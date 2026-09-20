@@ -99,7 +99,7 @@ def decorate(model, taxonomy_labels=None, price_unit='', benchmark=None, price_s
 
 
 def sort_models(models, sort, benchmark=None):
-    # Stable secondary key is the permanent number, regardless of direction.
+    # Stable secondary key is the chronological number, then database identity.
     models.sort(key=lambda m: (m.public_number is None, m.public_number or m.pk))
     descending = sort.endswith('_desc') or sort == 'check_best' and (not benchmark or benchmark.higher_is_better) or sort == 'check_worst' and benchmark and not benchmark.higher_is_better
     def key(m):

@@ -1,4 +1,5 @@
 import csv
+from datetime import date, timedelta
 import json
 import tempfile
 from io import StringIO
@@ -13,11 +14,14 @@ class ComparisonReleaseTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         call_command('seed_catalog', verbosity=0)
+        ModelVersion.objects.update(released=date(2020, 1, 1))
+        from catalog.chronology import renumber_chronologically
+        renumber_chronologically()
         source = ModelVersion.objects.first()
         for i in range(34):
             ModelVersion.objects.create(family=source.family, name=('z' if i % 2 else 'A') + str(i),
                 slug=f'comparison-{i}', version=str(i), category='text', tasks=['reasoning', 'coding'] if i % 2 else ['documents'],
-                source=source.source, checked=source.checked)
+                source=source.source, checked=source.checked, released=date(2021, 1, 1) + timedelta(days=i))
 
     def all_models(self, **params):
         result = []

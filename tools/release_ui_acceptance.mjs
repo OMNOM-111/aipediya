@@ -36,7 +36,7 @@ async function capture(page, name) {
 async function rows(page) {
   return page.locator('#model-rows > tr').evaluateAll(items => items.filter(x => x.querySelector('.model-name')).map(row => {
     const text = cls => (row.querySelector(cls)?.innerText || '').replace(/\s+/g, ' ').trim();
-    const number = Number(text('.number-col').replace('#', ''));
+    const number = text('.number-col') === '—' ? null : Number(text('.number-col').replace('#', ''));
     const priceText = row.querySelector('.price-col strong')?.textContent || '';
     const scoreText = row.querySelector('.checks-col strong')?.textContent || '';
     const purpose = [...row.querySelectorAll('.purpose-col .task')].map(e => e.textContent.trim()).join(' · ');
@@ -56,7 +56,7 @@ function assertOrder(items, key, desc = false) {
     if (prior == null || prior === '' || Number.isNaN(prior)) continue;
     if (typeof current === 'string') { current = current.normalize('NFKC').toLowerCase().replaceAll('ё', 'е'); prior = prior.normalize('NFKC').toLowerCase().replaceAll('ё', 'е'); }
     if (desc ? prior < current : prior > current) errors.push(`#${items[i-1].number} ${prior} -> #${items[i].number} ${current}`);
-    if (prior === current && items[i-1].number > items[i].number) errors.push(`unstable equal-value order #${items[i-1].number} -> #${items[i].number}`);
+    if (prior === current && (items[i-1].number ?? Infinity) > (items[i].number ?? Infinity)) errors.push(`unstable equal-value order #${items[i-1].number} -> #${items[i].number}`);
   }
   check(!errors.length, `${key} ${desc ? 'descending' : 'ascending'} actual displayed order: ${errors.slice(0, 8).join('; ')}`);
 }
@@ -72,7 +72,8 @@ async function fullRows(page) {
   }
   const all = await rows(page);
   check(all.length === total, `loaded ${all.length}/${total}`);
-  check(new Set(all.map(r => r.number)).size === all.length, 'duplicate permanent numbers');
+  const numbered = all.filter(r => r.number !== null);
+  check(new Set(numbered.map(r => r.number)).size === numbered.length, 'duplicate chronological numbers');
   check(new Set(all.map(r => r.href.split('?')[0])).size === all.length, 'duplicate model URLs');
   check(Number(await page.locator('#shown-count').innerText()) === total, 'shown counter differs from loaded rows');
   return all;
@@ -178,7 +179,7 @@ async function headerClicks(browser, engine) {
         check(!new URL(actual[i].state.url).searchParams.get('category'), 'header click silently applies category filter');
         assertOrder(actual[i].all || actual[i].now, key, key === 'score' ? i === 0 : i === 1);
       }
-      check(JSON.stringify(actual[0].now.map(x => x.number)) !== JSON.stringify(actual[1].now.map(x => x.number)), 'second click did not change actual rows');
+      check(JSON.stringify(actual[0].now.map(x => x.href.split('?')[0])) !== JSON.stringify(actual[1].now.map(x => x.href.split('?')[0])), 'second click did not change actual rows');
       return { total: actual[0].all?.length, first: actual[0].state, second: actual[1].state };
     });
   }

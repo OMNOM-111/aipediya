@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import date, timedelta
 from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.core.management import call_command
@@ -11,6 +11,10 @@ class CatalogTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         call_command("seed_catalog", verbosity=0)
+        # Synthetic release dates for ordering fixtures, never production data.
+        ModelVersion.objects.update(released=date(2020, 1, 1))
+        from catalog.chronology import renumber_chronologically
+        renumber_chronologically()
 
     def names(self, params):
         return [m.slug for m in self.client.get("/", params).context["page"]]
@@ -117,7 +121,7 @@ class CatalogTests(TestCase):
     def test_public_editing_endpoint_is_not_exposed(self):
         self.assertEqual(self.client.post("/report", {"message": "A real correction"}).status_code, 404)
 
-    def test_public_numbers_are_stable_and_not_reused_after_archiving(self):
+    def test_archiving_keeps_chronology_and_newer_release_gets_later_number(self):
         model = ModelVersion.objects.get(slug="qwen3-8b")
         assigned = model.public_number
         model.catalog_status = "archived"
@@ -128,7 +132,7 @@ class CatalogTests(TestCase):
         new = ModelVersion.objects.create(
             family=model.family, name="New permanent number", slug="new-permanent-number",
             version="1", category=model.category, tasks=model.tasks, description=model.description,
-            source=model.source, checked=model.checked,
+            source=model.source, checked=model.checked, released=date(2021, 1, 1),
         )
         self.assertGreater(new.public_number, assigned)
         self.assertEqual(self.names({"q": f"#{new.public_number}"}), [new.slug])

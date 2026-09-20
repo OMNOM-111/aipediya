@@ -5,7 +5,6 @@ from urllib.parse import urlparse
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
-from django.db.models import Max
 from django.utils.text import slugify
 
 from catalog.models import (Access, Benchmark, Category, Evaluation, ModelFamily,
@@ -180,7 +179,6 @@ class Command(BaseCommand):
                 input_modalities=entity.get("input_modalities_confirmed_subset") or [],
                 output_modalities=entity.get("output_modalities_confirmed_subset") or [],
                 open_weights=any(row.get("execution_location") == "local" for row in rows), research_entity_id=entity_id,
-                public_number=(ModelVersion.objects.aggregate(last=Max("public_number"))["last"] or 0) + 1,
             )
             action = "create"
         elif not model.research_entity_id:

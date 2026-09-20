@@ -1,8 +1,7 @@
 from datetime import timedelta
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
-from django.db import models
-from django.db.models import Max
+from django.db import models, transaction
 from django.utils import timezone
 
 
@@ -47,6 +46,7 @@ class ModelVersion(models.Model):
     philosophy = models.JSONField(default=dict, blank=True)
     context = models.PositiveIntegerField(null=True, blank=True)
     released = models.DateField(null=True, blank=True)
+    release_evidence = models.JSONField(default=dict, blank=True)
     license = models.CharField(max_length=200, blank=True)
     open_weights = models.BooleanField(default=False)
     source = models.ForeignKey(Source, on_delete=models.PROTECT)
@@ -64,10 +64,23 @@ class ModelVersion(models.Model):
     class Meta:
         ordering = ["name"]
     def save(self, *args, **kwargs):
-        # Permanent public numbers are assigned once and never recycled.
-        if self._state.adding and self.published and self.public_number is None:
-            self.public_number = (ModelVersion.objects.aggregate(last=Max("public_number"))["last"] or 0) + 1
-        super().save(*args, **kwargs)
+        # Numbers are chronological positions, not identities. Unknown dates
+        # have no chronological number; stable slugs/pks preserve every URL.
+        using = kwargs.get('using') or self._state.db or 'default'
+        fields = kwargs.get('update_fields')
+        relevant = self._state.adding or fields is None or bool(set(fields) & {'released', 'name', 'slug', 'published'})
+        with transaction.atomic(using=using):
+            if self._state.adding:
+                self.public_number = None
+            else:
+                # Another dated insertion may have changed this object's rank
+                # since it was loaded. Never write a stale rank back over it.
+                self.public_number = type(self).objects.using(using).values_list('public_number', flat=True).get(pk=self.pk)
+            super().save(*args, **kwargs)
+            if relevant:
+                from .chronology import renumber_chronologically
+                renumber_chronologically(using=using)
+                self.public_number = type(self).objects.using(using).values_list('public_number', flat=True).get(pk=self.pk)
     def __str__(self):
         return self.name
 

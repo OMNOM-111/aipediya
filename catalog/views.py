@@ -119,10 +119,10 @@ def catalog(request):
         qs = qs.filter(catalog_status=status)
 
     lang = "en" if request.GET.get("lang") == "en" else "ru"
-    sort = request.GET.get("sort", "name_asc")
+    sort = request.GET.get("sort", "number_asc")
     sort = {"score": "check_best", "check_desc": "check_best", "check_asc": "check_worst"}.get(sort, sort)
     orders = [f"{key}_{direction}" for key in ("number", "name", "purpose", "price", "access") for direction in ("asc", "desc")] + ["check_best", "check_worst"]
-    if sort not in orders: sort = "name_asc"
+    if sort not in orders: sort = "number_asc"
     price_scope = request.GET.get("price_scope", "standard")
     if price_scope not in {"standard", "batch", "offpeak", "peak", "flex", "fast", "priority", "free", "annual", "all"}: price_scope = "standard"
     price_variant = request.GET.get("price_variant", "base")

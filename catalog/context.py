@@ -4,6 +4,9 @@ from .seo import public_url
 
 
 TEXT = {
+    "released": ("Выпуск", "Released"),
+    "release_unknown": ("Дата выпуска не подтверждена", "Release date not verified"),
+    "chronology_note": ("№ — порядок по дате выпуска: от старых к новым. При одинаковой дате — по названию. Без подтверждённой даты — без номера, в конце хронологии.", "Numbers follow release dates, oldest first; same-day releases use name order. Unverified dates have no number and appear last in chronology."),
     "price_modality": ("Тип тарифицируемых токенов", "Billed token modality"),
     "text_tokens": ("Текстовые токены", "Text tokens"), "audio_tokens": ("Аудиотокены", "Audio tokens"), "image_tokens": ("Токены изображения", "Image tokens"),
     "coverage_note": ("Что проверено по оценкам", "Evaluation coverage check"),
@@ -24,7 +27,7 @@ TEXT = {
     "no_selected_price": ("Нет цены в выбранных условиях", "No price for selected conditions"),
     "no_selected_score": ("Нет результата выбранного теста и режима", "No result for selected test and mode"),
     "more": ("ещё", "more"),
-    "sort_explanation": ("Назначения и способы доступа: алфавитный порядок показанных значений; при равенстве — постоянный номер. Пропуски — в конце.", "Use cases and access: alphabetical order of displayed values; ties use the permanent number. Missing values stay last."),
+    "sort_explanation": ("Назначения и способы доступа: алфавитный порядок показанных значений; при равенстве — номер. Пропуски — в конце.", "Use cases and access: alphabetical order of displayed values; ties use the catalogue number. Missing values stay last."),
     "access_asc": ("Доступ: А–Я", "Access: A–Z"), "access_desc": ("Доступ: Я–А", "Access: Z–A"),
     "composite": ("Составной индекс", "Composite index"), "independent_run": ("Независимый прогон", "Independent run"),
     "developer": ("Разработчик", "Developer"), "preference": ("Пользовательские предпочтения", "User preferences"),
@@ -75,8 +78,8 @@ TEXT = {
     "price_scope": ("Условия цены", "Price conditions"),
     "standard_prices": ("Стандартная оплата по использованию", "Standard pay-as-you-go"),
     "all_prices": ("Все условия, включая специальные", "All conditions, including special"),
-    "number_asc": ("Номер: по возрастанию", "Number: low to high"),
-    "number_desc": ("Номер: по убыванию", "Number: high to low"),
+    "number_asc": ("Выпуск: сначала старые", "Release: oldest first"),
+    "number_desc": ("Выпуск: сначала новые", "Release: newest first"),
     "name_asc": ("Название: А–Я", "Name: A–Z"),
     "name_desc": ("Название: Я–А", "Name: Z–A"), "price_asc": ("Цена выбранной единицы: по возрастанию", "Selected price unit: low to high"),
     "price_desc": ("Цена выбранной единицы: по убыванию", "Selected price unit: high to low"),
