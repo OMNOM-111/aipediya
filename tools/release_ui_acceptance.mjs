@@ -15,6 +15,7 @@ const save = () => fs.writeFileSync(path.join(output, 'results.json'), JSON.stri
 const check = (ok, message) => { if (!ok) throw new Error(message); };
 async function test(engine, name, fn) {
   if (process.env.AIPEDIA_QA_CASE && name !== process.env.AIPEDIA_QA_CASE) return;
+  if (process.env.AIPEDIA_QA_CASE_PATTERN && !new RegExp(process.env.AIPEDIA_QA_CASE_PATTERN).test(name)) return;
   const started = Date.now();
   try { const data = await fn(); results.checks.push({ engine, name, status: 'PASS', ms: Date.now() - started, data }); }
   catch (error) { results.checks.push({ engine, name, status: 'FAIL', ms: Date.now() - started, error: error.message }); }
@@ -99,7 +100,8 @@ async function matrix(browser, engine) {
   if (!await page.locator('.model-name').count()) await go(page, '?lang=en');
   const preferredCard = page.locator('.model-name').filter({ hasText: /^GPT-5\.6 Sol$/ });
   const detailPath = (await (await preferredCard.count() ? preferredCard : page.locator('.model-name').first()).getAttribute('href')).split('?')[0];
-  for (const width of [320, 360, 390, 430, 768, 1024, 1440, 1920]) {
+  const widths = process.env.AIPEDIA_QA_WIDTHS ? process.env.AIPEDIA_QA_WIDTHS.split(',').map(Number) : [320, 360, 390, 430, 768, 1024, 1440, 1920];
+  for (const width of widths) {
     for (const lang of ['ru', 'en']) for (const theme of ['light', 'dark']) {
       await test(engine, `matrix-${width}-${lang}-${theme}`, async () => {
         await page.setViewportSize({ width, height: width < 768 ? 844 : 1000 });
@@ -127,10 +129,14 @@ async function matrix(browser, engine) {
       await test(engine, `card-${width}-${lang}-${theme}`, async () => {
         await page.goto(`${base}${detailPath}?lang=${lang}`, { waitUntil: 'networkidle' });
         if (await page.locator('html').getAttribute('data-theme') !== theme) await page.locator('#theme').click();
-        const m = await page.locator('article.model-detail').evaluate(e => ({ pageFits: document.documentElement.scrollWidth <= innerWidth + 1, heading: e.querySelector('h1').innerText, number: e.querySelector('.record-number')?.innerText, scores: e.querySelectorAll('.evaluation').length, tablesFit: [...e.querySelectorAll('.table-scroll')].every(t => t.getBoundingClientRect().right <= innerWidth + 1) }));
+        const m = await page.locator('article.model-detail').evaluate(e => {
+          const header = e.querySelector('.detail-prices thead th'); const range = document.createRange(); if (header) range.selectNodeContents(header);
+          return { pageFits: document.documentElement.scrollWidth <= innerWidth + 1, heading: e.querySelector('h1').innerText, number: e.querySelector('.record-number')?.innerText, scores: e.querySelectorAll('.evaluation').length, tablesFit: [...e.querySelectorAll('.table-scroll')].every(t => t.getBoundingClientRect().right <= innerWidth + 1), providerHeaderLines: header ? range.getClientRects().length : 0, providerHeaderWidth: header?.getBoundingClientRect().width };
+        });
         await capture(page, `${engine}-card-${width}-${lang}-${theme}`);
         check(m.pageFits && m.tablesFit, 'detail card overflows viewport');
         check(m.number?.startsWith('#'), 'detail card permanent number missing');
+        check(m.providerHeaderLines <= 3, `price provider header wraps into ${m.providerHeaderLines} lines at ${m.providerHeaderWidth}px`);
         if ([390, 768, 1440].includes(width) && m.scores) { await page.locator('#evaluations').evaluate(e => e.scrollIntoView({ block: 'start' })); await capture(page, `${engine}-scores-${width}-${lang}-${theme}`); }
         return m;
       });
@@ -142,7 +148,7 @@ async function headerClicks(browser, engine) {
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 }, recordVideo: { dir: output, size: { width: 1440, height: 1000 } } });
   const page = await ctx.newPage();
   const specs = [['number', 'number', 'number_asc', 'number_desc'], ['model', 'name', 'name_asc', 'name_desc'], ['purpose', 'purpose', 'purpose_asc', 'purpose_desc'], ['price', 'price', 'price_asc', 'price_desc'], ['access', 'access', 'access_asc', 'access_desc'], ['checks', 'score', 'check_best', 'check_worst']];
-  for (const lang of (process.env.AIPEDIA_QA_SHORT_RECORDING === '1' ? ['ru'] : ['ru', 'en'])) for (const [column, key, first, second] of specs) {
+  for (const lang of (process.env.AIPEDIA_QA_SHORT_RECORDING === '1' ? [process.env.AIPEDIA_QA_SHORT_LANG || 'ru'] : ['ru', 'en'])) for (const [column, key, first, second] of specs) {
     await test(engine, `header-${lang}-${column}`, async () => {
       await go(page, `?lang=${lang}&sort=number_desc`);
       const before = await rows(page);
@@ -323,6 +329,22 @@ async function flows(browser, engine) {
     check(conditions.length > 0 && conditions.every(t => t.includes(' · ') && t.split(' · ').at(-1).trim()), 'provider or price condition disappears in RU');
     return { compared: ru.length, priced: ru.filter(r => r.price !== null).length };
   });
+  await test(engine, 'price-modality-isolation', async () => {
+    await go(page, '?lang=en&sort=price_asc&price_unit=input&price_scope=standard&price_variant=base&price_modality=text');
+    const evidence = [];
+    for (const modality of ['text', 'audio', 'image']) {
+      if (await page.locator('select[name=price_modality]').inputValue() !== modality) await navigate(page, () => page.selectOption('select[name=price_modality]', modality));
+      const all = await fullRows(page); assertOrder(all, 'price');
+      const known = all.filter(r => r.price !== null);
+      const basis = await page.locator('.comparison-basis').innerText();
+      check(basis.toLowerCase().includes(modality), `comparison basis loses ${modality}`);
+      if (!known.length) check(basis.includes('No matching offers'), `empty ${modality} price comparison has no explanation`);
+      if (modality !== 'text') check(known.every(r => r.priceText.toLowerCase().includes(modality)), `${modality} price cell hides billed token modality`);
+      evidence.push({ modality, count: known.length, first: known.slice(0, 5).map(r => ({ number: r.number, price: r.price, shown: r.priceText })) });
+    }
+    check(new Set(evidence.map(e => JSON.stringify(e.first.map(r => [r.number, r.price])))).size > 1, 'modality selection does not change prices');
+    return evidence;
+  });
   await test(engine, 'text-200-percent', async () => {
     await page.setViewportSize({ width: 390, height: 844 }); await go(page, '?lang=ru');
     await page.evaluate(() => { const values = [...document.querySelectorAll('body *')].map(e => [e, getComputedStyle(e).fontSize, getComputedStyle(e).lineHeight]); for (const [e, fontSize, lineHeight] of values) { e.style.fontSize = `${parseFloat(fontSize) * 2}px`; if (/^[\d.]+px$/.test(lineHeight)) e.style.lineHeight = `${parseFloat(lineHeight) * 2}px`; } });
@@ -398,7 +420,7 @@ async function nativeZoom() {
     fs.rmSync(resolvedProfile, { recursive: true, force: true, maxRetries: 4, retryDelay: 250 });
   }
 }
-for (const engine of ['chromium', 'firefox', 'webkit'].filter(name => !process.env.AIPEDIA_QA_BROWSER || name === process.env.AIPEDIA_QA_BROWSER)) {
+async function runEngine(engine) {
   let browser;
   try {
     browser = await pw[engine].launch({ headless: true, ...(process.env[`AIPEDIA_${engine.toUpperCase()}_EXECUTABLE`] ? { executablePath: process.env[`AIPEDIA_${engine.toUpperCase()}_EXECUTABLE`] } : {}) });
@@ -406,11 +428,14 @@ for (const engine of ['chromium', 'firefox', 'webkit'].filter(name => !process.e
     if (process.env.AIPEDIA_QA_MATRIX_ONLY !== '1' && process.env.AIPEDIA_QA_FLOWS_ONLY !== '1') await headerClicks(browser, engine);
     if (process.env.AIPEDIA_QA_HEADERS_ONLY !== '1') {
       if (process.env.AIPEDIA_QA_FLOWS_ONLY !== '1') await matrix(browser, engine);
-      if (process.env.AIPEDIA_QA_MATRIX_ONLY !== '1') { await flows(browser, engine); if (engine === 'chromium' && !process.env.AIPEDIA_QA_CASE) await nativeZoom(); }
+      if (process.env.AIPEDIA_QA_MATRIX_ONLY !== '1') { await flows(browser, engine); if (engine === 'chromium' && !process.env.AIPEDIA_QA_CASE && !process.env.AIPEDIA_QA_CASE_PATTERN) await nativeZoom(); }
     }
   } catch (error) { results.checks.push({ engine, name: 'engine', status: 'BLOCKED', error: error.message }); save(); }
   finally { if (browser) await browser.close(); }
 }
+const requestedEngines = ['chromium', 'firefox', 'webkit'].filter(name => !process.env.AIPEDIA_QA_BROWSER || name === process.env.AIPEDIA_QA_BROWSER);
+if (process.env.AIPEDIA_QA_PARALLEL === '1') await Promise.all(requestedEngines.map(runEngine));
+else for (const engine of requestedEngines) await runEngine(engine);
 results.completed = new Date().toISOString();
 results.summary = Object.fromEntries(['PASS', 'FAIL', 'BLOCKED'].map(status => [status, results.checks.filter(r => r.status === status).length]));
 save();
