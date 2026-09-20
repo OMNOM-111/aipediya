@@ -1,5 +1,6 @@
 """Create an allowlisted, secret-free code/source release archive."""
 import hashlib
+import io
 import json
 import subprocess
 import zipfile
@@ -16,11 +17,11 @@ if __name__ == '__main__':
     commit = subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
     archive = ROOT / 'artifacts/acceptance-20260920' / f'aipedia-release-{commit[:12]}.zip'
     files = {}
-    tracked = subprocess.check_output(['git','ls-files','-z'],cwd=ROOT).decode().split('\0')
-    for rel in tracked:
-        if not rel or rel.startswith('data/research/'): continue
-        path=ROOT/rel
-        if path.is_file(): files['app/'+rel]=path.read_bytes()
+    committed = subprocess.check_output(['git','archive','--format=zip',commit],cwd=ROOT)
+    with zipfile.ZipFile(io.BytesIO(committed)) as tracked:
+        for rel in tracked.namelist():
+            if rel.endswith('/') or rel.startswith('data/research/'): continue
+            files['app/'+rel]=tracked.read(rel)
     for name in ['verified-alias-registry.json','verified-new-models.json','eci_scores.csv']:
         files['sources/'+name]=(SOURCE/name).read_bytes()
     for name in OWN_FILES: files['sources/epoch-export/'+name]=(SOURCE/'epoch-export'/name).read_bytes()
