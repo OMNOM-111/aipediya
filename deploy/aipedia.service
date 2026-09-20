@@ -1,0 +1,22 @@
+[Unit]
+Description=AIpedia Django application
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=aipedia
+Group=aipedia
+WorkingDirectory=/srv/aipedia/app
+EnvironmentFile=/etc/aipedia/aipedia.env
+ExecStart=/srv/aipedia/venv/bin/python /srv/aipedia/app/tools/serve.py --port 18810
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/srv/aipedia/data /srv/aipedia/logs /srv/aipedia/app/staticfiles
+
+[Install]
+WantedBy=multi-user.target

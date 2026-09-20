@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.py[cod]
+.env
+data/*.sqlite3*
+staticfiles/
+artifacts/
+*.log
+.coverage
+backups/
+public-release/
+BUILD.json
+aipedia-deploy*.zip

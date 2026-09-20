@@ -1,0 +1,16 @@
+[program:aipedia-web]
+command=/bin/sh /srv/aipedia/current/deploy/run-origin.sh
+directory=/srv/aipedia/current
+user=aipedia
+autostart=true
+autorestart=true
+startsecs=5
+stopasgroup=true
+killasgroup=true
+umask=0077
+stdout_logfile=/srv/aipedia/logs/web.log
+stderr_logfile=/srv/aipedia/logs/web-error.log
+stdout_logfile_maxbytes=10MB
+stderr_logfile_maxbytes=10MB
+stdout_logfile_backups=3
+stderr_logfile_backups=3

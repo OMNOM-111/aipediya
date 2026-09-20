@@ -1,0 +1,42 @@
+html body .model-table { min-width: 980px; }
+html body .model-table col.number-col, html body .model-table .number-col { width: 84px; min-width: 84px; white-space: nowrap; overflow-wrap: normal; word-break: normal; }
+html body .model-table col.model-col, html body .model-table .model-col { width: calc((100% - 84px) * .22); }
+html body .model-table col.purpose-col, html body .model-table .purpose-col { width: calc((100% - 84px) * .16); }
+html body .model-table col.price-col, html body .model-table .price-col { width: calc((100% - 84px) * .26); }
+html body .model-table col.access-col, html body .model-table .access-col { width: calc((100% - 84px) * .15); }
+html body .model-table col.checks-col, html body .model-table .checks-col { width: calc((100% - 84px) * .21); }
+html body .model-table .number-col { text-align: left; }
+.header-control { appearance: none; border: 0; border-radius: 0; background: transparent; color: inherit; min-height: 0; padding: 0; font-weight: 600; text-align: left; }
+.header-control.is-active, .model-table thead a[aria-current="true"] { color: var(--link); text-decoration: underline; text-underline-offset: 3px; }
+.filters-reset { align-self: center; font-size: 12px; white-space: nowrap; }
+.record-number { color: var(--muted); font-size: 0.67em; font-weight: 600; white-space: nowrap; }
+.catalog-controls { flex-wrap: wrap; }
+.column-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.column-actions > a[data-sort] { display: inline-flex; align-items: center; min-height: 44px; color: inherit; flex: 1; }
+.column-actions > .header-control { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; min-height: 44px; color: var(--muted); }
+.column-actions svg { width: 14px; height: 14px; }
+.model-table th[aria-sort=ascending] a[data-sort], .model-table th[aria-sort=descending] a[data-sort] { color: var(--link); }
+.comparison-basis { font-size: 11px; color: var(--muted); margin: 8px 0; }
+.evaluated-only { font-size: 12px; display: flex; align-items: center; gap: 6px; }
+.model-table .number-col { position: sticky; left: 0; z-index: 3; background: var(--bg); }
+.model-table .model-col { position: sticky; left: 84px; z-index: 2; background: var(--bg); }
+.model-table thead .number-col, .model-table thead .model-col { background: var(--subtle); }
+.model-table .number-col .column-actions { gap: 0; }
+.model-table .number-col .header-control { min-width: 20px; }
+@media (max-width: 600px) {
+  html body .model-table { min-width: 836px; }
+  html body .model-table .number-col { position: sticky; left: 0; z-index: 3; background: var(--bg); }
+  html body .model-table thead .number-col { background: var(--subtle); }
+  html body .model-table col.model-col, html body .model-table .model-col { width: 116px; min-width: 116px; }
+  html body .model-table col.purpose-col, html body .model-table .purpose-col { width: calc((100% - 200px) * .20); }
+  html body .model-table col.price-col, html body .model-table .price-col { width: calc((100% - 200px) * .32); }
+  html body .model-table col.access-col, html body .model-table .access-col { width: calc((100% - 200px) * .19); }
+  html body .model-table col.checks-col, html body .model-table .checks-col { width: calc((100% - 200px) * .29); }
+  html body .model-table .model-col { left: 84px; z-index: 2; }
+  .catalog-controls { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+  .catalog-controls .search { grid-column: 1 / -1; }
+  .catalog-controls select[name=sort], .catalog-controls .icon-button { grid-row: auto; grid-column: auto; }
+  .catalog-controls select { font-size: 12px; min-height: 44px; }
+  .catalog-controls .evaluated-only { grid-column: 1 / -1; }
+  .catalog-controls .icon-button { width: 44px; height: 44px; }
+}

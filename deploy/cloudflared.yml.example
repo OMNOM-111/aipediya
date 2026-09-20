@@ -1,0 +1,8 @@
+tunnel: REPLACE_WITH_AIPEDIA_TUNNEL_UUID
+credentials-file: /srv/aipedia/config/tunnel.json
+ingress:
+  - hostname: aipedia.example.invalid
+    service: http://127.0.0.1:18810
+    originRequest:
+      httpHostHeader: aipedia.example.invalid
+  - service: http_status:404
