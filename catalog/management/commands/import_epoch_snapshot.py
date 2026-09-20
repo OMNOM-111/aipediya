@@ -127,12 +127,28 @@ class Command(BaseCommand):
     def stage(self, key, row, filename, identity, snapshot):
         self.stats['observations'] += 1
         self.stats['review'] += 1
-        reason = (identity.get('identity_reason') or identity.get('reason') or identity['status']) if identity else 'No exact published catalog identity; source row retained'
+        source_model = row.get('Model version') or row.get('Model')
+        if identity:
+            reason = f"{identity['status']}: {source_model}; " + (identity.get('identity_reason') or identity.get('reason') or '')
+        else:
+            reason = f'No exact catalog identity for {source_model} in reviewed aliases ({snapshot}); source row retained; verify version before publication'
         payload = {'source_file': filename, 'snapshot': snapshot, 'row': row, 'alias': identity}
         record, created = ResearchRecord.objects.get_or_create(external_id='epoch-snapshot:' + key,
             defaults={'batch': 'Epoch ' + snapshot, 'payload': payload, 'review_reason': reason[:300]})
         if created:
             ResearchRevision.objects.create(record=record, batch=record.batch, action='epoch_stage', before={}, after=payload)
+        if not created and record.review_reason != reason[:300]:
+            before = {'review_reason': record.review_reason}
+            record.review_reason = reason[:300]
+            record.save(update_fields=['review_reason'])
+            ResearchRevision.objects.create(record=record, batch=record.batch, action='clarify_review', before=before, after={'review_reason': record.review_reason})
+        if row.get('id'):
+            old = ResearchRecord.objects.filter(external_id='epoch-own-run:' + filename + ':' + row['id'], state='review_required').first()
+            if old and old.review_reason != reason[:300]:
+                before = {'review_reason': old.review_reason}
+                old.review_reason = reason[:300]
+                old.save(update_fields=['review_reason'])
+                ResearchRevision.objects.create(record=old, batch='Epoch '+snapshot, action='clarify_review', before=before, after={'review_reason': old.review_reason})
 
     def publish(self, key, defaults, legacy=None):
         self.stats['observations'] += 1
