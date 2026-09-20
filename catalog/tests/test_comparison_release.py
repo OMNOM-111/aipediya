@@ -53,6 +53,11 @@ class ComparisonReleaseTests(TestCase):
             self.assertTrue(all(m.comparison_offer is None for m in models[len(known):]))
             self.assertContains(response, 'Нет цены в выбранных условиях')
 
+    def test_direct_later_page_shows_actual_loaded_row_count(self):
+        response = self.client.get('/', {'page':2})
+        self.assertEqual(response.context['shown_count'], 16)
+        self.assertEqual(response.context['shown_count'], len(response.context['page']))
+
     def test_explicit_modes_composite_missing_and_filters(self):
         model = ModelVersion.objects.first()
         bench = Benchmark.objects.create(name='ECI', protocol='test snapshot', category='text', unit='')

@@ -179,7 +179,7 @@ def catalog(request):
         "price_conditions": sorted(price_conditions.items(), key=lambda pair: pair[1]), "price_condition": price_condition,
         "comparison_count": sum(bool(m.comparison_offer) for m in models),
         "developers": ModelVersion.objects.filter(published=True).values("family__developer_id", "family__developer__name").distinct().order_by("family__developer__name"),
-        "found_count": page.paginator.count, "shown_count": page.end_index if page.paginator.count else 0,
+        "found_count": page.paginator.count, "shown_count": len(page.object_list),
         "seo": _catalog_seo(request, page),
     }
     if request.GET.get("partial") == "rows":
