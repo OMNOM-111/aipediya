@@ -127,6 +127,7 @@ async function matrix(browser, engine) {
         return m;
       });
       await test(engine, `card-${width}-${lang}-${theme}`, async () => {
+        await page.setViewportSize({ width, height: width < 768 ? 844 : 1000 });
         await page.goto(`${base}${detailPath}?lang=${lang}`, { waitUntil: 'networkidle' });
         if (await page.locator('html').getAttribute('data-theme') !== theme) await page.locator('#theme').click();
         const m = await page.locator('article.model-detail').evaluate(e => {
@@ -187,16 +188,23 @@ async function headerClicks(browser, engine) {
 async function flows(browser, engine) {
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 } }); const page = await ctx.newPage(); const pageErrors = [];
   page.on('pageerror', e => pageErrors.push(e.message));
+  await test(engine, 'public-build-health', async () => {
+    await go(page);
+    const health = await page.evaluate(async () => { const response = await fetch('/healthz'); return { status: response.status, body: await response.json() }; });
+    check(health.status === 200 && health.body.service === 'aipedia' && health.body.status === 'ok', `health endpoint: ${JSON.stringify(health)}`);
+    if (process.env.AIPEDIA_EXPECTED_BUILD) check(health.body.release === process.env.AIPEDIA_EXPECTED_BUILD, `deployed commit ${health.body.release} differs from expected ${process.env.AIPEDIA_EXPECTED_BUILD}`);
+    return health;
+  });
   await test(engine, 'static-assets-and-public-fingerprints', async () => {
     await go(page);
     const urls = await page.locator('link[rel=stylesheet], script[src]').evaluateAll(items => items.map(e => e.href || e.src).filter(url => new URL(url).pathname.startsWith('/static/')));
     check(urls.length >= 4, 'expected CSS and JavaScript assets absent');
     const assets = [];
     for (const url of urls) {
-      const response = await page.request.get(url);
-      check(response.ok(), `asset ${url} returned ${response.status()}`);
+      const response = await page.evaluate(async url => { const response = await fetch(url); return { status: response.status, ok: response.ok, type: response.headers.get('content-type'), cache: response.headers.get('cache-control') }; }, url);
+      check(response.ok, `asset ${url} returned ${response.status}`);
       if (new URL(base).protocol === 'https:') check(/\.[a-f0-9]{12}\.(css|js)$/.test(new URL(url).pathname), `public asset is not fingerprinted: ${url}`);
-      assets.push({ url, status: response.status(), type: response.headers()['content-type'], cache: response.headers()['cache-control'] });
+      assets.push({ url, ...response });
     }
     return assets;
   });
@@ -213,12 +221,14 @@ async function flows(browser, engine) {
   });
   await test(engine, 'page-two-detail-back-state', async () => {
     await go(page, '?lang=en&sort=number_asc&page=2');
-    const first = (await rows(page))[0].number;
+    const secondPage = await rows(page); const first = secondPage[0].number;
+    check(Number(await page.locator('#shown-count').innerText()) === secondPage.length, 'direct page 2 shown count differs from actual rows');
     await navigate(page, () => page.locator('.model-name').first().click());
     check(new URL(page.url()).searchParams.get('page') === '2', 'detail URL loses originating page 2');
     await navigate(page, () => page.locator('.back').click());
     check(new URL(page.url()).searchParams.get('page') === '2', 'back link loses originating page 2');
     check((await rows(page))[0].number === first, 'page 2 back changes first number');
+    check(Number(await page.locator('#shown-count').innerText()) === (await rows(page)).length, 'page 2 back shown count differs from actual rows');
     return { first, url: page.url() };
   });
   await test(engine, 'retry-after-failed-next-page', async () => {
