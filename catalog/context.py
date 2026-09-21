@@ -1,3 +1,5 @@
+from urllib.parse import urlencode
+
 from django.conf import settings
 
 from .seo import public_url
@@ -56,6 +58,9 @@ TEXT = {
     "safety": ("Безопасность", "Safety"), "agents": ("Агенты", "Agents"),
     "science": ("Наука", "Science"), "robotics": ("Робототехника", "Robotics"),
     "catalog": ("Каталог", "Catalog"), "methodology": ("Источники и методика", "Sources & methodology"),
+    "env_nav": ("Окружение", "Environment"),
+    "env_local_active": ("текущее окружение", "current environment"),
+    "env_open_production": ("Открыть публичный сайт", "Open the public site"),
     "title": ("Энциклопедия нейросетей", "The AI model encyclopedia"),
     "subtitle": ("Возможности, цены и происхождение — с источниками.", "Capabilities, pricing and origins, with sources."),
     "search": ("Найти модель, разработчика или задачу", "Find a model, developer or task"),
@@ -165,4 +170,6 @@ def site_context(request):
             "slot": settings.AIPEDIA_ADS_SLOT,
             "privacy_contact": settings.AIPEDIA_PRIVACY_CONTACT,
         },
+        "local_nav": settings.AIPEDIA_ENV == "local",
+        "production_home": f"{settings.AIPEDIA_PUBLIC_ORIGIN}/?{urlencode({'lang': lang})}",
     }

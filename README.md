@@ -7,14 +7,34 @@ Redis и фоновой очереди.
 
 ## Открыть
 
-Локальный адрес: http://127.0.0.1:18810
+Два окружения, одна кодовая база.
+
+- **Local** — этот компьютер, только `127.0.0.1`, отдельная SQLite
+  `data/local/aipedia.sqlite3`. Ярлык рабочего стола «AIpedia — Local».
+- **Production** — https://aipediya.com/. Кнопка Production в Local только
+  открывает публичный сайт; она ничего не публикует.
 
 ```powershell
 cd C:\Users\dimon\Documents\AIpedia
 .\start.ps1
 ```
 
-Если порт занят, `./start.ps1 -Port 18811`. Скрипт не завершает чужие процессы.
+Либо двойной щелчок по ярлыку «AIpedia — Local». Повторный запуск открывает
+уже работающий Local и не создаёт второй сервер. Если порт занят чужим
+процессом, он не останавливается: выбирается свободный порт в диапазоне
+18810–18819 и запоминается. Остановка только Local: ярлык «AIpedia — Stop Local»
+или `tools\local\stop-local.ps1`. Закрытие вкладки браузера сервер не гасит.
+
+Обычный адрес: http://127.0.0.1:18810
+Cursor/Codex, GitHub и production-сервер для запуска Local не нужны.
+
+Local заполняется безопасной копией опубликованного каталога один раз и
+не перезаписывается при следующих запусках. Обновление снимка — отдельная
+команда `tools/local/prepare_local_catalog.py --replace` с резервной копией.
+
+Краткий цикл: запустить Local → проверить в браузере → сохранить версию в Git →
+отдельно опубликовать по `docs/RELEASE.md` → при необходимости откатить только
+приложение AIpedia. Production, его туннель и StratForge этим циклом не трогать.
 
 ## Установка с нуля
 
@@ -86,11 +106,12 @@ GPQA взят из отчёта Google. AIME в отчёте атрибутир�
 
 Актуальные шаги и публичный статус: `docs/EXECUTION_STATE.md`; правила сравнения:
 `docs/COMPARISON_RULES.md`. Исторические числа ниже не заменяют текущую приёмку.
-Рабочая SQLite находится на сервере; локальная `data/aipedia.sqlite3` устарела
-и никогда не должна заменять рабочую БД. Приёмка использует online-копию.
+Рабочая SQLite Production находится на сервере:
+`/srv/aipedia/data/aipedia.sqlite3`. Local использует
+`data/local/aipedia.sqlite3` и никогда не должен заменять рабочую БД.
 
 ```powershell
-.\.venv\Scripts\python.exe manage.py test catalog
+.\.venv\Scripts\python.exe manage.py test catalog --settings=aipedia.test_settings
 .\.venv\Scripts\python.exe manage.py check
 python tools/browser_check.py
 ```
@@ -102,10 +123,11 @@ python tools/browser_check.py
 ## Развёртывание
 
 Существующая topology проверена: `/srv/aipedia/app`, БД `/srv/aipedia/data/aipedia.sqlite3`,
-выделенный Supervisor. Для обновления — `tools/build_release.py` и
-`tools/deploy_release.py`, свежая серверная копия и публичная приёмка.
-Туннель, секреты и StratForge не менять. `deploy/README.md` содержит исторические
-шаблоны начальной установки; не повторять уже выполненную инфраструктуру.
+выделенный Supervisor. Push в GitHub не выполняет deploy. Для обновления кода —
+`docs/RELEASE.md`: `tools/build_code_release.py` и `tools/deploy_code_release.py`,
+с online-backup серверной БД и без копирования Local SQLite. Туннель, секреты и
+StratForge не менять. `deploy/README.md` содержит исторические шаблоны начальной
+установки; не повторять уже выполненную инфраструктуру.
 
 ## Лицензии
 

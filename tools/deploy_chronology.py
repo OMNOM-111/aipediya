@@ -25,6 +25,7 @@ if __name__ == '__main__':
         stage = ROOT / 'releases' / ('chronology-' + commit[:12])
         stage.mkdir(exist_ok=False)
         for name, digest in manifest['files'].items():
+            assert not name.endswith(('.sqlite3', '.env'))
             target = (stage / name).resolve()
             assert target.is_relative_to(stage.resolve())
             content = z.read(name); assert hashlib.sha256(content).hexdigest() == digest

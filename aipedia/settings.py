@@ -2,10 +2,15 @@ import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-DEBUG = os.environ.get("AIPEDIA_ENV", "local") == "local"
+AIPEDIA_ENV = os.environ.get("AIPEDIA_ENV", "local").strip().lower()
+if AIPEDIA_ENV not in {"local", "production"}:
+    raise RuntimeError("AIPEDIA_ENV must be local or production")
+DEBUG = AIPEDIA_ENV == "local"
 SECRET_KEY = os.environ.get("AIPEDIA_SECRET_KEY", "local-preview-only-not-for-production")
-if not DEBUG and (SECRET_KEY.startswith(("local-", "REPLACE_")) or len(SECRET_KEY) < 50):
+if AIPEDIA_ENV == "production" and (SECRET_KEY.startswith(("local-", "REPLACE_")) or len(SECRET_KEY) < 50):
     raise RuntimeError("Set a random AIPEDIA_SECRET_KEY of at least 50 characters")
+if AIPEDIA_ENV == "production" and not os.environ.get("AIPEDIA_ALLOWED_HOSTS"):
+    raise RuntimeError("Production requires AIPEDIA_ALLOWED_HOSTS")
 ALLOWED_HOSTS = os.environ.get("AIPEDIA_ALLOWED_HOSTS", "127.0.0.1,localhost,[::1]").split(",")
 INSTALLED_APPS = [
     "django.contrib.admin", "django.contrib.auth", "django.contrib.contenttypes",
@@ -25,9 +30,25 @@ TEMPLATES = [{"BACKEND": "django.template.backends.django.DjangoTemplates", "DIR
                   "django.template.context_processors.request", "django.contrib.auth.context_processors.auth",
                   "django.contrib.messages.context_processors.messages", "catalog.context.site_context"]}}]
 WSGI_APPLICATION = "aipedia.wsgi.application"
+LOCAL_DB_ROOT = (BASE_DIR / "data" / "local").resolve()
+if AIPEDIA_ENV == "local":
+    default_db = LOCAL_DB_ROOT / "aipedia.sqlite3"
+else:
+    db_value = os.environ.get("AIPEDIA_DB")
+    if not db_value:
+        raise RuntimeError("Production requires AIPEDIA_DB")
+    default_db = Path(db_value)
 DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3",
-                          "NAME": os.environ.get("AIPEDIA_DB", str(BASE_DIR / "data" / "aipedia.sqlite3")),
+                          "NAME": os.environ.get("AIPEDIA_DB", str(default_db)),
                           "OPTIONS": {"timeout": 20}}}
+if AIPEDIA_ENV == "production":
+    production_db = Path(DATABASES["default"]["NAME"]).resolve()
+    try:
+        production_db.relative_to(LOCAL_DB_ROOT)
+    except ValueError:
+        pass
+    else:
+        raise RuntimeError("Production must not use the Local SQLite")
 LANGUAGE_CODE = "ru"
 TIME_ZONE = "UTC"
 USE_I18N = True

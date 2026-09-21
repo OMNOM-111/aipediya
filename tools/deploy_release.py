@@ -42,6 +42,7 @@ if __name__=='__main__':
         assert len(commit)==40 and all(c in '0123456789abcdef' for c in commit)
         stage=ROOT/'releases'/('20260920-'+commit[:12]);stage.mkdir(parents=True,exist_ok=False)
         for name,digest in manifest['files'].items():
+            assert not name.endswith(('.sqlite3','.env')) and Path(name).name not in {'secret.key','secret.env'}
             target=(stage/name).resolve()
             assert target.is_relative_to(stage.resolve()) and not name.startswith('/'),'Unsafe archive entry'
             content=z.read(name);assert hashlib.sha256(content).hexdigest()==digest,name

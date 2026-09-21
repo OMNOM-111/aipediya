@@ -214,7 +214,12 @@ def health(request):
     ModelVersion.objects.exists()
     path = Path(settings.BASE_DIR) / 'BUILD.json'
     build = json.loads(path.read_text()) if path.exists() else {}
-    return JsonResponse({"service": "aipedia", "status": "ok", "release": build.get('commit', 'local')})
+    return JsonResponse({
+        "service": "aipedia",
+        "status": "ok",
+        "release": build.get("commit", "local"),
+        "environment": settings.AIPEDIA_ENV,
+    })
 
 
 @require_GET
