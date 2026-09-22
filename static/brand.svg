@@ -1,1 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#365cf5"/><path d="M7 9h8v15H7zm10 0h8v15h-8z" fill="#fff"/><path d="M10 13h3m-3 4h3m6-4h3m-3 4h3" stroke="#365cf5" stroke-width="1.5"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
+  <defs>
+    <linearGradient id="ribbon" x1="7" y1="39" x2="30" y2="4" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00E0C6"/>
+      <stop offset=".48" stop-color="#2BE8DF"/>
+      <stop offset="1" stop-color="#22D9FF"/>
+    </linearGradient>
+    <linearGradient id="fold" x1="21" y1="24" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#007F91"/><stop offset="1" stop-color="#00C7DF"/></linearGradient>
+  </defs>
+  <path d="M5.5 38.2 19.1 6.7c1.2-2.9 5.4-2.9 6.7 0l13.5 31.5" stroke="url(#ribbon)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m21.7 25.3 16.8 13.2" stroke="url(#fold)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

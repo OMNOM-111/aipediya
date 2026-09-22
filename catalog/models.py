@@ -54,7 +54,14 @@ class ModelVersion(models.Model):
     published = models.BooleanField(default=True)
     public_number = models.PositiveIntegerField(null=True, blank=True, unique=True, db_index=True)
     catalog_status = models.CharField(
-        max_length=10, default="active", choices=[("active", "Активна"), ("archived", "Архив")]
+        max_length=12,
+        default="active",
+        choices=[
+            ("active", "Активна"),
+            ("deprecated", "Deprecated"),
+            ("retired", "Снята"),
+            ("archived", "Архив"),
+        ],
     )
     entry_type = models.CharField(max_length=16, default="model", choices=[("model", "Модель"), ("product", "Продукт"), ("api_service", "API-сервис"), ("runtime", "Среда запуска")])
     input_modalities = models.JSONField(default=list, blank=True)
@@ -68,7 +75,9 @@ class ModelVersion(models.Model):
         # have no chronological number; stable slugs/pks preserve every URL.
         using = kwargs.get('using') or self._state.db or 'default'
         fields = kwargs.get('update_fields')
-        relevant = self._state.adding or fields is None or bool(set(fields) & {'released', 'name', 'slug', 'published'})
+        relevant = self._state.adding or fields is None or bool(
+            set(fields) & {'released', 'name', 'slug', 'published', 'entry_type'}
+        )
         with transaction.atomic(using=using):
             if self._state.adding:
                 self.public_number = None
@@ -83,6 +92,172 @@ class ModelVersion(models.Model):
                 self.public_number = type(self).objects.using(using).values_list('public_number', flat=True).get(pk=self.pk)
     def __str__(self):
         return self.name
+
+
+class Country(models.Model):
+    """Normalized model-origin country (ISO 3166-1 alpha-2)."""
+
+    code = models.CharField(max_length=2, primary_key=True)
+    name_ru = models.CharField(max_length=80)
+    name_en = models.CharField(max_length=80)
+
+    class Meta:
+        ordering = ["code"]
+
+    def clean(self):
+        self.code = self.code.upper()
+        if len(self.code) != 2 or not self.code.isalpha():
+            raise ValidationError("Country code must be ISO 3166-1 alpha-2.")
+
+    def __str__(self):
+        return self.code
+
+
+class ModelOriginCountry(models.Model):
+    model = models.ForeignKey(
+        ModelVersion, related_name="origin_country_links", on_delete=models.CASCADE
+    )
+    country = models.ForeignKey(Country, related_name="model_links", on_delete=models.PROTECT)
+    source = models.ForeignKey(Source, on_delete=models.PROTECT)
+    checked = models.DateField()
+    position = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ["position", "country__code"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["model", "country"], name="unique_model_origin_country"
+            )
+        ]
+
+
+class Platform(models.Model):
+    code = models.SlugField(unique=True)
+    labels = models.JSONField(default=dict)
+    position = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ["position", "code"]
+
+    def __str__(self):
+        return self.labels.get("en") or self.code
+
+
+class Tool(models.Model):
+    CATEGORIES = [
+        ("ai_app", "AI-приложение"),
+        ("coding_assistant", "Coding assistant"),
+        ("coding_agent", "Coding agent"),
+        ("runtime", "Runtime"),
+        ("api_platform", "API-платформа"),
+        ("api_service", "API-сервис"),
+        ("ide_tool", "IDE-инструмент"),
+        ("client", "Клиент / интерфейс"),
+        ("agent_platform", "Agent platform"),
+        ("creative_app", "Творческое AI-приложение"),
+    ]
+    LOCAL_EXECUTION = [
+        ("yes", "Да"),
+        ("no", "Нет"),
+        ("hybrid", "Гибрид"),
+    ]
+    STATUSES = ModelVersion._meta.get_field("catalog_status").choices
+
+    # Existing ModelVersion rows are retained for pricing/access/history. The
+    # public Tools catalogue queries this table, not the legacy universal one.
+    legacy_version = models.OneToOneField(
+        ModelVersion,
+        related_name="tool_record",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
+    name = models.CharField(max_length=140)
+    slug = models.SlugField(unique=True)
+    version = models.CharField(max_length=150, blank=True)
+    developer = models.ForeignKey(Organization, related_name="tools", on_delete=models.PROTECT)
+    category = models.CharField(max_length=24, choices=CATEGORIES)
+    purposes = models.JSONField(default=list, blank=True)
+    description = models.JSONField(default=dict, blank=True)
+    ecosystem = models.JSONField(default=dict, blank=True)
+    local_execution = models.CharField(max_length=8, choices=LOCAL_EXECUTION, blank=True)
+    official_url = models.URLField(max_length=600, blank=True)
+    released = models.DateField(null=True, blank=True)
+    release_evidence = models.JSONField(default=dict, blank=True)
+    source = models.ForeignKey(Source, on_delete=models.PROTECT)
+    checked = models.DateField()
+    published = models.BooleanField(default=True)
+    public_number = models.PositiveIntegerField(null=True, blank=True, unique=True, db_index=True)
+    catalog_status = models.CharField(max_length=12, default="active", choices=STATUSES)
+    platforms = models.ManyToManyField(Platform, through="ToolPlatform", related_name="tools")
+    supported_models = models.ManyToManyField(
+        ModelVersion, through="ToolModelSupport", related_name="supported_by_tools"
+    )
+
+    class Meta:
+        ordering = ["name"]
+
+    def save(self, *args, **kwargs):
+        using = kwargs.get("using") or self._state.db or "default"
+        fields = kwargs.get("update_fields")
+        relevant = self._state.adding or fields is None or bool(
+            set(fields) & {"released", "name", "slug", "published"}
+        )
+        with transaction.atomic(using=using):
+            if self._state.adding:
+                self.public_number = None
+            else:
+                self.public_number = type(self).objects.using(using).values_list(
+                    "public_number", flat=True
+                ).get(pk=self.pk)
+            super().save(*args, **kwargs)
+            if relevant:
+                from .chronology import renumber_tools_chronologically
+
+                renumber_tools_chronologically(using=using)
+                self.public_number = type(self).objects.using(using).values_list(
+                    "public_number", flat=True
+                ).get(pk=self.pk)
+
+    def __str__(self):
+        return self.name
+
+
+class ToolPlatform(models.Model):
+    tool = models.ForeignKey(Tool, related_name="platform_links", on_delete=models.CASCADE)
+    platform = models.ForeignKey(Platform, on_delete=models.PROTECT)
+    source = models.ForeignKey(Source, on_delete=models.PROTECT)
+    checked = models.DateField()
+
+    class Meta:
+        ordering = ["platform__position", "platform__code"]
+        constraints = [
+            models.UniqueConstraint(fields=["tool", "platform"], name="unique_tool_platform")
+        ]
+
+
+class ToolModelSupport(models.Model):
+    tool = models.ForeignKey(Tool, related_name="model_links", on_delete=models.CASCADE)
+    model = models.ForeignKey(ModelVersion, on_delete=models.PROTECT)
+    source = models.ForeignKey(Source, on_delete=models.PROTECT)
+    checked = models.DateField()
+    note = models.JSONField(default=dict, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["tool", "model"], name="unique_tool_model_support")
+        ]
+
+
+class ToolPublicationRevision(models.Model):
+    tool = models.ForeignKey(Tool, related_name="publication_revisions", on_delete=models.PROTECT)
+    action = models.CharField(max_length=30)
+    before = models.JSONField(default=dict)
+    after = models.JSONField(default=dict)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created", "-pk"]
 
 
 class Service(models.Model):

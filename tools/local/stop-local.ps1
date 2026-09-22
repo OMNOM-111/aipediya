@@ -27,7 +27,9 @@ if (-not $proc) {
 }
 $cmd = Get-ProcessCommand $ProcessId
 $rootPattern = [regex]::Escape($Root)
-if ($cmd -notmatch 'serve\.py' -or $cmd -notmatch $rootPattern) {
+$isServe = $cmd -match 'serve\.py'
+$inProject = ($cmd -match $rootPattern) -or ($proc.Path -like "$Root*")
+if (-not $isServe -or -not $inProject) {
     Write-Host "PID $ProcessId is not this project's Local server. It was not stopped."
     exit 1
 }

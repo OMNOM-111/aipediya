@@ -81,15 +81,22 @@ class CatalogTests(TestCase):
         self.assertContains(detail, "benchmark=")
 
     def test_pagination_and_invalid_values(self):
+        from catalog.views import INITIAL_PAGE_SIZE, CHUNK_SIZE
         source = ModelVersion.objects.first()
-        for i in range(19):
+        need = INITIAL_PAGE_SIZE + 5 - ModelVersion.objects.count()
+        for i in range(max(0, need)):
             ModelVersion.objects.create(
                 family=source.family, name=f"Test version {i}", slug=f"test-version-{i}",
                 version="test", category=source.category, tasks=source.tasks, description=source.description,
                 source=source.source, checked=source.checked,
             )
+        first = self.client.get("/")
+        self.assertEqual(len(first.context["page"]), INITIAL_PAGE_SIZE)
+        self.assertTrue(first.context["page"].has_next)
         response = self.client.get("/", {"page": 2})
-        self.assertEqual(len(response.context["page"]), 1)
+        page = response.context["page"]
+        self.assertEqual(page.number, 2)
+        self.assertEqual(len(page), min(CHUNK_SIZE, page.paginator.count - INITIAL_PAGE_SIZE))
         for params in ({"page": "nonsense"}, {"sort": "DROP TABLE"}, {"benchmark": "invalid"}, {"developer": "-1"}):
             self.assertEqual(self.client.get("/", params).status_code, 200)
 
@@ -127,7 +134,8 @@ class CatalogTests(TestCase):
         model.catalog_status = "archived"
         model.save(update_fields=["catalog_status"])
         self.assertEqual(ModelVersion.objects.get(pk=model.pk).public_number, assigned)
-        self.assertNotIn(model.slug, self.names({}))
+        self.assertIn(model.slug, self.names({}))
+        self.assertNotIn(model.slug, self.names({"status": "active"}))
         self.assertIn(model.slug, self.names({"status": "archived"}))
         new = ModelVersion.objects.create(
             family=model.family, name="New permanent number", slug="new-permanent-number",

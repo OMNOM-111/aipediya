@@ -1,7 +1,7 @@
 from decimal import Decimal
 from django import template
 from catalog.context import TEXT
-from catalog.comparison import localized
+from catalog.comparison import format_context, localized
 
 register = template.Library()
 
@@ -23,6 +23,42 @@ def money(value):
         return ""
     result = format(Decimal(value), "f").rstrip("0").rstrip(".")
     return result or "0"
+
+@register.filter
+def catnum(value):
+    if value in (None, ""):
+        return ""
+    number = int(value)
+    return f"{number:03d}" if number < 1000 else str(number)
+
+@register.filter
+def tokens(value):
+    return format_context(value)
+
+MONTHS = {
+    "ru": ("Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"),
+    "en": ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
+}
+
+@register.filter
+def month_year(value, lang):
+    """Release date for the table/panel: day + abbreviated month + year.
+
+    RU (day first): 29 Июн 2021
+    EN US (month first): Jun 29, 2021
+    """
+    if not value:
+        return ""
+    month = MONTHS["en" if lang == "en" else "ru"][value.month - 1]
+    if lang == "en":
+        return f"{month} {value.day}, {value.year}"
+    return f"{value.day} {month} {value.year}"
+
+@register.filter
+def grouped(value):
+    if value in (None, ""):
+        return "0"
+    return f"{int(value):,}".replace(",", " ")
 
 @register.simple_tag(takes_context=True)
 def query(context, **changes):

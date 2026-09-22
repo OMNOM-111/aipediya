@@ -1,0 +1,8 @@
+{% load static catalog_tags %}<header class="site-header"><a class="brand" href="/?lang={{ lang }}" aria-label="AIpediya"><img src="{% static 'brand.svg' %}" alt="" width="44" height="44"><span class="brand-word"><span class="brand-ai">AI</span><span>pediya</span></span></a>
+{% if catalog_search %}
+<label class="search"><i data-lucide="search" aria-hidden="true"></i><span class="sr-only">{{ ui.search }}</span><input type="search" id="catalog-search" name="q" form="catalog-filters" value="{{ q }}" placeholder="{{ ui.search_models }}" maxlength="200" autocomplete="off"><kbd class="search-kbd" aria-hidden="true">/</kbd></label>
+{% else %}
+<form class="search" method="get" action="/" role="search"><input type="hidden" name="lang" value="{{ lang }}"><i data-lucide="search" aria-hidden="true"></i><span class="sr-only">{{ ui.search }}</span><input type="search" name="q" placeholder="{{ ui.search_models }}" maxlength="200"></form>
+{% endif %}
+<div class="orbit" aria-hidden="true"><img src="{% static 'orbit.svg' %}" alt="" width="230" height="160"></div>
+<div class="header-end"><div class="header-controls">{% if local_nav and not catalog_search %}{% include 'includes/env_nav.html' %}{% endif %}<nav class="languages" aria-label="Language"><a href="{% query lang='ru' page=request.GET.page %}" {% if lang == 'ru' %}aria-current="true"{% endif %}>RU</a><a href="{% query lang='en' page=request.GET.page %}" {% if lang == 'en' %}aria-current="true"{% endif %}>EN</a></nav><button type="button" id="theme" class="icon-button" title="{{ ui.theme }}" aria-label="{{ ui.theme }}" aria-pressed="false"><i data-lucide="sun" aria-hidden="true"></i></button></div></div></header>

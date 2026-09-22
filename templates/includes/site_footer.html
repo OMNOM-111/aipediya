@@ -1,0 +1,1 @@
+{% load catalog_tags %}<footer class="site-footer"><span>© {% now "Y" %} AIpediya</span><span class="footer-end">{% if local_nav %}{% include 'includes/env_nav.html' %}{% endif %}<a href="{% url 'privacy' %}?lang={{ lang }}">{{ ui.privacy }}</a><span class="footer-sep" aria-hidden="true">|</span><span class="footer-slogan">{{ ui.slogan }}</span></span></footer>

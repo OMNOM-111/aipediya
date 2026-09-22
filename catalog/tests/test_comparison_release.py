@@ -8,6 +8,7 @@ from django.core.management import call_command
 from django.test import TestCase
 from catalog.models import ModelVersion, Evaluation, Benchmark, Offer, Revision
 from catalog.management.commands.import_epoch_snapshot import OWN_FILES
+from catalog.views import INITIAL_PAGE_SIZE, CHUNK_SIZE
 
 
 class ComparisonReleaseTests(TestCase):
@@ -58,9 +59,25 @@ class ComparisonReleaseTests(TestCase):
             self.assertContains(response, 'Нет цены в выбранных условиях')
 
     def test_direct_later_page_shows_actual_loaded_row_count(self):
-        response = self.client.get('/', {'page':2})
-        self.assertEqual(response.context['shown_count'], 16)
-        self.assertEqual(response.context['shown_count'], len(response.context['page']))
+        source = ModelVersion.objects.filter(published=True).first()
+        need = INITIAL_PAGE_SIZE + CHUNK_SIZE + 5 - ModelVersion.objects.filter(published=True).count()
+        for i in range(max(0, need)):
+            ModelVersion.objects.create(
+                family=source.family, name=f'chunk-{i}', slug=f'chunk-{i}', version=str(i),
+                category='text', tasks=['reasoning'], source=source.source, checked=source.checked,
+                published=True,
+            )
+        response = self.client.get('/', {'page': 2})
+        page = response.context['page']
+        self.assertEqual(page.number, 2)
+        self.assertEqual(len(page), CHUNK_SIZE)
+        self.assertEqual(response.context['shown_count'], len(page))
+        self.assertEqual(response.context['shown_count'], page.end_index() - page.start_index() + 1)
+        partial = self.client.get('/', {'page': 2, 'partial': 'rows'})
+        self.assertEqual(partial.status_code, 200)
+        self.assertTrue(partial.has_header('X-Aipedia-Next'))
+        self.assertIn('partial=rows', partial['X-Aipedia-Next'])
+        self.assertIn('page=3', partial['X-Aipedia-Next'])
 
     def test_explicit_modes_composite_missing_and_filters(self):
         model = ModelVersion.objects.first()

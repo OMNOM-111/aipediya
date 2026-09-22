@@ -1,0 +1,125 @@
+from datetime import date
+
+from django.core.management import call_command
+from django.test import TestCase
+
+from catalog.chronology import renumber_chronologically
+from catalog.models import Evaluation, ModelVersion
+
+
+class RedesignCatalogTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        call_command("seed_catalog", verbosity=0)
+        ModelVersion.objects.update(released=date(2020, 1, 1))
+        renumber_chronologically()
+
+    def test_catalog_has_new_columns_and_empty_aipedia_rating(self):
+        response = self.client.get("/")
+        self.assertContains(response, "Модель")
+        self.assertContains(response, "Тип")
+        self.assertContains(response, "Разработчик")
+        self.assertContains(response, "Независимые проверки")
+        self.assertContains(response, "Рейтинг AIpediya")
+        self.assertContains(response, "Контекст")
+        self.assertContains(response, 'class="rating-col"')
+        self.assertNotContains(response, "75%")
+        self.assertContains(response, 'id="model-panel"')
+        self.assertContains(response, "Все")
+        self.assertContains(response, "Инструменты")
+
+    def test_visible_brand_matches_public_domain_spelling(self):
+        response = self.client.get("/", {"lang": "en"})
+        self.assertContains(response, 'aria-label="AIpediya"')
+        self.assertContains(response, '<span class="brand-ai">AI</span><span>pediya</span>', html=True)
+        self.assertContains(response, "AIpediya</span><span class=\"footer-end\"")
+        self.assertContains(response, "AIpediya rating")
+        self.assertContains(response, "AIpediya - AI model catalog")
+
+    def test_kind_tabs_use_existing_entry_types(self):
+        all_slugs = [model.slug for model in self.client.get("/").context["page"]]
+        models = [model.slug for model in self.client.get("/", {"kind": "model"}).context["page"]]
+        tools = [model.slug for model in self.client.get("/", {"kind": "tool"}).context["page"]]
+        self.assertTrue(all_slugs)
+        self.assertTrue(set(models).issubset(set(all_slugs)))
+        self.assertTrue(set(tools).issubset(set(all_slugs)))
+        self.assertFalse(set(models) & set(tools))
+        for model in self.client.get("/", {"kind": "model"}).context["page"]:
+            self.assertEqual(model.entry_type, "model")
+        for model in self.client.get("/", {"kind": "tool"}).context["page"]:
+            self.assertNotEqual(model.entry_type, "model")
+
+    def test_release_date_uses_localized_day_month_year(self):
+        from catalog.templatetags.catalog_tags import month_year
+
+        released = date(2021, 6, 29)
+        self.assertEqual(month_year(released, "ru"), "29 Июн 2021")
+        self.assertEqual(month_year(released, "en"), "Jun 29, 2021")
+        ModelVersion.objects.filter(slug="qwen3-8b").update(released=released)
+        self.assertContains(self.client.get("/?lang=ru"), "29 Июн 2021")
+        self.assertContains(self.client.get("/?lang=en"), "Jun 29, 2021")
+
+    def test_old_card_url_opens_panel_and_keeps_catalog(self):
+        model = ModelVersion.objects.get(slug="qwen3-8b")
+        response = self.client.get("/models/" + model.slug)
+        self.assertContains(response, model.version)
+        self.assertContains(response, "Платформа и оценка")
+        self.assertContains(response, f"#{model.public_number}")
+        self.assertContains(response, 'class="model-table"')
+        self.assertContains(response, 'id="model-panel"')
+        self.assertContains(response, "is-panel-open")
+        self.assertContains(response, "Поделиться")
+        self.assertContains(response, "Сохранение станет доступно после запуска личного кабинета.")
+        self.assertContains(response, 'aria-disabled="true"')
+        self.assertNotContains(response, "Сохранено")
+        panel = self.client.get("/models/" + model.slug, {"partial": "panel"})
+        self.assertEqual(panel.status_code, 200)
+        self.assertEqual(panel["X-Aipedia-Slug"], model.slug)
+
+    def test_unpublished_and_unknown_panel_stay_closed(self):
+        model = ModelVersion.objects.get(slug="qwen3-8b")
+        model.published = False
+        model.save()
+        self.assertEqual(self.client.get("/models/" + model.slug).status_code, 404)
+        self.assertEqual(self.client.get("/", {"partial": "panel", "model": model.slug}).status_code, 404)
+        catalog = self.client.get("/", {"model": "not-real"})
+        self.assertEqual(catalog.status_code, 200)
+        self.assertIsNone(catalog.context["selected_model"])
+
+    def test_missing_number_and_context_are_blank_not_zero(self):
+        model = ModelVersion.objects.get(slug="qwen3-8b")
+        model.released = None
+        model.context = None
+        model.save()
+        model.refresh_from_db()
+        self.assertIsNone(model.public_number)
+        response = self.client.get("/")
+        html = response.content.decode()
+        self.assertNotIn("75%", html)
+        row = next(item for item in response.context["page"] if item.slug == model.slug)
+        self.assertIsNone(row.public_number)
+        self.assertIsNone(row.context)
+        self.assertContains(response, 'class="rating-col"')
+
+    def test_input_and_output_prices_can_appear_together(self):
+        model = ModelVersion.objects.get(slug="gemini-2-5-flash")
+        response = self.client.get("/")
+        listed = next(item for item in response.context["page"] if item.slug == model.slug)
+        units = {offer.unit for offer in listed.table_offers}
+        self.assertTrue("input" in units or listed.table_offers)
+        if any(offer.unit == "input" for offer in listed.current_offers) and any(
+            offer.unit == "output" for offer in listed.current_offers
+        ):
+            self.assertIn("input", units)
+            self.assertIn("output", units)
+
+    def test_independent_column_does_not_relabel_developer_reports(self):
+        evaluation = Evaluation.objects.filter(public=True).first()
+        evaluation.result_kind = "developer"
+        evaluation.independent = False
+        evaluation.save(update_fields=["result_kind", "independent"])
+        response = self.client.get("/models/" + evaluation.model.slug)
+        self.assertContains(response, "Данные разработчика")
+        table = self.client.get("/")
+        listed = next(item for item in table.context["page"] if item.slug == evaluation.model.slug)
+        self.assertFalse(any(item.pk == evaluation.pk for item in listed.table_evaluations))

@@ -17,3 +17,6 @@ public-release/
 BUILD.json
 aipedia-deploy*.zip
 secret.key
+AI_CONTEXT/AI_CONTEXT.md
+AI_CONTEXT/AI_CONTEXT.zip
+AI_CONTEXT/MANIFEST.json

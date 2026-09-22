@@ -1,0 +1,20 @@
+# AIpedia — состояние хронологической нумерации, 2026-09-20 UTC
+
+Исторический отчёт выпуска. Текущий статус проекта — `docs/EXECUTION_STATE.md`.
+Этот файл не обновлять как живой паспорт.
+
+Опубликовано: commit6e901dc938aedab0369a620176bc462ac195d615, 06:55UTC, https://aipediya.com/?lang=ru&sort=number_asc . Владелец явно заменил прежнее требование постоянных номеров хронологией выпусков.
+
+- Был порядок импорта и236пустых дат из255. Сейчас212подтверждённых дат/хронологических номеров;43точные даты не подтверждены, карточки остаются в конце без номера с явной пометкой. Вопрос о варианте отображения задан; ответа не поступило, применён рекомендованный вариант без выдуманной датировки.
+- №1 GitHub Copilot29.06.2021; Astra№198/03.09.2026; №211/212 SEA-LION4.8/18.09.2026. Модели/продукты сохраняют свой тип. Одинаковый день — алфавит, без утверждения времени внутри дня.
+- Дата видна в таблице и карточке, источник в карточке. Default oldest-first, заголовок№обращает направление. При добавлении старой модели номера пересчитываются атомарно; pk/slug/URL остаются идентичностью. Каждое изменение номера и даты отражено в PublicationRevision.
+- 51 Django-тест PASS. Новые regression: вставка старой модели после новой, сохранение старого ORMобъекта, unknownlast в2направлениях, tie/day, defaultsort, URL, dryrun/idempotency/transactionrollback/fullmanifest gate. Намеренная смена правила отражена в COMPARISON_RULES.md; проверки не удалены.
+- На копии: миграция0010, dry-run/apply/repeat, сохранность, SQLitebackuprestore с полным сравнением iterdump PASS.33локальныеbrowserchecksPASS.
+- Публично:36focused chronology checksPASS +36проверок всех6заголовковRU/EN×3движка(в каждом2направления/полныйнабор);12проверок вкороткихвидео. Chromium/Firefox/WebKit,desktop/mobileRUEN/2темы. Снимки действительно просмотрены; физическийтелефон не тестировался.
+- Серверная сверка и скачанный post-release snapshot:255id/slug/имён/версий сохранены;503offers,854Evaluation(810public),280Access,63Source,2163ResearchRecord,2858ResearchRevision,2564Revision,1380прежнихPublicationRevision совпали. Новая история добавлена, старая не переписана. integrity=ok. Public CSV255/255совпал сproduction.
+- Перед публикацией onlinebackup: /srv/aipedia/backups/aipedia-before-chronology-20260920T065536Z.sqlite3 . После: /srv/aipedia/backups/aipedia-after-chronology-20260920T065536Z.sqlite3 . Предыдущий app: /srv/aipedia/releases/before-chronology-20260920T065536Z . Туннель, backup-service, секреты и StratForge не менялись.
+- Public mapping: https://aipediya.com/static/chronology-20260920.csv . Локальные evidence и отчёты: artifacts/chronology-20260920/; tests-final.txt, preservation-production.json, deployment.log, public-ui/results.json. Дополнительные header/video: artifacts/acceptance-20260920/ui/chronology-*.
+
+Состояние: выпуск и техническая проверка завершены. Данные43карточек имеют конкретный внешний пробел: нет доказанной даты для точного варианта/снапшота либо неоднозначная идентичность. Причины/источники в release-date-audit-notes.md, media-product-date-notes.md, release_dates.json и CSV. Для их будущей нумерации нужен подтверждённый exact-version release source; после добавления доказательства apply_release_chronology с полным manifest и новой backup. Без этих данных точную нумерацию всех255 заявлять нельзя. Фоновой работы после ответа не обещано.
+
+Общий архив приёмки обновлён: https://aipediya.com/releases/20260920/acceptance.zip?v=6e901dc938ae . 31 251 050 bytes, SHA256 056983710c9c3002b398edfd5b9ee73671541ca32cfe29d7eb5b1c240faac995. Текущие номера, coverage.csv, 48 новых снимков, отчёты и короткие RU/EN записи включены; прежняя приёмка явно помещена в previous-release. Неверсионный URL пока отдавал закэшированный старый архив; для текущего выпуска используется версионная ссылка. Полное скачивание версионной ссылки обычным Chromium: PASS, HTTP 200, 31 251 050 bytes, SHA256 совпал (CF-Cache-Status MISS). Отчёт: artifacts/acceptance-20260920/ui/chronology-final-download.json.

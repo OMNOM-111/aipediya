@@ -18,16 +18,19 @@ class SearchDiscoveryTests(TestCase):
         self.assertContains(filtered, 'name="robots" content="noindex,follow"')
 
     def test_plain_pagination_is_indexable_and_self_canonical(self):
+        from catalog.views import INITIAL_PAGE_SIZE
         template = ModelVersion.objects.filter(published=True).first()
+        need = INITIAL_PAGE_SIZE + 5 - ModelVersion.objects.filter(published=True).count()
         ModelVersion.objects.bulk_create([
             ModelVersion(
                 family=template.family, name=f"Pagination model {number}", slug=f"pagination-model-{number}",
                 version=f"Pagination model {number}", category=template.category, tasks=template.tasks,
                 description=template.description, source=template.source, checked=template.checked,
             )
-            for number in range(30)
+            for number in range(max(0, need))
         ])
         page = self.client.get("/?lang=en&page=2")
+        self.assertEqual(page.context["page"].number, 2)
         self.assertContains(page, 'rel="canonical" href="https://aipediya.com/?lang=en&amp;page=2"')
         self.assertNotContains(page, 'name="robots" content="noindex,follow"')
         duplicate = self.client.get("/?lang=en&page=1")

@@ -45,6 +45,7 @@ def sanitize(path):
 
 def counts(path):
     with sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True) as db:
+        names = {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
         data = {table: db.execute(f"SELECT COUNT(*) FROM [{table}]").fetchone()[0] for table in EXPECTED}
         data.update({
             "published": db.execute("SELECT COUNT(*) FROM catalog_modelversion WHERE published=1").fetchone()[0],
@@ -56,21 +57,71 @@ def counts(path):
             ).fetchone(),
             "integrity": db.execute("PRAGMA integrity_check").fetchone()[0],
         })
+        if "catalog_tool" in names:
+            data.update({
+                "split_catalogs": True,
+                "published_models": db.execute(
+                    "SELECT COUNT(*) FROM catalog_modelversion WHERE published=1 AND entry_type='model'"
+                ).fetchone()[0],
+                "active_models": db.execute(
+                    "SELECT COUNT(*) FROM catalog_modelversion "
+                    "WHERE published=1 AND entry_type='model' AND catalog_status='active'"
+                ).fetchone()[0],
+                "numbered_models": db.execute(
+                    "SELECT COUNT(*) FROM catalog_modelversion "
+                    "WHERE entry_type='model' AND public_number IS NOT NULL"
+                ).fetchone()[0],
+                "published_tools": db.execute(
+                    "SELECT COUNT(*) FROM catalog_tool WHERE published=1"
+                ).fetchone()[0],
+                "active_tools": db.execute(
+                    "SELECT COUNT(*) FROM catalog_tool WHERE published=1 AND catalog_status='active'"
+                ).fetchone()[0],
+                "numbered_tools": db.execute(
+                    "SELECT COUNT(*) FROM catalog_tool WHERE public_number IS NOT NULL"
+                ).fetchone()[0],
+                "first_model": db.execute(
+                    "SELECT public_number, slug, name FROM catalog_modelversion "
+                    "WHERE entry_type='model' AND public_number=1"
+                ).fetchone(),
+                "first_tool": db.execute(
+                    "SELECT public_number, slug, name FROM catalog_tool WHERE public_number=1"
+                ).fetchone(),
+            })
+        else:
+            data["split_catalogs"] = False
     return data
 
 
-def verify(path):
+def verify(path, exact_snapshot=False):
     data = counts(path)
     if data["integrity"] != "ok":
         raise SystemExit("Local catalog failed integrity_check")
-    for table, expected in EXPECTED.items():
-        if data[table] != expected:
-            raise SystemExit(f"{table} count {data[table]} != {expected}")
-    if data["published"] != 255 or data["numbered"] != 212:
+    if exact_snapshot:
+        for table, expected in EXPECTED.items():
+            if data[table] != expected:
+                raise SystemExit(f"{table} count {data[table]} != {expected}")
+    if exact_snapshot and data["split_catalogs"]:
+        expected_split = {
+            "published": 255,
+            "published_models": 234,
+            "active_models": 233,
+            "numbered_models": 198,
+            "published_tools": 21,
+            "active_tools": 21,
+            "numbered_tools": 14,
+        }
+        if any(data[key] != value for key, value in expected_split.items()):
+            raise SystemExit("Split catalog counts do not match the Local snapshot")
+        if not data["first_model"] or data["first_model"][1] != "eleven-multilingual-v2-833c0947":
+            raise SystemExit("Model chronology #1 does not match the Local catalog")
+        if not data["first_tool"] or data["first_tool"][1] != "github-copilot-179ab1d0":
+            raise SystemExit("Tool chronology #1 does not match the Local catalog")
+    elif exact_snapshot and (data["published"] != 255 or data["numbered"] != 212):
         raise SystemExit("Published chronology counts do not match the public catalog")
     if data["users"] or data["sessions"]:
         raise SystemExit("Refusing a local catalog that still contains users or sessions")
-    if not data["first"] or data["first"][1] != "github-copilot-179ab1d0":
+    if exact_snapshot and not data["split_catalogs"] and (not data["first"] or data["first"][1] != "github-copilot-179ab1d0"):
         raise SystemExit("Chronology #1 does not match the published catalog")
     return data
 
@@ -105,7 +156,7 @@ if __name__ == "__main__":
         "source": str(source),
         "database": str(destination),
         "copied_at": datetime.now(timezone.utc).isoformat(),
-        **verify(destination),
+        **verify(destination, exact_snapshot=True),
     }
     (destination.parent / "catalog-source.json").write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False))

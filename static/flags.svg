@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="flag-US" viewBox="0 0 21 14">
+    <rect width="21" height="14" fill="#fff"/><path fill="#b22234" d="M0 0h21v2H0zm0 4h21v2H0zm0 4h21v2H0zm0 4h21v2H0z"/><rect width="9" height="8" fill="#3c3b6e"/><g fill="#fff"><circle cx="1.5" cy="1.4" r=".45"/><circle cx="4.5" cy="1.4" r=".45"/><circle cx="7.5" cy="1.4" r=".45"/><circle cx="3" cy="3.8" r=".45"/><circle cx="6" cy="3.8" r=".45"/><circle cx="1.5" cy="6.2" r=".45"/><circle cx="4.5" cy="6.2" r=".45"/><circle cx="7.5" cy="6.2" r=".45"/></g>
+  </symbol>
+  <symbol id="flag-CN" viewBox="0 0 21 14">
+    <rect width="21" height="14" fill="#de2910"/><path fill="#ffde00" d="m4 1 .7 2.1h2.2L5.1 4.4l.7 2.1L4 5.2 2.2 6.5l.7-2.1-1.8-1.3h2.2z"/>
+  </symbol>
+  <symbol id="flag-FR" viewBox="0 0 21 14"><path fill="#0055a4" d="M0 0h7v14H0z"/><path fill="#fff" d="M7 0h7v14H7z"/><path fill="#ef4135" d="M14 0h7v14h-7z"/></symbol>
+  <symbol id="flag-GB" viewBox="0 0 21 14"><rect width="21" height="14" fill="#012169"/><path stroke="#fff" stroke-width="3" d="m0 0 21 14M21 0 0 14"/><path stroke="#c8102e" stroke-width="1.2" d="m0 0 21 14M21 0 0 14"/><path fill="#fff" d="M8 0h5v14H8zM0 4.5h21v5H0z"/><path fill="#c8102e" d="M9 0h3v14H9zM0 5.5h21v3H0z"/></symbol>
+  <symbol id="flag-DE" viewBox="0 0 21 14"><path d="M0 0h21v4.67H0z"/><path fill="#dd0000" d="M0 4.67h21v4.66H0z"/><path fill="#ffce00" d="M0 9.33h21V14H0z"/></symbol>
+  <symbol id="flag-CA" viewBox="0 0 21 14"><path fill="#d80621" d="M0 0h5v14H0zm16 0h5v14h-5z"/><path fill="#fff" d="M5 0h11v14H5z"/><path fill="#d80621" d="m10.5 2 .8 2 1.5-.8-.4 2 1.6.2-1.4 1.4.8 1.1-2.2-.3.3 3h-2l.3-3-2.2.3.8-1.1L7 5.4l1.6-.2-.4-2 1.5.8z"/></symbol>
+  <symbol id="flag-SG" viewBox="0 0 21 14"><path fill="#ef3340" d="M0 0h21v7H0z"/><path fill="#fff" d="M0 7h21v7H0z"/><path fill="#fff" d="M6 1.2a2.7 2.7 0 1 0 0 4.6 2.15 2.15 0 1 1 0-4.6z"/><circle cx="6.7" cy="2" r=".3" fill="#fff"/><circle cx="7.6" cy="2.7" r=".3" fill="#fff"/><circle cx="7.3" cy="3.8" r=".3" fill="#fff"/></symbol>
+  <symbol id="flag-KR" viewBox="0 0 21 14"><rect width="21" height="14" fill="#fff"/><path fill="#cd2e3a" d="M7.5 7a3 3 0 0 1 6 0c-1.5-1.5-3 .8-4.5-.2A3 3 0 0 0 7.5 7z"/><path fill="#0047a0" d="M13.5 7a3 3 0 0 1-6 0c1.5 1.5 3-.8 4.5.2A3 3 0 0 0 13.5 7z"/><g stroke="#111" stroke-width=".55"><path d="m3 3 2 1.4m-2.4-.8 2 1.4m-.2-3 2 1.4M15 10.6l2 1.4m-1.6-2 2 1.4m-1.6-2 2 1.4"/></g></symbol>
+  <symbol id="flag-IN" viewBox="0 0 21 14"><path fill="#ff9933" d="M0 0h21v4.67H0z"/><path fill="#fff" d="M0 4.67h21v4.66H0z"/><path fill="#138808" d="M0 9.33h21V14H0z"/><circle cx="10.5" cy="7" r="1.55" fill="none" stroke="#000080" stroke-width=".35"/><circle cx="10.5" cy="7" r=".3" fill="#000080"/></symbol>
+  <symbol id="flag-CH" viewBox="0 0 21 14"><rect width="21" height="14" fill="#d52b1e"/><path fill="#fff" d="M9 3h3v2.5h2.5v3H12V11H9V8.5H6.5v-3H9z"/></symbol>
+  <symbol id="flag-AE" viewBox="0 0 21 14"><path fill="#ff0000" d="M0 0h5v14H0z"/><path fill="#00732f" d="M5 0h16v4.67H5z"/><path fill="#fff" d="M5 4.67h16v4.66H5z"/><path d="M5 9.33h16V14H5z"/></symbol>
+  <symbol id="flag-RU" viewBox="0 0 21 14"><path fill="#fff" d="M0 0h21v4.67H0z"/><path fill="#0039a6" d="M0 4.67h21v4.66H0z"/><path fill="#d52b1e" d="M0 9.33h21V14H0z"/></symbol>
+  <symbol id="flag-IL" viewBox="0 0 21 14"><rect width="21" height="14" fill="#fff"/><path fill="#0038b8" d="M0 1.2h21v1.5H0zm0 10.1h21v1.5H0z"/><path fill="none" stroke="#0038b8" stroke-width=".7" d="m10.5 3.6 2.7 4.7H7.8zm0 6.8L7.8 5.7h5.4z"/></symbol>
+  <symbol id="flag-JP" viewBox="0 0 21 14"><rect width="21" height="14" fill="#fff"/><circle cx="10.5" cy="7" r="3.35" fill="#bc002d"/></symbol>
+  <symbol id="flag-NL" viewBox="0 0 21 14"><path fill="#ae1c28" d="M0 0h21v4.67H0z"/><path fill="#fff" d="M0 4.67h21v4.66H0z"/><path fill="#21468b" d="M0 9.33h21V14H0z"/></symbol>
+  <symbol id="flag-SA" viewBox="0 0 21 14"><rect width="21" height="14" fill="#006c35"/><path fill="#fff" d="M4 4.1h13v1H4zm1 2h11v.8H5zm2 3.1h8v.7H7zm7.3-.7h1.2v1.9h-1.2z"/></symbol>
+  <symbol id="flag-AU" viewBox="0 0 21 14"><rect width="21" height="14" fill="#012169"/><path stroke="#fff" stroke-width="1.4" d="m0 0 9 6M9 0 0 6"/><path stroke="#c8102e" stroke-width=".55" d="m0 0 9 6M9 0 0 6"/><path fill="#fff" d="M3.6 0h1.8v6H3.6zM0 2.1h9v1.8H0z"/><path fill="#c8102e" d="M4.1 0h.8v6h-.8zM0 2.6h9v.8H0z"/><g fill="#fff"><circle cx="14" cy="3" r=".75"/><circle cx="17.5" cy="6" r=".65"/><circle cx="13" cy="8.5" r=".65"/><circle cx="17" cy="11" r=".7"/><circle cx="10" cy="11" r=".55"/></g></symbol>
+  <symbol id="flag-CZ" viewBox="0 0 21 14"><path fill="#fff" d="M0 0h21v7H0z"/><path fill="#d7141a" d="M0 7h21v7H0z"/><path fill="#11457e" d="m0 0 9 7-9 7z"/></symbol>
+  <symbol id="flag-SE" viewBox="0 0 21 14"><rect width="21" height="14" fill="#006aa7"/><path fill="#fecc00" d="M0 5.5h21v3H0zM6 0h3v14H6z"/></symbol>
+</svg>

@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="230" height="160" viewBox="0 0 230 160" fill="none">
+  <!-- Traced from artifacts/reference-plan-design.png.
+       Local x maps to reference page x = 750 + x at a 1672px viewport; y is 1:1.
+       Ring: flat tilted ellipse, left cusp at page (765, 111.5), pale cyan #B6F0F3.
+       Planet limb: circle centre page (941.9, 79.8) r 97.9, halo spills inwards only.
+       Terminator: circle centre page (1006, 60) r 142.3.
+       The gap between the two arcs stays background - the reference has no fill there. -->
+  <defs>
+    <clipPath id="insideLimb"><circle cx="191.9" cy="79.84" r="97.9"/></clipPath>
+    <filter id="halo" x="-60%" y="-25%" width="220%" height="150%">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+
+    <linearGradient id="ringTop" x1="15" y1="111.5" x2="196" y2="8.9" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#B6F0F3" stop-opacity=".31"/>
+      <stop offset=".032" stop-color="#B6F0F3" stop-opacity=".40"/>
+      <stop offset=".069" stop-color="#B6F0F3" stop-opacity=".40"/>
+      <stop offset=".162" stop-color="#B6F0F3" stop-opacity=".36"/>
+      <stop offset=".318" stop-color="#BFF3F5" stop-opacity=".46"/>
+      <stop offset=".447" stop-color="#BFF3F5" stop-opacity=".40"/>
+      <stop offset=".719" stop-color="#A8DCE4" stop-opacity=".10"/>
+      <stop offset="1" stop-color="#93C3CF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="ringBot" x1="15" y1="113" x2="95" y2="95" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#B6F0F3" stop-opacity=".07"/>
+      <stop offset=".28" stop-color="#B6F0F3" stop-opacity=".10"/>
+      <stop offset=".58" stop-color="#AEE4EA" stop-opacity=".09"/>
+      <stop offset=".85" stop-color="#9DCCD6" stop-opacity=".04"/>
+      <stop offset="1" stop-color="#8FB8C4" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="limb" x1="130" y1="4" x2="116.3" y2="142" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset=".116" stop-color="#FFFFFF" stop-opacity=".04"/>
+      <stop offset=".261" stop-color="#FFFFFF" stop-opacity=".24"/>
+      <stop offset=".370" stop-color="#FFFFFF" stop-opacity=".55"/>
+      <stop offset=".551" stop-color="#FFFFFF" stop-opacity=".96"/>
+      <stop offset=".696" stop-color="#F4FBFF" stop-opacity=".78"/>
+      <stop offset=".841" stop-color="#C9E1EE" stop-opacity=".14"/>
+      <stop offset=".949" stop-color="#A9C6D6" stop-opacity=".02"/>
+      <stop offset="1" stop-color="#8FB0C2" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="haloIn" x1="130" y1="4" x2="116.3" y2="142" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#CBE6F4" stop-opacity="0"/>
+      <stop offset=".116" stop-color="#CBE6F4" stop-opacity="0"/>
+      <stop offset=".261" stop-color="#CBE6F4" stop-opacity=".045"/>
+      <stop offset=".370" stop-color="#CBE6F4" stop-opacity=".20"/>
+      <stop offset=".551" stop-color="#D5ECF8" stop-opacity=".47"/>
+      <stop offset=".696" stop-color="#C4DFEF" stop-opacity=".25"/>
+      <stop offset=".841" stop-color="#A8C8DC" stop-opacity=".03"/>
+      <stop offset="1" stop-color="#8FB0C2" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="haloOut" x1="130" y1="4" x2="116.3" y2="142" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#BBDCEE" stop-opacity="0"/>
+      <stop offset=".116" stop-color="#BBDCEE" stop-opacity="0"/>
+      <stop offset=".261" stop-color="#BBDCEE" stop-opacity=".015"/>
+      <stop offset=".370" stop-color="#BBDCEE" stop-opacity=".07"/>
+      <stop offset=".551" stop-color="#C6E3F2" stop-opacity=".16"/>
+      <stop offset=".696" stop-color="#B6D5E7" stop-opacity=".08"/>
+      <stop offset=".841" stop-color="#9DC0D4" stop-opacity=".01"/>
+      <stop offset="1" stop-color="#88A9BE" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="term" x1="124.3" y1="6" x2="134.5" y2="134" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#CBE4F0" stop-opacity=".01"/>
+      <stop offset=".047" stop-color="#CBE4F0" stop-opacity=".05"/>
+      <stop offset=".19" stop-color="#CBE4F0" stop-opacity=".11"/>
+      <stop offset=".30" stop-color="#CBE4F0" stop-opacity=".19"/>
+      <stop offset=".50" stop-color="#CBE4F0" stop-opacity=".20"/>
+      <stop offset=".73" stop-color="#B2CFE0" stop-opacity=".13"/>
+      <stop offset=".89" stop-color="#9BB9CC" stop-opacity=".04"/>
+      <stop offset="1" stop-color="#87A6B8" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="flare" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(95 63.75) scale(15)">
+      <stop stop-color="#FFFFFF" stop-opacity=".95"/>
+      <stop offset=".12" stop-color="#EAF7FF" stop-opacity=".28"/>
+      <stop offset=".42" stop-color="#A9CCDE" stop-opacity=".07"/>
+      <stop offset="1" stop-color="#8FB6CA" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <path d="M130 4A97.9 97.9 0 0 0 116.3 142" stroke="url(#haloOut)" stroke-width="8" filter="url(#halo)"/>
+  <g clip-path="url(#insideLimb)">
+    <path d="M130 4A97.9 97.9 0 0 0 116.3 142" stroke="url(#haloIn)" stroke-width="8" filter="url(#halo)"/>
+  </g>
+
+  <path d="M15 111.5C17 113.2 19.5 113.9 24 114C29 114.1 33 113.9 38 113.2C44 112.3 50 111.2 56 110C68 107 80 102.5 90 97.5C92 96.5 93.5 95.7 95 94.9"
+        stroke="url(#ringBot)" stroke-width="1"/>
+
+  <path d="M124.3 6A142.3 142.3 0 0 0 134.5 134" stroke="url(#term)" stroke-width="1"/>
+  <path d="M130 4A97.9 97.9 0 0 0 116.3 142" stroke="url(#limb)" stroke-width="1.3"/>
+
+  <path d="M15 111.5C15.2 108 16.5 106.5 19 105C21 103.7 23 101.8 25 100C30.5 95.9 35.8 93.3 41.5 90C51 84.6 61 80.2 70.5 75C78.5 70.6 87 67.7 95 63.75C112 55 160 29.8 196 8.9"
+        stroke="url(#ringTop)" stroke-width="1"/>
+
+  <circle cx="95" cy="63.75" r="15" fill="url(#flare)"/>
+  <path d="M95 53.5v20.5M84.75 63.75h20.5" stroke="#E8F6FF" stroke-opacity=".20" stroke-width=".7"/>
+  <path d="M95 58.5v10.5M89.75 63.75h10.5" stroke="#FFFFFF" stroke-opacity=".8" stroke-width=".9"/>
+</svg>

@@ -1,0 +1,90 @@
+{% load catalog_tags %}
+{% if entity_kind == 'tool' %}{% include 'tool_panel.html' %}{% else %}
+<div class="panel-inner" data-slug="{{ model.slug }}">
+<div class="panel-top">
+<a class="icon-button panel-close" href="/{% query tab='' model='' %}" aria-label="{{ ui.close_panel }}" data-close-panel="true"><i data-lucide="x" aria-hidden="true"></i></a>
+<div class="panel-actions">
+<button type="button" class="ghost-button" id="share-model" data-share="true"><i data-lucide="share" aria-hidden="true"></i>{{ ui.share }}</button>
+<span class="save-wrap" data-tip="{{ ui.save_hint }}"><button type="button" class="quiet-button save-btn" id="save-model" aria-disabled="true" aria-describedby="save-hint" data-save="true"><i data-lucide="star" aria-hidden="true"></i>{{ ui.save }}</button></span>
+</div>
+</div>
+<p class="save-hint" id="save-hint" role="status" hidden>{{ ui.save_hint }}</p>
+<p class="share-status" id="share-status" role="status" hidden></p>
+<div class="share-fallback" id="share-fallback" hidden>
+<label for="share-url">{{ ui.share_link }}</label>
+<input id="share-url" type="text" readonly>
+</div>
+<header class="panel-heading">
+{% include 'includes/model_mark.html' with panel=True %}
+<div class="panel-titles">
+<h1>{% if public_number %}<span class="record-number">#{{ public_number }}</span> {% endif %}{{ model.name }}</h1>
+<p class="model-meta">{{ model.family.developer.name|local:lang }}{% if model.display_version %} · {{ model.display_version }}{% endif %}{% if catalog_status %} · {{ catalog_status|label:lang }}{% endif %}</p>
+<p class="panel-tags">{% if model.entry_type %}<span class="tag">{{ model.entry_type|label:lang }}</span>{% endif %}{% if model.open_weights %}<span class="tag">{{ ui.weights }}</span>{% endif %}{% for task in model.task_labels|slice:':3' %}<span class="tag">{{ task }}</span>{% endfor %}</p>
+</div>
+</header>
+{% if model.description %}<p class="description">{{ model.description|local:lang }}</p>{% endif %}
+<div class="panel-scroll">
+<nav class="panel-tabs" role="tablist">
+<a class="panel-tab{% if panel_tab == 'overview' %} is-active{% endif %}" href="{% query tab='overview' %}" role="tab" aria-selected="{% if panel_tab == 'overview' %}true{% else %}false{% endif %}" data-tab="overview">{{ ui.overview }}</a>
+<a class="panel-tab{% if panel_tab == 'pricing' %} is-active{% endif %}" href="{% query tab='pricing' %}" role="tab" aria-selected="{% if panel_tab == 'pricing' %}true{% else %}false{% endif %}" data-tab="pricing">{{ ui.cost_and_access }}</a>
+<a class="panel-tab{% if panel_tab == 'checks' %} is-active{% endif %}" href="{% query tab='checks' %}" role="tab" aria-selected="{% if panel_tab == 'checks' %}true{% else %}false{% endif %}" data-tab="checks">{{ ui.checks_tab }}</a>
+</nav>
+<section class="tab-panel" id="tab-overview" role="tabpanel" {% if panel_tab != 'overview' %}hidden{% endif %}>
+<div class="stat-grid">
+<article class="stat-card"><div class="stat-head"><span class="stat-icon" aria-hidden="true"><i data-lucide="bar-chart-2"></i></span><h2>{{ ui.aipedia_rating }}</h2></div><p class="stat-value"></p><p class="secondary">{{ ui.our_score }}</p></article>
+<article class="stat-card"><div class="stat-head"><span class="stat-icon" aria-hidden="true"><i data-lucide="calendar"></i></span><h2>{{ ui.release_date_short }}</h2></div><p class="stat-value">{% if model.released %}<time datetime="{{ model.released|date:'Y-m-d' }}">{{ model.released|month_year:lang }}</time>{% endif %}</p>{% if model.released %}<p class="secondary">{{ ui.released }}</p>{% endif %}</article>
+<article class="stat-card"><div class="stat-head"><span class="stat-icon" aria-hidden="true"><i data-lucide="maximize-2"></i></span><h2>{{ ui.context_window }}</h2></div><p class="stat-value">{% if model.context %}{{ model.context|tokens }}{% endif %}</p>{% if model.context %}<p class="secondary">{{ ui.tokens }}</p>{% endif %}</article>
+</div>
+<section class="panel-block"><h2>{{ ui.suited_for }}</h2><ul class="fit-list">{% for task in model.task_labels %}<li><span class="fit-check" aria-hidden="true"><i data-lucide="check"></i></span>{{ task }}</li>{% endfor %}</ul></section>
+<section class="panel-block"><h2>{{ ui.access }}</h2>
+<div class="resource-row">{% for link in model.resource_links %}<a class="{% if link.kind == 'provider' %}mint-button{% else %}quiet-button{% endif %}" href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.label }} <i data-lucide="arrow-up-right" aria-hidden="true"></i></a>{% endfor %}</div>
+<div class="detail-access">{% for access in model.sorted_accesses %}<div><a href="{{ access.service.url }}" target="_blank" rel="noopener noreferrer">{{ access.service.provider.name|local:lang }} · {{ access.service.kind|label:lang }} <i data-lucide="arrow-up-right" aria-hidden="true"></i></a>{% if access.service.compute_location %}<span class="secondary">{{ ui.computes }}: {{ access.service.compute_location|label:lang }}</span>{% endif %}</div>{% endfor %}</div>
+</section>
+<section class="panel-block"><h2>{{ ui.brief }}</h2>
+<dl class="essentials">
+<dt>{{ ui.type_col }}</dt><dd>{{ model.entry_type|label:lang }}</dd>
+<dt>{{ ui.version }}</dt><dd>{{ model.version }}</dd>
+<dt>{{ ui.developer }}</dt><dd>{{ model.family.developer.name|local:lang }}</dd>
+<dt>{{ ui.status }}</dt><dd>{{ model.catalog_status|label:lang }}</dd>
+{% if model.origin_countries %}<dt>{{ ui.country_origin }}</dt><dd class="country-origin-list">{% for country in model.origin_countries %}<span>{% include 'includes/country_flag.html' %}{% if lang == 'en' %}{{ country.name_en }}{% else %}{{ country.name_ru }}{% endif %}</span>{% endfor %}</dd>{% endif %}
+<dt>{{ ui.accepts }}</dt><dd>{% for key in model.input_modalities %}{{ key|label:lang }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+<dt>{{ ui.produces }}</dt><dd>{% for key in model.output_modalities %}{{ key|label:lang }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+{% if model.license %}<dt>{{ ui.license }}</dt><dd>{{ model.license }}</dd>{% endif %}
+{% if model.open_weights %}<dt>{{ ui.weights }}</dt><dd>{{ ui.yes }}</dd>{% endif %}
+{% for key, item in facts.items %}<dt>{{ key|label:lang }}</dt><dd>{{ item.value|local:lang }}</dd>{% endfor %}
+</dl>
+</section>
+<section class="panel-block"><h2>{{ ui.capabilities }}</h2>{% if model.suitable %}<ul class="capability-list"><li><span class="check" aria-hidden="true"><i data-lucide="check-circle-2"></i></span><span>{{ model.suitable|local:lang }}</span></li></ul>{% endif %}</section>
+<section class="panel-block"><h2>{{ ui.limitations }}</h2>{% if model.limitations %}<p>{{ model.limitations|local:lang }}</p>{% endif %}</section>
+{% if model.origin %}<section class="panel-block"><h2>{{ ui.origin }}</h2><p>{{ model.origin|local:lang }}</p></section>{% endif %}
+{% if model.philosophy %}<section class="panel-block"><h2>{{ ui.philosophy }}</h2><p>{{ model.philosophy|local:lang }}</p></section>{% endif %}
+</section>
+<section class="tab-panel" id="tab-pricing" role="tabpanel" {% if panel_tab != 'pricing' %}hidden{% endif %}>
+<h2>{{ ui.price }}</h2>
+{% if model.current_offers %}
+<div class="table-scroll"><table class="detail-prices"><thead><tr><th>{{ ui.provider }}</th><th>{{ ui.price }}</th><th>{{ ui.conditions }}</th></tr></thead>
+<tbody>{% for offer in model.current_offers %}<tr><td>{{ offer.service.provider.name|local:lang }} · {{ offer.service.kind|label:lang }}</td><td>{% if offer.amount != None %}<b>&#36;{{ offer.amount|money }}</b> / {% if offer.billing_unit %}{{ offer.billing_unit|local:lang }}{% else %}{{ offer.unit|unit_label:lang }}{% endif %}{% endif %}</td><td>{{ offer.display_conditions }}<a class="secondary" href="{{ offer.source.url }}" target="_blank" rel="noopener noreferrer">{{ ui.source }} · {{ offer.checked|date:'d.m.Y' }}</a></td></tr>{% endfor %}</tbody></table></div>
+{% else %}<p class="missing empty-cell">{% if model.local_execution %}{{ ui.local_cost }}{% endif %}</p>{% endif %}
+</section>
+<section class="tab-panel" id="tab-checks" role="tabpanel" {% if panel_tab != 'checks' %}hidden{% endif %}>
+<h2>{{ ui.evaluator_score }}</h2>
+{% for e in model.public_evaluations %}
+<div class="evaluation">
+<div class="evaluation-heading"><a href="{{ e.source.url }}" target="_blank" rel="noopener noreferrer">{{ e.evaluator }} · {{ e.benchmark.name }}</a><b>{{ e.score|money }} {{ e.benchmark.unit }}</b></div>
+<p class="secondary">{% if e.result_kind == "composite" %}{{ ui.composite }}{% elif e.independent %}{{ ui.independent_run }}{% else %}{{ ui.developer_eval }}{% endif %} · {{ e.configuration|default:ui.unspecified_mode }} · {{ e.checked|date:'d.m.Y' }} · {% if e.benchmark.higher_is_better %}{{ ui.higher }}{% else %}{{ ui.lower }}{% endif %}</p>
+<p class="secondary">{{ ui.snapshot }}: {{ e.snapshot|default:ui.legacy_snapshot }}{% if e.confidence_low != None %} · 90% CI [{{ e.confidence_low|money }}, {{ e.confidence_high|money }}]{% endif %}</p>
+{% if e.result_kind == "composite" %}<p>{{ ui.eci_note }}</p>{% endif %}
+<details><summary>{{ ui.conditions }}</summary><p>{{ e.benchmark.protocol }}</p><p>{{ e.conditions|local:lang }}</p>{% if e.measured %}<p>{{ ui.measurement }}: {{ e.measured|date:'d.m.Y' }}</p>{% endif %}</details>
+</div>
+{% endfor %}
+{% for audit in model.audits.all %}
+<div class="evaluation"><h3>{{ ui.audit }} · {{ audit.auditor }}</h3><p>{{ audit.scope|local:lang }} · {{ audit.version }} · {{ audit.period }}</p><p>{{ audit.method|local:lang }}</p><p>{{ audit.conclusions|local:lang }}</p><a href="{{ audit.source.url }}" target="_blank" rel="noopener noreferrer">{{ ui.source }} · {{ audit.checked|date:'d.m.Y' }}</a></div>
+{% endfor %}
+{% if model.evaluation_gap %}
+<section class="evaluation-gap"><h2>{{ ui.coverage_note }}</h2><p>{{ model.evaluation_gap.reason|local:lang }}</p><p class="secondary">{{ ui.checked }} {{ model.evaluation_gap.checked }}</p>{% for link in model.evaluation_gap.links %}<p><a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{% if lang == 'en' %}{{ link.label_en }}{% else %}{{ link.label_ru }}{% endif %}</a></p>{% endfor %}</section>
+{% endif %}
+<section class="detail-source"><a href="{{ model.source.url }}" target="_blank" rel="noopener noreferrer">{{ ui.source }}</a><span>{{ ui.checked }} {{ model.checked|date:'d.m.Y' }}</span></section>
+</section>
+</div>
+</div>
+{% endif %}

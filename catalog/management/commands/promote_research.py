@@ -9,7 +9,8 @@ from django.utils.text import slugify
 
 from catalog.models import (Access, Benchmark, Category, Evaluation, ModelFamily,
                             ModelVersion, Offer, Organization, PublicationRevision,
-                            ResearchRecord, Service, Source)
+                            Platform, ResearchRecord, Service, Source, Tool,
+                            ToolPlatform)
 from catalog.public_text import PUBLIC_ENGLISH
 from catalog.research import ResearchError, read_document
 
@@ -198,6 +199,8 @@ class Command(BaseCommand):
             action = "update" if action == "unchanged" else action
         offer_keys_before = set(model.offers.filter(research_key__isnull=False).values_list("research_key", flat=True))
         added_offers, added_evaluations, offer_changes = self._offers_and_evaluations(model, rows, sources, document)
+        if model.entry_type != "model":
+            self._sync_tool(model, entity, rows, source, checked)
         if offer_changes and action == "unchanged":
             action = "update"
             before["offers"] = [change["before"] for change in offer_changes]
@@ -212,6 +215,76 @@ class Command(BaseCommand):
         ResearchRecord.objects.filter(source_record_id__in=record_ids, state="review_required").update(
             state="accepted", review_reason="published after identity, source, access and date gate")
         return model, action, added_offers, added_evaluations
+
+    def _sync_tool(self, model, entity, rows, source, checked):
+        """Keep future non-model research promotions in the normalized Tool table."""
+        category = {
+            "api_service": "api_service",
+            "runtime": "runtime",
+            "product": "ai_app",
+        }.get(model.entry_type, "api_service")
+        locations = {row.get("execution_location") for row in rows if row.get("execution_location")}
+        if locations == {"local"}:
+            local_execution = "yes"
+        elif "local" in locations and len(locations) > 1:
+            local_execution = "hybrid"
+        elif locations and locations <= {"cloud"}:
+            local_execution = "no"
+        else:
+            local_execution = ""
+        official_url = next(
+            (
+                row.get("access_entry_url") or row.get("access_url")
+                for row in rows
+                if row.get("access_entry_url") or row.get("access_url")
+            ),
+            source.url,
+        )
+        tool, _ = Tool.objects.update_or_create(
+            legacy_version=model,
+            defaults={
+                "name": model.name,
+                "slug": model.slug,
+                "version": model.version,
+                "developer": model.family.developer,
+                "category": category,
+                "purposes": model.tasks,
+                "description": model.description,
+                "local_execution": local_execution,
+                "official_url": official_url,
+                "released": model.released,
+                "release_evidence": model.release_evidence,
+                "source": model.source,
+                "checked": model.checked,
+                "published": model.published,
+                "catalog_status": model.catalog_status,
+            },
+        )
+        platform_specs = {
+            "API": ("api", "API", 90),
+            "web": ("web", "Web", 10),
+            "web-demo": ("web", "Web", 10),
+            "Discord": ("web", "Web", 10),
+            "desktop": ("desktop", "Desktop", 15),
+            "mobile": ("mobile", "Mobile", 18),
+            "CLI": ("cli", "CLI", 70),
+            "IDE": ("ide", "IDE", 80),
+            "local_runtime": ("desktop", "Desktop", 15),
+        }
+        for interface in {item for row in rows for item in row.get("interface_types", [])}:
+            spec = platform_specs.get(interface)
+            if not spec:
+                continue
+            code, label, position = spec
+            platform, _ = Platform.objects.update_or_create(
+                code=code,
+                defaults={"labels": {"ru": label, "en": label}, "position": position},
+            )
+            ToolPlatform.objects.get_or_create(
+                tool=tool,
+                platform=platform,
+                defaults={"source": source, "checked": checked},
+            )
 
     def _offers_and_evaluations(self, model, rows, sources, document):
         offers_added = evaluations_added = 0
