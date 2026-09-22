@@ -25,8 +25,8 @@
 
 | Слой | Указатель | Примечание |
 | --- | --- | --- |
-| Local | `43e2d3f` + только локальные research/output файлы | код и каталог выпуска сохранены; Local работает на 127.0.0.1:18810 |
-| GitHub | `origin/main` содержит `43e2d3f` | release commit отправлен |
+| Local | post-release audit поверх `43e2d3f` + только локальные research/output файлы | runtime-код и каталог равны выпуску; Local работает на 127.0.0.1:18810 |
+| GitHub | `origin/main` содержит `43e2d3f` и последующий audit-отчёт | runtime-код выпуска не менялся |
 | Production | `43e2d3f` | `/healthz` и серверная БД проверены после deploy |
 
 | Изменение | Local | GitHub | Production |
