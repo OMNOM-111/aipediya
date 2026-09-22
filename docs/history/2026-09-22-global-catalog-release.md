@@ -46,6 +46,28 @@ Payload: `catalog/migrations/data/global_catalog_20260922.json`, SHA-256
 
 ## Результат публикации
 
-Ожидает фиксации точного release commit, deploy и публичной проверки. Этот
-раздел обновляется после фактической публикации; подготовка архива сама по себе
-не считается выпуском.
+- Release commit: `43e2d3feba57cf67084cc2e3774c86a72ce361b5`
+- GitHub: `origin/main` получил release commit
+- code archive SHA-256:
+  `33be8e0054f1909bcb2ad891caae8558f61c58fc03932a80b3542af6199c3625`
+- deploy status: `deployed-origin-verified`; Local SQLite не копировалась
+- Production migrations: `0011`–`0014` PASS
+- `/healthz`: `status=ok`, `environment=production`, release совпадает
+- SQLite: `integrity_check=ok`, `foreign_key_check=0`
+- Production: 763 published моделей, 138 published инструментов, 555 offers,
+  1205 accesses, 881 evaluations, 343 sources, 2900 ResearchRecord, 3590
+  ResearchRevision, 4354 Revision, 3049 PublicationRevision и 158
+  ToolPublicationRevision
+- нумерация: модели 001–304 без пропусков; инструменты 001–017 без пропусков;
+  неизвестные даты остаются без номера
+- контрольные записи PASS: retired Jurassic-1 Jumbo, current API GPT-6 Astra,
+  open-weight Llama 3 70B Instruct, TTS Eleven v3, ChatGPT, Grok Voice API
+- server backups:
+  `/srv/aipedia/backups/aipedia-before-code-20260922T065139Z.sqlite3` и
+  `/srv/aipedia/backups/aipedia-after-code-20260922T065139Z.sqlite3`
+- previous app: `/srv/aipedia/releases/before-code-20260922T065139Z`
+
+Public Browser PASS: бренд `AIpediya`, 763/138, 001–018, флаги, RU/EN,
+dark/light, retired-панель и переход Models→Tools при активных фильтрах.
+Browser console warn/error: 0. Публичные ответы: models 200 / 0.288 s total;
+tools 200 / 0.414 s total.

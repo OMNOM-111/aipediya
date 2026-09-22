@@ -4,44 +4,47 @@
 Отчёты законченных выпусков — `docs/history/`.
 Пакет для нового чата собирается командой `.\.venv\Scripts\python.exe tools/pack_ai_context.py` и **не** редактируется как независимый источник.
 
-- Обновлено (UTC): 2026-09-22T06:45:00Z
+- Обновлено (UTC): 2026-09-22T06:55:33Z
 - Задача владельца: опубликовать на `https://aipediya.com/` точное текущее
   состояние Local и проверить полноту данных и актуальность версии.
 - Реализация Local: **IMPLEMENTATION COMPLETE**.
 - Автоматическая и Local-браузерная проверка: **PASS**.
 - Разрешение на Production: **ПОЛУЧЕНО** для текущего полного состояния Local.
-- Git: release candidate ещё не зафиксирован; commit/push/deploy выполняются
-  только после изолированной проверки точного commit.
-- Production: до начала выпуска остаётся на `6e901dc938aedab0369a620176bc462ac195d615`;
-  свежая read-only сверка и online-backup выполнены, данные ещё не изменены.
-- Публичная браузерная приёмка: **PENDING DEPLOYMENT**.
+- Git: release commit `43e2d3feba57cf67084cc2e3774c86a72ce361b5`
+  отправлен в `origin/main`.
+- Production: **DEPLOYED AND VERIFIED** на точном commit `43e2d3f…`;
+  Local SQLite не копировалась.
+- Публичная браузерная проверка: **PASS**.
 
 ## Три слоя
 
-Последний **подтверждённый** Production: commit `6e901dc938aedab0369a620176bc462ac195d615`, 2026-09-20 06:55 UTC, способ: выпуск хронологии и запись в `docs/RELEASE.md` / `docs/history/2026-09-20-chronology-release.md`. **В этой сессии публичный сайт не перепроверялся и не изменялся.**
+Последний **подтверждённый** Production: commit
+`43e2d3feba57cf67084cc2e3774c86a72ce361b5`, 2026-09-22 06:51 UTC,
+способ: code-only выпуск с natural-key data migration по `docs/RELEASE.md`.
+Полный отчёт: `docs/history/2026-09-22-global-catalog-release.md`.
 
 | Слой | Указатель | Примечание |
 | --- | --- | --- |
-| Local | рабочая папка + незакоммиченное | два каталога работают на http://127.0.0.1:18810/?lang=ru |
-| GitHub | `origin/main` = `7e66da27ecc869789c457495dfea3e6809ec79fd` | новые изменения не отправлены |
-| Production | `6e901dc` | не равен текущему GitHub и не равен Local-редизайну |
+| Local | `43e2d3f` + только локальные research/output файлы | код и каталог выпуска сохранены; Local работает на 127.0.0.1:18810 |
+| GitHub | `origin/main` содержит `43e2d3f` | release commit отправлен |
+| Production | `43e2d3f` | `/healthz` и серверная БД проверены после deploy |
 
 | Изменение | Local | GitHub | Production |
 | --- | --- | --- | --- |
 | Хронологические номера и даты выпуска | В коде и в Local-каталоге | Есть (с `6e901dc`) | Опубликовано как `6e901dc` |
 | Local/Production, ярлыки, code-only выпуск | Реализовано | `901eb47` | Не опубликовано |
 | `AGENTS.md` и правило Cursor | Реализовано | `7e66da2` | Не опубликовано |
-| Живой статус, решения, сборщик `AI_CONTEXT` | В рабочей папке | Ещё не отправлено | Нет |
-| Редизайн таблицы и правой панели | Работает в Local | Нет | Нет |
-| Финальная визуальная доводка по утверждённому PNG | Проверена в браузере Local; незакоммичено | Нет | Нет |
-| Знаки разработчиков у моделей | Работает в Local: 34/34 published | Нет | Нет |
-| Подгрузка строк при прокрутке (150 → 50…) | Работает в Local | Нет | Нет |
-| Дата релиза с днём и месяцем (RU/EN) | Работает в Local | Нет | Нет |
-| Раздельные каталоги моделей и инструментов | Работают в Local, браузерный PASS | Нет | Нет |
-| Reconciliation Local + applicability-fixed research master | Импортировано: 763 модели и 138 инструментов; канонический XLSX собран | Нет | Нет |
-| Визуальная проверка после reconciliation | 001–018 видны подряд; вкладки/фильтры/флаги/типографика/скорость исправлены и проверены | Нет | Нет |
-| Видимый бренд `AIpediya` и палитры Midnight/Day | Реализованы и проверены в браузере Local; незакоммичено | Нет | Нет |
-| Полный выпуск Local на Production | Кандидат подготовлен и проверяется | Нет | Ещё не применён |
+| Живой статус, решения, сборщик `AI_CONTEXT` | Есть | Есть | Код есть; пакет остаётся локальным |
+| Редизайн таблицы и правой панели | PASS | Есть | PASS |
+| Финальная визуальная доводка по утверждённому PNG | PASS | Есть | PASS |
+| Знаки разработчиков у моделей | PASS | Есть | PASS |
+| Подгрузка строк при прокрутке (150 → 50…) | PASS | Есть | PASS |
+| Дата релиза с днём и месяцем (RU/EN) | PASS | Есть | PASS |
+| Раздельные каталоги моделей и инструментов | 763 / 138 | Есть | 763 / 138, PASS |
+| Reconciliation Local + applicability-fixed research master | Импортировано; XLSX собран | Payload в Git | Импортировано |
+| Визуальная проверка после reconciliation | PASS | Есть | PASS |
+| Видимый бренд `AIpediya` и палитры Midnight/Day | PASS | Есть | PASS |
+| Полный выпуск Local на Production | Завершён | `43e2d3f` | DEPLOYED AND VERIFIED |
 | Ярлыки через `DesktopDirectory` | `install-shortcuts.ps1` изменён ранее, не этой задачей | Нет | Нет |
 | Неотслеживаемые дампы `data/research/` | Только на диске | Нет | Нет |
 
@@ -71,12 +74,36 @@
 
 Проверки кандидата: **82 Django tests PASS**; `manage.py check` PASS;
 `makemigrations --check --dry-run` — изменений нет; `node --check` PASS;
-`git diff --check` PASS. Изменено: подготовлены переносимый payload, защищённая
-data migration, release/audit tools, регрессионные тесты и этот статус. Не
-завершено: фиксация точного commit, изолированная проверка архива этого commit,
-deploy, серверная сверка и публичная браузерная проверка. Следующим выполнить:
-зафиксировать только необходимые файлы, собрать и проверить code-only архив,
-затем применить его по `docs/RELEASE.md` и проверить публичный сайт.
+`git diff --check` PASS. Точный архив commit `43e2d3f…`, SHA-256
+`33be8e0054f1909bcb2ad891caae8558f61c58fc03932a80b3542af6199c3625`,
+прошёл изолированную миграцию и semantic comparison с Local.
+
+Production после deploy: `/healthz` = `status: ok`, `environment: production`,
+release `43e2d3f…`; SQLite `integrity_check=ok`, `foreign_key_check=0`; payload
+SHA совпал; 763 published моделей, 138 published инструментов, 901 legacy
+ModelVersion, 555 offers, 1205 accesses, 881 evaluations, 343 sources, 2900
+research records, 3590 research revisions, 4354 revisions, 3049 model и 158
+tool publication revisions. Номера моделей непрерывны 001–304, инструментов
+001–017; записи без точной даты остаются без выдуманного номера.
+
+Server deploy backups:
+`/srv/aipedia/backups/aipedia-before-code-20260922T065139Z.sqlite3` и
+`/srv/aipedia/backups/aipedia-after-code-20260922T065139Z.sqlite3`.
+Предыдущий код сохранён в
+`/srv/aipedia/releases/before-code-20260922T065139Z`.
+
+Public Browser PASS: AIpediya; 763/138; номера 001–018 видны; флаги IL/GB/US
+и другие отображаются; переключение из `status=retired&q=jurassic` в Tools
+очищает фильтры и показывает 138/138; RU/EN, dark/light и карточка
+Jurassic-1 Jumbo проверены; ошибок console warn/error — 0. HTTP: models 200,
+TTFB 0.234 s, total 0.288 s; tools 200, TTFB 0.369 s, total 0.414 s.
+
+Изменено: release commit опубликован на GitHub и Production, серверная SQLite
+мигрирована на месте с сохранением истории, отчёт и audit verifier обновлены.
+Не завершено: очередь качества данных остаётся 711 записей / 1376 Required
+полей и 108 записей / 110 Needs verification; это явные пробелы источников,
+не дефект выпуска. Следующим выполнить: дальнейшую независимую проверку этой
+очереди отдельными пакетами; новый Production выпуск — только по новой команде.
 
 ## Текущая работа: видимый бренд AIpediya и проверка дизайна (2026-09-22)
 
