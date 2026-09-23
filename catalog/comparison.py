@@ -53,7 +53,10 @@ def developer_countries(value):
 
 
 def localized(value, lang):
-    text = value.get(lang) or value.get('ru') or value.get('en') or '' if isinstance(value, dict) else str(value)
+    if isinstance(value, dict):
+        text = value.get(lang) or value.get('en') or value.get('ru') or next((item for item in value.values() if item), '')
+    else:
+        text = str(value)
     # Some imported source prose was JSON-escaped twice. Decode only Unicode
     # escapes, leaving ordinary backslashes and non-ASCII characters intact.
     text = re.sub(r'\\u([0-9a-fA-F]{4})', lambda m: chr(int(m[1], 16)), text)
@@ -65,7 +68,17 @@ def alphabet(value):
 
 
 def label(code, lang):
-    return TEXT.get(code, (code, code))[lang == 'en']
+    from .context import t
+    return t(code, lang)
+
+
+def task_label(task, taxonomy_labels, lang):
+    """Localized use-case label: category taxonomy first, then the UI table."""
+    from .context import category_label
+    labels = taxonomy_labels.get(task)
+    if labels is not None:
+        return category_label(task, labels, lang)
+    return label(task, lang)
 
 
 @lru_cache(maxsize=1)
@@ -125,7 +138,7 @@ def decorate(model, taxonomy_labels=None, price_unit='', benchmark=None, price_s
     model.display_offers = [o for o in model.current_offers if o.primary]
     model.public_evaluations = sorted([e for e in model.evaluations.all() if e.public],
         key=lambda e: (e.result_kind != 'composite', e.benchmark.name, e.configuration, e.pk))
-    model.task_labels = sorted(set(localized(taxonomy_labels.get(task, label(task, lang)), lang)
+    model.task_labels = sorted(set(task_label(task, taxonomy_labels, lang)
                                    for task in model.tasks), key=alphabet)
     model.purpose_key = alphabet(' · '.join(model.task_labels))
     model.sorted_accesses = sorted(model.accesses.all(),
@@ -188,7 +201,7 @@ def decorate_tool(tool, taxonomy_labels=None, price_unit='', price_scope='standa
     taxonomy_labels = taxonomy_labels or {}
     tool.task_labels = sorted(
         set(
-            localized(taxonomy_labels.get(task, label(task, lang)), lang)
+            task_label(task, taxonomy_labels, lang)
             for task in tool.purposes
         ),
         key=alphabet,

@@ -10,7 +10,7 @@ from .models import Contribution
 
 def _target(request, model=None):
     url = reverse("detail", args=[model.slug]) if model else reverse("catalog")
-    return url + "?lang=" + ("en" if request.GET.get("lang") == "en" else "ru") + "#contributions"
+    return url + "?lang=" + getattr(request, "aipedia_lang", "en") + "#contributions"
 
 def _valid_url(url):
     parsed = urlparse(url)

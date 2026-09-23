@@ -13,7 +13,7 @@ class EnvironmentNavTests(TestCase):
         call_command("seed_catalog", verbosity=0)
 
     def test_local_renders_nav_on_catalog_and_card(self):
-        catalog = self.client.get("/")
+        catalog = self.client.get("/", {"lang": "ru"})
         self.assertContains(catalog, 'class="env-nav"')
         self.assertContains(catalog, "env-local")
         self.assertContains(catalog, "Production")
@@ -22,7 +22,7 @@ class EnvironmentNavTests(TestCase):
         english = self.client.get("/", {"lang": "en"})
         self.assertContains(english, "https://aipediya.com/?lang=en")
         model = ModelVersion.objects.get(slug="qwen3-8b")
-        card = self.client.get("/models/" + model.slug)
+        card = self.client.get("/models/" + model.slug, {"lang": "ru"})
         self.assertContains(card, 'class="env-nav"')
         self.assertContains(card, "https://aipediya.com/?lang=ru")
         self.assertEqual(self.client.get("/healthz").json()["environment"], "local")

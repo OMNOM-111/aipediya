@@ -437,3 +437,44 @@ class AuditReport(models.Model):
     conclusions = models.JSONField(default=dict)
     source = models.ForeignKey(Source, on_delete=models.PROTECT)
     checked = models.DateField()
+
+
+class ContentTranslation(models.Model):
+    """Machine or reviewed translation of one localizable catalog field.
+
+    English stays the canonical source and is never stored here. Each row is
+    bound to the sha-256 hash of the English source text; when the source
+    changes the hash no longer matches, the row becomes ``outdated`` and the
+    site falls back to English until a fresh translation is produced.
+    """
+
+    STATES = [
+        ("current", "Current"),
+        ("outdated", "Outdated"),
+        ("missing", "Missing"),
+        ("reviewed", "Reviewed"),
+    ]
+    entity_type = models.CharField(max_length=20)
+    object_id = models.PositiveIntegerField()
+    field = models.CharField(max_length=40)
+    language = models.CharField(max_length=12)
+    source_hash = models.CharField(max_length=64)
+    text = models.TextField(blank=True)
+    state = models.CharField(max_length=12, default="missing", choices=STATES)
+    provider = models.CharField(max_length=40, blank=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["entity_type", "object_id", "field", "language"],
+                name="unique_content_translation",
+            )
+        ]
+        indexes = [
+            models.Index(fields=["entity_type", "object_id"]),
+            models.Index(fields=["state"]),
+        ]
+
+    def __str__(self):
+        return f"{self.entity_type}:{self.object_id}:{self.field}:{self.language} ({self.state})"

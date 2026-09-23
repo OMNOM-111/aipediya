@@ -35,6 +35,7 @@ SOURCE_FILES = [
     ".cursor/rules/aipedia.mdc",
     "AI_CONTEXT/README.md",
     "tools/pack_ai_context.py",
+    "tools/local/install-shortcuts.ps1",
     "catalog/tests/test_pack_ai_context.py",
 ]
 DENIED_PARTS = {".venv", "__pycache__", "data/local", "node_modules"}

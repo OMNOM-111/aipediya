@@ -1,7 +1,9 @@
 from datetime import date
+from pathlib import Path
 
+from django.conf import settings
 from django.core.management import call_command
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
 
 from catalog.chronology import renumber_chronologically
 from catalog.models import Evaluation, ModelVersion
@@ -15,7 +17,7 @@ class RedesignCatalogTests(TestCase):
         renumber_chronologically()
 
     def test_catalog_has_new_columns_and_empty_aipedia_rating(self):
-        response = self.client.get("/")
+        response = self.client.get("/", {"lang": "ru"})
         self.assertContains(response, "Модель")
         self.assertContains(response, "Тип")
         self.assertContains(response, "Разработчик")
@@ -61,7 +63,7 @@ class RedesignCatalogTests(TestCase):
 
     def test_old_card_url_opens_panel_and_keeps_catalog(self):
         model = ModelVersion.objects.get(slug="qwen3-8b")
-        response = self.client.get("/models/" + model.slug)
+        response = self.client.get("/models/" + model.slug, {"lang": "ru"})
         self.assertContains(response, model.version)
         self.assertContains(response, "Платформа и оценка")
         self.assertContains(response, f"#{model.public_number}")
@@ -118,8 +120,54 @@ class RedesignCatalogTests(TestCase):
         evaluation.result_kind = "developer"
         evaluation.independent = False
         evaluation.save(update_fields=["result_kind", "independent"])
-        response = self.client.get("/models/" + evaluation.model.slug)
+        response = self.client.get("/models/" + evaluation.model.slug, {"lang": "ru"})
         self.assertContains(response, "Данные разработчика")
         table = self.client.get("/")
         listed = next(item for item in table.context["page"] if item.slug == evaluation.model.slug)
         self.assertFalse(any(item.pk == evaluation.pk for item in listed.table_evaluations))
+
+    def test_panel_partial_keeps_close_control(self):
+        model = ModelVersion.objects.get(slug="qwen3-8b")
+        panel = self.client.get("/models/" + model.slug, {"partial": "panel"})
+        self.assertEqual(panel.status_code, 200)
+        # The X control is what the outside-click and Escape handlers reuse to
+        # dismiss the panel; without it the panel could only be left by
+        # navigating away.
+        self.assertContains(panel, 'data-close-panel="true"')
+
+    def test_language_links_on_detail_keep_the_open_entity(self):
+        model = ModelVersion.objects.get(slug="qwen3-8b")
+        response = self.client.get("/models/" + model.slug, {"lang": "en"})
+        # Switcher links must stay relative to the current path so changing the
+        # language keeps the same model open instead of returning to the list.
+        self.assertContains(response, 'href="?lang=ar"')
+        self.assertNotContains(response, 'href="/?lang=ar"')
+
+
+class PanelInteractionAssetTests(SimpleTestCase):
+    """Guards the shipped panel/dropdown fixes in the static assets so a future
+    edit cannot silently drop the outside-click close or the dropdown layering."""
+
+    def _asset(self, name):
+        return (Path(settings.BASE_DIR) / "static" / name).read_text(encoding="utf-8")
+
+    def test_site_js_closes_panel_on_outside_click_and_syncs_header(self):
+        source = self._asset("site.js")
+        self.assertIn("syncHeaderHeight", source)
+        self.assertIn("--aip-header-h", source)
+        # The outside-click handler must skip the header, row links and column
+        # filters, then close the open panel.
+        self.assertIn('details.col-filter', source)
+        self.assertIn('.site-header', source)
+        self.assertIn("closePanel(true)", source)
+
+    def test_site_css_layers_dropdown_above_panel(self):
+        source = self._asset("site.css")
+        self.assertIn("--z-popover", source)
+        self.assertIn("--aip-header-h", source)
+        # Header sits above the panel; the language popover sits above both.
+        self.assertIn("z-index: var(--z-header)", source)
+        self.assertIn("z-index: var(--z-popover)", source)
+        # On narrow screens the panel starts below the header so the language
+        # selector and its dropdown stay reachable.
+        self.assertIn("inset: var(--aip-header-h, 0) 0 0 0", source)

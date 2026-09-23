@@ -2,7 +2,11 @@ from urllib.parse import urlencode
 
 from django.conf import settings
 
-from .seo import public_url
+from .i18n import (
+    DEFAULT_LANG, LANGUAGE_NAMES, direction, language_options, resolve_language,
+)
+from .seo import alternate_links, public_url
+from .ui_translations import CATEGORY_TRANSLATIONS, TRANSLATIONS
 
 
 TEXT = {
@@ -35,6 +39,7 @@ TEXT = {
     "developer": ("Разработчик", "Developer"), "preference": ("Пользовательские предпочтения", "User preferences"),
     "eci_note": ("Официальный индекс Epoch AI; объединяет собственные, сторонние и заявленные разработчиками результаты. Не является аудитом безопасности или оценкой генерации медиа.", "Official Epoch AI index; combines own, third-party and developer-reported results. It is not a safety audit or a media-generation score."),
     "theme": ("Тема", "Theme"), "search_short": ("Поиск", "Search"), "add_model": ("Добавить модель", "Add model"),
+    "language": ("Язык", "Language"),
     "models": ("Моделей", "Models"), "products": ("Продуктов", "Products"), "found": ("Найдено", "Found"), "shown": ("Показано", "Shown"),
     "status": ("Статус", "Status"), "active": ("Активна", "Active"), "archived": ("Архив", "Archive"),
     "deprecated": ("Deprecated", "Deprecated"), "retired": ("Снята", "Retired"),
@@ -110,6 +115,7 @@ TEXT = {
     "lower": ("Меньше — лучше", "Lower is better"), "higher": ("Больше — лучше", "Higher is better"),
     "shown": ("Показано", "Showing"), "of": ("из", "of"), "records": ("моделей", "models"),
     "previous": ("Назад", "Previous"), "next": ("Далее", "Next"),
+    "retry": ("Повторить", "Retry"),
     "empty": ("Модели не найдены", "No models found"), "empty_help": ("Попробуйте другое название или измените фильтры.", "Try another name or change your filters."),
     "report": ("Сообщить об ошибке", "Report an error"), "editor": ("Редакция", "Editorial"),
     "sample": ("Стартовая выборка публичных моделей", "Initial selection of public models"),
@@ -199,9 +205,53 @@ TEXT = {
     "Evaluation": ("Результат теста", "Evaluation"), "Fact": ("Характеристика", "Fact"), "Access": ("Способ доступа", "Access method"),
 }
 
+def t(key, lang):
+    """Resolve one interface string for a language with English fallback.
+
+    Base ru/en come from :data:`TEXT`; other locales come from
+    :data:`catalog.ui_translations.TRANSLATIONS`. A missing translation falls
+    back to English so the interface never shows a raw key.
+    """
+    pair = TEXT.get(key)
+    if lang == "ru":
+        return pair[0] if pair else key
+    if lang == "en":
+        return pair[1] if pair else key
+    override = TRANSLATIONS.get(lang, {}).get(key)
+    if override:
+        return override
+    return pair[1] if pair else key
+
+
+def category_label(code, labels, lang):
+    """Resolve a category / use-case label with English database fallback.
+
+    The ru/en labels in the database stay the source of truth; other locales
+    come from the code-based taxonomy translations and fall back to English.
+    """
+    labels = labels or {}
+    if lang not in ("ru", "en"):
+        override = CATEGORY_TRANSLATIONS.get(lang, {}).get(code)
+        if override:
+            return override
+    return labels.get(lang) or labels.get("en") or labels.get("ru") or code
+
+
+def _default_seo(lang):
+    if lang == "ru":
+        return (
+            "AIpediya - каталог нейросетей",
+            "Проверенный каталог нейросетей: назначение, доступ, цены и независимые оценки.",
+        )
+    return (
+        "AIpediya - AI model catalog",
+        "Verified AI model catalog: capabilities, access methods, prices, and independent evaluations.",
+    )
+
+
 def site_context(request):
-    lang = "en" if request.GET.get("lang") == "en" else "ru"
-    ui = {key: pair[lang == "en"] for key, pair in TEXT.items()}
+    lang = getattr(request, "aipedia_lang", None) or resolve_language(request)[0]
+    ui = {key: t(key, lang) for key in TEXT}
     page_raw = request.GET.get("page", "")
     page = int(page_raw) if page_raw.isdigit() else None
     indexable_page = page if page and page > 1 else None
@@ -212,19 +262,26 @@ def site_context(request):
         and settings.AIPEDIA_ADS_CLIENT
         and settings.AIPEDIA_ADS_SLOT
     )
+    alternates, x_default = alternate_links(request.path, page=indexable_page)
+    title, description = _default_seo(lang)
     return {
         "lang": lang,
+        "dir": direction(lang),
+        "lang_native": LANGUAGE_NAMES.get(lang, lang),
+        "language_options": language_options(),
         "ui": ui,
+        "js_i18n": {
+            "copied": ui["copied"],
+            "copyManual": ui["copy_manual"],
+            "panelError": ui["panel_error"],
+            "retry": ui["retry"],
+        },
         "seo": {
-            "title": "AIpediya - " + ("AI model catalog" if lang == "en" else "каталог нейросетей"),
-            "description": (
-                "Verified AI model catalog: capabilities, access methods, prices, and independent evaluations."
-                if lang == "en"
-                else "Проверенный каталог нейросетей: назначение, доступ, цены и независимые оценки."
-            ),
+            "title": title,
+            "description": description,
             "canonical": public_url(request.path, lang, page=indexable_page),
-            "alternate_ru": public_url(request.path, "ru", page=indexable_page),
-            "alternate_en": public_url(request.path, "en", page=indexable_page),
+            "alternates": alternates,
+            "x_default": x_default,
             "noindex": noindex,
         },
         "verification": {

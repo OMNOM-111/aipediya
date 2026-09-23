@@ -41,8 +41,8 @@ html body .tool-table .price-col { width: 120px; }
 html body .tool-table col.local-col,
 html body .tool-table .local-col { width: 78px; }
 
-.model-table .number-col { position: sticky; left: 0; z-index: 3; background: var(--surface); }
-.model-table .model-col { position: sticky; left: 48px; z-index: 2; background: var(--surface); }
+.model-table .number-col { position: sticky; inset-inline-start: 0; z-index: 3; background: var(--surface); }
+.model-table .model-col { position: sticky; inset-inline-start: 48px; z-index: 2; background: var(--surface); }
 .model-table thead .number-col,
 .model-table thead .model-col { background: var(--surface-2); z-index: 5; }
 .model-table tbody tr:hover .number-col,

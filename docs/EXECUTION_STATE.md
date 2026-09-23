@@ -4,17 +4,32 @@
 Отчёты законченных выпусков — `docs/history/`.
 Пакет для нового чата собирается командой `.\.venv\Scripts\python.exe tools/pack_ai_context.py` и **не** редактируется как независимый источник.
 
-- Обновлено (UTC): 2026-09-22T06:55:33Z
+- Обновлено (UTC): 2026-09-23T17:15:00Z
 - Задача владельца: опубликовать на `https://aipediya.com/` точное текущее
   состояние Local и проверить полноту данных и актуальность версии.
-- Реализация Local: **IMPLEMENTATION COMPLETE**.
-- Автоматическая и Local-браузерная проверка: **PASS**.
-- Разрешение на Production: **ПОЛУЧЕНО** для текущего полного состояния Local.
-- Git: release commit `43e2d3feba57cf67084cc2e3774c86a72ce361b5`
-  отправлен в `origin/main`.
-- Production: **DEPLOYED AND VERIFIED** на точном commit `43e2d3f…`;
-  Local SQLite не копировалась.
-- Публичная браузерная проверка: **PASS**.
+- Реализация Local: **IMPLEMENTATION COMPLETE** (i18n 22 языка + UI-исправления
+  правой панели и языкового меню).
+- Автоматическая проверка: **PASS** — `catalog` 140 тестов.
+- Local-браузерная проверка исправлений: **PASS** — панель закрывается по клику
+  вне/Escape/крестику, клики внутри не закрывают, меню языков над панелью,
+  смена языка сохраняет открытую карточку; desktop и mobile; EN/UK/AR(RTL).
+- Разрешение на Production: **ПОЛУЧЕНО** (явный мандат владельца на выпуск
+  итоговой исправленной версии по `docs/RELEASE.md`).
+- Предыдущий подтверждённый Production: commit
+  `43e2d3feba57cf67084cc2e3774c86a72ce361b5` (глобальный каталог).
+- Итоговая версия (i18n + UI-исправления + инструменты переноса переводов)
+  **закоммичена локально как релизный commit этой ветки**; данные переводов
+  экспортированы (`export_translations` → 42 260 записей, идемпотентный
+  self-import: 0 применённых, 42 260 неизменных).
+- Production-развёртывание и перенос переводов на сервер: **ОЖИДАЕТ выполнения
+  на самом сервере**. В этом окружении нет SSH-доступа к хосту AIpedia
+  (`deploy/README.md`: «SSH-хост/подключение не обнаружены»), а имеющиеся в
+  `~/.ssh` ключи принадлежат StratForge и по `AGENTS.md` не используются.
+  Серверные шаги переданы владельцу как точные команды (раздел
+  «Передача на Production» ниже). Local SQLite на сервер не копируется.
+- Поверх выпуска `43e2d3f` реализованы мультиязычность интерфейса на 22 языка,
+  provider-agnostic translation pipeline и исправления UI. Подробности —
+  раздел «Мультиязычность 22 языка и translation pipeline» ниже.
 
 ## Три слоя
 
@@ -47,6 +62,239 @@
 | Полный выпуск Local на Production | Завершён | `43e2d3f` | DEPLOYED AND VERIFIED |
 | Ярлыки через `DesktopDirectory` | `install-shortcuts.ps1` изменён ранее, не этой задачей | Нет | Нет |
 | Неотслеживаемые дампы `data/research/` | Только на диске | Нет | Нет |
+
+## Мультиязычность 22 языка и translation pipeline (2026-09-23, Local, не опубликовано)
+
+Реализовано поверх выпуска `43e2d3f` в рабочем дереве Local. Не закоммичено,
+Production без изменений, серверная SQLite не трогалась. Существующая RU/EN
+логика расширена, а не заменена.
+
+- 22 языка интерфейса: `en, ru, zh-Hans, es, fr, ar, pt-BR, de, ja, ko, hi, id,
+  tr, vi, it, pl, uk, fa, th, nl, bn, zh-Hant`. English — канонический,
+  `x-default` и итоговый fallback.
+- Определение языка: URL `?lang=` → cookie `aipedia_lang` → `Accept-Language` →
+  слабый хинт `CF-IPCountry` → English. Ручной выбор пишется в cookie и не
+  переопределяется гео (`catalog/i18n.py`, `catalog/middleware.py`).
+- URL не менялись: локаль остаётся в query-параметре `?lang=`. `canonical`,
+  полный набор `hreflang` для 22 локалей и `hreflang="x-default"` (English),
+  `<html lang dir>`, sitemap с `xhtml:link` alternates
+  (`catalog/seo.py`, `templates/base.html`, `catalog/views.py`).
+- Переключатель на 22 языка (родные названия, `<details>`-меню), сохраняет
+  текущую страницу/карточку (`templates/includes/site_header.html`).
+- RTL для `ar` и `fa` через логические CSS-свойства и точечный блок `[dir=rtl]`;
+  бренд остаётся LTR (`static/site.css`, `static/table-layout.css`, `static/site.js`).
+- Статические переводы UI (~299 ключей × 20 языков) и таксономии категорий
+  (24 кода × 20 языков) хранятся в коде `catalog/ui_translations.py`;
+  резолверы `catalog/context.t` и `category_label`. Отсутствующий перевод →
+  English fallback, техно-ключи не показываются. Локализованные даты/месяцы для
+  всех локалей (`catalog/templatetags/catalog_tags.py`).
+- Фактические поля (названия, компании, URL, цены, числа, рейтинги, даты, API
+  identifiers) не переводятся и общие для всех языков.
+- Translation pipeline для будущих динамических данных: модель
+  `ContentTranslation` (состояния `current`/`outdated`/`missing`/`reviewed`,
+  привязка к sha-256 hash английского источника), провайдеры
+  `catalog/translation_providers.py` (offline mock по умолчанию, adapter Azure
+  Translator, null), сервис `catalog/translation_pipeline.py`, команда
+  `translate_catalog` (status/dry-run/backfill/повторный перевод только
+  missing/outdated), сигнал `pre_save` делает перевод устаревшим при изменении
+  источника без вызова API. Ключ провайдера — только из env
+  `AIPEDIA_AZURE_TRANSLATOR_KEY`; реальный внешний API в тестах не вызывается.
+  Миграция `0015_contenttranslation` (только схема).
+
+Проверки: **все автоматические тесты PASS** (`manage.py test catalog
+--settings=aipedia.test_settings`). Включают `test_i18n` (20), `test_translation_pipeline`
+(14), `test_translation_finalization` (9: auto-translate on-commit+рендер,
+отключён по умолчанию, bulk-suppression, dedup translation memory, URL-agnostic
+retrieval, country_label, семантика `missing`/`not_applicable`, GET не вызывает
+Translator). Ранее единственный FAIL `test_pack_ai_context…install-shortcuts.ps1`
+исправлен выравниванием `SOURCE_FILES` в `tools/pack_ai_context.py` (файл существует
+и в Git; тест ожидал его в пакете — это pre-existing рассинхрон packer↔тест, не
+связан с i18n). `manage.py check` PASS. Данные Local без потерь:
+763 модели, 138 инструментов, 555 offers, 1205 accesses, 881 evaluations,
+343 sources, 2900 research, 901 ModelVersion; **revisions = 4354 (baseline
+восстановлен)**; **ContentTranslation = 42260 (state=current, provider=azure)**.
+
+Реальный Azure backfill выполнен (провайдер F0, region eastus2, endpoint
+глобальный): 901 объект, **360 запросов**, **1 680 285 биллинг-символов**
+(< 2 000 000 бесплатного месячного лимита F0), 42 254 перевода, 42 254 reused
+через translation memory (dedup по sha-256), 0 failed. Состояния переводов
+(семантика исправлена: `missing` = «источник есть, актуального перевода нет»,
+`not_applicable` = «английского источника нет»):
+`current=42260, outdated=0, reviewed=0, missing=0, not_applicable=36800`. Все
+36800 `not_applicable` — слоты полей с пустым английским источником (1840 полей
+× 20 языков), переводить нечего; поля с содержимым переведены на 100%
+(2113 × 20 = 42260). **Реальных недостающих переводов нет (missing=0).**
+Аудит остаточной локализации `manage.py audit_localization` по всем 22 локалям:
+`static_gaps=0`, `untranslated_with_source=0`, `ui_missing/category_missing/
+country_missing = []` для каждого языка (allowlist универсальных ключей
+api/cli/ide/github/ocr/3d/no_rating_yet).
+
+Финализирующий QA-слой (без повторного вызова Azure):
+- Семантическое качество: команда `audit_translation_quality` (offline) сверяет
+  42 260 переводов с английским источником. После нормализации ложных срабатываний
+  (персидские/арабские цифры ۱۲۳, десятичная запятая 1,05, компактность CJK):
+  `empty=0, escape_artifact=0, no_target_script=0, length_extreme=0`;
+  числа сохранены; идентификаторы для латинских локалей сохранены (62 остатка —
+  косметическая нормализация регистра избыточного `exact version: gpt-5-pro` →
+  `GPT-5-Pro`, имя модели сохранено); в индийских/CJK письменностях 1367
+  транслитераций имён собственных (естественно; slug/ID/заголовки — латиница).
+  Системных дефектов, требующих повторного перевода, нет.
+- **Систематический rendered QA 22/22** (автоматический аудит через Django test
+  client по реальной БД, не ручной браузер): для каждой из 22 локалей отрендерены
+  карточка Model (Claude 3 Haiku) и Tool (GitHub Copilot) — HTTP 200,
+  локализованные описание/страна в целевом письме, направление (`ar`/`fa` RTL),
+  бренды/ID (Anthropic, claude-3-haiku, GitHub) сохранены: **0 fails**. Mobile:
+  `<meta viewport>` + 8 `@media` брейкпоинтов; RTL: 39 логических CSS-свойств,
+  бренд `direction: ltr`.
+- **Targeted visual QA** (реальный браузер) для критичных представительных локалей
+  и RTL: ar (карточка + privacy, зеркальная раскладка), плюс проверка контента
+  в uk/de/ja/fa/zh-Hant. Не для всех 22 локалей визуально — это targeted, а 22/22
+  выше — систематический rendered-аудит.
+- Авто-перевод доказан end-to-end (mock): новый/изменённый English → авто-перевод
+  на commit → сохранение (`ContentTranslation` + JSON) → рендер в целевой локали;
+  и доказано, что GET/просмотр страниц **никогда** не вызывает Translator
+  (тесты `test_saving_model_autotranslates_on_commit_and_renders`,
+  `test_get_requests_never_call_the_translator`).
+
+Локализация карточек (root-cause фиксы поверх статики UI):
+- Страны — детерминированный код-слой `catalog/countries.py`
+  (`COUNTRY_TRANSLATIONS` ISO2 × 22 языка, `country_label()`), фильтр
+  `country_name`, подключён в `templates/panel.html` и
+  `templates/includes/country_flag.html`. RU/EN — из БД (`name_ru/name_en`),
+  прочие — из карты, fallback English.
+- Модальности (text/image/video/audio), open weights, yes/no — уже
+  локализованы через `t()`/`label:lang`; факты — только `service_price`
+  (цены, не переводятся).
+- Прозаические поля модели (`description/suitable/limitations/origin/philosophy`)
+  и инструмента (`description`) переводятся pipeline и рендерятся `local:lang`.
+  `ecosystem` инструментов исключён (бренд-названия, ru==en).
+
+Автоматический перевод новых/изменённых данных (штатный путь):
+- `pre_save` помечает переводы устаревшими при изменении английского источника
+  (без вызова API).
+- `post_save` хук `auto_translate` (`catalog/signals.py`) переводит новый/
+  изменённый объект после commit (`transaction.on_commit`), пакетно и
+  безопасно; включается `AIPEDIA_AUTO_TRANSLATE` (по умолчанию off в коде для
+  тестов/миграций; включён в `deploy/aipedia.env.example` и в Local `.env.local`).
+- Массовые импорты используют `suppress_auto_translation()` (подключено в
+  `promote_research`) и один пакетный `translate_catalog` после загрузки.
+- Провайдер батчит `translate_batch` с retry на 429/5xx (Retry-After), dedup
+  через translation memory; `translate_catalog` умеет `--dry-run` с оценкой
+  биллинг-символов, `--status`, `--batch-size`.
+
+Публичные не-карточные страницы:
+- `privacy.html` локализована на 22 языка (`catalog/static_pages.py` +
+  overlay `data/static_page_translations.json`, команда `translate_static_pages`;
+  15 500 символов, 20 запросов). Рендер из локализованных блоков.
+- `methodology.html` — сейчас осиротевший шаблон без маршрута/навигации/рендера
+  (`/methodology` → 404). **Не удалять**: следующая задача Global Search &
+  Discovery отдельно решит публичную локализованную Methodology page (маршрут,
+  контент, hreflang/sitemap для неё).
+- Панельные заметки покрытия оценок (`evaluation_gap`). Классификация содержимого:
+  (а) AIpediya-авторская проза — 105 уникальных `reason` (20 550 символов) +
+  4 generic label («Checked source» и др., 91 символ) → **должно локализоваться**;
+  (б) сторонние имена бенчмарков/источников/URL/ID (7 label: BFCL, Open ASR,
+  AVGen-Bench, EvalPlus, репозитории, URL, а также имена моделей/бенчмарков внутри
+  reason) → **сохраняются в оригинале**. Пересчёт уникальных биллинг-символов
+  после классификации и dedup: **412 820 символов** (× 20 языков). В месячном
+  лимите F0 осталось **304 215** → **не помещается, дефицит 108 605 символов**.
+  Платные расходы запрещены, поэтому эта часть **не переведена и НЕ считается
+  завершённой** — единственный quota-blocker. Переводимо при сбросе месячного
+  лимита F0 тем же pipeline; template-level dedup (27 шаблонов ≈ 105 000 символов)
+  влез бы, но требует реконструкции имён собственных по 20 разно-типологическим
+  языкам — риск неестественности (QA качества), не выполняется без решения владельца.
+  Окружающий UI секции (заголовок, «почему нет оценки», дата) локализован.
+  Очередь на следующий доступный период F0 quota (не обходить template-хаком,
+  платных расходов не создавать):
+  `AIpediya-authored eval-gap remaining: 412,820 billable chars; current shortfall: 108,605`.
+
+Защита технических токенов (реальный дефект «1M → ۱ متر» и класс риска):
+- `catalog/token_guard.py` — оборачивает машиночитаемые токены (`1M`, `128K`,
+  `32K`, `7B`, `70B`, `405B`, версии/ID `gpt-5-pro`, `GPT-5.2`, акронимы `API`/
+  `OCR`, URL) в `<span translate="no">`; провайдер Azure шлёт `textType=html`,
+  затем markup снимается — Azure не может превратить токен в слово/единицу.
+  Подтверждено реальным минимальным запросом: fa «Context: 1M» → «زمینه: 1M»
+  (без «متر»).
+- Уже сохранённые переводы проверены `token_guard`: семантический класс
+  «число+единица» (`1M`/`128K`/`7B`) — **328 строк / 232 уникальных (source,lang)
+  пар** искажены. Точечный ремонт `manage.py repair_token_distortions --provider
+  azure` (только этот класс, защищённый повторный перевод, dedup): 244 пары,
+  **17 запросов, 23 396 символов**, 340 обновлений полей, 0 failed. После ремонта
+  искажений класса «число+единица» = **0**. Записи ревизий не создаются
+  (`_aipedia_translation_write`), revisions = 4354. Резервная копия БД:
+  `backups/aipedia-before-token-repair-*.sqlite3`.
+- Оставшиеся 6 262 «any-token» расхождения — это транслитерация имён собственных
+  в индийских/CJK письменностях (не семантическое искажение, а смена письма;
+  slug/ID/заголовки — латиница). Полный ремонт стоил бы ~376 500 символов (за
+  остатком F0), поэтому не выполняется; защита `token_guard` предотвращает такие
+  случаи во всех будущих переводах.
+
+Ревизии: старый процесс backfill (до добавления guard) создал 765 технических
+translation-ревизий (`ModelVersion`, `updated`, снимок прозы получил ключи
+машинных языков). Идентифицированы точно по контент-сигнатуре (ни одна
+до-backfill ревизия не могла содержать эти ключи; id 4355–5119, contiguous),
+доказано: `distinct_models=763`, ни одна модель не теряет историю, non-artificial
+= 4354 (baseline). Перед удалением снята полная резервная копия БД
+(`backups/aipedia-before-translation-revision-cleanup-*.sqlite3`). Удалены только
+765 искусственных ревизий в транзакции с assert-проверками; переводы сохранены
+в `ContentTranslation` (42260) и в JSON моделей. Далее guard
+(`_aipedia_translation_write` в `translation_pipeline`/`signals`) исключает
+машинные записи перевода из журнала ревизий.
+
+Безопасность секрета Azure: ключ читается только из env
+`AIPEDIA_AZURE_TRANSLATOR_KEY` (в коде/Git/тестах/логах/AI_CONTEXT отсутствует).
+На Local settings.py авто-загружает несекретную/секретную конфигурацию из
+неотслеживаемого `.env.local` рядом с `manage.py` (реальное значение env
+побеждает; **пустое** значение env трактуется как отсутствующее, чтобы
+`.env.local` мог его заполнить). Endpoint и region — несекретные defaults
+(`…microsofttranslator.com`, `eastus2`). `.gitignore` исключает `.env`/`.env.*`
+(кроме `.env.example`), `secret.key`, `data/local/`; `git check-ignore .env.local`
+→ ignored; в отслеживаемых файлах значения ключа нет. `check_translator`
+(default azure) делает один минимальный запрос и печатает только PASS/FAIL,
+provider, region; ключ/части/длину не печатает.
+
+Targeted visual QA после backfill (реальный браузер, 127.0.0.1:18815, отдельный
+dev-сервер; чужой Local на 18810 не трогался) — критичные представительные локали
+и RTL: карточка модели (Claude 3 Haiku) и панель инструмента (GitHub Copilot) в
+uk/de/ja/ar/fa/zh-Hant — описание, ограничения, страна, модальности, статусы,
+ярлыки, yes/no локализованы; бренды (Anthropic, GitHub, Microsoft, AI21 Labs,
+DeepMind, Meta AI, OpenAI), model IDs, `API`, `Cloudflare`, `IP`, URL остаются
+оригинальными; ar/fa `dir=rtl` с зеркальной раскладкой и LTR-брендом; privacy
+(визуально ar RTL). Полное покрытие всех 22 локалей обеспечено систематическим
+rendered-аудитом выше (0 fails), а не ручным браузером по каждой локали.
+
+Хранилище переводов не привязано к конкретной URL-схеме. Переводы адресуются
+исключительно по коду локали (`ContentTranslation`, JSON-поля моделей,
+`TRANSLATIONS`, страны/категории, overlay статических страниц); текущее
+согласование языка (`resolve_language()`) читает `?lang=` лишь как один из
+сигналов и возвращает код. Поэтому **сами данные и pipeline перевода переживут
+смену URL-схемы без миграции переводов** (доказано тестом
+`UrlAgnosticContentTests`). Отдельный будущий этап Global Search & Discovery,
+если переведёт локали в путь (`/uk/…`, `/de/…`, `/ar/…`), изменит именно слой
+маршрутизации: routing, обратное построение URL (reverse), `canonical`,
+`hreflang`, `sitemap`, переключатель языка и редиректы — это работа того этапа,
+а не translation pipeline.
+
+Изменено/добавлено (Local, не закоммичено): `aipedia/settings.py`,
+`aipedia/test_settings.py`, `catalog/{i18n,middleware,context,seo,comparison,
+views,signals,models,ui_translations,translation_providers,translation_pipeline,
+countries,static_pages,token_guard}.py`, `catalog/templatetags/catalog_tags.py`,
+`catalog/management/commands/{translate_catalog,check_translator,audit_localization,
+audit_translation_quality,translate_static_pages,repair_token_distortions,
+promote_research}.py`,
+`catalog/migrations/0015_contenttranslation.py`, `contributions/views.py`,
+`tools/pack_ai_context.py`, `templates/{base,catalog,privacy,panel,
+includes/site_header,includes/country_flag}.html`,
+`static/{site.css,table-layout.css,site.js}`, `.env.example`,
+`deploy/aipedia.env.example`, `data/static_page_translations.json`, тесты
+`test_i18n.py`, `test_translation_pipeline.py`, `test_translation_finalization.py`,
+`test_token_guard.py`.
+Данные Local: `data/local/aipedia.sqlite3` получила 42260 ContentTranslation и
+переводы в JSON моделей/инструментов; класс «число+единица» отремонтирован
+защищёнными переводами; резервные копии до чистки ревизий и до ремонта токенов в
+`backups/`. Не завершено: ручная приёмка владельцем; commit/push/Production —
+только по отдельной команде владельца. Production без изменений, серверная SQLite
+не трогалась.
 
 ## Текущая работа: полный выпуск Local на Production (2026-09-22)
 
@@ -403,3 +651,39 @@ PASS; SQLite quick_check `ok`, foreign_key_check 0; `git diff --check` PASS.
 - artifacts/reference-plan-design.png
 - artifacts/visual-rebuild/local-final-1672x941.png
 - static/marks/
+
+## Передача на Production (серверные шаги, выполняет владелец на хосте)
+
+Развёртывание и перенос переводов запускаются **на самом сервере** `/srv/aipedia`
+(в этом окружении нет SSH к хосту AIpedia; StratForge-ключи не используются).
+Порядок строго по `docs/RELEASE.md`; Local SQLite на сервер не копируется;
+туннель, секреты и StratForge не трогаются.
+
+1. Локально собрать архив на релизном commit и сохранить SHA256:
+   `.\.venv\Scripts\python.exe tools/build_code_release.py`
+   (архив в `artifacts/code-release/aipedia-code-<commit12>.zip`, только
+   tracked-файлы, без SQLite/секретов).
+2. Локально проверить изолированно и dry-run:
+   `.\.venv\Scripts\python.exe tools/verify_isolated_release.py`
+   `.\.venv\Scripts\python.exe tools/deploy_code_release.py <archive> --sha256 <digest> --dry-run`
+3. Скопировать на сервер **два** файла (без Local SQLite): архив кода и
+   `artifacts/translation-data-release/translations-export.json` (42 260 записей,
+   15.3 MB, только переводы, без секретов).
+4. На сервере развернуть код:
+   `python3 tools/deploy_code_release.py /path/aipedia-code-<commit12>.zip --sha256 <digest>`
+   (останавливает только `aipedia`, online-backup серверной БД, перенос кода и
+   статики, `migrate` существующей БД, старт `aipedia`, проверка `/healthz`).
+5. На сервере перенести переводы в существующую серверную БД, идемпотентно и без
+   провайдера, сначала dry-run:
+   `python3 manage.py import_translations /path/translations-export.json --dry-run`
+   затем боевой прогон без `--dry-run`. Импорт применяет перевод только там, где
+   английский источник на сервере совпадает по sha256; несовпадения безопасно
+   пропускаются (остаётся английский), повторный запуск ничего не меняет.
+6. Публичная проверка `https://aipediya.com/`: `/healthz`, Модели и Инструменты,
+   карточка модели и инструмента, EN/UK/AR(RTL), локализованные описания и
+   страны, оригинальные бренды/ID/API/бенчмарки, правая панель (клик вне/Escape/
+   крестик), меню языков над панелью, смена языка сохраняет карточку, desktop и
+   mobile, защита числовых токенов (например «1M»).
+
+Экспорт переводов проверен на Local: `import_translations --dry-run` против той
+же базы даёт applied=0, unchanged=42 260 (полная идемпотентность).

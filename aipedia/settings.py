@@ -2,6 +2,34 @@ import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+def _load_local_env(path):
+    """Load KEY=VALUE lines from a local, git-ignored secret file (.env.local).
+
+    Values already present in the real environment win, so the launcher and
+    shell keep precedence. Secrets are read into the process environment only;
+    they are never printed, logged, or returned.
+    """
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return
+    for raw in lines:
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        # An empty or unset environment value is filled from .env.local; a real
+        # non-empty value already in the environment keeps precedence.
+        if key and value and not os.environ.get(key):
+            os.environ[key] = value
+
+
+_load_local_env(BASE_DIR / ".env.local")
+
 AIPEDIA_ENV = os.environ.get("AIPEDIA_ENV", "local").strip().lower()
 if AIPEDIA_ENV not in {"local", "production"}:
     raise RuntimeError("AIPEDIA_ENV must be local or production")
@@ -19,7 +47,8 @@ INSTALLED_APPS = [
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware", "whitenoise.middleware.WhiteNoiseMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware", "django.middleware.common.CommonMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware", "catalog.middleware.LanguageMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware", "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware", "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "catalog.middleware.HeadersMiddleware",
@@ -49,7 +78,7 @@ if AIPEDIA_ENV == "production":
         pass
     else:
         raise RuntimeError("Production must not use the Local SQLite")
-LANGUAGE_CODE = "ru"
+LANGUAGE_CODE = "en"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
@@ -87,3 +116,17 @@ AIPEDIA_ADS_SLOT = os.environ.get("AIPEDIA_ADS_SLOT", "")
 AIPEDIA_ADS_TXT = os.environ.get("AIPEDIA_ADS_TXT", "")
 AIPEDIA_INDEXNOW_KEY = os.environ.get("AIPEDIA_INDEXNOW_KEY", "")
 AIPEDIA_PRIVACY_CONTACT = os.environ.get("AIPEDIA_PRIVACY_CONTACT", "")
+# Dynamic catalog translation pipeline. Provider is swappable; the API key is
+# read only from the environment and never stored in code. "mock" needs no key
+# and is the Local/test default. Endpoint and region are non-secret config.
+AIPEDIA_TRANSLATION_PROVIDER = os.environ.get("AIPEDIA_TRANSLATION_PROVIDER", "mock").strip().lower()
+AIPEDIA_AZURE_TRANSLATOR_KEY = os.environ.get("AIPEDIA_AZURE_TRANSLATOR_KEY", "")
+AIPEDIA_AZURE_TRANSLATOR_ENDPOINT = os.environ.get(
+    "AIPEDIA_AZURE_TRANSLATOR_ENDPOINT", "https://api.cognitive.microsofttranslator.com"
+)
+AIPEDIA_AZURE_TRANSLATOR_REGION = os.environ.get("AIPEDIA_AZURE_TRANSLATOR_REGION", "eastus2")
+# Optional: translate a new/changed model or tool automatically right after it
+# is saved. Off by default so bulk imports and tests never call the provider on
+# the save path; enable only for interactive editing. Bulk data loads should run
+# the translate_catalog command.
+AIPEDIA_AUTO_TRANSLATE = os.environ.get("AIPEDIA_AUTO_TRANSLATE", "").strip().lower() in {"1", "true", "yes", "on"}

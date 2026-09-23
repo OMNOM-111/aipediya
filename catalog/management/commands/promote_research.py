@@ -13,6 +13,7 @@ from catalog.models import (Access, Benchmark, Category, Evaluation, ModelFamily
                             ToolPlatform)
 from catalog.public_text import PUBLIC_ENGLISH
 from catalog.research import ResearchError, read_document
+from catalog.translation_pipeline import suppress_auto_translation
 
 
 TASK_CATEGORY = {
@@ -99,7 +100,10 @@ class Command(BaseCommand):
         if options["dry_run"]:
             self.stdout.write(self.style.SUCCESS(str(result)))
             return
-        with transaction.atomic():
+        # Bulk promotion suppresses the per-save auto-translate hook; the new or
+        # changed English data is left in the pipeline's "missing"/"outdated"
+        # state and localized in one batched translate_catalog pass afterwards.
+        with suppress_auto_translation(), transaction.atomic():
             self._upsert_categories(document.get("taxonomy", []))
             for _, _, rows, reason in skipped:
                 ResearchRecord.objects.filter(source_record_id__in=[row["record_id"] for row in rows],

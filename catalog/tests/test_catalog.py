@@ -22,7 +22,7 @@ class CatalogTests(TestCase):
     def test_pages_and_missing(self):
         self.assertEqual(self.client.get("/").status_code, 200)
         for model in ModelVersion.objects.all():
-            response = self.client.get("/models/" + model.slug)
+            response = self.client.get("/models/" + model.slug, {"lang": "ru"})
             self.assertContains(response, model.version)
             self.assertContains(response, "Платформа и оценка")
             self.assertContains(response, f"#{model.public_number}")

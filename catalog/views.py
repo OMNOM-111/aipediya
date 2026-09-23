@@ -11,27 +11,28 @@ from django.views.decorators.http import require_GET
 from .models import (
     Benchmark, Category, Evaluation, ModelVersion, Offer, Platform, Service, Tool,
 )
-from .seo import public_url, sitemap_entries
+from .seo import alternate_links, public_url, sitemap_entries
 
 
 def _seo(request, title, description):
-    lang = "en" if request.GET.get("lang") == "en" else "ru"
+    lang = request.aipedia_lang
     page_raw = request.GET.get("page", "")
     page = int(page_raw) if page_raw.isdigit() else None
     indexable_page = page if page and page > 1 else None
     duplicate_page = bool(page_raw) and indexable_page is None
+    alternates, x_default = alternate_links(request.path, page=indexable_page)
     return {
         "title": title,
         "description": description[:160],
         "canonical": public_url(request.path, lang, page=indexable_page),
-        "alternate_ru": public_url(request.path, "ru", page=indexable_page),
-        "alternate_en": public_url(request.path, "en", page=indexable_page),
+        "alternates": alternates,
+        "x_default": x_default,
         "noindex": duplicate_page or any(key not in {"lang", "page"} for key in request.GET),
     }
 
 
 def _catalog_seo(request, page):
-    lang = "en" if request.GET.get("lang") == "en" else "ru"
+    lang = request.aipedia_lang
     is_tools = request.GET.get("kind") == "tool"
     page_raw = request.GET.get("page", "")
     requested_page = int(page_raw) if page_raw.isdigit() else None
@@ -39,28 +40,27 @@ def _catalog_seo(request, page):
     indexable_page = requested_page if (
         only_pagination and requested_page and requested_page > 1 and page.number == requested_page
     ) else None
+    if lang == "ru":
+        title = "AIpediya - " + ("каталог AI-инструментов" if is_tools else "каталог AI-моделей")
+        description = (
+            "Проверенный каталог AI-инструментов: категории, экосистемы моделей, платформы, доступ и цены."
+            if is_tools
+            else "Проверенный каталог AI-моделей: назначение, доступ, цены и независимые оценки."
+        )
+    else:
+        title = "AIpediya - " + ("AI tools catalog" if is_tools else "AI model catalog")
+        description = (
+            "Verified AI tools catalog: categories, model ecosystems, platforms, access, and pricing."
+            if is_tools
+            else "Verified AI model catalog: capabilities, access methods, prices, and independent evaluations."
+        )
+    alternates, x_default = alternate_links(request.path, page=indexable_page)
     return {
-        "title": "AIpediya - " + (
-            ("AI tools catalog" if is_tools else "AI model catalog")
-            if lang == "en"
-            else ("каталог AI-инструментов" if is_tools else "каталог AI-моделей")
-        ),
-        "description": (
-            (
-                "Verified AI tools catalog: categories, model ecosystems, platforms, access, and pricing."
-                if is_tools
-                else "Verified AI model catalog: capabilities, access methods, prices, and independent evaluations."
-            )
-            if lang == "en"
-            else (
-                "Проверенный каталог AI-инструментов: категории, экосистемы моделей, платформы, доступ и цены."
-                if is_tools
-                else "Проверенный каталог AI-моделей: назначение, доступ, цены и независимые оценки."
-            )
-        ),
+        "title": title,
+        "description": description,
         "canonical": public_url(request.path, lang, page=indexable_page),
-        "alternate_ru": public_url(request.path, "ru", page=indexable_page),
-        "alternate_en": public_url(request.path, "en", page=indexable_page),
+        "alternates": alternates,
+        "x_default": x_default,
         "noindex": not only_pagination or bool(page_raw) and indexable_page is None,
     }
 
@@ -88,7 +88,7 @@ def tools():
 from .comparison import (
     decorate, decorate_tool, sort_models, sort_tools, price_matches, condition_key, localized,
 )
-from .context import TEXT
+from .context import TEXT, t, category_label
 
 
 ENTRY_TYPES = [code for code, _ in ModelVersion._meta.get_field("entry_type").choices]
@@ -213,7 +213,7 @@ def _tool_catalog_context(request, selected_slug=None):
     qs = tools()
     categories = list(Category.objects.all())
     taxonomy_labels = {item.code: item.labels for item in categories}
-    lang = "en" if request.GET.get("lang") == "en" else "ru"
+    lang = request.aipedia_lang
     q = request.GET.get("q", "").strip()[:200]
     if q.startswith("#") and q[1:].isdigit():
         qs = qs.filter(public_number=int(q[1:]))
@@ -424,15 +424,15 @@ def _tool_filter_chips(request, lang, **values):
         if values.get(param):
             add(param, values[param])
     if values.get("category"):
-        add("category", TEXT.get(values["category"], (values["category"], values["category"]))[lang == "en"])
+        add("category", t(values["category"], lang))
     if values.get("developer"):
         add("developer", developers.get(values["developer"], values["developer"]))
     if values.get("platform"):
         add("platform", values["platform"])
     if values.get("local_execution"):
-        add("local", TEXT.get(values["local_execution"], (values["local_execution"], values["local_execution"]))[lang == "en"])
+        add("local", t(values["local_execution"], lang))
     if values.get("sort") and values["sort"] != "number_asc":
-        add("sort", TEXT.get(values["sort"], (values["sort"], values["sort"]))[lang == "en"])
+        add("sort", t(values["sort"], lang))
     return chips
 
 
@@ -497,7 +497,7 @@ def _catalog_context(request, selected_slug=None):
     kind = "model"
     entry_type = ""
 
-    lang = "en" if request.GET.get("lang") == "en" else "ru"
+    lang = request.aipedia_lang
     sort = request.GET.get("sort", "number_asc")
     sort = {"score": "check_best", "check_desc": "check_best", "check_asc": "check_worst"}.get(sort, sort)
     orders = [f"{key}_{direction}" for key in TEXT_SORTS for direction in ("asc", "desc")] + ["check_best", "check_worst"]
@@ -614,7 +614,7 @@ def _catalog_context(request, selected_slug=None):
 
 def _filter_chips(request, values, lang, categories, access_kinds):
     chips = []
-    labels = {item.code: localized(item.labels, lang) for item in categories}
+    labels = {item.code: category_label(item.code, item.labels, lang) for item in categories}
     developers = {
         str(item["family__developer_id"]): item["family__developer__name"]
         for item in ModelVersion.objects.filter(published=True, entry_type="model").values("family__developer_id", "family__developer__name")
@@ -638,22 +638,22 @@ def _filter_chips(request, values, lang, categories, access_kinds):
     if values["q"]:
         add("q", values["q"])
     if values["entry_type"]:
-        add("entry_type", TEXT.get(values["entry_type"], (values["entry_type"], values["entry_type"]))[lang == "en"])
+        add("entry_type", t(values["entry_type"], lang))
     if values["category"]:
         add("category", labels.get(values["category"], values["category"]))
     if values["developer"]:
         add("developer", developers.get(values["developer"], values["developer"]))
     if values["access"] in access_kinds:
-        add("access", TEXT.get(values["access"], (values["access"], values["access"]))[lang == "en"])
+        add("access", t(values["access"], lang))
     if values["status"] and values["status"] != "all":
-        add("status", TEXT.get(values["status"], (values["status"], values["status"]))[lang == "en"])
+        add("status", t(values["status"], lang))
     if values["price_unit"]:
         unit_key = "unit_image" if values["price_unit"] == "image" else values["price_unit"]
-        add("price_unit", TEXT.get(unit_key, (values["price_unit"], values["price_unit"]))[lang == "en"])
+        add("price_unit", t(unit_key, lang))
     if values["benchmark"]:
         add("benchmark", values["benchmark"].name)
     if values["sort"] and values["sort"] != "number_asc":
-        add("sort", TEXT.get(values["sort"], (values["sort"], values["sort"]))[lang == "en"])
+        add("sort", t(values["sort"], lang))
     return chips
 
 
@@ -689,7 +689,8 @@ def detail(request, slug):
     model = context["selected_model"]
     if not model:
         get_object_or_404(versions(), slug=slug)
-    description = model.description.get(context.get("lang") or ("en" if request.GET.get("lang") == "en" else "ru")) or model.description.get("en") or model.name
+    lang = request.aipedia_lang
+    description = model.description.get(lang) or model.description.get("en") or model.description.get("ru") or model.name
     version = "" if model.version.casefold() == model.name.casefold() else f" {model.version}"
     context["seo"] = _seo(request, f"{model.name}{version} | AIpediya", description)
     context["facts"] = model.facts_by_key
@@ -706,8 +707,9 @@ def tool_detail(request, slug):
     if not tool:
         get_object_or_404(tools(), slug=slug)
     description = (
-        tool.description.get("en" if request.GET.get("lang") == "en" else "ru")
+        tool.description.get(request.aipedia_lang)
         or tool.description.get("en")
+        or tool.description.get("ru")
         or tool.name
     )
     context["seo"] = _seo(request, f"{tool.name} | AIpediya", description)
@@ -749,10 +751,16 @@ def robots(request):
 
 @require_GET
 def sitemap(request):
-    rows = ["<?xml version=\"1.0\" encoding=\"UTF-8\"?>", '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
-    for url, checked in sitemap_entries():
-        lastmod = f"<lastmod>{checked.isoformat()}</lastmod>" if checked else ""
-        rows.append(f"<url><loc>{escape(url)}</loc>{lastmod}</url>")
+    rows = ["<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">']
+    for entry in sitemap_entries():
+        lastmod = f"<lastmod>{entry['lastmod'].isoformat()}</lastmod>" if entry["lastmod"] else ""
+        links = "".join(
+            f'<xhtml:link rel="alternate" hreflang="{escape(code)}" href="{escape(url)}"/>'
+            for code, url in entry["alternates"]
+        )
+        links += f'<xhtml:link rel="alternate" hreflang="x-default" href="{escape(entry["x_default"])}"/>'
+        rows.append(f"<url><loc>{escape(entry['loc'])}</loc>{lastmod}{links}</url>")
     rows.append("</urlset>")
     return HttpResponse("".join(rows), content_type="application/xml; charset=utf-8")
 
@@ -773,11 +781,16 @@ def indexnow_key(request, key):
 
 @require_GET
 def privacy(request):
-    lang = "en" if request.GET.get("lang") == "en" else "ru"
-    title = "Privacy | AIpediya" if lang == "en" else "Конфиденциальность | AIpediya"
+    lang = request.aipedia_lang
+    title = "Конфиденциальность | AIpediya" if lang == "ru" else "Privacy | AIpediya"
     description = (
-        "How AIpediya processes technical data, consent choices, and future advertising."
-        if lang == "en"
-        else "Как AIpediya обрабатывает технические данные, согласие и будущую рекламу."
+        "Как AIpediya обрабатывает технические данные, согласие и будущую рекламу."
+        if lang == "ru"
+        else "How AIpediya processes technical data, consent choices, and future advertising."
     )
-    return render(request, "privacy.html", {"seo": _seo(request, title, description)})
+    from .static_pages import page_blocks, page_label
+    return render(request, "privacy.html", {
+        "seo": _seo(request, title, description),
+        "blocks": page_blocks("privacy", lang),
+        "contact_label": page_label("privacy_contact", lang),
+    })

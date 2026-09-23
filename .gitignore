@@ -3,12 +3,14 @@ __pycache__/
 *.py[cod]
 .env
 .env.*
+.env.local
 !.env.example
 data/*.sqlite3*
 data/**/*.sqlite3*
 data/local/
 staticfiles/
 artifacts/
+outputs/
 *.log
 logs/
 .coverage

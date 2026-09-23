@@ -45,11 +45,17 @@ function placeFilterPopover(details) {
     return;
   }
   const box = summary.getBoundingClientRect();
+  const rtl = document.documentElement.dir === "rtl";
   pop.style.position = "fixed";
   pop.style.top = `${Math.round(box.bottom + 4)}px`;
-  pop.style.right = `${Math.max(8, Math.round(window.innerWidth - box.right))}px`;
-  pop.style.left = "auto";
-  pop.style.zIndex = "40";
+  pop.style.zIndex = "50";
+  if (rtl) {
+    pop.style.left = `${Math.max(8, Math.round(box.left))}px`;
+    pop.style.right = "auto";
+  } else {
+    pop.style.right = `${Math.max(8, Math.round(window.innerWidth - box.right))}px`;
+    pop.style.left = "auto";
+  }
 }
 
 const themeButton = document.querySelector("#theme");
@@ -77,12 +83,21 @@ document.addEventListener("keydown", (event) => {
 
 const panel = document.querySelector("#model-panel");
 const catalogPage = document.querySelector(".catalog-page");
+
+function syncHeaderHeight() {
+  const header = document.querySelector(".site-header");
+  if (header) document.documentElement.style.setProperty("--aip-header-h", `${header.offsetHeight}px`);
+}
+syncHeaderHeight();
+window.addEventListener("resize", syncHeaderHeight);
+
 let panelRequest = 0;
 let lastTrigger = null;
-const copiedRu = document.documentElement.lang === "ru";
-const copiedText = copiedRu ? "Ссылка скопирована" : "Link copied";
-const copyManual = copiedRu ? "Скопируйте ссылку вручную" : "Copy the link manually";
-const panelError = copiedRu ? "Не удалось открыть карточку. Обновите страницу." : "Could not open the card. Refresh the page.";
+let I18N = {};
+try { I18N = JSON.parse(document.getElementById("aipedia-i18n").textContent); } catch (_) {}
+const copiedText = I18N.copied || "Link copied";
+const copyManual = I18N.copyManual || "Copy the link manually";
+const panelError = I18N.panelError || "Could not open the card. Refresh the page.";
 
 function refreshIcons() {
   if (window.lucide) window.lucide.createIcons();
@@ -256,6 +271,19 @@ if (panel) {
     event.preventDefault();
     openPanelFromLink(link, true);
   });
+  // Close the open panel on a click outside it, but never on the header
+  // (language/search/theme), a row link that opens another entry, or a column
+  // filter popover — clicks inside the panel keep it open.
+  document.addEventListener("click", (event) => {
+    if (!panel.classList.contains("is-open")) return;
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    if (panel.contains(target)) return;
+    if (target.closest("a.model-name")) return;
+    if (target.closest(".site-header")) return;
+    if (target.closest("details.col-filter")) return;
+    closePanel(true);
+  });
   window.addEventListener("popstate", () => {
     const match = location.pathname.match(/^\/(?:models|tools)\/([^/]+)/);
     if (match) {
@@ -278,7 +306,7 @@ const modelRows = document.querySelector("#model-rows");
 const tableScroll = document.querySelector(".catalog-card > .table-scroll");
 if (infiniteScroll && modelRows && "IntersectionObserver" in window) {
   let loading = false;
-  const retryLabel = document.documentElement.lang === "ru" ? "Повторить" : "Retry";
+  const retryLabel = I18N.retry || "Retry";
   const showRetry = () => {
     infiniteScroll.replaceChildren();
     const retry = document.createElement("button");

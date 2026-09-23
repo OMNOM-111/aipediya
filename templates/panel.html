@@ -46,7 +46,7 @@
 <dt>{{ ui.version }}</dt><dd>{{ model.version }}</dd>
 <dt>{{ ui.developer }}</dt><dd>{{ model.family.developer.name|local:lang }}</dd>
 <dt>{{ ui.status }}</dt><dd>{{ model.catalog_status|label:lang }}</dd>
-{% if model.origin_countries %}<dt>{{ ui.country_origin }}</dt><dd class="country-origin-list">{% for country in model.origin_countries %}<span>{% include 'includes/country_flag.html' %}{% if lang == 'en' %}{{ country.name_en }}{% else %}{{ country.name_ru }}{% endif %}</span>{% endfor %}</dd>{% endif %}
+{% if model.origin_countries %}<dt>{{ ui.country_origin }}</dt><dd class="country-origin-list">{% for country in model.origin_countries %}<span>{% include 'includes/country_flag.html' %}{{ country|country_name:lang }}</span>{% endfor %}</dd>{% endif %}
 <dt>{{ ui.accepts }}</dt><dd>{% for key in model.input_modalities %}{{ key|label:lang }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
 <dt>{{ ui.produces }}</dt><dd>{% for key in model.output_modalities %}{{ key|label:lang }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
 {% if model.license %}<dt>{{ ui.license }}</dt><dd>{{ model.license }}</dd>{% endif %}
@@ -81,7 +81,7 @@
 <div class="evaluation"><h3>{{ ui.audit }} · {{ audit.auditor }}</h3><p>{{ audit.scope|local:lang }} · {{ audit.version }} · {{ audit.period }}</p><p>{{ audit.method|local:lang }}</p><p>{{ audit.conclusions|local:lang }}</p><a href="{{ audit.source.url }}" target="_blank" rel="noopener noreferrer">{{ ui.source }} · {{ audit.checked|date:'d.m.Y' }}</a></div>
 {% endfor %}
 {% if model.evaluation_gap %}
-<section class="evaluation-gap"><h2>{{ ui.coverage_note }}</h2><p>{{ model.evaluation_gap.reason|local:lang }}</p><p class="secondary">{{ ui.checked }} {{ model.evaluation_gap.checked }}</p>{% for link in model.evaluation_gap.links %}<p><a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{% if lang == 'en' %}{{ link.label_en }}{% else %}{{ link.label_ru }}{% endif %}</a></p>{% endfor %}</section>
+<section class="evaluation-gap"><h2>{{ ui.coverage_note }}</h2><p>{{ model.evaluation_gap.reason|local:lang }}</p><p class="secondary">{{ ui.checked }} {{ model.evaluation_gap.checked }}</p>{% for link in model.evaluation_gap.links %}<p><a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{% if lang == 'ru' %}{{ link.label_ru }}{% else %}{{ link.label_en }}{% endif %}</a></p>{% endfor %}</section>
 {% endif %}
 <section class="detail-source"><a href="{{ model.source.url }}" target="_blank" rel="noopener noreferrer">{{ ui.source }}</a><span>{{ ui.checked }} {{ model.checked|date:'d.m.Y' }}</span></section>
 </section>

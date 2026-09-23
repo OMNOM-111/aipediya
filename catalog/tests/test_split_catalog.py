@@ -65,7 +65,7 @@ class SplitCatalogTests(TestCase):
         renumber_tools_chronologically()
 
     def test_tabs_are_two_independent_catalogs_with_data_counts(self):
-        response = self.client.get("/")
+        response = self.client.get("/", {"lang": "ru"})
         self.assertEqual(response.context["entity_kind"], "model")
         self.assertContains(response, "Модели <span>2</span>", html=True)
         self.assertContains(response, "Инструменты <span>1</span>", html=True)
@@ -73,7 +73,7 @@ class SplitCatalogTests(TestCase):
         self.assertContains(response, "Независимые проверки")
         self.assertContains(response, "Рейтинг AIpediya")
         self.assertContains(response, "Контекст")
-        tools = self.client.get("/", {"kind": "tool"})
+        tools = self.client.get("/", {"kind": "tool", "lang": "ru"})
         self.assertEqual(tools.context["entity_kind"], "tool")
         self.assertContains(tools, "Модели / экосистема")
         self.assertContains(tools, "Платформы / доступ")
@@ -93,13 +93,13 @@ class SplitCatalogTests(TestCase):
     def test_catalog_tabs_clear_foreign_filters_and_card_routes(self):
         model = self.client.get(
             "/models/older-model",
-            {"status": "retired", "access": "api", "benchmark": "99"},
+            {"status": "retired", "access": "api", "benchmark": "99", "lang": "ru"},
         )
         self.assertContains(model, 'href="/?lang=ru&amp;kind=tool"')
         self.assertNotContains(model, 'kind=tool&amp;status=retired')
         tool = self.client.get(
             "/tools/fixture-tool",
-            {"platform": "cli", "local": "hybrid", "ecosystem": "Test"},
+            {"platform": "cli", "local": "hybrid", "ecosystem": "Test", "lang": "ru"},
         )
         self.assertContains(tool, 'href="/?lang=ru&amp;kind=model"')
         self.assertNotContains(tool, 'kind=model&amp;platform=cli')
@@ -117,14 +117,14 @@ class SplitCatalogTests(TestCase):
         self.assertEqual([(item.name, item.public_number) for item in listed], [("Fixture Tool", 1)])
 
     def test_country_flag_is_local_accessible_and_unknown_is_blank(self):
-        response = self.client.get("/", {"kind": "model", "status": "all"})
+        response = self.client.get("/", {"kind": "model", "status": "all", "lang": "ru"})
         html = response.content.decode()
         self.assertIn("flags.svg", html)
         self.assertIn("flag-US", html)
         self.assertIn('aria-label="США"', html)
         newer_row = html.split('data-slug="newer-model"', 1)[1].split("</tr>", 1)[0]
         self.assertNotIn("country-flag", newer_row)
-        panel = self.client.get("/models/older-model")
+        panel = self.client.get("/models/older-model", {"lang": "ru"})
         self.assertContains(panel, "Страна происхождения")
         self.assertContains(panel, "США")
         tools = self.client.get("/", {"kind": "tool"})

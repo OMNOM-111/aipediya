@@ -44,7 +44,7 @@ class ChronologyTests(TestCase):
         unknown = self.model('Undated')
         self.assertIsNone(unknown.public_number)
         for direction, expected in [('asc', ['alpha', 'zulu', 'undated']), ('desc', ['zulu', 'alpha', 'undated'])]:
-            response = self.client.get('/', {'sort': 'number_' + direction})
+            response = self.client.get('/', {'sort': 'number_' + direction, 'lang': 'ru'})
             self.assertEqual([m.slug for m in response.context['page']], expected)
             self.assertContains(response, 'Дата выпуска не подтверждена')
         unknown.released = date(2023, 1, 1)
