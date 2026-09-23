@@ -3,6 +3,7 @@ from django import template
 from catalog.context import TEXT, t, category_label
 from catalog.comparison import format_context, localized
 from catalog.countries import country_label
+from catalog.evaluation_labels import evaluation_label
 
 register = template.Library()
 
@@ -13,6 +14,10 @@ def local(value, lang):
 @register.filter
 def label(key, lang):
     return t(str(key), lang)
+
+@register.filter
+def eval_label(value, lang):
+    return evaluation_label(value, lang)
 
 @register.filter
 def catlabel(cat, lang):

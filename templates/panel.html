@@ -71,10 +71,10 @@
 {% for e in model.public_evaluations %}
 <div class="evaluation">
 <div class="evaluation-heading"><a href="{{ e.source.url }}" target="_blank" rel="noopener noreferrer">{{ e.evaluator }} · {{ e.benchmark.name }}</a><b>{{ e.score|money }} {{ e.benchmark.unit }}</b></div>
-<p class="secondary">{% if e.result_kind == "composite" %}{{ ui.composite }}{% elif e.independent %}{{ ui.independent_run }}{% else %}{{ ui.developer_eval }}{% endif %} · {{ e.configuration|default:ui.unspecified_mode }} · {{ e.checked|date:'d.m.Y' }} · {% if e.benchmark.higher_is_better %}{{ ui.higher }}{% else %}{{ ui.lower }}{% endif %}</p>
+<p class="secondary">{% if e.result_kind == "composite" %}{{ ui.composite }}{% elif e.independent %}{{ ui.independent_run }}{% else %}{{ ui.developer_eval }}{% endif %} · {{ e.configuration|eval_label:lang|default:ui.unspecified_mode }} · {{ e.checked|date:'d.m.Y' }} · {% if e.benchmark.higher_is_better %}{{ ui.higher }}{% else %}{{ ui.lower }}{% endif %}</p>
 <p class="secondary">{{ ui.snapshot }}: {{ e.snapshot|default:ui.legacy_snapshot }}{% if e.confidence_low != None %} · 90% CI [{{ e.confidence_low|money }}, {{ e.confidence_high|money }}]{% endif %}</p>
 {% if e.result_kind == "composite" %}<p>{{ ui.eci_note }}</p>{% endif %}
-<details><summary>{{ ui.conditions }}</summary><p>{{ e.benchmark.protocol }}</p><p>{{ e.conditions|local:lang }}</p>{% if e.measured %}<p>{{ ui.measurement }}: {{ e.measured|date:'d.m.Y' }}</p>{% endif %}</details>
+<details><summary>{{ ui.conditions }}</summary><p>{{ e.benchmark.protocol|eval_label:lang }}</p><p>{{ e.conditions|local:lang }}</p>{% if e.measured %}<p>{{ ui.measurement }}: {{ e.measured|date:'d.m.Y' }}</p>{% endif %}</details>
 </div>
 {% endfor %}
 {% for audit in model.audits.all %}
