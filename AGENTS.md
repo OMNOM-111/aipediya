@@ -19,6 +19,18 @@
 Сайт не пересоздавать с нуля. Существующую кодовую базу и историю Git
 продолжать.
 
+## Имена: бренд и техкод
+
+- Публичный бренд и домен: **AIpediya**, https://aipediya.com/.
+- Внутренний техкод без `y`: пакет Python `aipedia`, пути
+  `/srv/aipedia`, Local `data/local/aipedia.sqlite3`, переменные
+  `AIPEDIA_*`, cookie/localStorage с префиксом `aipedia`, unix-user и
+  Supervisor `aipedia`, ярлыки «AIpedia — Local». Это не опечатка и не
+  устаревший бренд — так задумано.
+- Не переименовывать техкод в `aipediya` «для единообразия» без отдельного
+  поручения владельца. Решение: `D-2026-09-23-brand-vs-tech-name` в
+  `docs/DECISIONS.md`.
+
 ## Local
 
 - Этот репозиторий. Публичный сайт: https://aipediya.com/
