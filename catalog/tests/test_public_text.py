@@ -8,17 +8,16 @@ CYRILLIC = re.compile(r"[\u0400-\u04FF]")
 
 
 class PublicTextTests(TestCase):
-    def test_controlled_russian_terms_fall_back_to_english_on_other_locales(self):
-        cases = {
-            "Самостоятельно": "Self-hosted",
-            "Pro · от": "Pro · from",
-            "видео; конфигурация требует уточнения": "video; configuration needs verification",
-            "1000 страниц": "1000 pages",
-            "песня": "song",
-        }
-        for source, english in cases.items():
-            for lang in ("ko", "ja", "de", "ar", "fr", "hi", "en"):
-                self.assertEqual(public_text(source, lang), english)
+    def test_controlled_terms_are_localized_without_russian_on_supported_locales(self):
+        sources = ("Самостоятельно", "Pro · от", "видео; конфигурация требует уточнения",
+                   "1000 страниц", "песня", "Прямой API · с аудио · 4K")
+        for source in sources:
+            for lang in ("ko", "ja", "de", "ar", "fr", "hi", "zh-Hans", "th"):
+                out = public_text(source, lang)
+                self.assertFalse(CYRILLIC.search(out), f"{source!r} in {lang}: {out!r}")
+        # The English locale still shows the English form.
+        self.assertEqual(public_text("Самостоятельно", "en"), "Self-hosted")
+        self.assertEqual(public_text("песня", "en"), "song")
 
     def test_russian_locale_keeps_the_original_source_term(self):
         self.assertEqual(public_text("Самостоятельно", "ru"), "Самостоятельно")

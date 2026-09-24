@@ -43,4 +43,9 @@ PUBLIC_ENGLISH = {
 def public_text(value, lang):
     if lang == "ru" or not isinstance(value, str):
         return value
+    from .controlled_terms import localize_controlled
+    localized = localize_controlled(value, lang)
+    if localized is not None:
+        return localized
+    # Emergency fallback only: English, never the original Russian source term.
     return PUBLIC_ENGLISH.get(value, value)
