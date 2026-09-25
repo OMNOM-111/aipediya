@@ -52,9 +52,9 @@ class QA:
         for attempt in range(3):
             try:
                 with OPENER.open(request, timeout=40) as response:
-                    return response.status, dict(response.headers), response.read().decode("utf-8", "replace")
+                    return response.status, {k.lower(): v for k, v in response.headers.items()}, response.read().decode("utf-8", "replace")
             except HTTPError as error:
-                return error.code, dict(error.headers or {}), ""
+                return error.code, {k.lower(): v for k, v in (error.headers or {}).items()}, ""
             except URLError:
                 time.sleep(2 * (attempt + 1))
         return 0, {}, ""
@@ -133,7 +133,7 @@ def main():
         ("/?page=1", "/"), ("/?lang=zz", "/"),
     ]:
         status, headers, _ = qa.get(source)
-        location = headers.get("Location", "")
+        location = headers.get("location", "")
         qa.check("legacy-redirects", f"301 {source}", status == 301 and location == target, f"{status} {location}")
         final, _, _ = qa.get(target)
         qa.check("legacy-redirects", f"single hop {source}", final == 200, final)
@@ -178,8 +178,8 @@ def main():
     qa.check("pagination", "sorted listing is noindex without canonical",
              status == 200 and 'content="noindex' in html and 'rel="canonical"' not in html, status)
     status, headers, _ = qa.get("/?partial=rows&page=2")
-    qa.check("pagination", "partial fragment X-Robots-Tag noindex", headers.get("X-Robots-Tag", "").startswith("noindex"),
-             headers.get("X-Robots-Tag"))
+    qa.check("pagination", "partial fragment X-Robots-Tag noindex", headers.get("x-robots-tag", "").startswith("noindex"),
+             headers.get("x-robots-tag"))
 
     # robots.txt
     status, _, robots = qa.get("/robots.txt")

@@ -32,12 +32,12 @@
       "title_en": "Global Search & Discovery",
       "summary": "Подготовка AIpediya к обнаружению моделей, инструментов и полезных подборок в международных поисковых системах и AI-поиске на 22 языках.",
       "app_version": "unreleased Local candidate on top of release-2026-09-25-local-approved (the project versions releases by tag release-YYYY-MM-DD-<name>; no separate semantic app version exists)",
-      "environment": "local",
-      "stage": "local-qa",
+      "environment": "production",
+      "stage": "released",
       "base_revision": "791e4ac5bf7469de243464c640c4af05b7304b26",
       "base_production_revision": "ed103a3ff1637d24ad104e843a44f80a2c82ba78",
       "started_utc": "2026-09-25T04:08:59Z",
-      "production_released": false,
+      "production_released": true,
       "sources": {
         "status": "docs/EXECUTION_STATE.md",
         "decisions": "docs/DECISIONS.md",
@@ -615,7 +615,16 @@
             }
           ]
         }
-      ]
+      ],
+      "release_tag": "release-2026-09-25-gsd-1-0",
+      "revision": "ba93f7ddf690f4a958405fbabfc65a59d3a9cfbf",
+      "production_verified_at": "2026-09-25T16:20:00Z",
+      "history": "docs/history/2026-09-25-gsd-1-0-release.md",
+      "production_evidence": {
+        "qa": "tools/gsd_production_qa.py 1596/1596",
+        "public_check": "34/34",
+        "sitemap_loc": 10032
+      }
     }
   ],
   "product_history": {

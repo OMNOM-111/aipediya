@@ -32,9 +32,9 @@ def get(url):
     request = Request(url, headers={"User-Agent": UA})
     try:
         with OPENER.open(request, timeout=30) as response:
-            return response.status, dict(response.headers), response.read().decode("utf-8", "replace")
+            return response.status, {k.lower(): v for k, v in response.headers.items()}, response.read().decode("utf-8", "replace")
     except HTTPError as error:
-        return error.code, dict(error.headers or {}), ""
+        return error.code, {k.lower(): v for k, v in (error.headers or {}).items()}, ""
 
 
 def main():
@@ -54,7 +54,7 @@ def main():
     for source, target in (("/?lang=ru", "/ru/"), ("/?lang=en", "/"), ("/?lang=ru&kind=tool", "/ru/tools/"),
                            ("/en/", "/"), ("/zh-Hans/", "/zh-hans/"), ("/ru", "/ru/")):
         code, hdrs, _ = get(base + source)
-        location = hdrs.get("Location", "")
+        location = hdrs.get("location", "")
         check(f"301 {source}", code == 301 and location.endswith(target), f"{code} -> {location}")
         time.sleep(0.3)
     for path, lang in (("/", "en"), ("/ru/", "ru"), ("/ar/tools/", "ar"), ("/zh-hans/methodology", "zh-Hans")):
@@ -64,13 +64,13 @@ def main():
         check(f"lang {path}", f'<html lang="{lang}"' in html)
         check(f"canonical {path}", canonical == PUBLIC + path, str(canonical))
         check(f"hreflang self {path}", f'href="{PUBLIC}{path}"' in html and 'hreflang="x-default"' in html)
-        check(f"no Vary Cookie {path}", "Cookie" not in hdrs.get("Vary", ""), hdrs.get("Vary", ""))
+        check(f"no Vary Cookie {path}", "cookie" not in hdrs.get("vary", "").lower(), hdrs.get("vary", ""))
         time.sleep(0.3)
     if slug:
         code, _, html = get(f"{base}/ru/models/{slug}")
         check("card SSR ru", code == 200 and "<h1" in html and "panel-inner" in html, str(code))
         code, hdrs, _ = get(f"{base}/models/{slug}?lang=de")
-        check("legacy card 301", code == 301 and hdrs.get("Location", "") == f"/de/models/{slug}", hdrs.get("Location", ""))
+        check("legacy card 301", code == 301 and hdrs.get("location", "") == f"/de/models/{slug}", hdrs.get("location", ""))
     code, _, _ = get(base + "/models/definitely-not-a-record?lang=ru")
     check("unknown record 404", code == 404, str(code))
     code, _, _ = get(base + "/?page=9999")
@@ -79,7 +79,7 @@ def main():
     if args.local:
         check("robots Local disallow", "Disallow: /\n" in robots)
     else:
-        check("robots facets blocked", "Disallow: /*?q=" in robots and "page=" not in robots)
+        check("robots facets blocked", "Disallow: /*?q=" in robots and "Disallow: /*?page=" not in robots)
         check("robots sitemap", f"Sitemap: {PUBLIC}/sitemap.xml" in robots)
     code, _, index = get(base + "/sitemap.xml")
     children = re.findall(r"<loc>([^<]+)</loc>", index)

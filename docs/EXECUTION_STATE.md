@@ -72,8 +72,17 @@
   конкретный commit/tag по `docs/RELEASE.md` и после него проверить public
   runtime. Никаких публикаций в этом этапе не выполнялось.
 
-- Выпуск GSD-1.0 (разрешение владельца 2026-09-25 на полное текущее
-  Local-состояние): **COMMIT/TAG/ARCHIVE ГОТОВЫ, СЕРВЕРНЫЙ ШАГ НЕ ВЫПОЛНЕН.**
+- Выпуск GSD-1.0: **DEPLOYED AND VERIFIED** 2026-09-25 16:08Z. Production =
+  `ba93f7ddf690` / `release-2026-09-25-gsd-1-0` (отчёт
+  `docs/history/2026-09-25-gsd-1-0-release.md`). Backup
+  `aipedia-before-release-2026-09-25-gsd-1-0-20260925T160739Z.sqlite3`;
+  migrate 0018; publication state без изменений (304/138); integrity ok, FK 0,
+  счётчики = baseline; Production GSD QA 1596/1596; public check 34/34; public
+  sitemap 10 032 `<loc>`. Внешне: Brave re-fetch принят; остальное — действия
+  владельца (`docs/SEARCH_DISCOVERY.md` §10). Следующим выполнить: владельцу —
+  консоли Google/Bing/Yandex и ключ IndexNow; исполнителю после ключа —
+  `notify_indexnow --all` + `indexnow_dispatch --send` на Production.
+- История подготовки выпуска (до deploy):
   - Commit `ba93f7ddf690f4a958405fbabfc65a59d3a9cfbf`, tag
     `release-2026-09-25-gsd-1-0`, push в GitHub выполнен (push не деплоит).
     Включены: GSD-1.0, код catalog master, Local-only «История сайта».

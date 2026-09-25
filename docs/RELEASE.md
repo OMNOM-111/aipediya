@@ -8,13 +8,16 @@
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный сайт работает на commit `ed103a3ff1637d24ad104e843a44f80a2c82ba78`
-(tag `release-2026-09-25-local-approved`, 2026-09-25; отчёт —
-`docs/history/2026-09-25-local-approved-release.md`).
+Текущий публичный сайт работает на commit `ba93f7ddf690f4a958405fbabfc65a59d3a9cfbf`
+(tag `release-2026-09-25-gsd-1-0`, 2026-09-25; отчёт —
+`docs/history/2026-09-25-gsd-1-0-release.md`). Предыдущий:
+`ed103a3ff163` (`release-2026-09-25-local-approved`).
 Позднее код этой ветки публикуется только по отдельной команде владельца.
 
-Подготовленный, **не выпущенный** кандидат: GSD-1.0 «Глобальная поисковая
-доступность» — scope, зависимости и откат: `docs/history/GSD-1.0-release-scope.md`.
+GSD-1.0 выпущен (scope, зависимости и откат: `docs/history/GSD-1.0-release-scope.md`).
+Проверка после выпуска: `tools/gsd_production_qa.py https://aipediya.com --commit <sha>`
+и `tools/gsd_public_check.py https://aipediya.com` (старый `public_acceptance.mjs`
+проверяет прежний `?lang=`-контракт).
 
 ## Процесс выпуска (подтверждено владельцем 2026-09-25)
 
