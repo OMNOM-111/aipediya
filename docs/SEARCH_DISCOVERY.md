@@ -164,12 +164,12 @@ available to the implementing agent; nothing is "connected" without owner eviden
 
 | System | Discovery / verification | Technical readiness (Local) | Live access | Owner action |
 |---|---|---|---|---|
-| Google Search Console | URL-prefix property: HTML file / HTML tag / GA / GTM / DNS; Domain property: DNS only [G1] | sitemaps, hreflang, canonical, robots ready; meta token env var | none | verify, submit `/sitemap.xml` |
-| Bing Webmaster Tools | XML file, `msvalidate.01` meta tag, CNAME, or import from GSC [B1]; IndexNow [B2] | ready; meta token env var; IndexNow outbox | none | verify, submit sitemap, IndexNow key |
-| Yandex Webmaster | `yandex-verification` meta tag, HTML file or DNS TXT [Y1]; IndexNow [Y2] | ready; meta token env var | none | verify, submit sitemap |
+| Google Search Console | URL-prefix property: HTML file / HTML tag / GA / GTM / DNS; Domain property: DNS only [G1] | sitemaps, hreflang, canonical, robots ready; meta token env var | Domain property verified by DNS TXT on 2026-09-25; `/sitemap.xml` status Successful | retain TXT; indexing is not implied |
+| Bing Webmaster Tools | XML file, `msvalidate.01` meta tag, CNAME, or import from GSC [B1]; IndexNow [B2] | ready; meta token env var; IndexNow outbox | GSC import added `https://aipediya.com/`; sitemap submitted 2026-09-25, status Processing | no verification or sitemap action remaining; IndexNow key remains separate |
+| Yandex Webmaster | `yandex-verification` meta tag, HTML file or DNS TXT [Y1]; IndexNow [Y2] | ready; meta token env var | not verified; Yandex Browser was not exposed to the available browser controls | continue in authenticated Yandex Browser and submit sitemap |
 | Seznam | IndexNow (`search.seznam.cz/indexnow`; one engine forwards to all participants) [S1] | outbox ready | none | IndexNow key activation only |
-| Naver Search Advisor | IndexNow participant with its own endpoint [I2]. Site registration/verification method: **unverified** — the official site (searchadvisor.naver.com) could not be fetched from this environment; only secondary guides were seen | outbox ready; no Naver token setting | none | register and verify in the console per its current instructions; add a token setting only if a meta tag is chosen; submit sitemap |
-| Baidu (ziyuan) | Official: site must be verified before sitemap submission; ≤ 50,000 URLs and ≤ 10 MB per sitemap file; submission does not guarantee crawling/indexing [BD1]. Concrete verification methods and account requirements: **unverified** (secondary guides only) | `/sitemaps/zh-hans.xml` fits the limits (458 URLs, ≈ 1.2 MB) | none | register/verify in the console, submit the zh-hans sitemap |
+| Naver Search Advisor | IndexNow participant with its own endpoint [I2]. Current console offered HTML file or HTML meta-tag verification | SSR setting and conditional head output implemented; `217/217` catalog tests PASS | Local release candidate `160be0f37037` prepared; Production deployment is pending, so Naver cannot verify it yet | deploy tag `release-2026-09-25-naver-verification`, then click Verify in Naver Search Advisor |
+| Baidu (ziyuan) | Official: site must be verified before sitemap submission; ≤ 50,000 URLs and ≤ 10 MB per sitemap file; submission does not guarantee crawling/indexing [BD1]. Concrete verification methods and account requirements: **unverified** (secondary guides only) | `/sitemaps/zh-hans.xml` fits the limits (458 URLs, ≈ 1.2 MB) | no Baidu tab or authenticated session among the inspected Chrome tabs (2026-09-25) | if account is available, register/verify and submit the zh-hans sitemap; otherwise owner may face identity/phone requirements |
 | Brave Search | Crawler has no distinct UA; does not crawl what Googlebot may not crawl; noindex (not robots) delists; URL submission at `search.brave.com/submit-url` [BR1] | ready (Googlebot not blocked) | none | optional: submit key URLs |
 | IndexNow protocol | Key file, batch POST ≤ 10,000 URLs, codes 200/202/400/403/422/429 [I1]; submission is shared with all participants; participants: Bing, Yandex, Seznam, Naver, Yep, Amazon (+ Internet Archive in the engines list); Google is not listed [I2][I3] | outbox + dispatcher, mock-tested | none | create key → `AIPEDIA_INDEXNOW_KEY`, `AIPEDIA_INDEXNOW_ENABLED=1`, run dispatcher after deploy |
 | OpenAI OAI-SearchBot | search crawler, honors robots; GPTBot = training; ChatGPT-User = user-triggered, robots may not apply; IP lists published [O1] | not blocked by current robots | spoofed-UA 200 only | none required for search visibility |
@@ -248,17 +248,23 @@ production-mode HTML audit (canonical/hreflang/noindex/lang/dir/H1/title/descrip
 sitemap), robots-respecting own crawl, outbox state. Server logs, search consoles and AI
 referrals are reported as `not_connected` with `null` values — never zero.
 
-## 10. Owner actions (minimum, after an approved GSD-1.0 release)
+## 10. Owner actions (updated 2026-09-25)
 
-1. Approve the GSD-1.0 release scope; deploy per `docs/RELEASE.md` (migration 0018).
-2. Google Search Console + Bing Webmaster + Yandex Webmaster: verify (meta token env
-   vars), submit `https://aipediya.com/sitemap.xml`.
-3. IndexNow: generate key → `AIPEDIA_INDEXNOW_KEY`, set `AIPEDIA_INDEXNOW_ENABLED=1`,
+1. Google Search Console is verified as Domain property by DNS TXT; the main sitemap is
+   Successful. Bing imported the site from GSC and its main sitemap is Processing.
+2. Yandex Webmaster remains unverified because the authorized Yandex Browser was not
+   available to this browser-control session. Continue there and submit the main sitemap.
+3. Naver account is signed in. The meta-tag implementation and Local QA are complete in
+   release candidate `release-2026-09-25-naver-verification` (`160be0f37037`), but the
+   Production deploy has not run because this session has no authorized server terminal.
+   After deploying, the owner can click Verify; the separate sitemap task is not part of
+   this verification-only request.
+4. Baidu was not present in the inspected open tabs; no submission was made.
+5. IndexNow: generate key → `AIPEDIA_INDEXNOW_KEY`, set `AIPEDIA_INDEXNOW_ENABLED=1`,
    restart `aipedia`, run `notify_indexnow --all` then `indexnow_dispatch --send` once.
-4. Optional: Naver Search Advisor, Baidu ziyuan registration and sitemap submission.
-5a. Decide the training-crawler policy (currently not defined; robots baseline unchanged).
-5. Datasets: choose a data license (or keep off). Then `AIPEDIA_DATASETS_PUBLIC=1`.
-6. Review agent-drafted translations of the new short texts
+6. Decide the training-crawler policy (currently not defined; robots baseline unchanged).
+7. Datasets: choose a data license (or keep off). Then `AIPEDIA_DATASETS_PUBLIC=1`.
+8. Review agent-drafted translations of the new short texts
    (`data/discovery_translations.json`, `review_status: unreviewed`).
 
 ## Advertising

@@ -14,6 +14,10 @@ Push в GitHub **не** публикует сайт. Ярлык Local, кноп�
 `ed103a3ff163` (`release-2026-09-25-local-approved`).
 Позднее код этой ветки публикуется только по отдельной команде владельца.
 
+Подготовлен, но **не опубликован** кандидат `release-2026-09-25-naver-verification`
+(`160be0f37037e34845edc1dae1e38eead4460a60`): SSR meta-tag и конфигурация Naver.
+Production остаётся на `ba93f7ddf690` до запуска штатного deploy на AIpedia host.
+
 GSD-1.0 выпущен (scope, зависимости и откат: `docs/history/GSD-1.0-release-scope.md`).
 Проверка после выпуска: `tools/gsd_production_qa.py https://aipediya.com --commit <sha>`
 и `tools/gsd_public_check.py https://aipediya.com` (старый `public_acceptance.mjs`
