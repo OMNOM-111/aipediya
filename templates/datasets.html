@@ -1,0 +1,27 @@
+{% extends 'base.html' %}{% block content %}<article class="policy">
+{% include 'includes/breadcrumbs.html' %}<h1>{{ title }}</h1>
+{% if docs_fallback %}<p class="note" lang="en">This documentation is available in English only.</p>{% endif %}
+{% if not kind %}<p lang="{{ docs_lang }}">{% if docs_lang == 'ru' %}Два открытых набора данных опубликованного каталога AIpediya. Скрытые кандидаты, внутренние заметки и история правок не выгружаются.{% else %}Two open datasets built from the published AIpediya catalog. Hidden candidates, internal notes and edit history are never exported.{% endif %}</p>{% endif %}
+{% for entry in entries %}
+<section>
+{% if not kind %}<h2><a href="{{ entry.page }}">{{ entry.meta.name }}</a></h2>{% endif %}
+<p lang="{{ docs_lang }}">{{ entry.description }}</p>
+<div class="table-scroll"><table lang="en">
+<tr><th scope="row">Records</th><td>{{ entry.meta.record_count }}</td></tr>
+<tr><th scope="row">Dataset version</th><td><code>{{ entry.meta.dataset_version }}</code></td></tr>
+<tr><th scope="row">Data as of (latest check date)</th><td>{{ entry.meta.data_as_of|default:"—" }}</td></tr>
+<tr><th scope="row">Schema version</th><td>{{ schema_version }}</td></tr>
+<tr><th scope="row">License</th><td>Not granted yet. The publisher has not chosen a license for these files; no reuse permission is implied.</td></tr>
+{% for fmt, file in entry.files.items %}<tr><th scope="row">{{ fmt|upper }}</th><td><a href="{{ file.url }}">{{ entry.slug }}.{{ fmt }}</a> · {{ file.bytes|filesizeformat }} · SHA-256 <code>{{ file.sha256 }}</code></td></tr>{% endfor %}
+</table></div>
+{% if kind %}
+<h2 lang="en">Provenance</h2><p lang="en">{{ entry.meta.provenance }}</p>
+<h2 lang="en">Unknown values</h2><p lang="en">{{ entry.meta.unknown_values }} Dates marked approximate are the earliest reliable evidence of public existence, not a confirmed release date. The check date is when an editor last reviewed the source.</p>
+<h2 lang="en">Fields</h2>
+<div class="table-scroll"><table lang="en"><thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead><tbody>{% for field in entry.meta.fields %}<tr><td><code>{{ field.name }}</code></td><td>{{ field.type }}</td><td>{{ field.meaning }}</td></tr>{% endfor %}</tbody></table></div>
+<h2 lang="en">Reproducibility</h2><p lang="en">Rows are sorted by <code>record_id</code>; the same published catalog state always produces byte-identical files. <code>content_sha256</code> in the JSON metadata covers the records array; file checksums are listed above and in <a href="/datasets/manifest.json">manifest.json</a>. The catalog number can change when an earlier release is added; use <code>record_id</code> as the identity.</p>
+{% endif %}
+</section>
+{% endfor %}
+<p><a href="{{ nav.methodology }}">{{ ui.methodology }}</a></p>
+</article>{% endblock %}

@@ -91,6 +91,9 @@ function syncHeaderHeight() {
 syncHeaderHeight();
 window.addEventListener("resize", syncHeaderHeight);
 
+// Optional locale prefix (/ru, /zh-hans, /pt-br), entity kind, slug.
+const ENTITY_PATH = /^(\/[a-z]{2,3}(?:-[a-z]{2,4})?)?\/(models|tools)\/([^/]+)$/;
+
 let panelRequest = 0;
 let lastTrigger = null;
 let I18N = {};
@@ -165,7 +168,9 @@ async function openPanelFromLink(link, push) {
     panel.innerHTML = html;
     bindPanel(panel);
     const title = response.headers.get("X-Aipedia-Title");
-    if (title) document.title = title;
+    if (title) {
+      try { document.title = decodeURIComponent(title); } catch (_) {}
+    }
     if (push) history.pushState({ panel: slug }, "", link.href);
   } catch (_) {
     if (requestId !== panelRequest) return;
@@ -181,17 +186,19 @@ function closePanel(push) {
   highlightRow("");
   if (panel) panel.innerHTML = "";
   const closeUrl = new URL(location.href);
-  if (location.pathname.startsWith("/models/") || location.pathname.startsWith("/tools/")) {
-    const closingTool = location.pathname.startsWith("/tools/");
-    closeUrl.pathname = "/";
+  const entity = location.pathname.match(ENTITY_PATH);
+  if (entity) {
+    // /ru/tools/x -> /ru/tools/ ; /models/x -> / (locale prefix kept)
+    closeUrl.pathname = (entity[1] || "") + (entity[2] === "tools" ? "/tools/" : "/");
     closeUrl.searchParams.delete("tab");
     closeUrl.searchParams.delete("model");
     closeUrl.searchParams.delete("tool");
-    closeUrl.searchParams.set("kind", closingTool ? "tool" : "model");
   } else {
     closeUrl.searchParams.delete("model");
     closeUrl.searchParams.delete("tab");
   }
+  const listingTitle = document.querySelector("#main[data-listing-title]");
+  if (listingTitle && listingTitle.dataset.listingTitle) document.title = listingTitle.dataset.listingTitle;
   if (push !== false) history.pushState({ panel: null }, "", closeUrl.pathname + closeUrl.search);
   if (lastTrigger && typeof lastTrigger.focus === "function") lastTrigger.focus();
 }
@@ -304,9 +311,9 @@ if (panel) {
     closePanel(true);
   });
   window.addEventListener("popstate", () => {
-    const match = location.pathname.match(/^\/(?:models|tools)\/([^/]+)/);
+    const match = location.pathname.match(ENTITY_PATH);
     if (match) {
-      const slug = match[1];
+      const slug = match[3];
       const existing = document.querySelector(`a.model-name[data-slug="${CSS.escape(slug)}"]`);
       const link = existing || document.createElement("a");
       if (!existing) {
@@ -420,3 +427,32 @@ if (adSlot && consent) {
     });
   });
 }
+
+// Language memory is client-side only: the address always decides the page
+// language, and no server response is personalised by it. A manual choice in
+// the switcher is remembered, and on a page in another language reached from outside the
+// site a quiet link offers the remembered language (never a redirect).
+const LANG_COOKIE = "aipedia_lang";
+document.querySelectorAll("a[data-set-lang]").forEach((link) => {
+  link.addEventListener("click", () => {
+    document.cookie = `${LANG_COOKIE}=${encodeURIComponent(link.dataset.setLang)}; path=/; max-age=31536000; samesite=lax${location.protocol === "https:" ? "; secure" : ""}`;
+  });
+});
+(function offerSavedLanguage() {
+  const saved = (document.cookie.match(/(?:^|; )aipedia_lang=([^;]+)/) || [])[1];
+  const pageLang = document.documentElement.lang;
+  if (!saved || decodeURIComponent(saved) === pageLang) return;
+  let external = true;
+  try { external = !document.referrer || new URL(document.referrer).origin !== location.origin; } catch (_) {}
+  if (!external) return;
+  const target = document.querySelector(`a[data-set-lang="${CSS.escape(decodeURIComponent(saved))}"]`);
+  const controls = document.querySelector(".header-controls");
+  if (!target || !controls) return;
+  const offer = document.createElement("a");
+  offer.className = "lang-offer";
+  offer.href = target.getAttribute("href");
+  offer.lang = target.lang;
+  offer.hreflang = target.hreflang;
+  offer.textContent = `${target.textContent} →`;
+  controls.prepend(offer);
+})();

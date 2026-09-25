@@ -1,68 +1,84 @@
-import secrets
+import hashlib
 import json
+import secrets
+from urllib.parse import quote
 from pathlib import Path
 from xml.sax.saxutils import escape
 
 from django.conf import settings
 from django.db.models import Count, F, OuterRef, Q, Subquery
-from django.http import FileResponse, HttpResponse, HttpResponseNotFound, JsonResponse
+from django.http import (
+    FileResponse, HttpResponse, HttpResponseNotFound, HttpResponsePermanentRedirect, JsonResponse,
+)
 from django.shortcuts import get_object_or_404, render
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_safe
 from .models import (
     Benchmark, Category, Evaluation, ModelVersion, Offer, Platform, Service, Tool,
 )
-from .seo import alternate_links, public_url, sitemap_entries
+from . import readiness
+from .i18n import SUPPORTED_CODES
+from .locale_urls import URL_CODE, FROM_URL_CODE, absolute, localize
+from .seo import json_ld_script, page_signals, render_index, render_urlset, sitemap_urlsets
+from .static_pages import label_text, labels_ready
 
 
-def _seo(request, title, description):
+def _ready_for_labels(keys):
+    return [code for code in SUPPORTED_CODES if labels_ready(keys, code)]
+
+
+def _catalog_seo(request, page, kind="model", hub=None):
+    """Listing signals: only the clean listing and its plain ?page=N pages are
+    indexable; any filter, search or sort makes the page ``noindex,follow``
+    without pointing a canonical at a different (unfiltered) page."""
     lang = request.aipedia_lang
-    page_raw = request.GET.get("page", "")
-    page = int(page_raw) if page_raw.isdigit() else None
-    indexable_page = page if page and page > 1 else None
-    duplicate_page = bool(page_raw) and indexable_page is None
-    alternates, x_default = alternate_links(request.path, page=indexable_page)
-    return {
-        "title": title,
-        "description": description[:160],
-        "canonical": public_url(request.path, lang, page=indexable_page),
-        "alternates": alternates,
-        "x_default": x_default,
-        "noindex": duplicate_page or any(key not in {"lang", "page"} for key in request.GET),
-    }
-
-
-def _catalog_seo(request, page):
-    lang = request.aipedia_lang
-    is_tools = request.GET.get("kind") == "tool"
-    page_raw = request.GET.get("page", "")
-    requested_page = int(page_raw) if page_raw.isdigit() else None
-    only_pagination = not any(key not in {"lang", "page"} for key in request.GET)
-    indexable_page = requested_page if (
-        only_pagination and requested_page and requested_page > 1 and page.number == requested_page
-    ) else None
-    if lang == "ru":
-        title = "AIpediya - " + ("каталог AI-инструментов" if is_tools else "каталог AI-моделей")
-        description = (
-            "Проверенный каталог AI-инструментов: категории, экосистемы моделей, платформы, доступ и цены."
-            if is_tools
-            else "Проверенный каталог AI-моделей: назначение, доступ, цены и независимые оценки."
-        )
+    neutral = request.aipedia_neutral_path
+    only_pagination = not any(key != "page" for key in request.GET)
+    page_number = page.number if page.number > 1 else None
+    if hub is not None:
+        from .static_pages import localized_blocks
+        blocks = {tag: text for tag, text, _fb in localized_blocks(hub.page, lang)}
+        title = blocks.get("title", "")
+        description = blocks.get("intro", "")
+        from .hubs import ready_locales
+        ready = ready_locales(hub, page.paginator.count)
+        crumbs = [("AIpediya", "/"), (label_text("collections", lang), "/collections/"), (title, neutral)]
     else:
-        title = "AIpediya - " + ("AI tools catalog" if is_tools else "AI model catalog")
-        description = (
-            "Verified AI tools catalog: categories, model ecosystems, platforms, access, and pricing."
-            if is_tools
-            else "Verified AI model catalog: capabilities, access methods, prices, and independent evaluations."
-        )
-    alternates, x_default = alternate_links(request.path, page=indexable_page)
-    return {
-        "title": title,
-        "description": description,
-        "canonical": public_url(request.path, lang, page=indexable_page),
-        "alternates": alternates,
-        "x_default": x_default,
-        "noindex": not only_pagination or bool(page_raw) and indexable_page is None,
-    }
+        key = "tools_catalog" if kind == "tool" else "models_catalog"
+        title = label_text(f"{key}_title", lang)
+        description = label_text(f"{key}_description", lang)
+        ready = _ready_for_labels([f"{key}_title", f"{key}_description", "page_n"])
+        crumbs = None
+    if page_number:
+        word = label_text("page_n", lang)
+        # Chinese orders the page number inside the phrase (第 2 页).
+        page_label = f"第{page_number}{word}" if lang in ("zh-Hans", "zh-Hant") else f"{word} {page_number}"
+        title = f"{title} — {page_label}"
+    signals = page_signals(
+        neutral, lang, title=f"{title} | AIpediya", description=description, ready_langs=ready,
+        indexable=only_pagination, page=page_number,
+        breadcrumbs=crumbs,
+    )
+    signals["h1"] = title
+    return signals
+
+
+def _entity_seo(request, entity, kind):
+    lang = request.aipedia_lang
+    from .comparison import localized
+    suffix_key = "tool_title_suffix" if kind == "tool" else "model_title_suffix"
+    developer = entity.developer.name if kind == "tool" else entity.family.developer.name
+    version = "" if not entity.version or entity.version.casefold() == entity.name.casefold() else f" {entity.version}"
+    name = f"{entity.name}{version}"
+    title = f"{name} — {label_text(suffix_key, lang)} ({developer}) | AIpediya"
+    description = localized(entity.description, lang) if entity.description else name
+    ready = [code for code in readiness.ready_locales(entity) if labels_ready([suffix_key], code)]
+    from .context import t
+    listing = ("/tools/", t("tools_tab", lang)) if kind == "tool" else ("/", t("models_tab", lang))
+    neutral = f"/{'tools' if kind == 'tool' else 'models'}/{entity.slug}"
+    return page_signals(
+        neutral, lang, title=title, description=description, ready_langs=ready, og_type="article",
+        breadcrumbs=[("AIpediya", "/"), (listing[1], listing[0]), (name, neutral)],
+    )
 
 
 def versions():
@@ -209,8 +225,11 @@ def _number_page(qs, number, descending=False):
     return CatalogPaginator.page_from_slice(object_list, count, page_number)
 
 
-def _tool_catalog_context(request, selected_slug=None):
+def _tool_catalog_context(request, selected_slug=None, hub=None):
     qs = tools()
+    if hub is not None:
+        from .hubs import members
+        qs = qs.filter(pk__in=members(hub))
     categories = list(Category.objects.all())
     taxonomy_labels = {item.code: item.labels for item in categories}
     lang = request.aipedia_lang
@@ -261,10 +280,11 @@ def _tool_catalog_context(request, selected_slug=None):
     if ecosystem:
         qs = qs.filter(ecosystem__icontains=ecosystem)
 
-    sort = request.GET.get("sort", "release_desc")
+    default_sort = hub.sort if hub is not None else "release_desc"
+    sort = request.GET.get("sort", default_sort)
     orders = [f"{key}_{direction}" for key in TOOL_SORTS for direction in ("asc", "desc")]
     if sort not in orders:
-        sort = "release_desc"
+        sort = default_sort
 
     price_scope = request.GET.get("price_scope", "standard")
     if price_scope not in {"standard", "batch", "offpeak", "peak", "flex", "fast", "priority", "free", "annual", "all"}:
@@ -404,7 +424,8 @@ def _tool_catalog_context(request, selected_slug=None):
         "price_condition": price_condition,
         "comparison_count": comparison_count,
         "filter_chips": chips,
-        "seo": _catalog_seo(request, page),
+        "hub": hub,
+        "seo": _catalog_seo(request, page, kind="tool", hub=hub),
     }
 
 
@@ -415,7 +436,7 @@ def _tool_filter_chips(request, lang, **values):
         params = request.GET.copy()
         params.pop(param, None)
         params.pop("page", None)
-        chips.append({"label": text, "href": "?" + params.urlencode()})
+        chips.append({"label": text, "href": "?" + params.urlencode() if params else request.path})
 
     developers = {
         str(item["developer_id"]): item["developer__name"] for item in values["developers"]
@@ -436,10 +457,11 @@ def _tool_filter_chips(request, lang, **values):
     return chips
 
 
-def _catalog_context(request, selected_slug=None):
-    if request.GET.get("kind") == "tool":
-        return _tool_catalog_context(request, selected_slug=selected_slug)
+def _catalog_context(request, selected_slug=None, hub=None):
     qs = versions()
+    if hub is not None:
+        from .hubs import members
+        qs = qs.filter(pk__in=members(hub))
     categories = list(Category.objects.all())
     taxonomy_labels = {item.code: item.labels for item in categories}
     q = request.GET.get("q", "").strip()[:200]
@@ -498,11 +520,12 @@ def _catalog_context(request, selected_slug=None):
     entry_type = ""
 
     lang = request.aipedia_lang
-    sort = request.GET.get("sort", "release_desc")
+    default_sort = hub.sort if hub is not None else "release_desc"
+    sort = request.GET.get("sort", default_sort)
     sort = {"score": "check_best", "check_desc": "check_best", "check_asc": "check_worst"}.get(sort, sort)
     orders = [f"{key}_{direction}" for key in TEXT_SORTS for direction in ("asc", "desc")] + ["check_best", "check_worst"]
     if sort not in orders:
-        sort = "release_desc"
+        sort = default_sort
     price_scope = request.GET.get("price_scope", "standard")
     if price_scope not in {"standard", "batch", "offpeak", "peak", "flex", "fast", "priority", "free", "annual", "all"}:
         price_scope = "standard"
@@ -602,7 +625,8 @@ def _catalog_context(request, selected_slug=None):
         "public_number": getattr(selected_model, "public_number", None),
         "catalog_status": getattr(selected_model, "catalog_status", ""),
         "facts": getattr(selected_model, "facts_by_key", {}),
-        "seo": _catalog_seo(request, page),
+        "hub": hub,
+        "seo": _catalog_seo(request, page, kind="model", hub=hub),
         "filter_chips": _filter_chips(request, {
             "q": q, "kind": kind, "entry_type": entry_type, "category": category_code,
             "developer": developer, "access": access, "status": status,
@@ -633,7 +657,7 @@ def _filter_chips(request, values, lang, categories, access_kinds):
             params.pop("price_variant", None)
             params.pop("price_condition", None)
         params.pop("page", None)
-        chips.append({"label": label, "href": "?" + params.urlencode() if params else f"?lang={lang}"})
+        chips.append({"label": label, "href": "?" + params.urlencode() if params else request.path})
 
     if values["q"]:
         add("q", values["q"])
@@ -657,8 +681,33 @@ def _filter_chips(request, values, lang, categories, access_kinds):
     return chips
 
 
-def _render_catalog(request, context):
-    if request.GET.get("partial") == "rows":
+def _page_guard(request, context):
+    """Pagination is finite: ``page`` must be an integer inside the range.
+
+    ``?page=1`` alone is a duplicate of the clean listing and redirects there;
+    anything invalid or out of range is a 404 instead of a silently clamped
+    page with different content.
+    """
+    raw = request.GET.get("page")
+    if raw is None:
+        return None
+    if not raw.isdigit() or int(raw) < 1 or int(raw) > context["page"].paginator.num_pages:
+        return _not_found(request)
+    if raw == "1":
+        params = request.GET.copy()
+        params.pop("page")
+        query = params.urlencode()
+        return HttpResponsePermanentRedirect(request.path + ("?" + query if query else ""))
+    return None
+
+
+def _render_catalog(request, context, listing=False):
+    partial = request.GET.get("partial")
+    if listing:
+        guard = _page_guard(request, context)
+        if guard is not None:
+            return guard
+    if partial == "rows":
         response = render(request, "catalog_rows.html", context)
         if context["page"].has_next:
             params = request.GET.copy()
@@ -666,57 +715,229 @@ def _render_catalog(request, context):
             params["partial"] = "rows"
             response["X-Aipedia-Next"] = "?" + params.urlencode()
         return response
-    if request.GET.get("partial") == "panel":
+    if partial == "panel":
         if not context.get("selected_entity"):
             return HttpResponseNotFound()
         response = render(request, "panel.html", context)
         response["Cache-Control"] = "no-store"
-        response["X-Aipedia-Title"] = context["seo"]["title"]
+        # Percent-encoded: HTTP headers are Latin-1, localized titles are not.
+        response["X-Aipedia-Title"] = quote(context["seo"]["title"], safe="")
         response["X-Aipedia-Slug"] = context["selected_entity"].slug
         response["X-Aipedia-Kind"] = context["entity_kind"]
         return response
     return render(request, "catalog.html", context)
 
 
-@require_GET
+def _not_found(request):
+    from .context import t
+    lang = request.aipedia_lang
+    return render(request, "404.html", {
+        "seo": page_signals("/", lang, title=f"{t('not_found', lang)} | AIpediya", description="",
+                            ready_langs=[], indexable=False),
+    }, status=404)
+
+
+@require_safe
 def catalog(request):
-    return _render_catalog(request, _catalog_context(request))
+    return _render_catalog(request, _catalog_context(request), listing=True)
 
 
-@require_GET
+@require_safe
+def tool_catalog(request):
+    return _render_catalog(request, _tool_catalog_context(request), listing=True)
+
+
+@require_safe
 def detail(request, slug):
+    if not readiness.public_models().filter(slug=slug).exists():
+        return _not_found(request)
     context = _catalog_context(request, selected_slug=slug)
     model = context["selected_model"]
-    if not model:
-        get_object_or_404(versions(), slug=slug)
-    lang = request.aipedia_lang
-    description = model.description.get(lang) or model.description.get("en") or model.description.get("ru") or model.name
-    version = "" if model.version.casefold() == model.name.casefold() else f" {model.version}"
-    context["seo"] = _seo(request, f"{model.name}{version} | AIpediya", description)
+    context["listing_title"] = context["seo"]["title"]
+    context["seo"] = _entity_seo(request, model, "model")
     context["facts"] = model.facts_by_key
     return _render_catalog(request, context)
 
 
-@require_GET
+@require_safe
 def tool_detail(request, slug):
-    params = request.GET.copy()
-    params["kind"] = "tool"
-    request.GET = params
+    if not readiness.public_tools().filter(slug=slug).exists():
+        return _not_found(request)
     context = _tool_catalog_context(request, selected_slug=slug)
-    tool = context["selected_tool"]
-    if not tool:
-        get_object_or_404(tools(), slug=slug)
-    description = (
-        tool.description.get(request.aipedia_lang)
-        or tool.description.get("en")
-        or tool.description.get("ru")
-        or tool.name
-    )
-    context["seo"] = _seo(request, f"{tool.name} | AIpediya", description)
+    context["listing_title"] = context["seo"]["title"]
+    context["seo"] = _entity_seo(request, context["selected_tool"], "tool")
     return _render_catalog(request, context)
 
 
-@require_GET
+@require_safe
+def collection(request, slug):
+    from .hubs import HUBS, status
+    from .static_pages import localized_blocks
+    hub = HUBS.get(slug)
+    if hub is None:
+        return _not_found(request)
+    builder = _tool_catalog_context if hub.kind == "tool" else _catalog_context
+    context = builder(request, hub=hub)
+    lang = request.aipedia_lang
+    context["hub_blocks"] = {tag: (text, fallback) for tag, text, fallback in localized_blocks(hub.page, lang)}
+    context["hub_state"] = status(hub, lang)
+    return _render_catalog(request, context, listing=True)
+
+
+@require_safe
+def collections_index(request):
+    from .hubs import HUB_LABELS, listed_hubs
+    from .static_pages import localized_blocks
+    lang = request.aipedia_lang
+    items = []
+    for hub, count in listed_hubs(lang):
+        blocks = {tag: text for tag, text, _fb in localized_blocks(hub.page, lang)}
+        items.append({"hub": hub, "count": count, "title": blocks.get("title"), "intro": blocks.get("intro"),
+                      "url": localize(f"/collections/{hub.slug}", lang)})
+    ready = [code for code in SUPPORTED_CODES
+             if labels_ready(HUB_LABELS + ("collections_intro",), code) and listed_hubs(code)]
+    title = label_text("collections", lang)
+    seo = page_signals("/collections/", lang, title=f"{title} | AIpediya",
+                       description=label_text("collections_intro", lang), ready_langs=ready,
+                       breadcrumbs=[("AIpediya", "/"), (title, "/collections/")])
+    return render(request, "collections.html", {"seo": seo, "items": items, "title": title,
+                                                "intro": label_text("collections_intro", lang)})
+
+
+@require_safe
+def methodology(request):
+    from .context import t
+    from .static_pages import localized_blocks, page_ready
+    lang = request.aipedia_lang
+    title = t("methodology", lang)
+    ready = [code for code in SUPPORTED_CODES
+             if page_ready("methodology", code) and labels_ready(["methodology_description"], code)]
+    seo = page_signals("/methodology", lang, title=f"{title} | AIpediya",
+                       description=label_text("methodology_description", lang), ready_langs=ready,
+                       breadcrumbs=[("AIpediya", "/"), (title, "/methodology")])
+    return render(request, "methodology.html", {
+        "seo": seo, "title": title, "blocks": localized_blocks("methodology", lang),
+        "counts": _catalog_counts(),
+    })
+
+
+DATASET_DESCRIPTIONS = {
+    None: "Two open datasets of the published AIpediya catalog, AI models and AI tools, in JSON and CSV with documented schema, provenance and checksums.",
+    "models": "Published AI models in the AIpediya catalog: developer, origin, category, modalities, context window, release dates with precision, status, open weights, license, access routes and list prices, each with its source and check date.",
+    "tools": "Published AI tools in the AIpediya catalog: developer, origin, category, platforms, local execution, supported models, release dates with precision, status, access routes and list prices, each with its source and check date.",
+}
+DATASET_DESCRIPTIONS_RU = {
+    None: "Два открытых набора данных опубликованного каталога AIpediya — AI-модели и AI-инструменты — в JSON и CSV с описанной схемой, происхождением данных и контрольными суммами.",
+    "models": "Опубликованные AI-модели каталога AIpediya: разработчик, происхождение, категория, модальности, контекстное окно, даты выпуска с точностью, статус, открытые веса, лицензия, способы доступа и цены — с источником и датой проверки.",
+    "tools": "Опубликованные AI-инструменты каталога AIpediya: разработчик, происхождение, категория, платформы, локальный запуск, поддерживаемые модели, даты выпуска с точностью, статус, способы доступа и цены — с источником и датой проверки.",
+}
+
+
+@require_safe
+def datasets_index(request):
+    return _dataset_page(request, None)
+
+
+@require_safe
+def dataset_page(request, kind):
+    return _dataset_page(request, kind)
+
+
+def _dataset_page(request, kind):
+    from . import datasets
+    if not datasets.datasets_enabled():
+        return _not_found(request)
+    lang = request.aipedia_lang
+    docs_lang = "ru" if lang == "ru" else "en"
+    neutral = request.aipedia_neutral_path
+    catalog_url = absolute("/datasets/", "en")
+    entries = []
+    for key in (list(datasets.DATASETS) if kind is None else [kind]):
+        rows = datasets.records(key)
+        meta = datasets.metadata(key, rows)
+        slug = datasets.DATASETS[key]["slug"]
+        files = {}
+        for fmt in ("json", "csv"):
+            payload = datasets.build(key, fmt)
+            files[fmt] = {"url": f"/datasets/{slug}.{fmt}",
+                          "abs": f"{settings.AIPEDIA_PUBLIC_ORIGIN}/datasets/{slug}.{fmt}",
+                          "sha256": hashlib.sha256(payload).hexdigest(), "bytes": len(payload)}
+        entries.append({"kind": key, "slug": slug, "meta": meta, "files": files,
+                        "page": localize(f"/datasets/{key}", lang),
+                        "description": (DATASET_DESCRIPTIONS_RU if docs_lang == "ru" else DATASET_DESCRIPTIONS)[key]})
+    title = label_text("datasets", lang) if kind is None else datasets.DATASETS[kind]["name"]
+    if kind is None:
+        json_ld = [{
+            "@context": "https://schema.org", "@type": "DataCatalog", "name": "AIpediya open data",
+            "url": catalog_url, "publisher": {"@type": "Organization", "name": "AIpediya", "url": absolute("/", "en")},
+            "dataset": [
+                {"@type": "Dataset", "name": entry["meta"]["name"], "url": absolute(f"/datasets/{entry['kind']}", "en"),
+                 "description": DATASET_DESCRIPTIONS[entry["kind"]]}
+                for entry in entries
+            ],
+        }]
+    else:
+        entry = entries[0]
+        meta = entry["meta"]
+        json_ld = [{
+            "@context": "https://schema.org",
+            "@type": "Dataset",
+            "name": meta["name"],
+            "description": DATASET_DESCRIPTIONS[kind],
+            "url": absolute(f"/datasets/{kind}", "en"),
+            "identifier": entry["slug"],
+            "version": meta["dataset_version"],
+            "dateModified": meta["data_as_of"],
+            "creator": {"@type": "Organization", "name": "AIpediya", "url": absolute("/", "en")},
+            "isAccessibleForFree": True,
+            "includedInDataCatalog": {"@type": "DataCatalog", "name": "AIpediya open data", "url": catalog_url},
+            "variableMeasured": [field["name"] for field in meta["fields"]],
+            "distribution": [
+                {"@type": "DataDownload", "encodingFormat": "application/json" if fmt == "json" else "text/csv",
+                 "contentUrl": entry["files"][fmt]["abs"]}
+                for fmt in ("json", "csv")
+            ],
+        }]
+    crumbs = [("AIpediya", "/"), (label_text("datasets", lang), "/datasets/")]
+    if kind is not None:
+        crumbs.append((title, neutral))
+
+    description = (DATASET_DESCRIPTIONS_RU if docs_lang == "ru" else DATASET_DESCRIPTIONS)[kind]
+    seo = page_signals(neutral, lang, title=f"{title} | AIpediya", description=description,
+                       ready_langs=datasets.dataset_page_langs(), json_ld=json_ld, breadcrumbs=crumbs)
+    return render(request, "datasets.html", {
+        "seo": seo, "title": title, "entries": entries, "kind": kind, "docs_lang": docs_lang,
+        "docs_fallback": lang not in datasets.DOCS_LANGS, "license_status": datasets.LICENSE_STATUS,
+        "schema_version": datasets.SCHEMA_VERSION,
+    })
+
+
+@require_safe
+def dataset_download(request, slug, fmt):
+    from . import datasets
+    if not datasets.datasets_enabled():
+        return HttpResponseNotFound()
+    kind = next((key for key, value in datasets.DATASETS.items() if value["slug"] == slug), None)
+    if kind is None or fmt not in ("json", "csv"):
+        return HttpResponseNotFound()
+    payload = datasets.build(kind, fmt)
+    content_type = "application/json; charset=utf-8" if fmt == "json" else "text/csv; charset=utf-8"
+    response = HttpResponse(payload, content_type=content_type)
+    response["ETag"] = '"' + hashlib.sha256(payload).hexdigest() + '"'
+    response["Content-Disposition"] = f'inline; filename="{slug}.{fmt}"'
+    response["X-Content-Type-Options"] = "nosniff"
+    return response
+
+
+@require_safe
+def dataset_manifest(request):
+    from . import datasets
+    if not datasets.datasets_enabled():
+        return HttpResponseNotFound()
+    return JsonResponse(datasets.manifest(), json_dumps_params={"indent": 1})
+
+
+@require_safe
 def health(request):
     ModelVersion.objects.exists()
     path = Path(settings.BASE_DIR) / 'BUILD.json'
@@ -729,49 +950,92 @@ def health(request):
     })
 
 
-@require_GET
+@require_safe
 def release_acceptance(request):
     path = Path(settings.BASE_DIR) / 'public-release' / 'aipedia-acceptance-20260920.zip'
     if not path.is_file(): return HttpResponseNotFound()
     return FileResponse(path.open('rb'), as_attachment=True, filename=path.name, content_type='application/zip')
 
 
-@require_GET
+# Facet, search and fragment parameters are excluded from crawling; locale
+# paths, entity pages and plain ?page=N pagination stay crawlable. Those URLs
+# also answer noindex (listings) or canonicalize to the entity (cards), so a
+# URL discovered before this rule still resolves consistently.
+ROBOTS_BLOCKED_PARAMS = (
+    "q", "sort", "category", "task", "developer", "access", "status", "benchmark", "configuration",
+    "snapshot", "evaluated_only", "price_unit", "price_scope", "price_variant", "price_modality",
+    "price_condition", "platform", "local", "ecosystem", "partial", "model", "tool",
+)
+
+
+def robots_rules():
+    """(Allow|Disallow, pattern) for Production robots.txt, most general first.
+
+    Card URLs with any query (``?tab=``, ``?page=`` of the list behind the
+    panel, filters) are canonical duplicates of the clean card and are not
+    crawled; the tools listing's plain pagination stays allowed (longest-match
+    rule: ``Allow: /tools/?page=`` beats ``Disallow: /tools/*?``).
+    """
+    rules = [("Allow", "/"), ("Disallow", "/admin/"), ("Disallow", "/healthz")]
+    for param in ROBOTS_BLOCKED_PARAMS:
+        rules.append(("Disallow", f"/*?{param}="))
+        rules.append(("Disallow", f"/*&{param}="))
+    for kind in ("models", "tools"):
+        for prefix in ("", "/*"):
+            rules.append(("Disallow", f"{prefix}/{kind}/*?"))
+            # A row link keeps the list page behind the panel (?page=N). Each
+            # card appears on exactly one list page, so this adds at most one
+            # canonicalized duplicate per card and keeps every card reachable.
+            rules.append(("Allow", f"{prefix}/{kind}/*?page="))
+            rules.append(("Disallow", f"{prefix}/{kind}/*?page=*&"))
+    return rules
+
+
+def robots_allows(path_and_query, rules=None):
+    """Longest-match evaluation (Google/Bing/Yandex semantics, ``*`` and ``$``)."""
+    import re as _re
+    best = ("Allow", -1)
+    for kind, pattern in rules or robots_rules():
+        regex = "^" + _re.escape(pattern).replace(r"\*", ".*").replace(r"\$", "$")
+        if _re.match(regex, path_and_query) and len(pattern) >= best[1]:
+            if len(pattern) > best[1] or kind == "Allow":
+                best = (kind, len(pattern))
+    return best[0] == "Allow"
+
+
+@require_safe
 def robots(request):
-    body = "\n".join((
-        "User-agent: *",
-        "Allow: /",
-        "Disallow: /admin/",
-        "Disallow: /healthz",
-        f"Sitemap: {settings.AIPEDIA_PUBLIC_ORIGIN}/sitemap.xml",
-        "",
-    ))
-    return HttpResponse(body, content_type="text/plain; charset=utf-8")
+    if not getattr(settings, "AIPEDIA_INDEXING_ALLOWED", False):
+        # Local / non-production: never indexable.
+        return HttpResponse("User-agent: *\nDisallow: /\n", content_type="text/plain; charset=utf-8")
+    lines = ["User-agent: *"] + [f"{kind}: {path}" for kind, path in robots_rules()]
+    lines += ["", f"Sitemap: {settings.AIPEDIA_PUBLIC_ORIGIN}/sitemap.xml", ""]
+    return HttpResponse("\n".join(lines), content_type="text/plain; charset=utf-8")
 
 
-@require_GET
+@require_safe
 def sitemap(request):
-    rows = ["<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">']
-    for entry in sitemap_entries():
-        lastmod = f"<lastmod>{entry['lastmod'].isoformat()}</lastmod>" if entry["lastmod"] else ""
-        links = "".join(
-            f'<xhtml:link rel="alternate" hreflang="{escape(code)}" href="{escape(url)}"/>'
-            for code, url in entry["alternates"]
-        )
-        links += f'<xhtml:link rel="alternate" hreflang="x-default" href="{escape(entry["x_default"])}"/>'
-        rows.append(f"<url><loc>{escape(entry['loc'])}</loc>{lastmod}{links}</url>")
-    rows.append("</urlset>")
-    return HttpResponse("".join(rows), content_type="application/xml; charset=utf-8")
+    return HttpResponse(render_index(sitemap_urlsets()), content_type="application/xml; charset=utf-8")
 
 
-@require_GET
+@require_safe
+def sitemap_locale(request, code):
+    lang = FROM_URL_CODE.get(code)
+    if lang is None:
+        return HttpResponseNotFound()
+    entries = sitemap_urlsets()[lang]
+    if not entries:
+        return HttpResponseNotFound()
+    return HttpResponse(render_urlset(entries), content_type="application/xml; charset=utf-8")
+
+
+@require_safe
 def ads_txt(request):
     body = settings.AIPEDIA_ADS_TXT.strip() or "# AIpediya: ads.txt is not configured."
     return HttpResponse(body + "\n", content_type="text/plain; charset=utf-8")
 
 
-@require_GET
+@require_safe
 def indexnow_key(request, key):
     configured = settings.AIPEDIA_INDEXNOW_KEY
     if not configured or not secrets.compare_digest(key, configured):
@@ -779,18 +1043,29 @@ def indexnow_key(request, key):
     return HttpResponse(configured + "\n", content_type="text/plain; charset=utf-8")
 
 
-@require_GET
+@require_safe
 def privacy(request):
+    from .context import t
+    from .static_pages import page_blocks, page_label, page_ready
     lang = request.aipedia_lang
-    title = "Конфиденциальность | AIpediya" if lang == "ru" else "Privacy | AIpediya"
+    title = t("privacy", lang)
     description = (
         "Как AIpediya обрабатывает технические данные, согласие и будущую рекламу."
         if lang == "ru"
         else "How AIpediya processes technical data, consent choices, and future advertising."
     )
-    from .static_pages import page_blocks, page_label
+    # Reachable in every locale; indexable only where the page is fully localized.
+    ready = [code for code in SUPPORTED_CODES if code in ("en", "ru") or page_ready("privacy", code)]
     return render(request, "privacy.html", {
-        "seo": _seo(request, title, description),
+        "seo": page_signals("/privacy", lang, title=f"{title} | AIpediya", description=description,
+                            ready_langs=ready),
         "blocks": page_blocks("privacy", lang),
         "contact_label": page_label("privacy_contact", lang),
     })
+
+
+def handler404(request, exception=None):
+    if not hasattr(request, "aipedia_lang"):
+        from .i18n import DEFAULT_LANG
+        request.aipedia_lang = DEFAULT_LANG
+    return _not_found(request)

@@ -63,6 +63,9 @@ class PackAiContextTests(SimpleTestCase):
         self.assertIn("AI_CONTEXT.md", names)
         self.assertIn("sources/AGENTS.md", names)
         self.assertIn("sources/tools/pack_ai_context.py", names)
+        self.assertIn("sources/docs/PRODUCT_HISTORY.md", names)
+        self.assertIn("sources/docs/timeline.json", names)
+        self.assertIn("sources/tools/local/install-history-shortcut.ps1", names)
         self.assertTrue(any(name.endswith("install-shortcuts.ps1") for name in names))
         for name in names:
             self.assertFalse(self.pack.deny(name), name)

@@ -3057,7 +3057,7 @@
   "models": 304,
   "tools": 138
  },
- "release": "release-2026-09-25-local-approved",
+ "release": "release-2026-09-25-gsd-1-0",
  "schema": "aipedia-publication-state/1",
  "tools": {
   "adobe-firefly-9f88c8c9": {

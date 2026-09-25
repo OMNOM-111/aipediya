@@ -1,27 +1,25 @@
 {% extends 'base.html' %}{% load static catalog_tags %}
 {% block body_class %}catalog-page{% if selected_entity %} is-panel-open{% endif %}{% endblock %}
-{% block head %}<link rel="stylesheet" href="{% static 'table-layout.css' %}">{% if page.has_previous %}<link rel="prev" href="{{ request.path }}{% query page=page.previous_page_number %}">{% endif %}{% if page.has_next %}<link rel="next" href="{{ request.path }}{% query page=page.next_page_number %}">{% endif %}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'table-layout.css' %}">{% if page.has_previous %}<link rel="prev" href="{{ request.path }}{% qsuffix page=page.previous_page_number %}">{% endif %}{% if page.has_next %}<link rel="next" href="{{ request.path }}{% qsuffix page=page.next_page_number %}">{% endif %}{% endblock %}
 {% block shell %}
 <div class="workspace">
 <div class="catalog-column">
 {% include 'includes/site_header.html' with catalog_search=True %}
-<main id="main">
-<h1 class="sr-only">AIpediya</h1>
+<main id="main" data-listing-title="{{ listing_title|default:seo.title }}">
+{% if hub %}<header class="hub-header">{% include 'includes/breadcrumbs.html' %}<h1{% if hub_blocks.title.1 %} lang="en"{% endif %}>{{ hub_blocks.title.0 }}</h1><p class="hub-intro"{% if hub_blocks.intro.1 %} lang="en"{% endif %}>{{ hub_blocks.intro.0 }}</p><p class="hub-criterion secondary"{% if hub_blocks.criterion.1 %} lang="en"{% endif %}>{{ hub_blocks.criterion.0 }}</p></header>{% elif selected_entity %}<h2 class="sr-only">{{ seo.h1|default:ui.catalog }}</h2>{% else %}<h1 class="sr-only">{{ seo.h1|default:ui.catalog }}</h1>{% endif %}
 <form method="get" id="catalog-filters" class="sr-submit" action="{{ request.path }}" role="search">
-<input type="hidden" name="lang" value="{{ lang }}">
 <input type="hidden" name="sort" value="{{ sort }}">
-{% if kind %}<input type="hidden" name="kind" value="{{ kind }}">{% endif %}
 <button type="submit" class="sr-only">{{ ui.find }}</button>
 </form>
 <div class="catalog-toolbar">
 <nav class="type-tabs" aria-label="{{ ui.catalog }}">
-<a class="type-tab{% if kind == 'model' %} is-active{% endif %}" href="/?lang={{ lang }}&amp;kind=model" {% if kind == 'model' %}aria-current="page"{% endif %}>{{ ui.models_tab }} <span>{{ counts.models|grouped }}</span></a>
-<a class="type-tab{% if kind == 'tool' %} is-active{% endif %}" href="/?lang={{ lang }}&amp;kind=tool" {% if kind == 'tool' %}aria-current="page"{% endif %}>{{ ui.tools_tab }} <span>{{ counts.tools|grouped }}</span></a>
+<a class="type-tab{% if kind == 'model' %} is-active{% endif %}" href="{{ nav.models }}" {% if kind == 'model' and not hub %}aria-current="page"{% endif %}>{{ ui.models_tab }} <span>{{ counts.models|grouped }}</span></a>
+<a class="type-tab{% if kind == 'tool' %} is-active{% endif %}" href="{{ nav.tools }}" {% if kind == 'tool' and not hub %}aria-current="page"{% endif %}>{{ ui.tools_tab }} <span>{{ counts.tools|grouped }}</span></a>
 </nav>
 <div class="toolbar-end"><p class="catalog-counts"><span id="result-count">{{ found_count|grouped }}</span> {{ ui.results }}</p></div>
 </div>
 {% if filter_chips %}
-<ul class="filter-chips" aria-label="{{ ui.active_filters }}">{% for chip in filter_chips %}<li><a class="chip" href="{{ chip.href }}">{{ chip.label }} <span aria-hidden="true">×</span><span class="sr-only">{{ ui.clear_filter }}</span></a></li>{% endfor %}<li><a class="chip chip-reset" href="/?lang={{ lang }}">{{ ui.reset }}</a></li></ul>
+<ul class="filter-chips" aria-label="{{ ui.active_filters }}">{% for chip in filter_chips %}<li><a class="chip" href="{{ chip.href }}">{{ chip.label }} <span aria-hidden="true">×</span><span class="sr-only">{{ ui.clear_filter }}</span></a></li>{% endfor %}<li><a class="chip chip-reset" href="{{ request.path }}">{{ ui.reset }}</a></li></ul>
 {% endif %}
 {% if price_unit or benchmark %}<p class="comparison-basis">{% if price_unit %}{{ ui.price_basis }}: {{ price_unit|unit_label:lang }} · {{ price_modality|label:lang }} · {{ price_scope|label:lang }} · {{ price_variant|label:lang }} · {{ ui.lowest_matching }}. {% if not comparison_count %}{{ ui.no_matching_price }} {% endif %}{% endif %}{% if benchmark %}{{ ui.score_basis }}: {{ benchmark.name }} · {{ configuration|eval_label:lang|default:ui.unspecified_mode }} · {{ snapshot|default:ui.legacy_snapshot }}. {% endif %}</p>{% endif %}
 <div class="catalog-card">
@@ -60,5 +58,5 @@
 <aside id="model-panel" class="model-panel{% if selected_entity %} is-open{% endif %}" {% if not selected_entity %}hidden{% endif %} data-open="{% if selected_entity %}true{% endif %}" aria-label="{{ ui.panel_label }}">{% if selected_entity %}{% include 'panel.html' %}{% endif %}</aside>
 </div>
 {% include 'includes/site_footer.html' %}
-{% if ads.enabled %}<aside class="ad-slot wrap" data-ad-client="{{ ads.client }}" data-ad-slot="{{ ads.slot }}" aria-label="{{ ui.advertising }}"><span>{{ ui.advertising }}</span><ins class="adsbygoogle" data-ad-client="{{ ads.client }}" data-ad-slot="{{ ads.slot }}" data-ad-format="auto" data-full-width-responsive="true"></ins></aside><aside class="consent wrap" id="ad-consent" aria-live="polite"><span>{{ ui.consent_text }}</span><a href="{% url 'privacy' %}?lang={{ lang }}">{{ ui.privacy }}</a><button type="button" data-consent="deny">{{ ui.consent_decline }}</button><button type="button" data-consent="grant">{{ ui.consent_accept }}</button></aside>{% endif %}
+{% if ads.enabled %}<aside class="ad-slot wrap" data-ad-client="{{ ads.client }}" data-ad-slot="{{ ads.slot }}" aria-label="{{ ui.advertising }}"><span>{{ ui.advertising }}</span><ins class="adsbygoogle" data-ad-client="{{ ads.client }}" data-ad-slot="{{ ads.slot }}" data-ad-format="auto" data-full-width-responsive="true"></ins></aside><aside class="consent wrap" id="ad-consent" aria-live="polite"><span>{{ ui.consent_text }}</span><a href="{{ nav.privacy }}">{{ ui.privacy }}</a><button type="button" data-consent="deny">{{ ui.consent_decline }}</button><button type="button" data-consent="grant">{{ ui.consent_accept }}</button></aside>{% endif %}
 {% endblock %}

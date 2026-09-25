@@ -25,6 +25,8 @@ SOURCE_FILES = [
     "AGENTS.md",
     "README.md",
     "docs/EXECUTION_STATE.md",
+    "docs/PRODUCT_HISTORY.md",
+    "docs/timeline.json",
     "docs/DECISIONS.md",
     "docs/PROJECT_MAP.md",
     "docs/RELEASE.md",
@@ -36,6 +38,7 @@ SOURCE_FILES = [
     "AI_CONTEXT/README.md",
     "tools/pack_ai_context.py",
     "tools/local/install-shortcuts.ps1",
+    "tools/local/install-history-shortcut.ps1",
     "catalog/tests/test_pack_ai_context.py",
 ]
 DENIED_PARTS = {".venv", "__pycache__", "data/local", "node_modules"}
@@ -179,10 +182,10 @@ def collect_git() -> dict:
         bits = counts.split()
         if len(bits) == 2:
             behind, ahead = bits[0], bits[1]
-    porcelain = git("status", "--porcelain=v1", "-uall")
-    staged = name_status(git("diff", "--cached", "--name-only"))
-    unstaged = name_status(git("diff", "--name-only"))
-    untracked = [posix(p) for p in git("ls-files", "--others", "--exclude-standard").splitlines() if p]
+    porcelain = git("-c", "core.quotePath=false", "status", "--porcelain=v1", "-uall")
+    staged = name_status(git("-c", "core.quotePath=false", "diff", "--cached", "--name-only"))
+    unstaged = name_status(git("-c", "core.quotePath=false", "diff", "--name-only"))
+    untracked = [posix(p) for p in git("-c", "core.quotePath=false", "ls-files", "--others", "--exclude-standard").splitlines() if p]
     dirty = bool(porcelain.strip())
     log = git("log", "-5", "--format=%h %ci %s")
     diff_stat = git("diff", "--stat")

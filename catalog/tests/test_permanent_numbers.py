@@ -36,14 +36,14 @@ class PermanentNumberAndDateTests(TestCase):
 
     def test_approximate_date_renders_with_prefix_and_class(self):
         self.model("Aprx", approx=date(2024, 9, 1), precision="month")
-        response = self.client.get("/", {"lang": "en"})
+        response = self.client.get("/", {"lang": "en"}, follow=True)
         html = response.content.decode()
         self.assertIn("release-date approx", html)
         self.assertIn("\u2248 Sep 2024", html)
 
     def test_approximate_day_precision_shows_full_date(self):
         self.model("Aprx", approx=date(2024, 9, 21), precision="day")
-        response = self.client.get("/", {"lang": "en"})
+        response = self.client.get("/", {"lang": "en"}, follow=True)
         self.assertIn("\u2248 Sep 21, 2024", response.content.decode())
 
     def test_rows_expose_slug_and_name_link_for_whole_row_click(self):
@@ -63,7 +63,7 @@ class PermanentNumberAndDateTests(TestCase):
             category="coding_agent", purposes=["coding"], released=date(2020, 1, 1),
             source=self.source, checked=date(2026, 1, 1),
         )
-        response = self.client.get("/", {"kind": "tool"})
+        response = self.client.get("/", {"kind": "tool"}, follow=True)
         self.assertEqual(response.context["sort"], "release_desc")
         self.assertEqual(
             [tool.slug for tool in response.context["page"]],

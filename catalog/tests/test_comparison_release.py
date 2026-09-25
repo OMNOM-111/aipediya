@@ -26,9 +26,9 @@ class ComparisonReleaseTests(TestCase):
 
     def all_models(self, **params):
         result = []
-        first = self.client.get('/', params)
+        first = self.client.get('/', params, follow=True)
         for page in range(1, first.context['page'].paginator.num_pages + 1):
-            response = self.client.get('/', {**params, 'page': page})
+            response = self.client.get('/', {**params, 'page': page}, follow=True)
             result.extend(response.context['page'])
         self.assertEqual(len(result), len({m.public_number for m in result}))
         return result
@@ -50,7 +50,7 @@ class ComparisonReleaseTests(TestCase):
 
     def test_price_default_basis_and_no_substitute_prices(self):
         for direction in ('asc', 'desc'):
-            response = self.client.get('/', {'sort': 'price_' + direction, 'lang': 'ru'})
+            response = self.client.get('/', {'sort': 'price_' + direction, 'lang': 'ru'}, follow=True)
             self.assertEqual(response.context['price_unit'], 'input')
             models = self.all_models(sort='price_' + direction)
             known = [m.comparison_offer.amount for m in models if m.comparison_offer]

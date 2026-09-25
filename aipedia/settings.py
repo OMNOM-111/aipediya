@@ -107,6 +107,17 @@ if os.environ.get("AIPEDIA_TRUST_PROXY") == "1":
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 CSRF_TRUSTED_ORIGINS = [x for x in os.environ.get("AIPEDIA_TRUSTED_ORIGINS", "").split(",") if x]
 AIPEDIA_PUBLIC_ORIGIN = os.environ.get("AIPEDIA_PUBLIC_ORIGIN", "https://aipediya.com").rstrip("/")
+# Only Production may be indexed. Local always answers robots "Disallow: /" and
+# X-Robots-Tag noindex; production-mode SEO output is verified in isolated tests
+# with override_settings, never by switching this on for Local.
+AIPEDIA_INDEXING_ALLOWED = AIPEDIA_ENV == "production"
+# Public dataset downloads stay off until the owner decides the data license
+# (GSD-07 publication blocker). Local QA may enable them via the environment.
+AIPEDIA_DATASETS_PUBLIC = os.environ.get("AIPEDIA_DATASETS_PUBLIC", "1" if AIPEDIA_ENV == "local" else "0") == "1"
+# IndexNow: submissions happen only from the outbox dispatcher, only when this
+# is explicitly enabled in Production. Local never sends.
+AIPEDIA_INDEXNOW_ENABLED = AIPEDIA_ENV == "production" and os.environ.get("AIPEDIA_INDEXNOW_ENABLED", "0") == "1"
+AIPEDIA_INDEXNOW_ENDPOINT = os.environ.get("AIPEDIA_INDEXNOW_ENDPOINT", "https://api.indexnow.org/indexnow")
 GOOGLE_SITE_VERIFICATION = os.environ.get("GOOGLE_SITE_VERIFICATION", "")
 BING_SITE_VERIFICATION = os.environ.get("BING_SITE_VERIFICATION", "")
 YANDEX_SITE_VERIFICATION = os.environ.get("YANDEX_SITE_VERIFICATION", "")

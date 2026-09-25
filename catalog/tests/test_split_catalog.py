@@ -65,7 +65,7 @@ class SplitCatalogTests(TestCase):
         renumber_tools_chronologically()
 
     def test_tabs_are_two_independent_catalogs_with_data_counts(self):
-        response = self.client.get("/", {"lang": "ru"})
+        response = self.client.get("/", {"lang": "ru"}, follow=True)
         self.assertEqual(response.context["entity_kind"], "model")
         self.assertContains(response, "Модели <span>2</span>", html=True)
         self.assertContains(response, "Инструменты <span>1</span>", html=True)
@@ -73,7 +73,7 @@ class SplitCatalogTests(TestCase):
         self.assertContains(response, "Независимые проверки")
         self.assertContains(response, "Рейтинг AIpediya")
         self.assertContains(response, "Контекст")
-        tools = self.client.get("/", {"kind": "tool", "lang": "ru"})
+        tools = self.client.get("/", {"kind": "tool", "lang": "ru"}, follow=True)
         self.assertEqual(tools.context["entity_kind"], "tool")
         self.assertContains(tools, "Модели / экосистема")
         self.assertContains(tools, "Платформы / доступ")
@@ -95,15 +95,15 @@ class SplitCatalogTests(TestCase):
     def test_catalog_tabs_clear_foreign_filters_and_card_routes(self):
         model = self.client.get(
             "/models/older-model",
-            {"status": "retired", "access": "api", "benchmark": "99", "lang": "ru"},
+            {"status": "retired", "access": "api", "benchmark": "99", "lang": "ru"}, follow=True,
         )
-        self.assertContains(model, 'href="/?lang=ru&amp;kind=tool"')
+        self.assertContains(model, 'href="/ru/tools/"')
         self.assertNotContains(model, 'kind=tool&amp;status=retired')
         tool = self.client.get(
             "/tools/fixture-tool",
-            {"platform": "cli", "local": "hybrid", "ecosystem": "Test", "lang": "ru"},
+            {"platform": "cli", "local": "hybrid", "ecosystem": "Test", "lang": "ru"}, follow=True,
         )
-        self.assertContains(tool, 'href="/?lang=ru&amp;kind=model"')
+        self.assertContains(tool, 'href="/ru/"')
         self.assertNotContains(tool, 'kind=model&amp;platform=cli')
 
     def test_chronology_is_independent_and_filter_does_not_renumber(self):
@@ -114,22 +114,22 @@ class SplitCatalogTests(TestCase):
         self.assertEqual((self.older_model.public_number, self.newer_model.public_number), (1, 2))
         self.assertIsNone(self.legacy_tool.public_number)
         self.assertEqual(self.tool.public_number, 1)
-        response = self.client.get("/", {"kind": "tool", "developer": self.tool_org.pk})
+        response = self.client.get("/", {"kind": "tool", "developer": self.tool_org.pk}, follow=True)
         listed = list(response.context["page"])
         self.assertEqual([(item.name, item.public_number) for item in listed], [("Fixture Tool", 1)])
 
     def test_country_flag_is_local_accessible_and_unknown_is_blank(self):
-        response = self.client.get("/", {"kind": "model", "status": "all", "lang": "ru"})
+        response = self.client.get("/", {"kind": "model", "status": "all", "lang": "ru"}, follow=True)
         html = response.content.decode()
         self.assertIn("flags.svg", html)
         self.assertIn("flag-US", html)
         self.assertIn('aria-label="США"', html)
         newer_row = html.split('data-slug="newer-model"', 1)[1].split("</tr>", 1)[0]
         self.assertNotIn("country-flag", newer_row)
-        panel = self.client.get("/models/older-model", {"lang": "ru"})
+        panel = self.client.get("/models/older-model", {"lang": "ru"}, follow=True)
         self.assertContains(panel, "Страна происхождения")
         self.assertContains(panel, "США")
-        tools = self.client.get("/", {"kind": "tool"})
+        tools = self.client.get("/", {"kind": "tool"}, follow=True)
         self.assertContains(tools, "flag-US")
         self.assertContains(tools, "flag-GB")
 
@@ -142,7 +142,7 @@ class SplitCatalogTests(TestCase):
         self.assertEqual([], sorted(code for code in expected if f'id="flag-{code}"' not in sprite))
 
     def test_tool_panel_has_only_tool_specific_content_and_closes_by_contract(self):
-        response = self.client.get("/tools/fixture-tool", {"lang": "en"})
+        response = self.client.get("/tools/fixture-tool", {"lang": "en"}, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'data-kind="tool"')
         self.assertContains(response, "Supported models / ecosystem")
@@ -152,17 +152,17 @@ class SplitCatalogTests(TestCase):
         self.assertNotContains(response, "AIpediya rating")
         self.assertNotContains(response, 'data-tab="checks"')
         partial = self.client.get(
-            "/tools/fixture-tool", {"lang": "en", "partial": "panel"}
+            "/tools/fixture-tool", {"lang": "en", "partial": "panel"}, follow=True
         )
         self.assertEqual(partial["X-Aipedia-Kind"], "tool")
         self.assertEqual(partial["X-Aipedia-Slug"], "fixture-tool")
 
     def test_search_and_tool_filters_are_type_specific(self):
-        model_search = self.client.get("/", {"kind": "model", "q": "Fixture Tool"})
+        model_search = self.client.get("/", {"kind": "model", "q": "Fixture Tool"}, follow=True)
         self.assertEqual(list(model_search.context["page"]), [])
-        tool_search = self.client.get("/", {"kind": "tool", "q": "Fixture Tool"})
+        tool_search = self.client.get("/", {"kind": "tool", "q": "Fixture Tool"}, follow=True)
         self.assertEqual([item.slug for item in tool_search.context["page"]], ["fixture-tool"])
         filtered = self.client.get(
-            "/", {"kind": "tool", "category": "coding_agent", "platform": "cli", "local": "hybrid"}
+            "/", {"kind": "tool", "category": "coding_agent", "platform": "cli", "local": "hybrid"}, follow=True
         )
         self.assertEqual([item.slug for item in filtered.context["page"]], ["fixture-tool"])

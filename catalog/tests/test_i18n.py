@@ -63,49 +63,49 @@ class NegotiationTests(TestCase):
     def setUpTestData(cls):
         call_command("seed_catalog", verbosity=0)
 
-    def test_url_param_selects_language(self):
-        response = self.client.get("/", {"lang": "fr"})
+    # ADR D-2026-09-25-locale-paths: the address alone decides the language.
+    # Cookies, Accept-Language and country headers never change an explicit
+    # URL; old ?lang= links answer one permanent redirect.
+
+    def test_locale_path_selects_language(self):
+        response = self.client.get("/fr/")
         self.assertEqual(response.context["lang"], "fr")
         self.assertContains(response, 'lang="fr"')
         self.assertContains(response, "Modèles")
+
+    def test_legacy_lang_param_redirects_permanently_once(self):
+        response = self.client.get("/", {"lang": "fr"})
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response["Location"], "/fr/")
+        final = self.client.get("/", {"lang": "fr"}, follow=True)
+        self.assertEqual(len(final.redirect_chain), 1)
+        self.assertEqual(final.context["lang"], "fr")
 
     def test_no_signal_defaults_to_english(self):
         response = self.client.get("/")
         self.assertEqual(response.context["lang"], "en")
         self.assertContains(response, 'lang="en"')
 
-    def test_accept_language_used_without_param_or_cookie(self):
-        response = self.client.get("/", HTTP_ACCEPT_LANGUAGE="es-ES,es;q=0.9,en;q=0.5")
-        self.assertEqual(response.context["lang"], "es")
-
-    def test_saved_cookie_outranks_accept_language(self):
+    def test_accept_language_cookie_and_country_never_change_explicit_url(self):
         self.client.cookies["aipedia_lang"] = "de"
-        response = self.client.get("/", HTTP_ACCEPT_LANGUAGE="es")
-        self.assertEqual(response.context["lang"], "de")
+        for path, lang in (("/", "en"), ("/ru/", "ru"), ("/ja/", "ja")):
+            response = self.client.get(path, HTTP_ACCEPT_LANGUAGE="es", HTTP_CF_IPCOUNTRY="BR")
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.context["lang"], lang)
+            self.assertNotIn("Cookie", response.get("Vary", ""))
+            self.assertNotIn("Accept-Language", response.get("Vary", ""))
 
-    def test_url_param_outranks_cookie(self):
-        self.client.cookies["aipedia_lang"] = "de"
-        response = self.client.get("/", {"lang": "ru"})
-        self.assertEqual(response.context["lang"], "ru")
-
-    def test_explicit_choice_is_remembered_in_cookie(self):
-        response = self.client.get("/", {"lang": "ja"})
-        self.assertEqual(response.cookies["aipedia_lang"].value, "ja")
+    def test_server_never_sets_a_language_cookie(self):
+        response = self.client.get("/ja/")
+        self.assertNotIn("aipedia_lang", response.cookies)
 
     def test_unsupported_param_falls_back_to_english(self):
-        response = self.client.get("/", {"lang": "zz"})
+        response = self.client.get("/", {"lang": "zz"}, follow=True)
         self.assertEqual(response.context["lang"], "en")
 
-    def test_country_hint_used_only_as_last_resort(self):
-        response = self.client.get("/", HTTP_CF_IPCOUNTRY="BR")
-        self.assertEqual(response.context["lang"], "pt-BR")
-        # A stronger Accept-Language signal wins over the country hint.
-        response = self.client.get("/", HTTP_CF_IPCOUNTRY="BR", HTTP_ACCEPT_LANGUAGE="ja")
-        self.assertEqual(response.context["lang"], "ja")
-
     def test_russian_and_english_not_regressed(self):
-        self.assertContains(self.client.get("/", {"lang": "ru"}), "Модели")
-        self.assertContains(self.client.get("/", {"lang": "en"}), "Models")
+        self.assertContains(self.client.get("/ru/"), "Модели")
+        self.assertContains(self.client.get("/"), "Models")
 
 
 class DirectionAndSeoTests(TestCase):
@@ -115,42 +115,47 @@ class DirectionAndSeoTests(TestCase):
 
     def test_rtl_languages_set_dir_attribute(self):
         for code in ("ar", "fa"):
-            response = self.client.get("/", {"lang": code})
+            response = self.client.get("/", {"lang": code}, follow=True)
             self.assertEqual(response.context["dir"], "rtl")
             self.assertContains(response, 'dir="rtl"')
-        self.assertContains(self.client.get("/", {"lang": "en"}), 'dir="ltr"')
+        self.assertContains(self.client.get("/", {"lang": "en"}, follow=True), 'dir="ltr"')
 
     def test_canonical_and_hreflang_alternates(self):
-        response = self.client.get("/", {"lang": "fr"})
-        self.assertContains(response, 'rel="canonical" href="https://aipediya.com/?lang=fr"')
-        self.assertContains(response, 'hreflang="x-default" href="https://aipediya.com/?lang=en"')
-        for code in SUPPORTED_CODES:
-            self.assertContains(
-                response, f'hreflang="{code}" href="https://aipediya.com/?lang={code}"'
-            )
+        from catalog.readiness import ready_locales
+        model = ModelVersion.objects.filter(published=True, entry_type="model").first()
+        ready = ready_locales(model)
+        self.assertIn("en", ready)
+        with self.settings(AIPEDIA_INDEXING_ALLOWED=True):
+            response = self.client.get("/models/" + model.slug)
+        self.assertContains(response, f'rel="canonical" href="https://aipediya.com/models/{model.slug}"')
+        self.assertContains(response, f'hreflang="x-default" href="https://aipediya.com/models/{model.slug}"')
+        for code in ready:
+            prefix = "" if code == "en" else "/" + code.lower()
+            self.assertContains(response, f'hreflang="{code}" href="https://aipediya.com{prefix}/models/{model.slug}"')
 
     def test_switcher_lists_every_language(self):
-        response = self.client.get("/", {"lang": "en"})
+        response = self.client.get("/")
         for code in SUPPORTED_CODES:
-            self.assertContains(response, f'?lang={code}"')
+            prefix = "/" if code == "en" else f"/{code.lower()}/"
+            self.assertContains(response, f'href="{prefix}" hreflang="{code}"')
 
     def test_switching_language_keeps_the_card(self):
         model = ModelVersion.objects.filter(published=True).first()
-        response = self.client.get("/models/" + model.slug, {"lang": "en"})
-        self.assertContains(
-            response, f'hreflang="ar" href="https://aipediya.com/models/{model.slug}?lang=ar"'
-        )
+        response = self.client.get("/models/" + model.slug)
+        self.assertContains(response, f'href="/ar/models/{model.slug}" hreflang="ar"')
 
     def test_missing_dynamic_translation_falls_back_to_english(self):
         model = ModelVersion.objects.filter(published=True).first()
         model.description = {"en": "English only snapshot text"}
         model.save()
-        response = self.client.get("/models/" + model.slug, {"lang": "de"})
+        response = self.client.get("/models/" + model.slug, {"lang": "de"}, follow=True)
         self.assertContains(response, "English only snapshot text")
 
     def test_sitemap_lists_localized_alternates(self):
-        response = self.client.get("/sitemap.xml")
-        body = response.content.decode()
+        index = self.client.get("/sitemap.xml").content.decode()
+        self.assertIn("<sitemapindex", index)
+        self.assertIn("https://aipediya.com/sitemaps/en.xml", index)
+        body = self.client.get("/sitemaps/en.xml").content.decode()
         self.assertIn("xmlns:xhtml", body)
         self.assertIn('hreflang="x-default"', body)
         self.assertIn('hreflang="ar"', body)

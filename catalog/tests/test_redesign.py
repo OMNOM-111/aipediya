@@ -17,7 +17,7 @@ class RedesignCatalogTests(TestCase):
         renumber_chronologically()
 
     def test_catalog_has_new_columns_and_empty_aipedia_rating(self):
-        response = self.client.get("/", {"lang": "ru"})
+        response = self.client.get("/", {"lang": "ru"}, follow=True)
         self.assertContains(response, "Модель")
         self.assertContains(response, "Тип")
         self.assertContains(response, "Разработчик")
@@ -31,24 +31,24 @@ class RedesignCatalogTests(TestCase):
         self.assertContains(response, "Инструменты")
 
     def test_visible_brand_matches_public_domain_spelling(self):
-        response = self.client.get("/", {"lang": "en"})
+        response = self.client.get("/", {"lang": "en"}, follow=True)
         self.assertContains(response, 'aria-label="AIpediya"')
         self.assertContains(response, '<span class="brand-ai">AI</span><span>pediya</span>', html=True)
         self.assertContains(response, "AIpediya</span><span class=\"footer-end\"")
         self.assertContains(response, "AIpediya rating")
-        self.assertContains(response, "AIpediya - AI model catalog")
+        self.assertContains(response, "AI model catalog: prices, access and independent evaluations | AIpediya")
 
     def test_kind_tabs_use_existing_entry_types(self):
         all_slugs = [model.slug for model in self.client.get("/").context["page"]]
-        models = [model.slug for model in self.client.get("/", {"kind": "model"}).context["page"]]
-        tools = [model.slug for model in self.client.get("/", {"kind": "tool"}).context["page"]]
+        models = [model.slug for model in self.client.get("/", {"kind": "model"}, follow=True).context["page"]]
+        tools = [model.slug for model in self.client.get("/", {"kind": "tool"}, follow=True).context["page"]]
         self.assertTrue(all_slugs)
         self.assertTrue(set(models).issubset(set(all_slugs)))
         self.assertTrue(set(tools).issubset(set(all_slugs)))
         self.assertFalse(set(models) & set(tools))
-        for model in self.client.get("/", {"kind": "model"}).context["page"]:
+        for model in self.client.get("/", {"kind": "model"}, follow=True).context["page"]:
             self.assertEqual(model.entry_type, "model")
-        for model in self.client.get("/", {"kind": "tool"}).context["page"]:
+        for model in self.client.get("/", {"kind": "tool"}, follow=True).context["page"]:
             self.assertNotEqual(model.entry_type, "model")
 
     def test_release_date_uses_localized_day_month_year(self):
@@ -58,12 +58,12 @@ class RedesignCatalogTests(TestCase):
         self.assertEqual(month_year(released, "ru"), "29 Июн 2021")
         self.assertEqual(month_year(released, "en"), "Jun 29, 2021")
         ModelVersion.objects.filter(slug="qwen3-8b").update(released=released)
-        self.assertContains(self.client.get("/?lang=ru"), "29 Июн 2021")
-        self.assertContains(self.client.get("/?lang=en"), "Jun 29, 2021")
+        self.assertContains(self.client.get("/?lang=ru", follow=True), "29 Июн 2021")
+        self.assertContains(self.client.get("/?lang=en", follow=True), "Jun 29, 2021")
 
     def test_old_card_url_opens_panel_and_keeps_catalog(self):
         model = ModelVersion.objects.get(slug="qwen3-8b")
-        response = self.client.get("/models/" + model.slug, {"lang": "ru"})
+        response = self.client.get("/models/" + model.slug, {"lang": "ru"}, follow=True)
         self.assertContains(response, model.version)
         self.assertContains(response, "Платформа и оценка")
         self.assertContains(response, f"#{model.public_number}")
@@ -123,7 +123,7 @@ class RedesignCatalogTests(TestCase):
         evaluation.result_kind = "developer"
         evaluation.independent = False
         evaluation.save(update_fields=["result_kind", "independent"])
-        response = self.client.get("/models/" + evaluation.model.slug, {"lang": "ru"})
+        response = self.client.get("/models/" + evaluation.model.slug, {"lang": "ru"}, follow=True)
         self.assertContains(response, "Данные разработчика")
         table = self.client.get("/")
         listed = next(item for item in table.context["page"] if item.slug == evaluation.model.slug)
@@ -140,11 +140,11 @@ class RedesignCatalogTests(TestCase):
 
     def test_language_links_on_detail_keep_the_open_entity(self):
         model = ModelVersion.objects.get(slug="qwen3-8b")
-        response = self.client.get("/models/" + model.slug, {"lang": "en"})
-        # Switcher links must stay relative to the current path so changing the
-        # language keeps the same model open instead of returning to the list.
-        self.assertContains(response, 'href="?lang=ar"')
-        self.assertNotContains(response, 'href="/?lang=ar"')
+        response = self.client.get("/models/" + model.slug, {"lang": "en"}, follow=True)
+        # Switcher links point at the same card in the other locale so changing
+        # the language keeps the same model open instead of returning to the list.
+        self.assertContains(response, f'href="/ar/models/{model.slug}"')
+        self.assertNotContains(response, 'href="/ar/" hreflang="ar"')
 
 
 class PanelInteractionAssetTests(SimpleTestCase):

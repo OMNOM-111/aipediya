@@ -1,11 +1,6 @@
-from urllib.parse import urlencode
-
 from django.conf import settings
 
-from .i18n import (
-    DEFAULT_LANG, LANGUAGE_NAMES, direction, language_options, resolve_language,
-)
-from .seo import alternate_links, public_url
+from .i18n import DEFAULT_LANG, LANGUAGE_NAMES, direction, language_options
 from .ui_translations import CATEGORY_TRANSLATIONS, TRANSLATIONS
 
 
@@ -237,38 +232,37 @@ def category_label(code, labels, lang):
     return labels.get(lang) or labels.get("en") or labels.get("ru") or code
 
 
-def _default_seo(lang):
-    if lang == "ru":
-        return (
-            "AIpediya - каталог нейросетей",
-            "Проверенный каталог нейросетей: назначение, доступ, цены и независимые оценки.",
-        )
-    return (
-        "AIpediya - AI model catalog",
-        "Verified AI model catalog: capabilities, access methods, prices, and independent evaluations.",
-    )
-
-
 def site_context(request):
-    lang = getattr(request, "aipedia_lang", None) or resolve_language(request)[0]
+    from .locale_urls import absolute, localize, switch_url
+    from .seo import json_ld_script
+
+    lang = getattr(request, "aipedia_lang", None) or DEFAULT_LANG
     ui = {key: t(key, lang) for key in TEXT}
-    page_raw = request.GET.get("page", "")
-    page = int(page_raw) if page_raw.isdigit() else None
-    indexable_page = page if page and page > 1 else None
-    duplicate_page = bool(page_raw) and indexable_page is None
-    noindex = duplicate_page or any(key not in {"lang", "page"} for key in request.GET)
     ads_enabled = bool(
         settings.AIPEDIA_ADS_ENABLED
         and settings.AIPEDIA_ADS_CLIENT
         and settings.AIPEDIA_ADS_SLOT
     )
-    alternates, x_default = alternate_links(request.path, page=indexable_page)
-    title, description = _default_seo(lang)
+    from .static_pages import label_text
     return {
         "lang": lang,
         "dir": direction(lang),
         "lang_native": LANGUAGE_NAMES.get(lang, lang),
         "language_options": language_options(),
+        "language_links": [(code, native, switch_url(request, code)) for code, native in language_options()],
+        "nav": {
+            "home": localize("/", lang),
+            "models": localize("/", lang),
+            "tools": localize("/tools/", lang),
+            "methodology": localize("/methodology", lang),
+            "privacy": localize("/privacy", lang),
+            "history": localize("/history/", lang),
+            "collections": localize("/collections/", lang),
+            "datasets": localize("/datasets/", lang),
+            "collections_label": label_text("collections", lang),
+            "datasets_label": label_text("datasets", lang),
+            "datasets_enabled": bool(getattr(settings, "AIPEDIA_DATASETS_PUBLIC", False)),
+        },
         "ui": ui,
         "js_i18n": {
             "copied": ui["copied"],
@@ -276,14 +270,18 @@ def site_context(request):
             "panelError": ui["panel_error"],
             "retry": ui["retry"],
         },
-        "seo": {
-            "title": title,
-            "description": description,
-            "canonical": public_url(request.path, lang, page=indexable_page),
-            "alternates": alternates,
-            "x_default": x_default,
-            "noindex": noindex,
-        },
+        # Views replace this; the default (e.g. for error pages) is never indexable.
+        "seo": {"title": "AIpediya", "description": "", "noindex": True, "canonical": "",
+                "alternates": [], "x_default": "", "json_ld": [], "og_type": "website",
+                "og_url": absolute("/", lang), "og_locale": lang.replace("-", "_")},
+        "organization_ld": json_ld_script({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "AIpediya",
+            "url": absolute("/", "en"),
+            "logo": f"{settings.AIPEDIA_PUBLIC_ORIGIN}/static/brand-512.png",
+        }),
+        "public_origin": settings.AIPEDIA_PUBLIC_ORIGIN,
         "verification": {
             "google": settings.GOOGLE_SITE_VERIFICATION,
             "bing": settings.BING_SITE_VERIFICATION,
@@ -296,5 +294,5 @@ def site_context(request):
             "privacy_contact": settings.AIPEDIA_PRIVACY_CONTACT,
         },
         "local_nav": settings.AIPEDIA_ENV == "local",
-        "production_home": f"{settings.AIPEDIA_PUBLIC_ORIGIN}/?{urlencode({'lang': lang})}",
+        "production_home": absolute("/", lang),
     }

@@ -1,4 +1,7 @@
-﻿param()
+﻿param(
+    [ValidateSet('/ru/', '/ru/history/')]
+    [string]$OpenPath = '/ru/'
+)
 $ErrorActionPreference = 'Stop'
 try { $Host.UI.RawUI.WindowTitle = 'AIpedia - Local' } catch {}
 
@@ -129,19 +132,19 @@ try {
     $choice = Choose-Port
     $port = [int]$choice.Port
     Set-Content -LiteralPath $PortFile -Value "$port" -Encoding ASCII
-    $url = "http://127.0.0.1:$port/?lang=ru"
+    $url = "http://127.0.0.1:$port$OpenPath"
 
     if ($choice.Existing) {
         Write-Log "Local is already running at $url"
-        Start-Process $url
-        Write-Host "Opened the existing Local catalog. Closing the browser does not stop the server."
+        try { Start-Process $url } catch { Write-Log "Local is ready; open manually: $url" }
+        Write-Host "Existing Local is ready. Closing the browser does not stop the server."
         Write-Host "Stop Local: $Root\tools\local\stop-local.ps1"
         exit 0
     }
 
     Write-Log "Starting Local Waitress on 127.0.0.1:$port"
     $serve = Join-Path $Root 'tools\serve.py'
-    $proc = Start-Process -FilePath $Python -ArgumentList @($serve, '--port', "$port") -WorkingDirectory $Root -NoNewWindow -PassThru
+    $proc = Start-Process -FilePath $Python -ArgumentList @($serve, '--port', "$port") -WorkingDirectory $Root -WindowStyle Hidden -PassThru
     $ready = $false
     for ($i = 0; $i -lt 45; $i++) {
         if ($proc.HasExited) { throw "Local server exited with code $($proc.ExitCode)" }
@@ -149,7 +152,7 @@ try {
         Start-Sleep -Seconds 1
     }
     if (-not $ready) { throw "Local did not become ready on $url" }
-    Start-Process $url
+    try { Start-Process $url } catch { Write-Log "Local is ready; open manually: $url" }
     Write-Host ""
     Write-Host "AIpedia Local is ready: $url"
     Write-Host "Database: $DbFile"

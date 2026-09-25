@@ -45,7 +45,7 @@ class AutoTranslateHookTests(_SeededCatalog):
             ContentTranslation.objects.filter(object_id=model.pk, language="fr", field="description").exists()
         )
         # rendered in the target locale via a normal page view
-        html = self.client.get("/models/" + model.slug, {"lang": "fr", "partial": "panel"}).content.decode()
+        html = self.client.get("/models/" + model.slug, {"lang": "fr", "partial": "panel"}, follow=True).content.decode()
         self.assertIn("[fr] Automatically localized capability.", html)
 
     def test_disabled_by_default_does_not_translate(self):
@@ -81,10 +81,10 @@ class PageViewsNeverTranslateTests(_SeededCatalog):
         # translations only; no GET path may reach the provider.
         with override_settings(AIPEDIA_AUTO_TRANSLATE=True):
             with mock.patch.object(providers, "get_provider", spy):
-                self.assertEqual(self.client.get("/", {"lang": "fr"}).status_code, 200)
-                self.assertEqual(self.client.get("/", {"lang": "ar"}).status_code, 200)
-                self.client.get("/models/" + model.slug, {"lang": "ja", "partial": "panel"})
-                self.client.get("/models/" + model.slug, {"lang": "uk"})
+                self.assertEqual(self.client.get("/", {"lang": "fr"}, follow=True).status_code, 200)
+                self.assertEqual(self.client.get("/", {"lang": "ar"}, follow=True).status_code, 200)
+                self.client.get("/models/" + model.slug, {"lang": "ja", "partial": "panel"}, follow=True)
+                self.client.get("/models/" + model.slug, {"lang": "uk"}, follow=True)
         self.assertEqual(calls, [])
 
 

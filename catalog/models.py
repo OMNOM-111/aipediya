@@ -481,3 +481,46 @@ class ContentTranslation(models.Model):
 
     def __str__(self):
         return f"{self.entity_type}:{self.object_id}:{self.field}:{self.language} ({self.state})"
+
+
+class DiscoveryEvent(models.Model):
+    """Outbox of public-URL changes for search-engine notification (IndexNow).
+
+    Written by model signals when a public record is created, significantly
+    updated, unpublished/removed, or when one locale's translation changes.
+    Reading a page never writes here. ``indexnow_dispatch`` sends pending rows
+    only in Production with IndexNow explicitly enabled, after checking that
+    the Production state is live; Local only records and dry-runs.
+    """
+
+    UPSERT = "upsert"
+    REMOVE = "remove"
+    STATES = [("pending", "Pending"), ("sent", "Sent"), ("failed", "Failed"), ("skipped", "Skipped")]
+
+    url = models.URLField(max_length=600)
+    lang = models.CharField(max_length=12, blank=True)
+    entity_kind = models.CharField(max_length=12, blank=True)
+    record_id = models.CharField(max_length=120, blank=True)
+    action = models.CharField(max_length=10, choices=[(UPSERT, "Created or updated"), (REMOVE, "Removed")])
+    reason = models.CharField(max_length=40)
+    state = models.CharField(max_length=10, choices=STATES, default="pending")
+    attempts = models.PositiveSmallIntegerField(default=0)
+    next_attempt = models.DateTimeField(null=True, blank=True)
+    last_status = models.PositiveSmallIntegerField(null=True, blank=True)
+    last_error = models.CharField(max_length=300, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    sent_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["created", "pk"]
+        indexes = [models.Index(fields=["state", "next_attempt"])]
+        constraints = [
+            # Dedup: at most one pending notification per URL; a newer change
+            # updates the pending row instead of adding another.
+            models.UniqueConstraint(fields=["url"], condition=models.Q(state="pending"),
+                                    name="one_pending_event_per_url"),
+        ]
+
+    def __str__(self):
+        return f"{self.action} {self.url} ({self.state})"

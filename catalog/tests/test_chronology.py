@@ -53,7 +53,7 @@ class ChronologyTests(TestCase):
         self.assertIsNotNone(undated.public_number)
         number_before = undated.public_number
         for direction, expected in [('desc', ['alpha', 'zulu', 'undated']), ('asc', ['zulu', 'alpha', 'undated'])]:
-            response = self.client.get('/', {'sort': 'release_' + direction, 'lang': 'ru'})
+            response = self.client.get('/', {'sort': 'release_' + direction, 'lang': 'ru'}, follow=True)
             self.assertEqual([m.slug for m in response.context['page']], expected)
             self.assertContains(response, 'Дата выпуска не подтверждена')
         # An approximate date sorts the entry by that date but keeps its number.
@@ -62,7 +62,7 @@ class ChronologyTests(TestCase):
         undated.save(update_fields=['approx_released', 'approx_precision'])
         undated.refresh_from_db()
         self.assertEqual(undated.public_number, number_before)
-        response = self.client.get('/', {'sort': 'release_asc', 'lang': 'ru'})
+        response = self.client.get('/', {'sort': 'release_asc', 'lang': 'ru'}, follow=True)
         self.assertEqual([m.slug for m in response.context['page']], ['undated', 'zulu', 'alpha'])
 
     def test_manifest_dry_run_idempotency_coverage_and_rollback(self):

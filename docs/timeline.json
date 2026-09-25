@@ -1,0 +1,761 @@
+{
+  "schema": "aipediya-timeline/1",
+  "note": "Compact release/version timeline. Human status lives in docs/EXECUTION_STATE.md, decisions in docs/DECISIONS.md, search contract in docs/SEARCH_DISCOVERY.md. Evidence files live in artifacts/global-search-discovery/GSD-1.0/ (git-ignored, Local only). Progress numbers are computed by tools/gsd_progress.py from the criteria below; do not hand-edit percentages.",
+  "entries": [
+    {
+      "release_id": "release-2026-09-20-chronology",
+      "title": "Chronology release",
+      "environment": "production",
+      "stage": "released",
+      "revision": null,
+      "history": "docs/history/2026-09-20-chronology-release.md"
+    },
+    {
+      "release_id": "release-2026-09-22-global-catalog",
+      "title": "Global catalog release",
+      "environment": "production",
+      "stage": "released",
+      "revision": null,
+      "history": "docs/history/2026-09-22-global-catalog-release.md"
+    },
+    {
+      "release_id": "release-2026-09-25-local-approved",
+      "title": "Approved Local catalog state (304 Models / 138 Tools)",
+      "environment": "production",
+      "stage": "released",
+      "revision": "ed103a3ff1637d24ad104e843a44f80a2c82ba78",
+      "history": "docs/history/2026-09-25-local-approved-release.md"
+    },
+    {
+      "release_id": "GSD-1.0",
+      "title": "Глобальная поисковая доступность",
+      "title_en": "Global Search & Discovery",
+      "summary": "Подготовка AIpediya к обнаружению моделей, инструментов и полезных подборок в международных поисковых системах и AI-поиске на 22 языках.",
+      "app_version": "unreleased Local candidate on top of release-2026-09-25-local-approved (the project versions releases by tag release-YYYY-MM-DD-<name>; no separate semantic app version exists)",
+      "environment": "local",
+      "stage": "local-qa",
+      "base_revision": "791e4ac5bf7469de243464c640c4af05b7304b26",
+      "base_production_revision": "ed103a3ff1637d24ad104e843a44f80a2c82ba78",
+      "started_utc": "2026-09-25T04:08:59Z",
+      "production_released": false,
+      "sources": {
+        "status": "docs/EXECUTION_STATE.md",
+        "decisions": "docs/DECISIONS.md",
+        "search_contract": "docs/SEARCH_DISCOVERY.md",
+        "evidence": "artifacts/global-search-discovery/GSD-1.0/"
+      },
+      "user_outcomes": [
+        "Каждая модель, инструмент, подборка и страница методики получили постоянный адрес на своём языке (/ru/…, /ja/…); английский — на корне.",
+        "Старые ссылки вида ?lang= ведут одним переходом на ту же страницу нового адреса; язык страницы больше не меняется от cookie или браузера.",
+        "Карточки полностью видны без JavaScript: описание, цены в USD, доступ, страны, даты, источники и даты проверки.",
+        "Поисковые системы получают локализованные заголовки и описания, взаимные hreflang и отдельную карту сайта на каждый язык; фильтры и сортировки не засоряют индекс.",
+        "Публичная страница «Источники и методика» на 22 языках описывает только действующие правила.",
+        "Десять тематических подборок (программирование, видео, API, открытые веса, Китай, 2025 год, длинный контекст, инструменты для кода и др.); неполные не индексируются.",
+        "Два набора открытых данных (модели, инструменты) в JSON/CSV с контрольными суммами — готовы, но включаются только после выбора лицензии владельцем.",
+        "Изменения каталога записываются в журнал для IndexNow; отправка включается владельцем только на Production."
+      ],
+      "items": [
+        {
+          "id": "GSD-01",
+          "title": "Фактический baseline и паспорт версии",
+          "weight": 6,
+          "criteria": [
+            {
+              "id": "GSD-01.A1",
+              "text": "Local HEAD/working tree, fresh GitHub (ls-remote), Production /healthz, robots, sitemap recorded with UTC time and method",
+              "implemented": true,
+              "verified": true,
+              "evidence": "artifacts/global-search-discovery/GSD-1.0/baseline/BASELINE.md"
+            },
+            {
+              "id": "GSD-01.A2",
+              "text": "Applied migrations, public/hidden counts, key table counts, Local SQLite and master XLSX sha256 recorded",
+              "implemented": true,
+              "verified": true,
+              "evidence": "artifacts/global-search-discovery/GSD-1.0/baseline/BASELINE.md"
+            },
+            {
+              "id": "GSD-01.A3",
+              "text": "Pre-existing uncommitted work snapshotted (status, tracked diff, untracked sha256) and never reset/stashed/cleaned",
+              "implemented": true,
+              "verified": true,
+              "evidence": "artifacts/global-search-discovery/GSD-1.0/baseline/BASELINE.md"
+            },
+            {
+              "id": "GSD-01.A4",
+              "text": "Baseline regression run recorded before changes",
+              "implemented": true,
+              "verified": true,
+              "evidence": "artifacts/global-search-discovery/GSD-1.0/baseline/BASELINE.md"
+            },
+            {
+              "id": "GSD-01.A5",
+              "text": "GSD-1.0 passport registered in a timeline registry: release id, app version, title/summary, environment, stage, base revision, ten items, states, evidence",
+              "implemented": true,
+              "verified": true,
+              "evidence": "docs/timeline.json GSD-1.0 entry + tools/gsd_progress.py"
+            },
+            {
+              "id": "GSD-01.A6",
+              "text": "Unverified facts listed separately from verified ones",
+              "implemented": true,
+              "verified": true,
+              "evidence": "artifacts/global-search-discovery/GSD-1.0/baseline/BASELINE.md"
+            }
+          ]
+        },
+        {
+          "id": "GSD-02",
+          "title": "Окончательная архитектура языковых URL",
+          "weight": 12,
+          "criteria": [
+            {
+              "id": "GSD-02.A1",
+              "text": "ADR compares ?lang= vs locale paths on this project with official sources; delegated engineering decision separated from Production permission",
+              "implemented": true,
+              "verified": true,
+              "evidence": "docs/DECISIONS.md D-2026-09-25-locale-paths (Google multi-regional guide: URL parameters Not recommended; avoid auto language redirects)"
+            },
+            {
+              "id": "GSD-02.A2",
+              "text": "One central URL builder used by views, templates, sitemap, hreflang, datasets, notifications",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/locale_urls.py, catalog/middleware.py; tests LocaleUrlTests + test_i18n NegotiationTests; artifacts/global-search-discovery/GSD-1.0/gsd-check-local.json 33/33; browser: uk switch keeps card+tab, cookie client-side"
+            },
+            {
+              "id": "GSD-02.A3",
+              "text": "Locale path routing for all 22 locales; English on unprefixed root; lowercase path codes; trailing-slash rules",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/locale_urls.py, catalog/middleware.py; tests LocaleUrlTests + test_i18n NegotiationTests; artifacts/global-search-discovery/GSD-1.0/gsd-check-local.json 33/33; browser: uk switch keeps card+tab, cookie client-side"
+            },
+            {
+              "id": "GSD-02.A4",
+              "text": "Legacy ?lang= URLs 301 to the equivalent page in one hop, UX params preserved, kind mapped; no chains or loops for every route type",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/locale_urls.py, catalog/middleware.py; tests LocaleUrlTests + test_i18n NegotiationTests; artifacts/global-search-discovery/GSD-1.0/gsd-check-local.json 33/33; browser: uk switch keeps card+tab, cookie client-side"
+            },
+            {
+              "id": "GSD-02.A5",
+              "text": "Non-canonical code forms, /en/ and missing slash 301 to canonical; unknown codes 404; unknown/hidden entities 404 (never redirected home)",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/locale_urls.py, catalog/middleware.py; tests LocaleUrlTests + test_i18n NegotiationTests; artifacts/global-search-discovery/GSD-1.0/gsd-check-local.json 33/33; browser: uk switch keeps card+tab, cookie client-side"
+            },
+            {
+              "id": "GSD-02.A6",
+              "text": "Explicit URL language independent of cookie, Accept-Language, CF-IPCountry; no IP or language redirects; explicit responses do not Vary on Cookie",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/locale_urls.py, catalog/middleware.py; tests LocaleUrlTests + test_i18n NegotiationTests; artifacts/global-search-discovery/GSD-1.0/gsd-check-local.json 33/33; browser: uk switch keeps card+tab, cookie client-side"
+            },
+            {
+              "id": "GSD-02.A7",
+              "text": "Language switcher links to the equivalent page per locale preserving UX params; manual choice remembered client-side only, never as a shared cached response",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/locale_urls.py, catalog/middleware.py; tests LocaleUrlTests + test_i18n NegotiationTests; artifacts/global-search-discovery/GSD-1.0/gsd-check-local.json 33/33; browser: uk switch keeps card+tab, cookie client-side"
+            },
+            {
+              "id": "GSD-02.A8",
+              "text": "Direct entity links, panel open/close and browser back/forward work on locale paths (browser verified)",
+              "implemented": true,
+              "verified": true,
+              "evidence": "In-app browser QA 2026-09-25: /ru/ row click -> /ru/models/grok-47..., Escape closes -> /ru/, back reopens, forward closes; mobile /uk/tools/ open/X/back; title restored"
+            }
+          ]
+        },
+        {
+          "id": "GSD-03",
+          "title": "Полноценные SSR-карточки и правила индексируемости",
+          "weight": 16,
+          "criteria": [
+            {
+              "id": "GSD-03.A1",
+              "text": "Direct Model URL without JS returns the entity's content (name, developer, description, all tab content) in source HTML",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/readiness.py; templates panel/tool_panel (sources, check dates, USD, countries, status, lang=en fallback); tests ReadinessAndSignalsTests.test_hidden_records_never_leak_into_any_channel; screens/*card*.png"
+            },
+            {
+              "id": "GSD-03.A2",
+              "text": "Direct Tool URL likewise; tools get no model-only fields; countries, sources and verification dates shown",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/readiness.py; templates panel/tool_panel (sources, check dates, USD, countries, status, lang=en fallback); tests ReadinessAndSignalsTests.test_hidden_records_never_leak_into_any_channel; screens/*card*.png"
+            },
+            {
+              "id": "GSD-03.A3",
+              "text": "Applicable facts shown: release date and its precision, status, prices with currency/unit/conditions, access, context/modalities, license/open weights, evaluations, sources and check dates; unknown stays blank",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/readiness.py; templates panel/tool_panel (sources, check dates, USD, countries, status, lang=en fallback); tests ReadinessAndSignalsTests.test_hidden_records_never_leak_into_any_channel; screens/*card*.png"
+            },
+            {
+              "id": "GSD-03.A4",
+              "text": "Single publicity policy used by views, sitemap, hreflang, hubs, datasets and notifications",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/readiness.py; templates panel/tool_panel (sources, check dates, USD, countries, status, lang=en fallback); tests ReadinessAndSignalsTests.test_hidden_records_never_leak_into_any_channel; screens/*card*.png"
+            },
+            {
+              "id": "GSD-03.A5",
+              "text": "Readiness registry for every entity x locale with result and reason (indexable / not-ready / not-public), exportable",
+              "implemented": true,
+              "verified": true,
+              "evidence": "artifacts/global-search-discovery/GSD-1.0/readiness-registry.csv (19,822 rows: 9,724 indexable, 0 not-ready, 10,098 not-public); seo-report-full.json registry.totals (content_translation_rows 42,260 reported separately)"
+            },
+            {
+              "id": "GSD-03.A6",
+              "text": "Zero hidden-record leakage across pages, sitemap, hubs, datasets, notifications and cross-links (tested)",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/readiness.py; templates panel/tool_panel (sources, check dates, USD, countries, status, lang=en fallback); tests ReadinessAndSignalsTests.test_hidden_records_never_leak_into_any_channel; screens/*card*.png"
+            },
+            {
+              "id": "GSD-03.A7",
+              "text": "English fallback prose marked lang=en; eval-gap exception documented and non-blocking",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/readiness.py; templates panel/tool_panel (sources, check dates, USD, countries, status, lang=en fallback); tests ReadinessAndSignalsTests.test_hidden_records_never_leak_into_any_channel; screens/*card*.png"
+            },
+            {
+              "id": "GSD-03.A8",
+              "text": "Indexable URL counts reported separately from translation counts",
+              "implemented": true,
+              "verified": true,
+              "evidence": "artifacts/global-search-discovery/GSD-1.0/readiness-registry.csv (19,822 rows: 9,724 indexable, 0 not-ready, 10,098 not-public); seo-report-full.json registry.totals (content_translation_rows 42,260 reported separately)"
+            }
+          ]
+        },
+        {
+          "id": "GSD-04",
+          "title": "Международные SEO-сигналы и sitemap",
+          "weight": 12,
+          "criteria": [
+            {
+              "id": "GSD-04.A1",
+              "text": "Localized title and meta description for entity, catalog, hub, methodology and dataset pages in 22 locales",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/seo.py page_signals/sitemap_urlsets; tests test_sitemap_graph_is_reciprocal_unique_and_within_limits, test_single_h1_lang_dir..., test_local_is_never_indexable, test_canonical_never_uses_request_host"
+            },
+            {
+              "id": "GSD-04.A2",
+              "text": "Exactly one subject H1 per page",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/seo.py page_signals/sitemap_urlsets; tests test_sitemap_graph_is_reciprocal_unique_and_within_limits, test_single_h1_lang_dir..., test_local_is_never_indexable, test_canonical_never_uses_request_host"
+            },
+            {
+              "id": "GSD-04.A3",
+              "text": "Self-canonical; reciprocal hreflang with self-reference and x-default; alternates contain only ready canonical 200 pages",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/seo.py page_signals/sitemap_urlsets; tests test_sitemap_graph_is_reciprocal_unique_and_within_limits, test_single_h1_lang_dir..., test_local_is_never_indexable, test_canonical_never_uses_request_host"
+            },
+            {
+              "id": "GSD-04.A4",
+              "text": "html lang/dir correct for all locales including RTL",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/seo.py page_signals/sitemap_urlsets; tests test_sitemap_graph_is_reciprocal_unique_and_within_limits, test_single_h1_lang_dir..., test_local_is_never_indexable, test_canonical_never_uses_request_host"
+            },
+            {
+              "id": "GSD-04.A5",
+              "text": "Sitemap index and per-locale children built from the registry; URL/byte limits, XML escaping, no duplicates/hidden/localhost, real lastmod",
+              "implemented": true,
+              "verified": true,
+              "evidence": "Reconciliation 2026-09-25: artifacts/global-search-discovery/GSD-1.0/sitemap-reconciliation.json (10,035 loc by type; two-way page<->sitemap 396/396, 0 mismatches; /privacy added); artifacts/global-search-discovery/GSD-1.0/seo-report-reconciliation.json (575 pages incl. all 311 non-entity sitemap URLs, 0 problems; entity 9,724 == registry); full audit artifacts/global-search-discovery/GSD-1.0/seo-report-full.json (10,013 pages, 0 problems, pre-/privacy)"
+            },
+            {
+              "id": "GSD-04.A6",
+              "text": "HTML vs sitemap consistency audit; indexable count equals registry; loc and alternate links counted separately",
+              "implemented": true,
+              "verified": true,
+              "evidence": "Reconciliation 2026-09-25: artifacts/global-search-discovery/GSD-1.0/sitemap-reconciliation.json (10,035 loc by type; two-way page<->sitemap 396/396, 0 mismatches; /privacy added); artifacts/global-search-discovery/GSD-1.0/seo-report-reconciliation.json (575 pages incl. all 311 non-entity sitemap URLs, 0 problems; entity 9,724 == registry); full audit artifacts/global-search-discovery/GSD-1.0/seo-report-full.json (10,013 pages, 0 problems, pre-/privacy)"
+            },
+            {
+              "id": "GSD-04.A7",
+              "text": "Local protected from indexing (robots Disallow + X-Robots-Tag) while production-mode SEO verified in isolated tests; canonical never built from Host",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/seo.py page_signals/sitemap_urlsets; tests test_sitemap_graph_is_reciprocal_unique_and_within_limits, test_single_h1_lang_dir..., test_local_is_never_indexable, test_canonical_never_uses_request_host"
+            }
+          ]
+        },
+        {
+          "id": "GSD-05",
+          "title": "Управление фильтрами, пагинацией и обходом",
+          "weight": 8,
+          "criteria": [
+            {
+              "id": "GSD-05.A1",
+              "text": "Inventory of every query parameter with its crawl/index policy",
+              "implemented": true,
+              "verified": true,
+              "evidence": "docs/SEARCH_DISCOVERY.md §5; tests test_listing_signals_filters_pagination_and_partials, test_robots_production_blocks_only_facets, BrowserContractRegressionTests; browser /pl/ sort->noindex, page 2 canonical"
+            },
+            {
+              "id": "GSD-05.A2",
+              "text": "Filtered/sorted/search listings are noindex,follow and never canonicalized to the root; entity-equivalent params canonicalize to the entity",
+              "implemented": true,
+              "verified": true,
+              "evidence": "docs/SEARCH_DISCOVERY.md §5; tests test_listing_signals_filters_pagination_and_partials, test_robots_production_blocks_only_facets, BrowserContractRegressionTests; browser /pl/ sort->noindex, page 2 canonical"
+            },
+            {
+              "id": "GSD-05.A3",
+              "text": "robots.txt blocks only facet/search/partial parameters; locale paths and page= stay crawlable",
+              "implemented": true,
+              "verified": true,
+              "evidence": "docs/SEARCH_DISCOVERY.md §5; tests test_listing_signals_filters_pagination_and_partials, test_robots_production_blocks_only_facets, BrowserContractRegressionTests; browser /pl/ sort->noindex, page 2 canonical"
+            },
+            {
+              "id": "GSD-05.A4",
+              "text": "Pagination finite with plain <a href> and own canonical; page=1 duplicate 301; invalid/out-of-range 404",
+              "implemented": true,
+              "verified": true,
+              "evidence": "docs/SEARCH_DISCOVERY.md §5; tests test_listing_signals_filters_pagination_and_partials, test_robots_production_blocks_only_facets, BrowserContractRegressionTests; browser /pl/ sort->noindex, page 2 canonical"
+            },
+            {
+              "id": "GSD-05.A5",
+              "text": "Partial endpoints send X-Robots-Tag noindex and partial params never leak into links",
+              "implemented": true,
+              "verified": true,
+              "evidence": "docs/SEARCH_DISCOVERY.md §5; tests test_listing_signals_filters_pagination_and_partials, test_robots_production_blocks_only_facets, BrowserContractRegressionTests; browser /pl/ sort->noindex, page 2 canonical"
+            },
+            {
+              "id": "GSD-05.A6",
+              "text": "Every public entity reachable through plain links without JS (crawl test)",
+              "implemented": true,
+              "verified": true,
+              "evidence": "artifacts/global-search-discovery/GSD-1.0/seo-report-crawl.json: robots-respecting crawl terminated at 2,142 pages, 442/442 public entities reached via plain links, 24,936 blocked links skipped, 0 hidden linked"
+            },
+            {
+              "id": "GSD-05.A7",
+              "text": "Finite crawl map: a robots-respecting crawler terminates with a bounded URL set",
+              "implemented": true,
+              "verified": true,
+              "evidence": "artifacts/global-search-discovery/GSD-1.0/seo-report-crawl.json: robots-respecting crawl terminated at 2,142 pages, 442/442 public entities reached via plain links, 24,936 blocked links skipped, 0 hidden linked"
+            }
+          ]
+        },
+        {
+          "id": "GSD-06",
+          "title": "Публичная методология и structured data",
+          "weight": 8,
+          "criteria": [
+            {
+              "id": "GSD-06.A1",
+              "text": "Methodology route in 22 locales, linked from the existing header/footer",
+              "implemented": true,
+              "verified": true,
+              "evidence": "C:/Program Files/Git/methodology x22 (test_methodology_is_linked_and_localized_everywhere), catalog/discovery_content.py, data/discovery_translations.json (agent-draft, unreviewed), test_json_ld_escaping_and_types"
+            },
+            {
+              "id": "GSD-06.A2",
+              "text": "Describes only implemented rules (sources, existence/publication, exact/approximate dates, prices/units, origin, evaluations, unknowns, conflicts, updates) with future plans separated",
+              "implemented": true,
+              "verified": true,
+              "evidence": "C:/Program Files/Git/methodology x22 (test_methodology_is_linked_and_localized_everywhere), catalog/discovery_content.py, data/discovery_translations.json (agent-draft, unreviewed), test_json_ld_escaping_and_types"
+            },
+            {
+              "id": "GSD-06.A3",
+              "text": "New strings localized through the existing dictionary; draft/unreviewed status marked",
+              "implemented": true,
+              "verified": true,
+              "evidence": "C:/Program Files/Git/methodology x22 (test_methodology_is_linked_and_localized_everywhere), catalog/discovery_content.py, data/discovery_translations.json (agent-draft, unreviewed), test_json_ld_escaping_and_types"
+            },
+            {
+              "id": "GSD-06.A4",
+              "text": "Organization JSON-LD; BreadcrumbList on entity, hub, methodology and dataset pages",
+              "implemented": true,
+              "verified": true,
+              "evidence": "StructuredDataAndSitemapReconciliationTests: Organization on all pages; BreadcrumbList on cards/collections/hubs/methodology/datasets paired with visible breadcrumb (names checked); DataCatalog on /datasets/; Dataset+DataDownload (contentUrl 200, encodingFormat matches, visible link) + includedInDataCatalog on /datasets/models|tools; no license/rating/review"
+            },
+            {
+              "id": "GSD-06.A5",
+              "text": "Dataset/DataCatalog/DataDownload JSON-LD only on real dataset pages; no invented ratings, reviews, licenses, prices or addresses",
+              "implemented": true,
+              "verified": true,
+              "evidence": "StructuredDataAndSitemapReconciliationTests: Organization on all pages; BreadcrumbList on cards/collections/hubs/methodology/datasets paired with visible breadcrumb (names checked); DataCatalog on /datasets/; Dataset+DataDownload (contentUrl 200, encodingFormat matches, visible link) + includedInDataCatalog on /datasets/models|tools; no license/rating/review"
+            },
+            {
+              "id": "GSD-06.A6",
+              "text": "JSON-LD safely escaped and consistent with visible content (tests)",
+              "implemented": true,
+              "verified": true,
+              "evidence": "StructuredDataAndSitemapReconciliationTests: Organization on all pages; BreadcrumbList on cards/collections/hubs/methodology/datasets paired with visible breadcrumb (names checked); DataCatalog on /datasets/; Dataset+DataDownload (contentUrl 200, encodingFormat matches, visible link) + includedInDataCatalog on /datasets/models|tools; no license/rating/review"
+            }
+          ]
+        },
+        {
+          "id": "GSD-07",
+          "title": "Две безопасные публичные выгрузки данных",
+          "weight": 10,
+          "criteria": [
+            {
+              "id": "GSD-07.A1",
+              "text": "AIpediya Global AI Models Dataset in JSON and CSV",
+              "implemented": true,
+              "verified": true,
+              "evidence": "artifacts/global-search-discovery/GSD-1.0/datasets-snapshot (export_datasets --check passed; 304/138 records); DatasetTests; D-2026-09-25-datasets-license-gate"
+            },
+            {
+              "id": "GSD-07.A2",
+              "text": "AIpediya AI Tools Dataset in JSON and CSV",
+              "implemented": true,
+              "verified": true,
+              "evidence": "artifacts/global-search-discovery/GSD-1.0/datasets-snapshot (export_datasets --check passed; 304/138 records); DatasetTests; D-2026-09-25-datasets-license-gate"
+            },
+            {
+              "id": "GSD-07.A3",
+              "text": "Landing pages with documented schema, schema version, dataset version/date, provenance and checksums",
+              "implemented": true,
+              "verified": true,
+              "evidence": "artifacts/global-search-discovery/GSD-1.0/datasets-snapshot (export_datasets --check passed; 304/138 records); DatasetTests; D-2026-09-25-datasets-license-gate"
+            },
+            {
+              "id": "GSD-07.A4",
+              "text": "Allowlist projection; 0 hidden/private records or fields; counts equal public counts; relations consistent",
+              "implemented": true,
+              "verified": true,
+              "evidence": "artifacts/global-search-discovery/GSD-1.0/datasets-snapshot (export_datasets --check passed; 304/138 records); DatasetTests; D-2026-09-25-datasets-license-gate"
+            },
+            {
+              "id": "GSD-07.A5",
+              "text": "CSV formula-injection protection and type-safe serialization",
+              "implemented": true,
+              "verified": true,
+              "evidence": "artifacts/global-search-discovery/GSD-1.0/datasets-snapshot (export_datasets --check passed; 304/138 records); DatasetTests; D-2026-09-25-datasets-license-gate"
+            },
+            {
+              "id": "GSD-07.A6",
+              "text": "Reproducible snapshot command with identical checksums across runs; no Excel/openpyxl at runtime",
+              "implemented": true,
+              "verified": true,
+              "evidence": "artifacts/global-search-discovery/GSD-1.0/datasets-snapshot (export_datasets --check passed; 304/138 records); DatasetTests; D-2026-09-25-datasets-license-gate"
+            },
+            {
+              "id": "GSD-07.A7",
+              "text": "License and re-publication blockers named precisely; public exposure gated by a setting",
+              "implemented": true,
+              "verified": true,
+              "evidence": "artifacts/global-search-discovery/GSD-1.0/datasets-snapshot (export_datasets --check passed; 304/138 records); DatasetTests; D-2026-09-25-datasets-license-gate"
+            }
+          ]
+        },
+        {
+          "id": "GSD-08",
+          "title": "Поисковые системы, AI-crawlers и IndexNow",
+          "weight": 10,
+          "criteria": [
+            {
+              "id": "GSD-08.A1",
+              "text": "Discovery matrix: Google, Bing, Yandex, Baidu, Naver, Seznam/IndexNow, Brave and AI-search providers with verification method, readiness, live access and owner action",
+              "implemented": true,
+              "verified": true,
+              "evidence": "docs/SEARCH_DISCOVERY.md s.8 official-source matrix [G1-G4,B1-B3,Y1-Y3,S1,BD1,BR1,I1-I3,O1,P1,A1]; Naver verification + Baidu verification methods marked UNVERIFIED (official page unreachable / not found); Brave corrected (submit-url exists); training policy = not defined by owner (D-2026-09-25-training-crawlers-undefined)"
+            },
+            {
+              "id": "GSD-08.A2",
+              "text": "Crawler categories (search / training / user-triggered) from official docs; existing training-access decisions preserved",
+              "implemented": true,
+              "verified": true,
+              "evidence": "docs/SEARCH_DISCOVERY.md s.8 official-source matrix [G1-G4,B1-B3,Y1-Y3,S1,BD1,BR1,I1-I3,O1,P1,A1]; Naver verification + Baidu verification methods marked UNVERIFIED (official page unreachable / not found); Brave corrected (submit-url exists); training policy = not defined by owner (D-2026-09-25-training-crawlers-undefined)"
+            },
+            {
+              "id": "GSD-08.A3",
+              "text": "Production crawler-access audit separating plain HTTP, spoofed UA and confirmed real crawl (limited sample)",
+              "implemented": true,
+              "verified": true,
+              "evidence": "artifacts/global-search-discovery/GSD-1.0/production-ua-probe.txt (12 spoofed UAs -> 200; real crawl unverified, stated)"
+            },
+            {
+              "id": "GSD-08.A4",
+              "text": "Persistent outbox with events on create, significant update, unpublish/removal and per-locale translation change; removals keep the former URL",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/discovery.py, indexnow_dispatch; DiscoveryOutboxTests + DispatcherTests (mock transport 200/202/403/422/429/5xx, live gate, host allowlist, local never sends)"
+            },
+            {
+              "id": "GSD-08.A5",
+              "text": "Dispatcher with dedup, idempotency, bounded retries, 200/202/4xx/429/5xx handling, batch limit, host allowlist, live-state gating",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/discovery.py, indexnow_dispatch; DiscoveryOutboxTests + DispatcherTests (mock transport 200/202/403/422/429/5xx, live gate, host allowlist, local never sends)"
+            },
+            {
+              "id": "GSD-08.A6",
+              "text": "Local: real sends and scheduler disabled; tested with mock/dry-run; GET never enqueues or sends",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/discovery.py, indexnow_dispatch; DiscoveryOutboxTests + DispatcherTests (mock transport 200/202/403/422/429/5xx, live gate, host allowlist, local never sends)"
+            },
+            {
+              "id": "GSD-08.A7",
+              "text": "Exact activation checklist including a prepared (not applied) Cloudflare scope",
+              "implemented": true,
+              "verified": true,
+              "evidence": "docs/SEARCH_DISCOVERY.md §8 (official: indexnow.org searchengines, OpenAI/Perplexity/Anthropic bot docs, Google crawler overview, Brave help)"
+            }
+          ]
+        },
+        {
+          "id": "GSD-09",
+          "title": "Полезные SEO-подборки и основа авторитетных материалов",
+          "weight": 8,
+          "criteria": [
+            {
+              "id": "GSD-09.A1",
+              "text": "Registry of at most 10 intent hubs with stable URLs, deterministic selection and explicit criteria",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/hubs.py (10; music-models not ready 4<5); HubTests; artifacts/global-search-discovery/GSD-1.0/catalog-stats.json; static/share-card.png; screens/de-hub-desktop.png"
+            },
+            {
+              "id": "GSD-09.A2",
+              "text": "Hub text localized for 22 locales with metadata, canonical, hreflang and sitemap",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/hubs.py (10; music-models not ready 4<5); HubTests; artifacts/global-search-discovery/GSD-1.0/catalog-stats.json; static/share-card.png; screens/de-hub-desktop.png"
+            },
+            {
+              "id": "GSD-09.A3",
+              "text": "Empty/thin hubs are not indexable; ready vs not-ready candidates reported",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/hubs.py (10; music-models not ready 4<5); HubTests; artifacts/global-search-discovery/GSD-1.0/catalog-stats.json; static/share-card.png; screens/de-hub-desktop.png"
+            },
+            {
+              "id": "GSD-09.A4",
+              "text": "Hubs reuse catalog/panel UX, plain internal links, linked from the site",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/hubs.py (10; music-models not ready 4<5); HubTests; artifacts/global-search-discovery/GSD-1.0/catalog-stats.json; static/share-card.png; screens/de-hub-desktop.png"
+            },
+            {
+              "id": "GSD-09.A5",
+              "text": "Reusable verifiable aggregates over published data (command), boundaries of future history/API/ratings stated",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/hubs.py (10; music-models not ready 4<5); HubTests; artifacts/global-search-discovery/GSD-1.0/catalog-stats.json; static/share-card.png; screens/de-hub-desktop.png"
+            },
+            {
+              "id": "GSD-09.A6",
+              "text": "Sharing metadata (Open Graph/Twitter) using existing brand assets",
+              "implemented": true,
+              "verified": true,
+              "evidence": "catalog/hubs.py (10; music-models not ready 4<5); HubTests; artifacts/global-search-discovery/GSD-1.0/catalog-stats.json; static/share-card.png; screens/de-hub-desktop.png"
+            }
+          ]
+        },
+        {
+          "id": "GSD-10",
+          "title": "Мониторинг, сквозная проверка и Local handoff",
+          "weight": 10,
+          "criteria": [
+            {
+              "id": "GSD-10.A1",
+              "text": "Repeatable machine-readable technical report separating own crawler, server logs and provider data; unavailable sources null/not_connected",
+              "implemented": true,
+              "verified": true,
+              "evidence": "manage.py seo_report; artifacts/global-search-discovery/GSD-1.0/seo-report-full.json (22 locales, 10,013 pages, 0 problems; providers/logs not_connected=null); sitemap reciprocity test + audit"
+            },
+            {
+              "id": "GSD-10.A2",
+              "text": "Full regression suite PASS; migrate, check, makemigrations --check",
+              "implemented": true,
+              "verified": true,
+              "evidence": "artifacts/global-search-discovery/GSD-1.0/final-tests.txt Ran 216 OK (0 fail/0 skip) in current tree; check OK; makemigrations --check: No changes"
+            },
+            {
+              "id": "GSD-10.A3",
+              "text": "Systematic rendered audit across all 22 locales",
+              "implemented": true,
+              "verified": true,
+              "evidence": "manage.py seo_report; artifacts/global-search-discovery/GSD-1.0/seo-report-full.json (22 locales, 10,013 pages, 0 problems; providers/logs not_connected=null); sitemap reciprocity test + audit"
+            },
+            {
+              "id": "GSD-10.A4",
+              "text": "Readiness/sitemap graph checks: reciprocity, no orphans, no non-200 alternates",
+              "implemented": true,
+              "verified": true,
+              "evidence": "manage.py seo_report; artifacts/global-search-discovery/GSD-1.0/seo-report-full.json (22 locales, 10,013 pages, 0 problems; providers/logs not_connected=null); sitemap reciprocity test + audit"
+            },
+            {
+              "id": "GSD-10.A5",
+              "text": "Browser scenarios: EN/RU/UK, European Latin, CJK, both RTL; desktop/mobile; both themes; Models/Tools; direct links, panel, Escape/close, language switch, filters, pagination, back/forward",
+              "implemented": true,
+              "verified": true,
+              "evidence": "In-app browser + headless screens (artifacts/.../screens): RU/UK/PL/ZH-Hans/AR/FA/DE/JA/ES/FR/EN; desktop 1440 + mobile 375/390; dark+light; Models+Tools+hubs; direct links, panel open, Escape, X close, language switch keeps card+tab, sort->noindex, pagination page 2, back/forward. Pre-existing: AR mobile card clipped identically on Production"
+            },
+            {
+              "id": "GSD-10.A6",
+              "text": "Limited external Production sample check (read-only)",
+              "implemented": true,
+              "verified": true,
+              "evidence": "artifacts/global-search-discovery/GSD-1.0/gsd-check-production-pre-release.json 8/32 (expected: old contract live); artifacts/global-search-discovery/GSD-1.0/production-ua-probe.txt; screens/PROD-ar-card-mobile-baseline.png"
+            },
+            {
+              "id": "GSD-10.A7",
+              "text": "Data, translation and publication-state preservation vs baseline; no secrets; Local network writes disabled",
+              "implemented": true,
+              "verified": true,
+              "evidence": "artifacts/global-search-discovery/GSD-1.0/preservation-after.txt equals baseline counts; master sha256 unchanged; release_state vs DB 0 mismatches; ContentTranslation 42260 current unchanged"
+            },
+            {
+              "id": "GSD-10.A8",
+              "text": "Docs updated, AI_CONTEXT packed, exact release scope prepared (dependencies, migrations, redirect map, sitemap counts, deploy/rollback, activation)",
+              "implemented": true,
+              "verified": true,
+              "evidence": "docs/SEARCH_DISCOVERY.md, DECISIONS.md (5 ADR), EXECUTION_STATE.md, PROJECT_MAP.md, RELEASE.md pointer, docs/history/GSD-1.0-release-scope.md; AI_CONTEXT packed"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "product_history": {
+    "visibility": "Local only; no owner authentication exists for this page on Production",
+    "production_evidence": "docs/history/2026-09-25-local-approved-release.md",
+    "production_verified_at": "2026-09-25T03:21:00Z",
+    "milestones": [
+      {
+        "release_id": "release-2026-09-20-chronology",
+        "date": "2026-09-20",
+        "title_ru": "Хронология моделей",
+        "title_en": "Model chronology",
+        "icon": "calendar-days",
+        "tags_ru": [
+          "Даты выпуска",
+          "Порядок каталога"
+        ],
+        "tags_en": [
+          "Release dates",
+          "Catalog order"
+        ],
+        "capabilities_ru": [
+          "Модели с подтверждённой датой получили хронологический номер",
+          "Карточки без подтверждённой даты остались без номера"
+        ],
+        "capabilities_en": [
+          "Models with confirmed dates received chronological numbers",
+          "Cards without confirmed dates remained unnumbered"
+        ],
+        "revision": "6e901dc938aedab0369a620176bc462ac195d615",
+        "source": "2026-09-20-chronology-release"
+      },
+      {
+        "release_id": "release-2026-09-22-global-catalog",
+        "date": "2026-09-22",
+        "title_ru": "Модели и инструменты",
+        "title_en": "Models and tools",
+        "icon": "library-big",
+        "tags_ru": [
+          "Карточки",
+          "Цены и источники"
+        ],
+        "tags_en": [
+          "Cards",
+          "Prices and sources"
+        ],
+        "capabilities_ru": [
+          "Публичные каталоги моделей и инструментов с карточками",
+          "В карточках сохранены цены, доступ, оценки и источники"
+        ],
+        "capabilities_en": [
+          "Public model and tool catalogs with detail cards",
+          "Cards retain prices, access, evaluations and sources"
+        ],
+        "revision": "43e2d3feba57cf67084cc2e3774c86a72ce361b5",
+        "source": "2026-09-22-global-catalog-release"
+      },
+      {
+        "release_id": "release-2026-09-25-local-approved",
+        "date": "2026-09-25",
+        "title_ru": "Языковые версии сайта",
+        "title_en": "Site languages",
+        "icon": "languages",
+        "tags_ru": [
+          "22 языка",
+          "Поиск и фильтры"
+        ],
+        "tags_en": [
+          "22 languages",
+          "Search and filters"
+        ],
+        "capabilities_ru": [
+          "Каталог переведён на 22 языка, включая RTL",
+          "Доступны поиск, фильтры, сортировка и боковые карточки",
+          "Публичное состояние: 304 модели и 138 инструментов на момент выпуска"
+        ],
+        "capabilities_en": [
+          "Catalog translated into 22 languages, including RTL",
+          "Search, filters, sorting and side panels are available",
+          "Release snapshot: 304 models and 138 tools"
+        ],
+        "revision": "ed103a3ff1637d24ad104e843a44f80a2c82ba78",
+        "source": "2026-09-25-local-approved-release",
+        "owner_decision": "D-2026-09-25-release-process"
+      },
+      {
+        "release_id": "GSD-1.0",
+        "date": "2026-09-25",
+        "title_ru": "Поиск и история сайта",
+        "title_en": "Discovery and site history",
+        "icon": "search-check",
+        "tags_ru": [
+          "Языковые адреса",
+          "Поисковая доступность",
+          "История"
+        ],
+        "tags_en": [
+          "Language URLs",
+          "Search discovery",
+          "History"
+        ],
+        "source": "GSD-1.0-release-scope",
+        "open": true
+      }
+    ],
+    "additional_tasks": [
+      {
+        "id": "MASTER",
+        "title_ru": "Каноническая база каталога",
+        "title_en": "Catalog master workbook",
+        "goal_ru": "Проверять записи в едином реестре до синхронизации с Local.",
+        "goal_en": "Verify entries in one workbook before syncing to Local.",
+        "done_ru": "Созданы master XLSX, import и check; повторный import добавил 0 записей, check прошёл.",
+        "done_en": "Master XLSX, import and check exist; repeated import added 0 entries and check passed.",
+        "qa_ru": "170 тестов PASS по записи в EXECUTION_STATE; результат этого этапа отдельно не перепроверен этой страницей.",
+        "qa_en": "170 tests PASS in EXECUTION_STATE; this page does not revalidate that stage.",
+        "owner_ru": "Правило master зафиксировано в D-2026-09-24-catalog-master. Разрешение на синхронизацию или новый выпуск этим не дано.",
+        "owner_en": "The master rule is recorded in D-2026-09-24-catalog-master. It does not authorize sync or a new release.",
+        "next_ru": "Реализовать sync-local; сначала решить открытые вопросы о номерах и кандидатах.",
+        "next_en": "Implement sync-local after resolving open number and candidate questions.",
+        "source": "execution-state",
+        "decision": "decisions"
+      },
+      {
+        "id": "HISTORY",
+        "title_ru": "История развития сайта",
+        "title_en": "Site development history",
+        "goal_ru": "Показать подтверждённые выпуски и открытый Local-пакет владельцу.",
+        "goal_en": "Show confirmed releases and the open Local package to the owner.",
+        "done_ru": "Local-страница, реестр этапов и доступные из страницы документы-источники.",
+        "done_en": "Local page, milestone registry and source documents accessible from the page.",
+        "qa_ru": "Проверка текущего этапа указана в EXECUTION_STATE; личная приёмка владельцем ожидается.",
+        "qa_en": "Current stage checks are recorded in EXECUTION_STATE; owner acceptance is pending.",
+        "owner_ru": "Владелец подтвердил композицию: две верхние карточки и Git в последней панели. Приёмка обновлённой страницы ещё ожидается.",
+        "owner_en": "The owner specified two top cards and Git in the last panel. Acceptance of the updated page is still pending.",
+        "next_ru": "Владельцу просмотреть Local-страницу и оставить замечания или решение.",
+        "next_en": "Owner reviews the Local page and records feedback or a decision.",
+        "source": "execution-state",
+        "decision": "decisions"
+      }
+    ]
+  }
+}

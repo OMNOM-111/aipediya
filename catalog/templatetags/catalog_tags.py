@@ -125,14 +125,66 @@ def grouped(value):
         return "0"
     return f"{int(value):,}".replace(",", " ")
 
+# Parameters that must never be carried into a link: fragments (partial),
+# the language (it is in the path) and the old catalog switch (kind).
+_NEVER_LINKED = ("partial", "lang", "kind")
+
+
 @register.simple_tag(takes_context=True)
 def query(context, **changes):
     params = context["request"].GET.copy()
+    for key in _NEVER_LINKED:
+        params.pop(key, None)
     if "page" not in changes:
         params.pop("page", None)
     for key, value in changes.items():
-        if value is None or value == "":
+        if value is None or value == "" or (key == "page" and str(value) == "1"):
             params.pop(key, None)
         else:
             params[key] = str(value)
-    return "?" + params.urlencode()
+    encoded = params.urlencode()
+    return "?" + encoded if encoded else context["request"].path
+
+
+@register.simple_tag(takes_context=True)
+def qsuffix(context, **changes):
+    """Like ``query`` but returns "" when nothing remains (for appending)."""
+    result = query(context, **changes)
+    return result if result.startswith("?") else ""
+
+
+@register.simple_tag(takes_context=True)
+def lurl(context, name, *args):
+    """Localized path of a named route for the page language."""
+    from django.urls import reverse
+    from catalog.locale_urls import localize
+    return localize(reverse(name, args=args), context.get("lang") or "en")
+
+
+@register.simple_tag(takes_context=True)
+def lpath(context, neutral_path):
+    from catalog.locale_urls import localize
+    return localize(neutral_path, context.get("lang") or "en")
+
+
+@register.simple_tag
+def jsonld(data):
+    from django.utils.safestring import mark_safe
+    from catalog.seo import json_ld_script
+    return mark_safe(json_ld_script(data))
+
+
+@register.filter
+def fallback_attr(value, lang):
+    """' lang="en"' when a localized JSON value has no text for ``lang``.
+
+    Marks English fallback prose honestly in HTML instead of presenting it as
+    a translation. Brand names and numbers are not affected (they are not
+    localized fields)."""
+    from django.utils.safestring import mark_safe
+    if isinstance(value, dict) and lang not in ("en",) and not (value.get(lang) or "").strip():
+        if (value.get("en") or "").strip():
+            return mark_safe(' lang="en"')
+        if (value.get("ru") or "").strip():
+            return mark_safe(' lang="ru"')
+    return ""

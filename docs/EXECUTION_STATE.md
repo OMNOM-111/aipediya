@@ -2,9 +2,152 @@
 
 Живой паспорт локальной разработки. Не дублирует `AGENTS.md`.
 Отчёты законченных выпусков — `docs/history/`.
-Пакет для нового чата собирается командой `.\.venv\Scripts\python.exe tools/pack_ai_context.py` и **не** редактируется как независимый источник.
+Пакет для нового чата собирается командой `\.\.venv\Scripts\python.exe tools/pack_ai_context.py` и **не** редактируется как независимый источник.
 
-- Обновлено (UTC): 2026-09-24T00:20:00Z
+## История сайта: две среды и ярлык — Local, 2026-09-25 15:42 UTC
+
+- Изменено: по указанию владельца верх страницы `/ru/history/` содержит только
+  Local и Production; Git HEAD и состояние рабочего дерева находятся в панели
+  последней открытой карточки таймлайна. В `AI_CONTEXT` создан ярлык
+  `AIpedia — История сайта.lnk`; он указывает на штатный
+  `tools/local/start-local.ps1 -OpenPath /ru/history/`. Восстановление ярлыка —
+  `tools/local/install-history-shortcut.ps1`. Для следующих агентов обновлены
+  `docs/PRODUCT_HISTORY.md`, `AI_CONTEXT/README.md`, `AGENTS.md`,
+  `docs/timeline.json`; решение о композиции записано в `docs/DECISIONS.md`.
+  Сборщик AI_CONTEXT теперь включает порядок истории, реестр и установщик;
+  Git-список в сборке читает Unicode-имя ярлыка без escape-последовательностей.
+- Слои: текущий Local работает на `127.0.0.1:18810`; состояние сохранённого
+  кода видно в последней панели. Production не менялся; по отчёту последний
+  подтверждённый выпуск — `ed103a3`, текущий онлайн-ответ не проверен.
+  Предшествующие незакоммиченные файлы сохранены, включая
+  `AIpediya_GSD_1_0_Claude_Task.md`.
+- Проверки: полный `manage.py test catalog --settings=aipedia.test_settings`
+  **216/216 PASS**; PowerShell parser для двух launcher-скриптов — 0 ошибок;
+  `.lnk` указывает на ожидаемый script/аргумент; `start-local.ps1 -OpenPath`
+  на работающем Local вернул нужный адрес; `git diff --check` PASS. В браузере
+  Local: две карточки, Git только в последней панели; mobile viewport 390 px
+  — две карточки в колонку, без горизонтального переполнения. Физический
+  телефон не проверялся. Автоматическое открытие браузера из ограниченного
+  shell получило Access denied; скрипт корректно оставил Local работающим и
+  вывел адрес. Двойной клик по `.lnk` вне sandbox отдельно не проверен.
+- Не завершено: личный просмотр владельцем новой композиции; другие открытые
+  задачи GSD-1.0 и master сохраняют прежний статус. Production не публиковался.
+- Следующим выполнить: владельцу посмотреть страницу и ярлык; следующему
+  исполнителю перед новой работой прочитать открытый пакет и замечания,
+  обновлять `docs/timeline.json` только при изменении фактического состояния.
+
+## История развития сайта — Local, 2026-09-25 08:09 UTC
+
+- Изменено: в существующий `docs/timeline.json` добавлен слой истории продукта
+  с тремя подтверждёнными этапами (20.09, 22.09, 25.09) и открытым пакетом;
+  GSD-1.0 берёт 10 задач и их критерии из прежней записи реестра. Отдельно
+  показаны master и эта страница, не смешанные с уже опубликованной базой.
+  Созданы Local-only `/history/` и allowlist `/history/source/<id>`, шаблон,
+  стили, JS боковой панели и тесты; ссылка добавлена в Local footer. Процесс
+  сопровождения — `docs/PRODUCT_HISTORY.md`, краткая ссылка в `AGENTS.md`.
+- Слои: Local HEAD `791e4ac5bf7469de243464c640c4af05b7304b26`, рабочее
+  дерево грязное (включая прежние чужие изменения и не затронутый этой задачей
+  `AIpediya_GSD_1_0_Claude_Task.md`); GitHub по более ранней
+  проверке GSD-1.0 совпадал с HEAD, сейчас повторно не проверялся. Production
+  по `docs/RELEASE.md` и отчёту выпуска — commit `ed103a3ff163`, tag
+  `release-2026-09-25-local-approved`; доступ к публичному `/healthz` из этого
+  окружения отклонён сетевыми правами, поэтому онлайн-состояние на текущий
+  момент не подтверждено. Production не менялся.
+- Проверки: `manage.py check` PASS; полный `manage.py test catalog
+  --settings=aipedia.test_settings` **213/213 PASS**; JS syntax PASS;
+  `git diff --check` PASS. Local browser: 1920, 1440, 2560, mobile 390;
+  горизонтальная/вертикальная композиция, RU/EN/AR RTL, Light/Dark,
+  панель/кнопка/Escape/клик вне/возврат фокуса — PASS. Эти mobile-проверки
+  выполнены эмуляцией viewport, не физическим устройством. Существующий
+  сервер 18810 держал старый шаблон в памяти; точная финальная версия
+  запущена отдельным Local-процессом на `127.0.0.1:18811` и открыта в браузере.
+- Не завершено: личная приёмка страницы владельцем; выпуск GSD-1.0 и master
+  sync-local остаются открытыми; опубликованный сайт не получил страницу.
+  Подтверждённый публичный статус после 03:21 UTC не получен из-за сетевого
+  ограничения. Для не-RU/EN локалей текст истории показан с пометкой `lang=en`
+  внутри правильного направления страницы; перевод истории на 20 языков не
+  утверждён и не заявлен.
+- Следующим выполнить: владельцу просмотреть Local-страницу и дать замечания;
+  исполнителю обновить реестр по решению, а перед выпуском подтвердить
+  конкретный commit/tag по `docs/RELEASE.md` и после него проверить public
+  runtime. Никаких публикаций в этом этапе не выполнялось.
+
+- Обновлено (UTC): 2026-09-25 (GSD-1.0, Local)
+- Задача 2026-09-25 **GSD-1.0 «Глобальная поисковая доступность»** (Local-only):
+  реализация и Local QA; Production **не менялся**, ничего не отправлялось,
+  push/tag/deploy не выполнялись. Паспорт и критерии — `docs/timeline.json`
+  (прогресс: `.venv\Scripts\python.exe tools/gsd_progress.py`), контракт —
+  `docs/SEARCH_DISCOVERY.md`, решения — `D-2026-09-25-locale-paths`,
+  `…-seo-readiness`, `…-facets-pagination`, `…-datasets-license-gate`,
+  `…-discovery-outbox`; evidence — `artifacts/global-search-discovery/GSD-1.0/`.
+  - Слои (проверено 2026-09-25 04:08Z): Local HEAD = GitHub `origin/main` =
+    `791e4ac` (свежий `git ls-remote`); Production `/healthz` = `ed103a3ff163`,
+    sitemap 443 `?lang=en` URL (1 + 304 + 138). Local рабочее дерево = HEAD +
+    незакоммиченные изменения (ниже).
+  - Существующие незакоммиченные изменения другого исполнителя (не трогались,
+    снимок `artifacts/…/baseline/`): `AGENTS.md`, `AI_CONTEXT/README.md`,
+    `docs/DECISIONS.md` (разделы master), `docs/EXECUTION_STATE.md`,
+    `catalog/catalog_master.py`, команды `catalog_master`, `reconcile_catalog`,
+    `restore_core_catalog`, `catalog/tests/test_catalog_master.py`, XLSX,
+    `data/research/`, `requirements-dev.txt`.
+  - Изменено этой задачей: URL `/<locale>/…` (English на корне) + 301 для
+    `?lang=`; `catalog/locale_urls.py`, `middleware.py`, `readiness.py`,
+    `seo.py`, `hubs.py`, `datasets.py`, `discovery.py`, `discovery_content.py`,
+    `aggregates.py`, `views.py`, `context.py`, `static_pages.py`, `signals.py`,
+    `comparison.py` (скрытые модели не связываются с инструментами),
+    `templatetags/catalog_tags.py`, `models.py` + миграция
+    `0018_discovery_outbox`; команды `seo_report`, `indexnow_dispatch`,
+    `export_datasets`, `catalog_stats`, `notify_indexnow` (теперь только
+    ставит в журнал); шаблоны base/catalog/panel/tool_panel/rows/header/footer/
+    methodology/404/report + новые `collections.html`, `datasets.html`;
+    `static/site.js`, `site.css`, `share-card.png`, `brand-512.png`;
+    `data/discovery_translations.json` (переводы новых строк на 20 языков —
+    черновик агента, не проверен человеком); `aipedia/settings.py`,
+    `test_settings.py`, `urls.py`; `tools/gsd_progress.py`,
+    `tools/gsd_public_check.py`, `tools/local/start-local.ps1` (URL `/ru/`);
+    тесты: новый `test_global_search_discovery.py` (38), переписаны тесты
+    старого URL-контракта (`test_i18n`, `test_search_discovery`, частично
+    `test_catalog`, `test_environments`, `test_redesign`, `test_split_catalog`;
+    остальные вызовы `?lang=` идут через 301 с `follow=True`).
+  - Исправленные по ходу дефекты: ссылки строк в подгружаемых чанках несли
+    `partial=rows` (пред-существующий); заголовок `X-Aipedia-Title` для
+    нелатинских названий приходил в RFC 2047 (`=?utf-8?b?…`); `rel=prev` на
+    второй странице; HEAD отвечал 405; заголовок вкладки не возвращался после
+    закрытия панели; `notify_indexnow --all` был сломан; собственный crawler
+    не разрешал относительные ссылки (исправлено до финального прогона).
+  - Reconciliation 2026-09-25 (по запросу владельца): в sitemap добавлена
+    индексируемая `/privacy` (×22) и правила sitemap выровнены с правилами
+    страниц (двусторонняя проверка 396/396 без расхождений); итог 10 035
+    `<loc>`; BreadcrumbList теперь всегда сопровождается видимой цепочкой;
+    тесты матрицы structured data (Organization, BreadcrumbList, Dataset,
+    DataCatalog, DataDownload); §8 `SEARCH_DISCOVERY.md` — только официальные
+    первоисточники (Naver и способы верификации Baidu — «не подтверждено»);
+    Brave: исправлено — отправка URL существует; политика training-краулеров
+    записана как не определённая владельцем (`D-2026-09-25-training-crawlers-undefined`).
+  - Проверки: `catalog` **216 тестов PASS, 0 FAIL, 0 SKIP** (было 174);
+    полный rendered-аудит `seo_report --html all`: 10 013 страниц × 22 локали,
+    0 проблем (canonical/hreflang/noindex/lang/dir/H1/title/description vs
+    sitemap); sitemap = реестр (9 724 entity-URL, 0 утечек скрытых);
+    robots-crawler завершился на 2 142 страницах, 442/442 публичных записи
+    достижимы обычными ссылками без JS; `check` OK;
+    `makemigrations --check` — нет изменений; `export_datasets --check`
+    (детерминизм) PASS; `gsd_public_check` Local 33/33; браузер (desktop/mobile,
+    тёмная/светлая, RU/UK/PL/ZH/AR/FA/DE/JA/ES/FR/EN) — PASS; сохранность данных:
+    счётчики всех ключевых таблиц = baseline, ContentTranslation 42 260 current,
+    XLSX sha256 без изменений, `release_state.json` ↔ БД 0 расхождений.
+    Local SQLite изменена только миграцией 0018 (новая пустая таблица).
+  - Не завершено / вне Local: выпуск GSD-1.0 на Production (нужно отдельное
+    утверждение); лицензия датасетов (решение владельца); регистрация в
+    консолях и ключ IndexNow (владелец); проверка переводов-черновиков;
+    отложенный eval-gap (412,820 billable chars; ранее записанный дефицит F0
+    108,605) — отдельно; пред-существующее: карточка AR на мобильном обрезана
+    по горизонтали так же, как на Production.
+  - Следующим выполнить: владельцу — утвердить scope GSD-1.0
+    (`docs/history/GSD-1.0-release-scope.md`) и решить лицензию данных;
+    исполнителю после утверждения — commit/tag и выпуск по `docs/RELEASE.md`,
+    затем `tools/gsd_public_check.py https://aipediya.com`.
+- Обновлено ранее (UTC): 2026-09-25T01:46:36Z
+- Follow-up (master finalize): `catalog_master import` (added 0, renumbered 0) и `catalog_master check` = OK подтверждены повторно; исправлены тесты `catalog/tests/test_catalog_master.py` под обязательное поле `Publication Decision`; `manage.py test catalog --settings=aipedia.test_settings` снова PASS (170/170). Production не трогался.
 - Задача 2026-09-25 (выпуск утверждённого Local-состояния): **DEPLOYED AND
   VERIFIED**. Production = commit `ed103a3ff163` / tag
   `release-2026-09-25-local-approved` (отчёт
@@ -24,6 +167,143 @@
   - Следующим выполнить: отдельная Local-итерация Global Search / SEO /
     discoverability (в т.ч. локализованный `<title>`); Production — только по
     новому утверждению владельца.
+- Задача 2026-09-24 (catalog master — единая каноническая база, Local-only):
+  **COMPLETE, Local PASS**. Production **не менялся**; ничего не публиковалось;
+  Local SQLite не изменялась (sha256 до/после import/check совпадает).
+  - Слои: Local — изменения не закоммичены. GitHub — `origin/main` = `6ce09b2`
+    (без этой задачи). Production — не трогался; `/healthz` (только чтение)
+    release `e8a4df761a87`, sitemap 763 модели / 138 инструментов.
+  - Изменено: `AI_CONTEXT/AIpediya_Model_Verification_Master.xlsx` пересобран как
+    catalog master (схема `aipediya-catalog-master/2`): листы Models (763 =
+    304 PUBLISHED + 459 NEEDS_REVIEW, 54 колонки), Tools (138 PUBLISHED, 44
+    колонки), Offers 555, Evaluations 881, Access 1205, Facts 10, Origins 812,
+    Tool Platforms 224, Changelog, Meta, Rules, Lists. Код:
+    `catalog/catalog_master.py`, `catalog/management/commands/catalog_master.py`
+    (`import [--production] [--rebuild]`, `check [--production]`),
+    `catalog/tests/test_catalog_master.py`. Удалены созданные ранее этой же
+    задачей и не закоммиченные `catalog/verification_master.py`,
+    команда `verification_master` и её тест (старый XLSX: копия в
+    `%TEMP%\old_registry_backup.xlsx`, ручных правок в нём не было). Правила:
+    `AGENTS.md` («Каноническая база каталога (master)»), `AI_CONTEXT/README.md`,
+    `docs/DECISIONS.md` (`D-2026-09-24-catalog-master`; прежние
+    `…-model-verification-registry` и нумерация из
+    `…-permanent-catalog-numbers` — «заменено»; два открытых вопроса).
+  - Результат импорта: drift master↔Local = 0 во всех листах; Public Number
+    master (хронология) совпал с Local у всех 304 моделей и 17 датированных
+    инструментов. Предупреждения `check` (ожидаемые): 580 записей имеют номер
+    в Local без Public Number в master (459 NEEDS_REVIEW с 305–763 и 121
+    инструмент без даты с 18–138); 459 NEEDS_REVIEW опубликованы на Production;
+    121 PUBLISHED инструмент без verified date.
+  - Проверки: `catalog_master import` повторно — added 0, renumbered 0;
+    `check --production` — OK; Excel (COM) открывает все 12 листов, списки и
+    подсветка (NEEDS_REVIEW + On Production=YES — красным) работают;
+    `catalog` **170 тестов PASS**.
+  - Не завершено: синхронизация master → Local (и затем Production) не
+    реализована; Local-код (незакоммиченный) ещё выдаёт постоянные номера;
+    верификация 459 кандидатов не выполнялась; открытые вопросы владельцу —
+    номера 121 инструмента без даты и снятие 459 NEEDS_REVIEW с Production.
+  - Следующим выполнить: владельцу — ответить на два открытых вопроса в
+    `docs/DECISIONS.md`; исполнителю — реализовать `catalog_master sync-local`
+    (master → Local, с журналом, без `QuerySet.update`), затем верифицировать
+    кандидатов пачками (`import` + `check` после каждой).
+- Ранее в этот день (реестр верификации, заменён catalog master): ниже — его
+  исходная запись для истории.
+  - Слои: Local — изменения ниже, не закоммичены. GitHub — `origin/main` =
+    `6ce09b2` (без этой задачи). Production — этой задачей не трогался (текущий
+    по этому файлу — `e8a4df761a87`; строка `docs/RELEASE.md` «публичный сайт
+    работает на commit `43e2d3f…`» устарела — расхождение, не исправлялось).
+  - Параллельно: в 00:27 UTC другой исполнитель записал ниже блок о выпускном
+    прогоне (архив `artifacts/code-release/aipedia-code-6ce09b289d3f.zip`, deploy
+    заблокирован). Имя архива указывает на commit `6ce09b2`, в который файлы
+    этой задачи не входят; блок не изменялся, кроме пометки «Обновлено ранее».
+  - Изменено: создан `AI_CONTEXT/AIpediya_Model_Verification_Master.xlsx`
+    (листы Models / Rules / Lists; 459 строк = все скрытые модели Local, все
+    `TO_VERIFY`; 15 колонок владельца + служебные Slug, Research Entity ID,
+    Category, Catalog Status (DB), Reserved Number (Local DB), Research Date Hint,
+    Import Sources (unverified), DB Checked, Import Batch, Missing Count;
+    выпадающие списки, условная подсветка недостающего, закреплённая шапка,
+    автофильтр). Код: `catalog/verification_master.py`,
+    `catalog/management/commands/verification_master.py` (`sync|check`),
+    `catalog/tests/test_verification_master.py`, `requirements-dev.txt`
+    (`openpyxl`, только Local; установлен в `.venv`). Правила: `AGENTS.md`
+    (раздел «Реестр верификации моделей»), `AI_CONTEXT/README.md`,
+    `docs/DECISIONS.md` (`D-2026-09-24-model-verification-registry` + открытый
+    вопрос о номерах).
+  - Данные в реестре: Official/Secondary Source, даты, Exists, Release Stage,
+    Last Verified **пустые** у всех 459 (ничего не верифицировано); Missing Data
+    у всех = `exists; date (exact or ≈); release_stage; official_source;
+    last_verified`. Подсказки импорта: дата у 412, ссылки у 459 (служебные
+    колонки, не доказательство). У 29 записей импортный источник — заглушка
+    Smithsonian Mark I Perceptron.
+  - Расхождения, найденные при сверке: (1) 459 моделей скрыты 2026-09-24 в
+    23:37 UTC незакоммиченной командой `restore_core_catalog --apply` (журнал
+    `move_to_research_layer`); блок ниже про «опубликованные 763» устарел —
+    сейчас в Local опубликовано 304 модели (№1–304), скрытые 459 держат
+    предварительные номера 305–763. (2) `restore_core_catalog` снимает
+    публикацию через `QuerySet.update` (журнал пишется отдельно), а
+    незакоммиченный `reconcile_catalog` описывает «clear all model numbers and
+    assign fresh 1..N» — противоречит `D-2026-09-24-permanent-catalog-numbers`;
+    не запускать без решения владельца.
+  - Проверки: `verification_master sync` (повторный — added=0) и `check: OK`;
+    `openpyxl` round-trip (правка агентом сохраняется, Missing Data
+    пересчитывается, кандидат без slug сохраняется); негативный `check` ловит
+    7/7 нарушений; Excel (COM) открывает файл без восстановления, списки и
+    подсветка работают, введённая дата остаётся текстом; сохранить из Excel на
+    этой машине нельзя — истекла лицензия Office. `catalog` **169 тестов PASS**.
+  - Не завершено: сама верификация 459 кандидатов (источники/даты) не
+    выполнялась; публикация кандидатов — только после `VERIFIED` →
+    `READY_FOR_SITE` и отдельного решения владельца; вопрос о номере
+    публикуемого кандидата (предварительный 305–763 или следующий свободный)
+    открыт.
+  - Следующим выполнить: владельцу — решить вопрос о номерах и при желании
+    закоммитить; исполнителю — верифицировать кандидатов пачками, после каждой
+    `verification_master sync` + `check`.
+
+- Обновлено ранее (UTC): 2026-09-25T00:27:23Z
+- Текущий выпускной прогон: `catalog --settings=aipedia.test_settings` PASS; Local smoke PASS (`127.0.0.1:18810`, `healthz`, каталог 304/138, newest-first, row-click проверен частично); isolated release verify FAIL по fingerprint базы (`publication_revisions`/`tool_publication_revisions` расходятся с ожиданием на Local-данных); code-only deploy из этого Windows окружения заблокирован, потому что серверный шаг выполняется на хосте `/srv/aipedia`, а здесь нет SSH-доступа к нему.
+- Изменено: рабочее дерево содержит локальные правки каталога/вёрстки/документации и неотслеживаемые `data/research/`; архив кода собран как `artifacts/code-release/aipedia-code-6ce09b289d3f.zip`.
+- Не завершено: публикация текущего Local-состояния в Production.
+- Следующим выполнить: на серверном хосте AIpedia запустить по `docs/RELEASE.md` `python3 tools/deploy_code_release.py /path/aipedia-code-6ce09b289d3f.zip --sha256 6054b382624c31d00dd437e60245bfa921067089f34a5109fd7ed2600da88459` после отдельной проверки того, как должны трактоваться локальные revision counts для скрытых research-строк.
+
+- Задача 2026-09-24 (три UX/data-нюанса, Local-only): **IMPLEMENTATION COMPLETE,
+  Local PASS**. Production **не менялся** (нет применимого разрешения на выпуск).
+  - Изменено:
+    - (1) Чистый `/` открывает каталог по дате выпуска убыв. (newest-first) для
+      Моделей и Инструментов; явные `?sort=…` переопределяют; детерминизм после
+      перезагрузки (`catalog/views.py` default `release_desc`).
+    - (2) Клик по всей строке открывает нужную панель; ссылки/кнопки/поля/фильтры
+      и выделение текста не перехватываются; клик по строке не закрывает панель
+      (`static/site.js`, `static/site.css` cursor).
+    - (3) `catalog/public number` — постоянный ID (одна простановка, не
+      пересчитывается на дате/цене/оценке/сортировке; существующие сохранены;
+      остальные опубликованные проставлены один раз детерминированно; новая
+      запись получает следующий свободный). Отдельная приблизительная дата
+      `approx_released`/`approx_precision`/`approx_evidence` (рендер `≈`, никогда
+      не выдаётся за точную). Сортировка по выпуску: точная → приблизительная →
+      неизвестные в конце. Файлы: `catalog/models.py`, `catalog/chronology.py`,
+      `catalog/comparison.py`, `catalog/templatetags/catalog_tags.py`, шаблоны
+      строк/панелей, миграция `0016_approx_dates_and_permanent_numbers`.
+  - Данные Local после миграции: модели опубликованные 763 → пронумерованы 763
+    (0 null); инструменты 138 → 138 (0 null); номера уникальны и непрерывны
+    (1..763 / 1..138); существующие 1..304 / 1..17 сохранены (первый `#1`
+    jurassic-1-jumbo / github-copilot).
+  - Проверки: `catalog` **160 тестов PASS** (5 старых тестов правила «номер по
+    дате» переписаны на постоянные номера; добавлен `test_permanent_numbers.py`).
+    Local-браузер: чистый `/` newest-first, `?sort=number_asc` даёт 1..5,
+    `release_asc` oldest-first, клик по ячейке строки открывает панель, клик вне
+    закрывает; Tools newest-first.
+  - Решения: добавлено `D-2026-09-24-permanent-catalog-numbers`;
+    `D-2026-09-20-chronology-numbers` и `D-2026-09-20-undated-last` помечены
+    «заменено новым решением»; обновлён numbering-абзац
+    `D-2026-09-21-model-tool-catalog-split`.
+  - Не завершено: приблизительные даты как инфраструктура — конкретные `approx_*`
+    значения для 459 недатированных моделей владельцем не вносились (по замыслу).
+    Публикация на Production не выполнялась.
+  - Следующим выполнить: дождаться явного разрешения владельца на выпуск этого
+    состояния по `docs/RELEASE.md`; при желании — наполнить `approx_*` доказанными
+    приблизительными датами.
+- Обновлено ранее (UTC): 2026-09-24T00:20:00Z
+
 - Документация имён: правило «бренд AIpediya / техкод aipedia» закреплено в
   `AGENTS.md` и `D-2026-09-23-brand-vs-tech-name` (`docs/DECISIONS.md`). Код,
   сервер и Production не менялись.

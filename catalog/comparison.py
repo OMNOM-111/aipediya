@@ -261,7 +261,11 @@ def decorate_tool(tool, taxonomy_labels=None, price_unit='', price_scope='standa
         tool.resource_links.append(
             {"kind": "provider", "url": tool.official_url, "label": label("official_link", lang)}
         )
-    tool.linked_models = [link.model for link in tool.model_links.all()]
+    # Only published catalog models may be linked; hidden records never leak.
+    tool.linked_models = [
+        link.model for link in tool.model_links.all()
+        if link.model.published and link.model.entry_type == "model"
+    ]
     return tool
 
 

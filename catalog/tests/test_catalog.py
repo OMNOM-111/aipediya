@@ -17,12 +17,12 @@ class CatalogTests(TestCase):
         renumber_chronologically()
 
     def names(self, params):
-        return [m.slug for m in self.client.get("/", params).context["page"]]
+        return [m.slug for m in self.client.get("/", params, follow=True).context["page"]]
 
     def test_pages_and_missing(self):
         self.assertEqual(self.client.get("/").status_code, 200)
         for model in ModelVersion.objects.all():
-            response = self.client.get("/models/" + model.slug, {"lang": "ru"})
+            response = self.client.get("/models/" + model.slug, {"lang": "ru"}, follow=True)
             self.assertContains(response, model.version)
             self.assertContains(response, "Платформа и оценка")
             self.assertContains(response, f"#{model.public_number}")
@@ -70,13 +70,13 @@ class CatalogTests(TestCase):
 
     def test_filters_and_catalogue_state_survive_links(self):
         bench = Benchmark.objects.get(name="AIME 2025")
-        response = self.client.get("/", {"q": "Gemini", "category": "code", "access": "api", "lang": "en", "benchmark": bench.pk, "sort": "check_best"})
+        response = self.client.get("/", {"q": "Gemini", "category": "code", "access": "api", "lang": "en", "benchmark": bench.pk, "sort": "check_best"}, follow=True)
         self.assertContains(response, 'lang="en"')
         self.assertContains(response, "data-filter-control=\"category\"")
         self.assertContains(response, "data-filter-control=\"access\"")
         self.assertContains(response, "data-filter-control=\"benchmark\"")
         first = response.context["page"][0]
-        detail = self.client.get(f"/models/{first.slug}", response.wsgi_request.GET)
+        detail = self.client.get(f"/models/{first.slug}", response.wsgi_request.GET, follow=True)
         self.assertContains(detail, "category=code")
         self.assertContains(detail, "benchmark=")
 
@@ -97,8 +97,13 @@ class CatalogTests(TestCase):
         page = response.context["page"]
         self.assertEqual(page.number, 2)
         self.assertEqual(len(page), min(CHUNK_SIZE, page.paginator.count - INITIAL_PAGE_SIZE))
-        for params in ({"page": "nonsense"}, {"sort": "DROP TABLE"}, {"benchmark": "invalid"}, {"developer": "-1"}):
-            self.assertEqual(self.client.get("/", params).status_code, 200)
+        for params in ({"sort": "DROP TABLE"}, {"benchmark": "invalid"}, {"developer": "-1"}):
+            self.assertEqual(self.client.get("/", params, follow=True).status_code, 200)
+        # Pagination is finite: invalid or out-of-range pages are 404, page=1 is
+        # a permanent redirect to the clean listing (GSD-05).
+        for value in ("nonsense", "0", "-1", str(page.paginator.num_pages + 1)):
+            self.assertEqual(self.client.get("/", {"page": value}).status_code, 404)
+        self.assertEqual(self.client.get("/", {"page": 1})["Location"], "/")
 
     def test_editorial_history_and_seed_preservation(self):
         offer = Offer.objects.first()

@@ -78,31 +78,31 @@ class PublicCatalogFlowTests(TestCase):
         self.assertEqual((turbo.amount, turbo.unit), (60, "million_characters"))
         self.assertEqual((hd.amount, hd.unit), (100, "million_characters"))
         for lang, expected in (("ru", "1M символов"), ("en", "1M characters")):
-            response = self.client.get(f"/?lang={lang}&q=speech-2.8-turbo")
+            response = self.client.get(f"/?lang={lang}&q=speech-2.8-turbo", follow=True)
             self.assertContains(response, "60</strong>", html=False)
             self.assertContains(response, expected)
 
     def test_local_cli_never_becomes_cloud_access(self):
         model = ModelVersion.objects.get(research_entity_id="gpt-oss")
         self.assertTrue(all(access.service.compute_location == "local" for access in model.accesses.all()))
-        response = self.client.get(f"/models/{model.slug}?lang=ru")
+        response = self.client.get(f"/models/{model.slug}?lang=ru", follow=True)
         self.assertContains(response, "Локально")
         self.assertNotContains(response, "Вычисления: Облако")
 
     def test_taxonomy_labels_and_checked_evaluations_render_without_internal_ids(self):
-        response = self.client.get("/?lang=en&category=video_generation")
+        response = self.client.get("/?lang=en&category=video_generation", follow=True)
         self.assertContains(response, "Video generation")
         self.assertNotContains(response, ">video_generation<", html=False)
         checked = Evaluation.objects.filter(independent=True, source__url__startswith="https://").count()
         self.assertGreater(checked, 0)
 
     def test_numeric_sorts_require_an_explicit_comparison_scope(self):
-        price_response = self.client.get("/?lang=en&price_unit=input&sort=price_asc")
+        price_response = self.client.get("/?lang=en&price_unit=input&sort=price_asc", follow=True)
         self.assertEqual(price_response.context["price_unit"], "input")
         self.assertContains(price_response, "Price unit")
 
         benchmark = Benchmark.objects.get(protocol="test protocol")
-        response = self.client.get(f"/?lang=en&benchmark={benchmark.pk}&sort=check_best&evaluated_only=1")
+        response = self.client.get(f"/?lang=en&benchmark={benchmark.pk}&sort=check_best&evaluated_only=1", follow=True)
         models = list(response.context["page"])
         self.assertTrue(models)
         self.assertTrue(all(

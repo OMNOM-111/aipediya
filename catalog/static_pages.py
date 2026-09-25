@@ -91,3 +91,72 @@ def page_blocks(page, lang):
             text = overlay.get(source_hash(english), {}).get(lang) or english
         blocks.append((tag, text))
     return blocks
+
+
+# --- GSD-1.0 pages: methodology and collections -----------------------------
+# Their English/Russian source lives in catalog.discovery_content; drafts for
+# the other locales live in a separate overlay with explicit provenance so they
+# are never confused with the machine-translation overlay above.
+from . import discovery_content as _dc  # noqa: E402
+
+STATIC_PAGES["methodology"] = _dc.METHODOLOGY
+for _slug, _blocks in _dc.HUBS.items():
+    STATIC_PAGES[f"hub:{_slug}"] = _blocks
+for _key, (_en, _ru) in _dc.LABELS.items():
+    STATIC_LABELS[_key] = (_en, _ru)
+
+_DISCOVERY_PATH = Path(settings.BASE_DIR) / "data" / "discovery_translations.json"
+
+
+@lru_cache(maxsize=1)
+def _discovery_overlay():
+    if _DISCOVERY_PATH.exists():
+        return json.loads(_DISCOVERY_PATH.read_text(encoding="utf-8")).get("strings", {})
+    return {}
+
+
+def _translated(english, lang):
+    """Return ``(text, is_fallback)`` for one English source string."""
+    digest = source_hash(english)
+    text = _overlay().get(digest, {}).get(lang) or _discovery_overlay().get(digest, {}).get(lang)
+    return (text, False) if text else (english, True)
+
+
+def localized_blocks(page, lang):
+    """``[(tag, text, fallback)]``; ``fallback`` marks English shown in another locale."""
+    blocks = []
+    for tag, english, russian in STATIC_PAGES.get(page, []):
+        if lang == "en":
+            blocks.append((tag, english, False))
+        elif lang == "ru":
+            blocks.append((tag, russian or english, not russian))
+        else:
+            text, fallback = _translated(english, lang)
+            blocks.append((tag, text, fallback))
+    return blocks
+
+
+def label_text(key, lang):
+    english, russian = STATIC_LABELS.get(key, ("", ""))
+    if lang == "en":
+        return english
+    if lang == "ru":
+        return russian or english
+    return _translated(english, lang)[0]
+
+
+def page_ready(page, lang):
+    """A page is indexable in a locale only when no block falls back to English."""
+    blocks = STATIC_PAGES.get(page)
+    return bool(blocks) and not any(fallback for _tag, _text, fallback in localized_blocks(page, lang))
+
+
+def labels_ready(keys, lang):
+    if lang in ("en", "ru"):
+        return True
+    return all(not _translated(STATIC_LABELS[key][0], lang)[1] for key in keys)
+
+
+def clear_discovery_cache():
+    _discovery_overlay.cache_clear()
+    _overlay.cache_clear()

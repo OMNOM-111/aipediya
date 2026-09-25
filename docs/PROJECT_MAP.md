@@ -23,7 +23,10 @@ Django 5.2 LTS, SQLite, серверный HTML, WhiteNoise, Waitress.
 | Каталог инструментов | `templates/tool_table.html`, `templates/tool_rows.html` |
 | Правая панель модели / инструмента | `templates/panel.html`, `templates/tool_panel.html`; `templates/detail.html` подключает каталог с открытой панелью |
 | Стили и поведение панели | `static/site.css`, `static/table-layout.css`, `static/site.js` |
-| Маршруты | `aipedia/urls.py`, `catalog/views.py` |
+| Маршруты | `aipedia/urls.py`, `catalog/views.py`; языковые пути — `catalog/locale_urls.py` + `catalog/middleware.py` |
+| Поиск: readiness, sitemap, hreflang, JSON-LD | `catalog/readiness.py`, `catalog/seo.py`, контракт `docs/SEARCH_DISCOVERY.md` |
+| Методика, подборки, открытые данные | `catalog/discovery_content.py`, `catalog/hubs.py`, `catalog/datasets.py`, `templates/methodology.html`, `collections.html`, `datasets.html`; переводы новых строк — `data/discovery_translations.json` |
+| IndexNow-журнал и отчёт | `catalog/discovery.py`, команды `indexnow_dispatch`, `notify_indexnow`, `seo_report`, `export_datasets`, `catalog_stats` |
 | Фильтры и сортировка | `catalog/comparison.py`, `catalog/views.py` |
 | Независимые хронологические номера моделей и инструментов | `catalog/chronology.py`, команда `apply_release_chronology` |
 | Импорт исследований | `catalog/management/commands/import_research.py` |
@@ -35,7 +38,7 @@ Django 5.2 LTS, SQLite, серверный HTML, WhiteNoise, Waitress.
 Модели, инструменты, страны происхождения и платформы: `catalog/models.py`.
 `ModelVersion` хранит модели и сохранённые legacy-записи; публичный каталог
 инструментов читает отдельную сущность `Tool`, связанную с legacy-записью без
-потери истории. Схема — миграции `catalog/migrations/` (актуальная 0013).
+потери истории. Схема — миграции `catalog/migrations/` (актуальная 0018).
 Модели и инструменты имеют независимые фильтры, сортировки, панели и
 хронологические номера; смешанного публичного режима «Все» нет.
 Production SQLite на сервере: `/srv/aipedia/data/aipedia.sqlite3`.

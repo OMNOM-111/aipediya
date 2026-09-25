@@ -13,3 +13,7 @@ STORAGES = {
 AIPEDIA_TRANSLATION_PROVIDER = "mock"
 AIPEDIA_AZURE_TRANSLATOR_KEY = ""
 AIPEDIA_AUTO_TRANSLATE = False
+
+# Tests never send IndexNow requests; dispatcher tests inject a fake transport.
+AIPEDIA_INDEXNOW_ENABLED = False
+AIPEDIA_DATASETS_PUBLIC = True

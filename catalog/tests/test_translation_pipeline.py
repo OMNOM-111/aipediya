@@ -80,7 +80,7 @@ class TranslationPipelineTests(TestCase):
         self.assertEqual(summary["translated"], 0)
         self.model.refresh_from_db()
         self.assertNotIn("fr", self.model.description)
-        response = self.client.get("/models/" + self.model.slug, {"lang": "fr"})
+        response = self.client.get("/models/" + self.model.slug, {"lang": "fr"}, follow=True)
         self.assertEqual(response.status_code, 200)
 
     def test_null_provider_keeps_english_fallback(self):
