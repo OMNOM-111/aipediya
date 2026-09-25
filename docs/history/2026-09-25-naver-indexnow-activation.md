@@ -43,3 +43,23 @@ Gate: 217 и 219 тестов PASS соответственно.
 `/healthz` = `386d4aaafd00`; integrity ok; FK 0; Models 304/763, Tools 138, Offers 555,
 Evaluations 881, ContentTranslation 42 260, Revision 4 813; outbox 15 048 строк;
 Production GSD QA **1596/1596**; public sitemap 10 032.
+
+## Автоматическая отправка (2026-09-25 22:41Z)
+
+- Штатный механизм периодических задач AIpedia — программы собственного supervisord
+  (`aipedia-backup` = цикл `sleep`). Cron на хосте нет. Добавлена программа
+  `aipedia-indexnow` → `/srv/aipedia/bin/indexnow-dispatch-loop`
+  (`deploy/indexnow-dispatch-loop.sh`, владелец `aipedia`, 0700): каждые 300 с
+  `flock -n /srv/aipedia/data/indexnow-dispatch.lock … indexnow_dispatch --send --batch 1000`;
+  только pending/retry события, dedup/retry/live-gate диспетчера без изменений, без `--all`.
+  Окружение — копия `[program:aipedia]` + `AIPEDIA_INDEXNOW_INTERVAL_SECONDS="300"`.
+- Конфигурация до изменения: `/srv/aipedia/backups/supervisord.conf.before-indexnow-scheduler-20260925T224101Z`.
+  `supervisorctl update aipedia-indexnow` запустил только новую программу; `aipedia`,
+  `aipedia-backup`, `aipedia-tunnel` не перезапускались.
+- End-to-end: `notify_indexnow --url https://aipediya.com/methodology` (реальная
+  публичная страница без изменений) → событие 15049 `pending` 22:41:37Z → очередной
+  плановый цикл 22:46:02Z → IndexNow HTTP 200, `sent`. Публичные данные не менялись;
+  строка журнала оставлена как аудит.
+- Лог: ключ IndexNow в `indexnow.log`/`indexnow-error.log` — 0 вхождений. Проверка
+  блокировки: вторая попытка при удержанной блокировке — `SECOND_RUN_BLOCKED`.
+- Outbox после теста: sent 10 033, failed 5 016 (история попытки с 422), pending 0.

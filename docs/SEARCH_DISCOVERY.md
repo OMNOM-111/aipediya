@@ -171,7 +171,7 @@ available to the implementing agent; nothing is "connected" without owner eviden
 | Naver Search Advisor | IndexNow participant with its own endpoint [I2]. Current console offered HTML file or HTML meta-tag verification | SSR setting and conditional head output implemented; `217/217` catalog tests PASS | meta tag live in Production HTML since 2026-09-25 22:02Z (`160be0f37037`, curl-verified) | click Verify, then submit `https://aipediya.com/sitemap.xml` |
 | Baidu (ziyuan) | Official: site must be verified before sitemap submission; ≤ 50,000 URLs and ≤ 10 MB per sitemap file; submission does not guarantee crawling/indexing [BD1]. Concrete verification methods and account requirements: **unverified** (secondary guides only) | `/sitemaps/zh-hans.xml` fits the limits (458 URLs, ≈ 1.2 MB) | no Baidu tab or authenticated session among the inspected Chrome tabs (2026-09-25) | if account is available, register/verify and submit the zh-hans sitemap; otherwise owner may face identity/phone requirements |
 | Brave Search | Crawler has no distinct UA; does not crawl what Googlebot may not crawl; noindex (not robots) delists; URL submission at `search.brave.com/submit-url` [BR1] | ready (Googlebot not blocked) | none | optional: submit key URLs |
-| IndexNow protocol | Key file, batch POST ≤ 10,000 URLs, codes 200/202/400/403/422/429 [I1]; submission is shared with all participants; participants: Bing, Yandex, Seznam, Naver, Yep, Amazon (+ Internet Archive in the engines list); Google is not listed [I2][I3] | enabled on Production 2026-09-25; root key file `/<key>.txt` returns 200 | initial submission: 10,032 URLs accepted (HTTP 200, 3 POSTs); acceptance is not indexing | run `indexnow_dispatch --send` after future deploys |
+| IndexNow protocol | Key file, batch POST ≤ 10,000 URLs, codes 200/202/400/403/422/429 [I1]; submission is shared with all participants; participants: Bing, Yandex, Seznam, Naver, Yep, Amazon (+ Internet Archive in the engines list); Google is not listed [I2][I3] | enabled on Production 2026-09-25; root key file `/<key>.txt` returns 200 | initial submission: 10,032 URLs accepted (HTTP 200, 3 POSTs); acceptance is not indexing | automatic: `aipedia-indexnow` scheduler every 300 s |
 | OpenAI OAI-SearchBot | search crawler, honors robots; GPTBot = training; ChatGPT-User = user-triggered, robots may not apply; IP lists published [O1] | not blocked by current robots | spoofed-UA 200 only | none required for search visibility |
 | PerplexityBot | search (not training), honors robots; Perplexity-User user-triggered, generally ignores robots; IP lists published [P1] | not blocked | spoofed-UA 200 only | none |
 | Anthropic Claude-SearchBot | search; ClaudeBot = training; Claude-User = user-triggered; all honor robots.txt [A1] | not blocked | spoofed-UA 200 only | none |
@@ -237,8 +237,15 @@ HTML is not cached with cookies (the site sets no language cookie server-side).
   200/202 → sent; 400/422 → failed; 403 → abort, keep pending; 429/5xx/network →
   exponential backoff, `--max-attempts` (default 6) then failed. Acceptance ≠ indexing.
 * `manage.py notify_indexnow --url … | --all` only queues (no network).
-* No scheduler is installed. After the owner enables it, run the dispatcher after each
-  deploy; `--all` once after the URL-architecture release.
+* Scheduler (Production, since 2026-09-25 22:41Z): supervisord program
+  `aipedia-indexnow` (same pattern as `aipedia-backup`) runs
+  `/srv/aipedia/bin/indexnow-dispatch-loop` (`deploy/indexnow-dispatch-loop.sh`):
+  `indexnow_dispatch --send --batch 1000` every 300 s
+  (`AIPEDIA_INDEXNOW_INTERVAL_SECONDS`), only pending events that are due, with the
+  normal live-state gate; never `--all`. `flock -n /srv/aipedia/data/indexnow-dispatch.lock`
+  prevents overlapping runs; a manual run must use the same lock. Logs:
+  `/srv/aipedia/logs/indexnow.log` (URLs and HTTP status only, never the key).
+  `--all` was used once, for the URL-architecture release (2026-09-25).
 
 ## 9. Monitoring
 
@@ -257,8 +264,8 @@ referrals are reported as `not_connected` with `null` values — never zero.
    in Naver Search Advisor, then submit `https://aipediya.com/sitemap.xml`.
 4. Baidu was not present in the inspected open tabs; no submission was made.
 5. IndexNow: enabled (key in the `[program:aipedia]` environment, root key file). The
-   initial submission of all 10,032 public URLs was accepted. After each future deploy,
-   run `indexnow_dispatch --send` on the host (no scheduler is installed).
+   initial submission of all 10,032 public URLs was accepted. Future changes are sent
+   automatically by the `aipedia-indexnow` scheduler (every 300 s); no owner action.
 6. Decide the training-crawler policy (currently not defined; robots baseline unchanged).
 7. Datasets: choose a data license (or keep off). Then `AIPEDIA_DATASETS_PUBLIC=1`.
 8. Review agent-drafted translations of the new short texts
