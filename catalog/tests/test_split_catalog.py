@@ -83,9 +83,11 @@ class SplitCatalogTests(TestCase):
     def test_default_chronology_includes_historical_records(self):
         response = self.client.get("/")
         self.assertEqual(response.context["status"], "all")
+        # Default order is newest-first by release date; the permanent numbers
+        # (Older Model 1, Newer Model 2) stay attached to each row.
         self.assertEqual(
             [(item.name, item.public_number) for item in response.context["page"]],
-            [("Older Model", 1), ("Newer Model", 2)],
+            [("Newer Model", 2), ("Older Model", 1)],
         )
         active = self.client.get("/", {"status": "active"})
         self.assertEqual([item.name for item in active.context["page"]], ["Newer Model"])

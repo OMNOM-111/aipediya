@@ -39,7 +39,7 @@ class Command(BaseCommand):
                     action='verify_release_date', before=before,
                     after={'released': str(released) if released else None, 'release_evidence': evidence})
                 changed += 1
-            result = renumber_chronologically(reason='owner_requested_oldest_first_2026-09-20')
+            result = renumber_chronologically()
             result.update({'dates_changed': changed, 'dry_run': dry_run})
             if dry_run:
                 transaction.set_rollback(True)

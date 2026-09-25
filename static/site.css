@@ -338,6 +338,7 @@ tbody th { font-weight: 400; }
 /* The reference rhythm is a uniform 55px row; long values clamp instead of
    pushing the row taller, otherwise the page no longer fits 12 rows. */
 .model-table tbody tr > * { height: 55px; max-height: 55px; overflow: hidden; }
+.model-table tbody tr[data-slug] { cursor: pointer; }
 tbody tr:last-child > * { border-bottom: 0; }
 tbody tr:hover > * { background: rgba(126, 198, 214, 0.035); }
 
@@ -477,6 +478,7 @@ a.model-name:hover .model-title { color: var(--mint-text); }
 .release-date { font-size: 13px; color: var(--text-soft); }
 .model-table .release-date { white-space: nowrap; }
 .model-table .release-date.missing { color: var(--muted); }
+.model-table .release-date.approx { color: var(--text-soft); }
 
 .model-table tbody tr.is-selected > * {
   background: rgba(94, 234, 212, .04);

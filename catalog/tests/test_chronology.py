@@ -24,32 +24,46 @@ class ChronologyTests(TestCase):
         newer = self.model('Astra', date(2026, 9, 1))
         newer_pk, newer_slug = newer.pk, newer.slug
         older = self.model('Older', date(2024, 1, 1))
-        # Save the stale object: its old number now belongs to Older.
+        older.refresh_from_db(); newer.refresh_from_db()
+        # Numbers follow assignment order (each new entry takes the next free
+        # number), never the release date, and are never recomputed.
+        self.assertEqual((newer.public_number, older.public_number), (1, 2))
+        # Refining data on an existing entry never changes its permanent number.
         newer.description = {'en': 'Updated description'}
         newer.save()
         newer.refresh_from_db()
-        self.assertEqual((older.public_number, newer.public_number), (1, 2))
+        self.assertEqual(newer.public_number, 1)
         self.assertEqual((newer.pk, newer.slug), (newer_pk, newer_slug))
-        self.assertTrue(PublicationRevision.objects.filter(model=newer, action='renumber_chronology',
-            before__public_number=1, after__public_number=2).exists())
+        self.assertTrue(PublicationRevision.objects.filter(model=newer, action='assign_catalog_number',
+            after__public_number=1).exists())
+        # The clean catalogue opens newest-first by release date, independent of
+        # the permanent numbers.
         response = self.client.get('/')
-        self.assertEqual(response.context['sort'], 'number_asc')
-        self.assertEqual([m.slug for m in response.context['page']], ['older', 'astra'])
+        self.assertEqual(response.context['sort'], 'release_desc')
+        self.assertEqual([m.slug for m in response.context['page']], ['astra', 'older'])
         self.assertContains(response, '2024-01-01')
         self.assertEqual(self.client.get('/models/' + newer_slug).status_code, 200)
 
     def test_same_day_uses_name_and_unknown_stays_last_both_directions(self):
         self.model('Zulu', date(2024, 1, 1))
-        self.model('Alpha', date(2024, 1, 1))
-        unknown = self.model('Undated')
-        self.assertIsNone(unknown.public_number)
-        for direction, expected in [('asc', ['alpha', 'zulu', 'undated']), ('desc', ['zulu', 'alpha', 'undated'])]:
-            response = self.client.get('/', {'sort': 'number_' + direction, 'lang': 'ru'})
+        self.model('Alpha', date(2025, 1, 1))
+        undated = self.model('Undated')
+        # Every published entry now carries a permanent number, dated or not.
+        undated.refresh_from_db()
+        self.assertIsNotNone(undated.public_number)
+        number_before = undated.public_number
+        for direction, expected in [('desc', ['alpha', 'zulu', 'undated']), ('asc', ['zulu', 'alpha', 'undated'])]:
+            response = self.client.get('/', {'sort': 'release_' + direction, 'lang': 'ru'})
             self.assertEqual([m.slug for m in response.context['page']], expected)
             self.assertContains(response, 'Дата выпуска не подтверждена')
-        unknown.released = date(2023, 1, 1)
-        unknown.save(update_fields=['released'])
-        self.assertEqual(unknown.public_number, 1)
+        # An approximate date sorts the entry by that date but keeps its number.
+        undated.approx_released = date(2023, 6, 1)
+        undated.approx_precision = 'month'
+        undated.save(update_fields=['approx_released', 'approx_precision'])
+        undated.refresh_from_db()
+        self.assertEqual(undated.public_number, number_before)
+        response = self.client.get('/', {'sort': 'release_asc', 'lang': 'ru'})
+        self.assertEqual([m.slug for m in response.context['page']], ['undated', 'zulu', 'alpha'])
 
     def test_manifest_dry_run_idempotency_coverage_and_rollback(self):
         first = self.model('First')
@@ -68,7 +82,7 @@ class ChronologyTests(TestCase):
             call_command('apply_release_chronology', str(path), stdout=StringIO())
             first.refresh_from_db(); second.refresh_from_db()
             self.assertEqual(first.public_number, 1)
-            self.assertIsNone(second.public_number)
+            self.assertEqual(second.public_number, 2)
             count = PublicationRevision.objects.count()
             call_command('apply_release_chronology', str(path), stdout=StringIO())
             self.assertEqual(PublicationRevision.objects.count(), count)

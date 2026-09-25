@@ -9,5 +9,5 @@
 <td class="rating-col"></td>
 <td class="context-col">{% if model.context %}{{ model.context|tokens }}{% endif %}</td>
 <td class="status-col"><span class="quiet-chip">{{ model.catalog_status|label:lang }}</span></td>
-<td class="release-col">{% if model.released %}<time class="release-date" datetime="{{ model.released|date:'Y-m-d' }}">{{ model.released|month_year:lang }}</time>{% else %}<span class="release-date missing">{{ ui.release_unknown }}</span>{% endif %}</td>
+<td class="release-col">{% if model.released %}<time class="release-date" datetime="{{ model.released|date:'Y-m-d' }}">{{ model.released|month_year:lang }}</time>{% elif model.approx_released %}<span class="release-date approx">{{ model|approx_label:lang }}</span>{% else %}<span class="release-date missing">{{ ui.release_unknown }}</span>{% endif %}</td>
 </tr>{% empty %}<tr><td colspan="11" class="empty">{{ ui.empty }} <a href="/?lang={{ lang }}&amp;kind=model">{{ ui.reset }}</a></td></tr>{% endfor %}

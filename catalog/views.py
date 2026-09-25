@@ -261,10 +261,10 @@ def _tool_catalog_context(request, selected_slug=None):
     if ecosystem:
         qs = qs.filter(ecosystem__icontains=ecosystem)
 
-    sort = request.GET.get("sort", "number_asc")
+    sort = request.GET.get("sort", "release_desc")
     orders = [f"{key}_{direction}" for key in TOOL_SORTS for direction in ("asc", "desc")]
     if sort not in orders:
-        sort = "number_asc"
+        sort = "release_desc"
 
     price_scope = request.GET.get("price_scope", "standard")
     if price_scope not in {"standard", "batch", "offpeak", "peak", "flex", "fast", "priority", "free", "annual", "all"}:
@@ -431,7 +431,7 @@ def _tool_filter_chips(request, lang, **values):
         add("platform", values["platform"])
     if values.get("local_execution"):
         add("local", t(values["local_execution"], lang))
-    if values.get("sort") and values["sort"] != "number_asc":
+    if values.get("sort") and values["sort"] != "release_desc":
         add("sort", t(values["sort"], lang))
     return chips
 
@@ -498,11 +498,11 @@ def _catalog_context(request, selected_slug=None):
     entry_type = ""
 
     lang = request.aipedia_lang
-    sort = request.GET.get("sort", "number_asc")
+    sort = request.GET.get("sort", "release_desc")
     sort = {"score": "check_best", "check_desc": "check_best", "check_asc": "check_worst"}.get(sort, sort)
     orders = [f"{key}_{direction}" for key in TEXT_SORTS for direction in ("asc", "desc")] + ["check_best", "check_worst"]
     if sort not in orders:
-        sort = "number_asc"
+        sort = "release_desc"
     price_scope = request.GET.get("price_scope", "standard")
     if price_scope not in {"standard", "batch", "offpeak", "peak", "flex", "fast", "priority", "free", "annual", "all"}:
         price_scope = "standard"
@@ -652,7 +652,7 @@ def _filter_chips(request, values, lang, categories, access_kinds):
         add("price_unit", t(unit_key, lang))
     if values["benchmark"]:
         add("benchmark", values["benchmark"].name)
-    if values["sort"] and values["sort"] != "number_asc":
+    if values["sort"] and values["sort"] != "release_desc":
         add("sort", t(values["sort"], lang))
     return chips
 

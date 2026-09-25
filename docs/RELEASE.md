@@ -11,6 +11,42 @@ Push в GitHub **не** публикует сайт. Ярлык Local, кноп�
 Текущий публичный сайт работает на commit `43e2d3feba57cf67084cc2e3774c86a72ce361b5`.
 Позднее код этой ветки публикуется только по отдельной команде владельца.
 
+## Процесс выпуска (подтверждено владельцем 2026-09-25)
+
+Develop on Local → QA Local → владелец утверждает выпуск → Production
+приводится к **утверждённому Local-состоянию** → выпуск получает commit, tag и
+changelog.
+
+- Утверждение владельцем относится ко всему проверенному Local-состоянию:
+  что публично, скрыто, отсортировано, переведено и как отображается.
+  Отдельные внутренние изменения, уже входящие в это состояние, повторно не
+  согласуются.
+- Local SQLite на сервер **никогда** не копируется. Код переносится архивом,
+  схема — `migrate` существующей серверной БД, а публикационное состояние
+  (какие Models/Tools публичны, их постоянные номера) — манифестом
+  `data/release_state.json` из того же commit:
+  `manage.py sync_publication_state export data/release_state.json --release <tag>`
+  на Local, затем `deploy_code_release.py … --publication-state data/release_state.json`
+  на сервере. Шаг идёт после `migrate`, пока `aipedia` остановлена; меняет только
+  `published` через `save()` с записью `sync_release_state` в журнал; при любом
+  расхождении номера/slug ничего не пишет, и deploy откатывается к backup.
+- Перед выпуском: полный набор тестов PASS, Local QA PASS; после — public
+  HTTPS QA. Tag вида `release-YYYY-MM-DD-<name>`, changelog — ниже и в
+  `docs/history/`.
+
+## Changelog
+
+### release-2026-09-25-local-approved
+
+- Полная локализация интерфейса и каталога на 22 языка.
+- Корректный публичный счётчик каталога.
+- Проверенный набор из 304 публичных Models (Tools — 138).
+- Сортировка по умолчанию newest → oldest для Models и Tools.
+- Фильтры, поиск, клик по строке и правая панель (Escape / X / клик вне).
+- Улучшения responsive/mobile и RTL (ar, fa).
+- 459 внутренних research-моделей сохранены в базе вне публичного каталога
+  (без удаления данных, переводов и истории; постоянные номера 305–763 внутренние).
+
 ## Собрать архив кода
 
 Из корня проекта, на проверенном commit/tag:
@@ -42,13 +78,18 @@ artifacts и `.venv` туда не входят. Скрипт отказывае
 1. Зафиксировать commit/tag и прогнать `manage.py test catalog --settings=aipedia.test_settings`.
 2. Собрать архив `tools/build_code_release.py` и сохранить SHA256.
 3. Скопировать архив на сервер **без** Local SQLite.
-4. На сервере: `python3 tools/deploy_code_release.py /path/to/archive.zip --sha256 <digest>`.
+4. На сервере: `python3 tools/deploy_code_release.py /path/to/archive.zip --sha256 <digest> --publication-state data/release_state.json`
+   (сначала то же с `--dry-run`).
 5. Скрипт останавливает только программу `aipedia`, делает online-backup
    `/srv/aipedia/data/aipedia.sqlite3`, переносит код и статику, выполняет
    `migrate` существующей серверной БД, поднимает только `aipedia` и проверяет
    `/healthz` на loopback.
 6. Он **никогда** не копирует локальную SQLite поверх серверной базы и не
    удаляет `/srv/aipedia/data`, `/srv/aipedia/backups` и `/srv/aipedia/config`.
+
+Проверить манифест заранее на копии, приведённой к схеме Production:
+`manage.py sync_publication_state apply data/release_state.json` (dry-run) с
+`AIPEDIA_DB=<копия>`.
 
 Не использовать `tools/deploy_release.py` и `tools/deploy_chronology.py` для
 этого изменения: они рассчитаны на прошлые выпуски с импортом источников /

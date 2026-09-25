@@ -90,6 +90,36 @@ def month_year(value, lang):
     return f"{value.day} {month} {value.year}"
 
 @register.filter
+def month_only(value, lang):
+    """Month + year without a day, for 'month'-precision approximate dates."""
+    if not value:
+        return ""
+    if lang in ("ja", "zh-Hans", "zh-Hant"):
+        return f"{value.year}年{value.month}月"
+    if lang == "ko":
+        return f"{value.year}년 {value.month}월"
+    month = MONTHS.get(lang, MONTHS["en"])[value.month - 1]
+    return f"{month} {value.year}"
+
+@register.filter
+def approx_label(obj, lang):
+    """≈-prefixed approximate release-evidence date, at the stored precision.
+
+    Never used when an exact ``released`` date exists. 'day' precision renders
+    the full date; 'month' (or unset) renders month + year. Always carries the
+    ≈ prefix so it is never read as an exact release.
+    """
+    approx = getattr(obj, "approx_released", None)
+    if not approx:
+        return ""
+    prec = getattr(obj, "approx_precision", "")
+    if prec == "day":
+        return f"≈ {month_year(approx, lang)}"
+    if prec == "year":
+        return f"≈ {approx.year}"
+    return f"≈ {month_only(approx, lang)}"
+
+@register.filter
 def grouped(value):
     if value in (None, ""):
         return "0"

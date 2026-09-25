@@ -187,7 +187,7 @@ def sort_models(models, sort, benchmark=None):
         if sort.startswith('developer_'): return m.developer_key or None
         if sort.startswith('status_'): return m.status_key or None
         if sort.startswith('context_'): return m.context
-        if sort.startswith('release_'): return m.released
+        if sort.startswith('release_'): return m.released or m.approx_released
         if sort.startswith('price_'): return m.comparison_offer.amount if m.comparison_offer else None
         return m.comparison_evaluation.score if m.comparison_evaluation else None
     known = [m for m in models if key(m) is not None]
@@ -289,7 +289,7 @@ def sort_tools(tools, sort):
         if sort.startswith('local_'):
             return tool.local_key or None
         if sort.startswith('release_'):
-            return tool.released
+            return tool.released or tool.approx_released
         return tool.public_number
 
     known = [tool for tool in tools if key(tool) is not None]

@@ -271,6 +271,24 @@ if (panel) {
     event.preventDefault();
     openPanelFromLink(link, true);
   });
+  // Clicking anywhere on a catalogue row opens its panel, as if the name link
+  // were clicked. Interactive elements (links, buttons, form controls, filter
+  // popovers) keep their own behaviour, and an active text selection never
+  // triggers a navigation.
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const row = target.closest("tr[data-slug]");
+    if (!row) return;
+    if (target.closest("a, button, input, select, textarea, label, details, summary, [role='button']")) return;
+    const selection = window.getSelection();
+    if (selection && !selection.isCollapsed && selection.toString().trim()) return;
+    const link = row.querySelector("a.model-name");
+    if (!link) return;
+    event.preventDefault();
+    openPanelFromLink(link, true);
+  });
   // Close the open panel on a click outside it, but never on the header
   // (language/search/theme), a row link that opens another entry, or a column
   // filter popover — clicks inside the panel keep it open.
@@ -279,6 +297,7 @@ if (panel) {
     const target = event.target;
     if (!(target instanceof Element)) return;
     if (panel.contains(target)) return;
+    if (target.closest("tr[data-slug]")) return;
     if (target.closest("a.model-name")) return;
     if (target.closest(".site-header")) return;
     if (target.closest("details.col-filter")) return;

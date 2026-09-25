@@ -38,13 +38,18 @@ def inspect_archive(archive, expected_sha256):
         return manifest, commit, names
 
 
-def planned_steps(commit):
-    return [
+def planned_steps(commit, publication_state=None):
+    steps = [
         "verify archive SHA256 and secret-free manifest",
         "stage code under /srv/aipedia/releases/code-" + commit[:12],
         "stop only supervisor program aipedia",
         "online-backup /srv/aipedia/data/aipedia.sqlite3; never copy Local SQLite onto it",
         "manage.py check && collectstatic --noinput && migrate --noinput",
+    ]
+    if publication_state:
+        steps.append("manage.py sync_publication_state apply " + publication_state
+                     + " --apply (approved Local published flags; aborts on any number mismatch)")
+    return steps + [
         "switch /srv/aipedia/app, start only aipedia, check /healthz release=" + commit,
         "on failure before start: restore previous app and restore DB from the backup",
         "on failure after start: leave DB in place for reviewed rollback",
@@ -56,10 +61,14 @@ if __name__ == "__main__":
     parser.add_argument("archive")
     parser.add_argument("--sha256", required=True)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--publication-state", help="Approved state manifest inside the release, e.g. data/release_state.json")
     args = parser.parse_args()
     archive = Path(args.archive)
     manifest, commit, names = inspect_archive(archive, args.sha256)
-    report = {"commit": commit, "files": len(names), "steps": planned_steps(commit), "copies_sqlite": False}
+    if args.publication_state and "app/" + args.publication_state not in names:
+        raise SystemExit("Publication state manifest is not in the release archive: " + args.publication_state)
+    report = {"commit": commit, "files": len(names), "steps": planned_steps(commit, args.publication_state),
+              "copies_sqlite": False}
     if args.dry_run:
         print(json.dumps(report, indent=2))
         raise SystemExit(0)
@@ -123,6 +132,8 @@ if __name__ == "__main__":
         stopped = True
         backup(DB, before)
         manage("migrate", "--noinput")
+        if args.publication_state:
+            manage("sync_publication_state", "apply", args.publication_state, "--apply")
         os.rename(ROOT / "app", previous)
         old_renamed = True
         os.rename(app, ROOT / "app")
@@ -152,6 +163,7 @@ if __name__ == "__main__":
             "current_app": str(ROOT / "app"),
             "status": "deployed-origin-verified",
             "copied_sqlite": False,
+            "publication_state": args.publication_state or None,
         }
         (stage / "DEPLOYMENT.json").write_text(json.dumps(state, indent=2))
         own_tree(stage)

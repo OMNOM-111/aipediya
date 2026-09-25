@@ -47,6 +47,18 @@ class ModelVersion(models.Model):
     context = models.PositiveIntegerField(null=True, blank=True)
     released = models.DateField(null=True, blank=True)
     release_evidence = models.JSONField(default=dict, blank=True)
+    # Approximate public/release-evidence date used only when no exact date is
+    # proven; precision is "month" or "day". Rendered with a ≈ prefix and never
+    # presented as an exact release.
+    approx_released = models.DateField(null=True, blank=True)
+    approx_precision = models.CharField(max_length=5, blank=True, default="")
+    approx_evidence = models.JSONField(default=dict, blank=True)
+    # Public release stage shown next to the date: released (GA) shows no badge;
+    # preview/beta/research are labelled. Empty means unspecified/GA.
+    release_stage = models.CharField(
+        max_length=10, blank=True, default="",
+        choices=[("released", "Released"), ("preview", "Preview"), ("beta", "Beta"), ("research", "Research")],
+    )
     license = models.CharField(max_length=200, blank=True)
     open_weights = models.BooleanField(default=False)
     source = models.ForeignKey(Source, on_delete=models.PROTECT)
@@ -71,24 +83,18 @@ class ModelVersion(models.Model):
     class Meta:
         ordering = ["name"]
     def save(self, *args, **kwargs):
-        # Numbers are chronological positions, not identities. Unknown dates
-        # have no chronological number; stable slugs/pks preserve every URL.
+        # A public number is a permanent identity, assigned once and never
+        # recomputed; refining a date/price/rating never changes it. Stable
+        # slugs/pks preserve every URL.
         using = kwargs.get('using') or self._state.db or 'default'
-        fields = kwargs.get('update_fields')
-        relevant = self._state.adding or fields is None or bool(
-            set(fields) & {'released', 'name', 'slug', 'published', 'entry_type'}
-        )
         with transaction.atomic(using=using):
-            if self._state.adding:
-                self.public_number = None
-            else:
-                # Another dated insertion may have changed this object's rank
-                # since it was loaded. Never write a stale rank back over it.
+            if not self._state.adding:
+                # Never write a stale in-memory number over the stored one.
                 self.public_number = type(self).objects.using(using).values_list('public_number', flat=True).get(pk=self.pk)
             super().save(*args, **kwargs)
-            if relevant:
-                from .chronology import renumber_chronologically
-                renumber_chronologically(using=using)
+            if self.entry_type == 'model' and self.published and self.public_number is None:
+                from .chronology import assign_catalog_numbers
+                assign_catalog_numbers(using=using)
                 self.public_number = type(self).objects.using(using).values_list('public_number', flat=True).get(pk=self.pk)
     def __str__(self):
         return self.name
@@ -184,6 +190,9 @@ class Tool(models.Model):
     official_url = models.URLField(max_length=600, blank=True)
     released = models.DateField(null=True, blank=True)
     release_evidence = models.JSONField(default=dict, blank=True)
+    approx_released = models.DateField(null=True, blank=True)
+    approx_precision = models.CharField(max_length=5, blank=True, default="")
+    approx_evidence = models.JSONField(default=dict, blank=True)
     source = models.ForeignKey(Source, on_delete=models.PROTECT)
     checked = models.DateField()
     published = models.BooleanField(default=True)
@@ -199,22 +208,16 @@ class Tool(models.Model):
 
     def save(self, *args, **kwargs):
         using = kwargs.get("using") or self._state.db or "default"
-        fields = kwargs.get("update_fields")
-        relevant = self._state.adding or fields is None or bool(
-            set(fields) & {"released", "name", "slug", "published"}
-        )
         with transaction.atomic(using=using):
-            if self._state.adding:
-                self.public_number = None
-            else:
+            if not self._state.adding:
                 self.public_number = type(self).objects.using(using).values_list(
                     "public_number", flat=True
                 ).get(pk=self.pk)
             super().save(*args, **kwargs)
-            if relevant:
-                from .chronology import renumber_tools_chronologically
+            if self.published and self.public_number is None:
+                from .chronology import assign_tool_numbers
 
-                renumber_tools_chronologically(using=using)
+                assign_tool_numbers(using=using)
                 self.public_number = type(self).objects.using(using).values_list(
                     "public_number", flat=True
                 ).get(pk=self.pk)

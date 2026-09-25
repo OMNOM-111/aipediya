@@ -90,16 +90,19 @@ class RedesignCatalogTests(TestCase):
 
     def test_missing_number_and_context_are_blank_not_zero(self):
         model = ModelVersion.objects.get(slug="qwen3-8b")
+        number_before = model.public_number
         model.released = None
         model.context = None
         model.save()
         model.refresh_from_db()
-        self.assertIsNone(model.public_number)
+        # Clearing the date never removes the permanent number.
+        self.assertEqual(model.public_number, number_before)
+        self.assertIsNotNone(model.public_number)
         response = self.client.get("/")
         html = response.content.decode()
         self.assertNotIn("75%", html)
         row = next(item for item in response.context["page"] if item.slug == model.slug)
-        self.assertIsNone(row.public_number)
+        self.assertEqual(row.public_number, number_before)
         self.assertIsNone(row.context)
         self.assertContains(response, 'class="rating-col"')
 
