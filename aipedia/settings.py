@@ -121,6 +121,10 @@ AIPEDIA_INDEXNOW_ENDPOINT = os.environ.get("AIPEDIA_INDEXNOW_ENDPOINT", "https:/
 GOOGLE_SITE_VERIFICATION = os.environ.get("GOOGLE_SITE_VERIFICATION", "")
 BING_SITE_VERIFICATION = os.environ.get("BING_SITE_VERIFICATION", "")
 YANDEX_SITE_VERIFICATION = os.environ.get("YANDEX_SITE_VERIFICATION", "")
+# Public Naver ownership token; this is verification metadata, not a secret.
+NAVER_SITE_VERIFICATION = os.environ.get("NAVER_SITE_VERIFICATION", "") or (
+    "9c99ee04834598097c2ba9b6a809819418e5d74d" if AIPEDIA_ENV == "production" else ""
+)
 AIPEDIA_ADS_ENABLED = os.environ.get("AIPEDIA_ADS_ENABLED", "0") == "1"
 AIPEDIA_ADS_CLIENT = os.environ.get("AIPEDIA_ADS_CLIENT", "")
 AIPEDIA_ADS_SLOT = os.environ.get("AIPEDIA_ADS_SLOT", "")

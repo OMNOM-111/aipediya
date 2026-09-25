@@ -44,6 +44,30 @@ def make_hidden(template, slug="hidden-candidate"):
     return hidden
 
 
+@override_settings(AIPEDIA_INDEXING_ALLOWED=True,
+                   NAVER_SITE_VERIFICATION="9c99ee04834598097c2ba9b6a809819418e5d74d")
+class NaverVerificationMetaTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        call_command("seed_catalog", verbosity=0)
+
+    def test_naver_token_is_in_server_rendered_head_without_changing_seo_signals(self):
+        response = self.client.get("/")
+        html = response.content.decode()
+        head = html.split("</head>", 1)[0]
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            '<meta name="naver-site-verification" content="9c99ee04834598097c2ba9b6a809819418e5d74d">',
+            head,
+        )
+        self.assertEqual(html.count('name="naver-site-verification"'), 1)
+        self.assertIn("<title>", head)
+        self.assertIn('name="description"', head)
+        self.assertIn('rel="canonical" href="https://aipediya.com/"', head)
+        self.assertIn('hreflang="x-default" href="https://aipediya.com/"', head)
+
+
 class LocaleUrlTests(TestCase):
     @classmethod
     def setUpTestData(cls):

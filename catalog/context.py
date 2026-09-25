@@ -286,6 +286,7 @@ def site_context(request):
             "google": settings.GOOGLE_SITE_VERIFICATION,
             "bing": settings.BING_SITE_VERIFICATION,
             "yandex": settings.YANDEX_SITE_VERIFICATION,
+            "naver": settings.NAVER_SITE_VERIFICATION,
         },
         "ads": {
             "enabled": ads_enabled,
