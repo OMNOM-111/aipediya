@@ -5,6 +5,25 @@
 Пакет для нового чата собирается командой `.\.venv\Scripts\python.exe tools/pack_ai_context.py` и **не** редактируется как независимый источник.
 
 - Обновлено (UTC): 2026-09-24T00:20:00Z
+- Задача 2026-09-25 (выпуск утверждённого Local-состояния): **DEPLOYED AND
+  VERIFIED**. Production = commit `ed103a3ff163` / tag
+  `release-2026-09-25-local-approved` (отчёт
+  `docs/history/2026-09-25-local-approved-release.md`, процесс
+  `D-2026-09-25-release-process`).
+  - Слои: Local = GitHub (`origin/main` + tag) = Production для кода выпуска;
+    Production: 304 Models / 138 Tools публично, 459 research-моделей скрыты
+    (№305–763, данные/переводы/история сохранены), `/healthz` = `ed103a3ff163`.
+  - Проверки: тесты 174 PASS; Local и public HTTPS аудит — 0 fails (22 локали,
+    sitemap 304/138, 459 скрытых = 404); строки каталога Production и Local
+    совпадают побайтно; браузер AR/RU/UK, desktop/mobile.
+  - Вне выпуска (остались незакоммиченными в рабочей копии, работа другого
+    исполнителя): `catalog_master*`, XLSX, `AI_CONTEXT/README.md`,
+    `requirements-dev.txt`, `data/research/`, разделы catalog master в
+    `AGENTS.md`/`DECISIONS.md`/этом файле; а также `restore_core_catalog`,
+    `reconcile_catalog`.
+  - Следующим выполнить: отдельная Local-итерация Global Search / SEO /
+    discoverability (в т.ч. локализованный `<title>`); Production — только по
+    новому утверждению владельца.
 - Документация имён: правило «бренд AIpediya / техкод aipedia» закреплено в
   `AGENTS.md` и `D-2026-09-23-brand-vs-tech-name` (`docs/DECISIONS.md`). Код,
   сервер и Production не менялись.
