@@ -8,9 +8,10 @@
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный сайт работает на commit `386d4aaafd00e6cf88e0c4018162f850a5fd6286`
-(tag `release-2026-09-25-indexnow-root-key`, 2026-09-25 22:07Z; отчёт —
+Текущий публичный сайт работает на commit `634778807b2e82ca52dea1de150ea0810950d644`
+(tag `release-2026-09-25-deploy-dispatch-lock`, 2026-09-25 22:54Z; отчёт —
 `docs/history/2026-09-25-naver-indexnow-activation.md`). Перед ним в тот же день:
+`386d4aaafd00` (`release-2026-09-25-indexnow-root-key`),
 `160be0f37037` (`release-2026-09-25-naver-verification`) и `ba93f7ddf690`
 (`release-2026-09-25-gsd-1-0`, отчёт `docs/history/2026-09-25-gsd-1-0-release.md`).
 Позднее код этой ветки публикуется только по отдельной команде владельца.
@@ -110,7 +111,10 @@ artifacts и `.venv` туда не входят. Скрипт отказывае
 3. Скопировать архив на сервер **без** Local SQLite.
 4. На сервере: `python3 tools/deploy_code_release.py /path/to/archive.zip --sha256 <digest> --publication-state data/release_state.json`
    (сначала то же с `--dry-run`).
-5. Скрипт останавливает только программу `aipedia`, делает online-backup
+5. Скрипт берёт блокировку `/srv/aipedia/data/indexnow-dispatch.lock` (плановая
+   отправка IndexNow `aipedia-indexnow` на это время пропускается; блокировка
+   снимается и после успеха, и после отката, и при аварийном завершении),
+   останавливает только программу `aipedia`, делает online-backup
    `/srv/aipedia/data/aipedia.sqlite3`, переносит код и статику, выполняет
    `migrate` существующей серверной БД, поднимает только `aipedia` и проверяет
    `/healthz` на loopback.

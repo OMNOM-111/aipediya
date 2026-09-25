@@ -246,6 +246,13 @@ HTML is not cached with cookies (the site sets no language cookie server-side).
   prevents overlapping runs; a manual run must use the same lock. Logs:
   `/srv/aipedia/logs/indexnow.log` (URLs and HTTP status only, never the key).
   `--all` was used once, for the URL-architecture release (2026-09-25).
+  `tools/deploy_code_release.py` holds the same lock from before `stop aipedia` through
+  migrate, publication state, app switch, start/healthz and any rollback (released in
+  `finally`, and by the kernel on a crash), so dispatch never runs during a deploy; if a
+  dispatch is running, the deploy waits up to 600 s, otherwise aborts before any change.
+* Status: `manage.py indexnow_status` (also in `seo_report` → `outbox`): `active_pending`,
+  `active_retry` (need attention), `failed_unresolved` (really undelivered) versus
+  `failed_resolved_historical` (failed attempts whose URL was accepted later — audit only).
 
 ## 9. Monitoring
 

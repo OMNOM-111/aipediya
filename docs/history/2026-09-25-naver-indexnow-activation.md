@@ -63,3 +63,17 @@ Production GSD QA **1596/1596**; public sitemap 10 032.
 - Лог: ключ IndexNow в `indexnow.log`/`indexnow-error.log` — 0 вхождений. Проверка
   блокировки: вторая попытка при удержанной блокировке — `SECOND_RUN_BLOCKED`.
 - Outbox после теста: sent 10 033, failed 5 016 (история попытки с 422), pending 0.
+
+## Защита deploy от параллельной отправки (2026-09-25 22:54Z)
+
+- `634778807b2e` / `release-2026-09-25-deploy-dispatch-lock`: `deploy_code_release.py`
+  берёт `indexnow-dispatch.lock` до `stop aipedia` и держит его через migrate,
+  publication state, переключение, start/healthz и откат (`finally`; при аварии блокировку
+  снимает ядро). Частота scheduler не менялась.
+- Проверка: на Linux-хосте — scheduler `flock -n` не получает блокировку, пока её держит
+  deploy (1), второй deploy завершается до изменений, после снятия — 0; при реальном
+  deploy пробник видел блокировку ~6 с (12 × 0,5 с) и свободную до и после. Тесты: 223 PASS
+  (+1 POSIX-тест пропущен на Windows, выполнен на хосте). Backup
+  `aipedia-before-release-2026-09-25-deploy-dispatch-lock-20260925T225432Z.sqlite3`.
+- `indexnow_status` на Production: active_pending 0, active_retry 0, failed_unresolved 0,
+  failed_resolved_historical 5 016, urls_accepted 10 032. Integrity ok, FK 0, 304/138.
