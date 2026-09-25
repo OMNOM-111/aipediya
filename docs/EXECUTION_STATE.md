@@ -72,6 +72,28 @@
   конкретный commit/tag по `docs/RELEASE.md` и после него проверить public
   runtime. Никаких публикаций в этом этапе не выполнялось.
 
+- Выпуск GSD-1.0 (разрешение владельца 2026-09-25 на полное текущее
+  Local-состояние): **COMMIT/TAG/ARCHIVE ГОТОВЫ, СЕРВЕРНЫЙ ШАГ НЕ ВЫПОЛНЕН.**
+  - Commit `ba93f7ddf690f4a958405fbabfc65a59d3a9cfbf`, tag
+    `release-2026-09-25-gsd-1-0`, push в GitHub выполнен (push не деплоит).
+    Включены: GSD-1.0, код catalog master, Local-only «История сайта».
+    Не включены (публичный репозиторий): master XLSX, `data/research/`,
+    ярлык `.lnk`, файл задания.
+  - Gate: 216 тестов PASS (история 3/3, catalog master 10/10), `check` OK,
+    `makemigrations --check` — нет изменений. Манифест
+    `data/release_state.json` переэкспортирован: изменилась только метка
+    release; 304 Models / 138 Tools, как на Production.
+  - Архив `artifacts/code-release/aipedia-code-ba93f7ddf690.zip`, sha256
+    `5ed63075cb59e6bc97b05fe4e290c53b3a31202a043056aebb069dad8f8facc4`,
+    290 файлов, без SQLite/секретов; dry-run `deploy_code_release.py` OK.
+  - Блокер: удалённое выполнение через существующий SSH-канал общей машины
+    отклонено автоматическим классификатором разрешений этой сессии (ключ
+    StratForge). Обход не выполнялся. Production по-прежнему `ed103a3`.
+  - Следующим выполнить: владельцу — либо разрешить этот SSH-канал для сессии,
+    либо выполнить серверные шаги (backup → dry-run → deploy с
+    `--publication-state data/release_state.json`); затем исполнителю —
+    `tools/gsd_production_qa.py https://aipediya.com --commit ba93f7ddf690f4a958405fbabfc65a59d3a9cfbf`
+    и запись выпуска в `docs/history/`.
 - Обновлено (UTC): 2026-09-25 (GSD-1.0, Local)
 - Задача 2026-09-25 **GSD-1.0 «Глобальная поисковая доступность»** (Local-only):
   реализация и Local QA; Production **не менялся**, ничего не отправлялось,
