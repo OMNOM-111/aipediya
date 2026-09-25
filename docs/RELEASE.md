@@ -8,15 +8,16 @@
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный сайт работает на commit `ba93f7ddf690f4a958405fbabfc65a59d3a9cfbf`
-(tag `release-2026-09-25-gsd-1-0`, 2026-09-25; отчёт —
-`docs/history/2026-09-25-gsd-1-0-release.md`). Предыдущий:
-`ed103a3ff163` (`release-2026-09-25-local-approved`).
+Текущий публичный сайт работает на commit `386d4aaafd00e6cf88e0c4018162f850a5fd6286`
+(tag `release-2026-09-25-indexnow-root-key`, 2026-09-25 22:07Z; отчёт —
+`docs/history/2026-09-25-naver-indexnow-activation.md`). Перед ним в тот же день:
+`160be0f37037` (`release-2026-09-25-naver-verification`) и `ba93f7ddf690`
+(`release-2026-09-25-gsd-1-0`, отчёт `docs/history/2026-09-25-gsd-1-0-release.md`).
 Позднее код этой ветки публикуется только по отдельной команде владельца.
 
-Подготовлен, но **не опубликован** кандидат `release-2026-09-25-naver-verification`
-(`160be0f37037e34845edc1dae1e38eead4460a60`): SSR meta-tag и конфигурация Naver.
-Production остаётся на `ba93f7ddf690` до запуска штатного deploy на AIpedia host.
+`release-2026-09-25-naver-verification` (`160be0f37037`, meta-tag Naver) и
+`release-2026-09-25-indexnow-root-key` (`386d4aaafd00`, ключ IndexNow в корне сайта)
+выпущены 2026-09-25 по команде владельца.
 
 GSD-1.0 выпущен (scope, зависимости и откат: `docs/history/GSD-1.0-release-scope.md`).
 Проверка после выпуска: `tools/gsd_production_qa.py https://aipediya.com --commit <sha>`
