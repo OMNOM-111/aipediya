@@ -180,3 +180,41 @@ def allowed_host(url):
     origin = urlsplit(settings.AIPEDIA_PUBLIC_ORIGIN)
     parts = urlsplit(url)
     return parts.scheme == origin.scheme and parts.netloc == origin.netloc
+
+
+def outbox_status():
+    """Operational view of the IndexNow outbox (read-only).
+
+    Separates work that still needs attention from history:
+    * ``active_pending`` - pending and never attempted;
+    * ``active_retry`` - pending with at least one failed attempt (backoff);
+    * ``failed_unresolved`` - failed rows whose URL has no later accepted send
+      (these URLs were really not delivered);
+    * ``failed_resolved_historical`` - failed attempts whose URL was accepted by a
+      later send; kept as audit history, not undelivered URLs.
+    Acceptance by IndexNow is not indexing.
+    """
+    from django.db.models import Max
+
+    from .models import DiscoveryEvent
+
+    last_sent = dict(
+        DiscoveryEvent.objects.filter(state="sent").order_by().values_list("url").annotate(last=Max("pk"))
+    )
+    failed = DiscoveryEvent.objects.filter(state="failed").values_list("pk", "url")
+    resolved = sum(1 for pk, url in failed if last_sent.get(url, 0) > pk)
+    failed_total = DiscoveryEvent.objects.filter(state="failed").count()
+    pending = DiscoveryEvent.objects.filter(state="pending")
+    sent = DiscoveryEvent.objects.filter(state="sent")
+    return {
+        "active_pending": pending.filter(attempts=0).count(),
+        "active_retry": pending.filter(attempts__gt=0).count(),
+        "sent_events": sent.count(),
+        "urls_accepted": len(last_sent),
+        "failed_unresolved": failed_total - resolved,
+        "failed_resolved_historical": resolved,
+        "skipped": DiscoveryEvent.objects.filter(state="skipped").count(),
+        "last_sent_at": sent.aggregate(last=Max("sent_at"))["last"],
+        "sending_enabled": bool(getattr(settings, "AIPEDIA_INDEXNOW_ENABLED", False)),
+        "note": "accepted by IndexNow is not indexed; failed_resolved_historical are superseded attempts",
+    }

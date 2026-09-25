@@ -11,6 +11,37 @@ import zipfile
 from pathlib import Path
 
 DENIED_SUFFIXES = (".sqlite3", ".sqlite3-wal", ".sqlite3-shm", ".env")
+# Shared with /srv/aipedia/bin/indexnow-dispatch-loop (flock -n): while a deploy
+# holds it, scheduled IndexNow dispatch is skipped, so it never runs during
+# migrate / publication-state / app switch / rollback.
+DISPATCH_LOCK = "/srv/aipedia/data/indexnow-dispatch.lock"
+DISPATCH_LOCK_TIMEOUT = 600
+
+
+def acquire_dispatch_lock(path=DISPATCH_LOCK, timeout=DISPATCH_LOCK_TIMEOUT, owner="aipedia"):
+    """Take the IndexNow dispatch lock exclusively; wait for a running dispatch.
+
+    Returns an open file descriptor; the lock lasts until it is closed or the
+    process exits (the kernel releases it even on a crash). Raises SystemExit
+    before any change if the lock cannot be taken in time.
+    """
+    import fcntl
+    created = not os.path.exists(path)
+    fd = os.open(path, os.O_RDWR | os.O_CREAT, 0o644)
+    if created and owner:
+        import pwd
+        account = pwd.getpwnam(owner)
+        os.chown(path, account.pw_uid, account.pw_gid)
+    deadline = time.monotonic() + timeout
+    while True:
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            return fd
+        except BlockingIOError:
+            if time.monotonic() >= deadline:
+                os.close(fd)
+                raise SystemExit("IndexNow dispatch still running; deploy aborted before any change")
+            time.sleep(2)
 DENIED_NAMES = {"secret.key", "secret.env", "aipedia.pid"}
 
 
@@ -42,6 +73,7 @@ def planned_steps(commit, publication_state=None):
     steps = [
         "verify archive SHA256 and secret-free manifest",
         "stage code under /srv/aipedia/releases/code-" + commit[:12],
+        "take " + DISPATCH_LOCK + " (pauses scheduled IndexNow dispatch until the end, incl. rollback)",
         "stop only supervisor program aipedia",
         "online-backup /srv/aipedia/data/aipedia.sqlite3; never copy Local SQLite onto it",
         "manage.py check && collectstatic --noinput && migrate --noinput",
@@ -127,6 +159,7 @@ if __name__ == "__main__":
     before = ROOT / "backups" / ("aipedia-before-code-" + stamp + ".sqlite3")
     previous = ROOT / "releases" / ("before-code-" + stamp)
     switched = stopped = started = old_renamed = False
+    dispatch_lock = acquire_dispatch_lock()
     try:
         subprocess.run(SUPERVISOR + ["stop", "aipedia"], check=True)
         stopped = True
@@ -184,3 +217,6 @@ if __name__ == "__main__":
                 src.backup(dst)
             subprocess.run(SUPERVISOR + ["start", "aipedia"], check=True)
         raise
+    finally:
+        # Scheduled dispatch resumes on its next cycle, after success or rollback.
+        os.close(dispatch_lock)

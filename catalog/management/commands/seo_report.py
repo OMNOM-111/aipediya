@@ -289,9 +289,8 @@ class Command(BaseCommand):
         }
 
     def outbox_section(self):
+        from catalog.discovery import outbox_status
         from catalog.models import DiscoveryEvent
-        return {
-            "by_state": dict(Counter(DiscoveryEvent.objects.values_list("state", flat=True))),
-            "by_action": dict(Counter(DiscoveryEvent.objects.values_list("action", flat=True))),
-            "sending_enabled": bool(getattr(settings, "AIPEDIA_INDEXNOW_ENABLED", False)),
-        }
+        status = outbox_status()
+        status["by_state_raw"] = dict(Counter(DiscoveryEvent.objects.values_list("state", flat=True)))
+        return status

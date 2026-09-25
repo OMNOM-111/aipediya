@@ -672,3 +672,75 @@ class IndexNowKeyFileTests(TestCase):
 
     def test_root_key_file_is_404_when_unconfigured(self):
         self.assertEqual(self.client.get("/0123456789abcdef.txt").status_code, 404)
+
+
+class OutboxStatusTests(TestCase):
+    def test_historical_failures_are_not_reported_as_undelivered(self):
+        from catalog.discovery import outbox_status
+        E = DiscoveryEvent
+        E.objects.create(url="https://aipediya.com/a", action="upsert", reason="manual", state="failed", attempts=1, last_status=422)
+        E.objects.create(url="https://aipediya.com/a", action="upsert", reason="manual", state="sent", attempts=1, last_status=200)
+        E.objects.create(url="https://aipediya.com/b", action="upsert", reason="manual", state="failed", attempts=6, last_status=500)
+        E.objects.create(url="https://aipediya.com/c", action="upsert", reason="manual", state="pending", attempts=0)
+        E.objects.create(url="https://aipediya.com/d", action="upsert", reason="manual", state="pending", attempts=2, last_status=429)
+        status = outbox_status()
+        self.assertEqual(status["failed_resolved_historical"], 1)
+        self.assertEqual(status["failed_unresolved"], 1)
+        self.assertEqual(status["active_pending"], 1)
+        self.assertEqual(status["active_retry"], 1)
+        self.assertEqual(status["urls_accepted"], 1)
+
+    def test_failure_after_success_is_unresolved(self):
+        from catalog.discovery import outbox_status
+        DiscoveryEvent.objects.create(url="https://aipediya.com/x", action="upsert", reason="manual", state="sent", attempts=1)
+        DiscoveryEvent.objects.create(url="https://aipediya.com/x", action="upsert", reason="updated", state="failed", attempts=6)
+        self.assertEqual(outbox_status()["failed_unresolved"], 1)
+
+
+class DeployDispatchLockTests(TestCase):
+    """The deploy must hold the scheduler's lock across migrate/switch/rollback."""
+
+    def load(self):
+        import importlib.util
+        from pathlib import Path
+        path = Path(__file__).resolve().parents[2] / "tools" / "deploy_code_release.py"
+        spec = importlib.util.spec_from_file_location("deploy_code_release", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module, path.read_text(encoding="utf-8")
+
+    def test_lock_is_the_scheduler_lock_and_wraps_the_critical_section(self):
+        module, source = self.load()
+        from pathlib import Path
+        loop = (Path(__file__).resolve().parents[2] / "deploy" / "indexnow-dispatch-loop.sh").read_text(encoding="utf-8")
+        self.assertIn(f"lock={module.DISPATCH_LOCK}", loop)
+        self.assertIn('flock -n "$lock"', loop)
+        acquire = source.index("dispatch_lock = acquire_dispatch_lock()")
+        self.assertLess(acquire, source.index('SUPERVISOR + ["stop", "aipedia"]'))
+        self.assertLess(source.index('manage("migrate", "--noinput")'), source.index("os.close(dispatch_lock)"))
+        # Released in finally: after success, after rollback, and on any error.
+        finally_block = source[source.index("    finally:\n        # Scheduled dispatch"):]
+        self.assertIn("os.close(dispatch_lock)", finally_block.splitlines()[2])
+        steps = module.planned_steps("0" * 40, "data/release_state.json")
+        self.assertLess([i for i, s in enumerate(steps) if "indexnow-dispatch.lock" in s][0],
+                        [i for i, s in enumerate(steps) if "stop only" in s][0])
+
+    def test_lock_blocks_scheduler_and_is_released(self):
+        try:
+            import fcntl  # noqa: F401
+        except ImportError:
+            self.skipTest("fcntl is POSIX-only; verified on the Linux host instead")
+        import os
+        import subprocess
+        import sys
+        import tempfile
+        module, _ = self.load()
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "indexnow-dispatch.lock")
+            fd = module.acquire_dispatch_lock(path, timeout=1, owner=None)
+            probe = [sys.executable, "-c", "import fcntl,os,sys;f=os.open(sys.argv[1],os.O_RDWR);fcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB)", path]
+            self.assertNotEqual(subprocess.run(probe, capture_output=True).returncode, 0)
+            with self.assertRaises(SystemExit):
+                module.acquire_dispatch_lock(path, timeout=0, owner=None)
+            os.close(fd)
+            self.assertEqual(subprocess.run(probe, capture_output=True).returncode, 0)
