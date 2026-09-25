@@ -478,6 +478,8 @@ class DispatcherTests(TestCase):
         self.assertEqual(sorted(calls[0]["urlList"]),
                          ["https://aipediya.com/models/a", "https://aipediya.com/ru/models/b"])
         self.assertEqual(calls[0]["host"], "aipediya.com")
+        # The key file must sit at the host root so it authorises every URL.
+        self.assertEqual(calls[0]["keyLocation"], "https://aipediya.com/0123456789abcdef.txt")
         self.assertEqual(DiscoveryEvent.objects.get(url="https://evil.example/x").state, "skipped")
         self.assertEqual(DiscoveryEvent.objects.filter(state="sent").count(), 2)
         # Idempotent: a second run sends nothing.
@@ -655,3 +657,18 @@ class StructuredDataAndSitemapReconciliationTests(TestCase):
 def escape_html(text):
     from django.utils.html import escape
     return escape(text)
+
+
+class IndexNowKeyFileTests(TestCase):
+    @override_settings(AIPEDIA_INDEXNOW_KEY="0123456789abcdef")
+    def test_root_key_file_is_served_and_only_for_the_configured_key(self):
+        root = self.client.get("/0123456789abcdef.txt")
+        self.assertEqual(root.status_code, 200)
+        self.assertEqual(root.content.decode().strip(), "0123456789abcdef")
+        self.assertEqual(self.client.get("/indexnow/0123456789abcdef.txt").status_code, 200)
+        self.assertEqual(self.client.get("/fedcba9876543210.txt").status_code, 404)
+        self.assertEqual(self.client.get("/robots.txt").status_code, 200)
+        self.assertEqual(self.client.get("/ru/0123456789abcdef.txt").status_code, 404)
+
+    def test_root_key_file_is_404_when_unconfigured(self):
+        self.assertEqual(self.client.get("/0123456789abcdef.txt").status_code, 404)

@@ -28,6 +28,9 @@ urlpatterns = [
     re_path(r"^sitemaps/(?P<code>[a-z-]+)\.xml$", views.sitemap_locale, name="sitemap_locale"),
     path("ads.txt", views.ads_txt, name="ads_txt"),
     path("indexnow/<str:key>.txt", views.indexnow_key, name="indexnow_key"),
+    # IndexNow key at the host root: a key file in a sub-folder only authorises
+    # URLs under that folder (IndexNow spec), so the root file is the one used.
+    re_path(r"^(?P<key>[A-Za-z0-9-]{8,128})\.txt$", views.indexnow_key, name="indexnow_root_key"),
     path("healthz", views.health, name="health"),
     path("releases/20260920/acceptance.zip", views.release_acceptance, name="release_acceptance"),
     path("admin/", admin.site.urls),

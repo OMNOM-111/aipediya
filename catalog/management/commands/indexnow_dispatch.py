@@ -100,7 +100,9 @@ class Command(BaseCommand):
         host = settings.AIPEDIA_PUBLIC_ORIGIN.split("://", 1)[-1]
         payload = json.dumps({
             "host": host, "key": key,
-            "keyLocation": f"{settings.AIPEDIA_PUBLIC_ORIGIN}/indexnow/{key}.txt",
+            # Root key file: a keyLocation inside /indexnow/ would authorise only
+            # URLs under /indexnow/ and every other URL would be rejected (422).
+            "keyLocation": f"{settings.AIPEDIA_PUBLIC_ORIGIN}/{key}.txt",
             "urlList": [event.url for event in ready],
         }).encode("utf-8")
         try:
