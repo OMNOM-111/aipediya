@@ -8,11 +8,23 @@
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный сайт работает на commit `1a10421d9d7bcd68b2b1224ce74843bebd932e2c`
-(catalog-master-v014, tag `release-2026-09-26-catalog-master-v014`, 2026-09-26 18:18Z;
-310 Models / 139 Tools; отчёт — `docs/history/2026-09-26-catalog-master-v014-release.md`).
-Это id кандидата (digest файлов из `data/release/v014/CANDIDATE_FILES.txt` поверх
-`b3116cf6dc56`), а не hash git-commit; tag указывает на commit с теми же файлами кода.
+Текущий публичный выпуск (catalog-master-v014, 2026-09-26 18:18Z; 310 Models / 139 Tools;
+отчёт — `docs/history/2026-09-26-catalog-master-v014-release.md`):
+- release_id опубликованного пакета: `1a10421d9d7bcd68b2b1224ce74843bebd932e2c` — его
+  возвращает `/healthz`; это digest файлов кандидата из
+  `data/release/v014/CANDIDATE_FILES.txt` поверх `b3116cf6dc56`, **не** hash git-commit;
+  архив `aipedia-code-1a10421d9d7b.zip`, SHA-256
+  `c80469b298a8221655030c735475fef2c945524a81c6d4466e2eaa74e4ec4377`.
+- Git-коммит с изменениями выпуска: `20807cd542ec474737840bf78677d57b31a37e98`,
+  tag `release-2026-09-26-catalog-master-v014`. По коду публичный сайт работает на commit `20807cd542ec474737840bf78677d57b31a37e98`:
+  300 из 308 файлов архива побайтно совпадают с этим коммитом; отличаются только шесть
+  документов статуса (дописаны после выпуска) и служебные `BUILD.json`/`MANIFEST.json`
+  сборки (сверка 2026-09-26 18:55Z).
+- Ограничение сборщика (до исправления извлечения): `tools/pack_ai_context.py` читает
+  из этого файла только Git-коммит (поле `production_commit_from_docs` в
+  `AI_CONTEXT/MANIFEST.json`); release_id опубликованного пакета он не извлекает и
+  живой `/healthz` не запрашивает. Фактический выпуск сверять по release_id выше и
+  `/healthz`. Запрос исполнителю сборщика — `docs/EXECUTION_STATE.md`, блок v014.
 Предыдущий: commit `634778807b2e82ca52dea1de150ea0810950d644`
 (tag `release-2026-09-25-deploy-dispatch-lock`, 2026-09-25 22:54Z; отчёт —
 `docs/history/2026-09-25-naver-indexnow-activation.md`). Перед ним в тот же день:
