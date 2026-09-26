@@ -8,7 +8,19 @@
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный выпуск (catalog-master-v014, 2026-09-26 18:18Z; 310 Models / 139 Tools;
+Текущий публичный выпуск — **Search Visibility Optimization v2**, 2026-09-26
+21:47 UTC: commit `61adedd6ea5e6a0955d51d87374fa2fa9bcc7799`, tag
+`release-2026-09-26-search-visibility-optimization-v2`. По коду публичный
+сайт работает на commit `61adedd6ea5e6a0955d51d87374fa2fa9bcc7799`:
+`/healthz` подтвердил `environment=production` и commit; 310 Models / 139
+Tools сохранены. Архив `artifacts/code-release/aipedia-code-61adedd6ea5e.zip`,
+SHA-256 `8b8f2fa4bac3b6edce0868e4a963a795111d45695341c869ed824186e9ee625f`.
+Отчёт и QA: `docs/history/2026-09-26-search-visibility-release.md`.
+Более новый код публикуется только по новой конкретной команде владельца.
+
+### Предыдущий публичный выпуск — catalog-master-v014
+
+Предыдущий публичный выпуск (catalog-master-v014, 2026-09-26 18:18Z; 310 Models / 139 Tools;
 отчёт — `docs/history/2026-09-26-catalog-master-v014-release.md`):
 - release_id опубликованного пакета: `1a10421d9d7bcd68b2b1224ce74843bebd932e2c` — его
   возвращает `/healthz`; это digest файлов кандидата из
@@ -16,7 +28,7 @@ Push в GitHub **не** публикует сайт. Ярлык Local, кноп�
   архив `aipedia-code-1a10421d9d7b.zip`, SHA-256
   `c80469b298a8221655030c735475fef2c945524a81c6d4466e2eaa74e4ec4377`.
 - Git-коммит с изменениями выпуска: `20807cd542ec474737840bf78677d57b31a37e98`,
-  tag `release-2026-09-26-catalog-master-v014`. По коду публичный сайт работает на commit `20807cd542ec474737840bf78677d57b31a37e98`:
+  tag `release-2026-09-26-catalog-master-v014`. На дату этого выпуска публичный сайт работал на commit `20807cd542ec474737840bf78677d57b31a37e98`:
   300 из 308 файлов архива побайтно совпадают с этим коммитом; отличаются только шесть
   документов статуса (дописаны после выпуска) и служебные `BUILD.json`/`MANIFEST.json`
   сборки (сверка 2026-09-26 18:55Z).
@@ -66,6 +78,15 @@ changelog.
   `docs/history/`.
 
 ## Changelog
+
+### release-2026-09-26-search-visibility-optimization-v2
+
+45 GSC legacy URL исправлены (25 одношаговых 301, 19 корректных 404, один
+`200/noindex`); robots имеет только конечные точные исключения и не открывает
+фасеты. Опубликованы четыре обоснованных EN/RU URL сравнения контекста и
+официальных API-цен, чистые SSR-ссылки и исправление IndexNow для старых 301.
+Local 267 PASS + 1 skip; Production 45/45 legacy URL, 1657/1657 Search QA PASS.
+
 
 ### release-2026-09-26-catalog-master-v014 — единая база каталога
 

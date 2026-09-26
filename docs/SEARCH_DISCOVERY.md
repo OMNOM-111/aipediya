@@ -8,6 +8,10 @@ Decisions: `docs/DECISIONS.md` (`D-2026-09-25-locale-paths`, `D-2026-09-25-seo-r
 Search Visibility Optimization update follows that architecture; release state
 and public verification are recorded in `docs/RELEASE.md` and
 `docs/history/2026-09-26-search-visibility-release.md`.
+The update was published on 2026-09-26 21:47 UTC at commit
+`61adedd6ea5e6a0955d51d87374fa2fa9bcc7799`; 45/45 legacy URLs and
+1657/1657 public Search checks passed. IndexNow accepted 334 targeted notices;
+search-engine recrawl, indexed-page counts and ranking growth remain unverified.
 
 ## 1. Language URLs
 

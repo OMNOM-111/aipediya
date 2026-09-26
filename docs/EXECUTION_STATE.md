@@ -4,6 +4,29 @@
 Отчёты законченных выпусков — `docs/history/`.
 Пакет для нового чата собирается командой `\.\.venv\Scripts\python.exe tools/pack_ai_context.py` и **не** редактируется как независимый источник.
 
+## Search Visibility Optimization — опубликовано, 2026-09-26 21:47 UTC
+
+- Изменено: 45 старых GSC URL (25 одношаговых 301, 19 корректных 404,
+  один `200/noindex`), точечные robots-исключения без широкого card `?page=`
+  Allow, чистые SSR-ссылки, четыре конечных EN/RU поисковых URL и приём
+  редиректов диспетчером IndexNow. Каталог 310 Models / 139 Tools сохранён.
+- Local: 268 тестов, 267 PASS + 1 ожидаемый skip; `seo_report` — 10 193
+  Local sitemap URL и 359 HTML без проблем, лимитированный crawl 320/320
+  ответов 200; 45/45 legacy URL PASS. Браузерный сценарий пагинации PASS.
+- GitHub/Production: commit `61adedd6ea5e6a0955d51d87374fa2fa9bcc7799`,
+  tag `release-2026-09-26-search-visibility-optimization-v2`; штатный
+  code-only deploy подтверждён `/healthz`. Public Search QA 1657/1657,
+  GSD check 34/34 и legacy 45/45 PASS; 10 190 sitemap URL, 22 локали.
+  Backup, rollback, Cloudflare robots purge и QA — в
+  `docs/history/2026-09-26-search-visibility-release.md`.
+- IndexNow scheduler принял 330 старых 301 URL + четыре новые страницы;
+  активная и unresolved очередь — 0. GSC пока отражает прежние 41 impression,
+  0 clicks, average position 8.5; индексирование обрабатывается. Bing
+  performance также готовится. Рост ranking не подтверждён.
+- Не завершено: новый recrawl/canonical и свежие GSC/Bing метрики; доступ к
+  Naver после восстановления аккаунта. Следующим выполнить повторный замер
+  индексации, queries, стран и SERP после обхода поисковиков.
+
 ## Catalog master v014 — опубликовано и проверено; этап закрыт — 2026-09-26 18:55 UTC
 
 - Статус: **опубликовано и проверено** (выпуск catalog-master-v014, отчёт
