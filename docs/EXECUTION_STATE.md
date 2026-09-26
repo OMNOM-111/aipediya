@@ -20,7 +20,12 @@
   выпуск на расхождении pk цен (`offer-552…555`); план переведён на стабильные ключи
   строк, второй preflight и выпуск прошли.
 - Master: `AI_CONTEXT/AIpediya_Model_Verification_Master.xlsx` v014 (v013 — резервная
-  копия в `backups/catalog-master-finalize-20260925/`).
+  копия в `backups/catalog-master-finalize-20260925/`); после `import --production`
+  SHA-256 `94054b1392cbbee0140230883b2b557a106c6101ad23119e7ddf9542c2dba950`,
+  Status PUBLISHED = On Production у 310 + 139 записей, расхождений 0.
+- Git: commit `20807cd` (только файлы этой задачи; параллельная работа над
+  историей сайта не включена), tag `release-2026-09-26-catalog-master-v014`, push
+  в `origin/main` выполнен.
 - Local: 310 / 139, совпадает с Production по выдаче (списки EN/DE, 1 248 карточек,
   20 редиректов).
 - Тесты: рабочее дерево 260 OK (1 skip); архив выпуска в чистом окружении 258: 257 OK,
