@@ -80,6 +80,11 @@ class ModelVersion(models.Model):
     output_modalities = models.JSONField(default=list, blank=True)
     translations_need_review = models.BooleanField(default=False)
     research_entity_id = models.CharField(max_length=80, unique=True, null=True, blank=True)
+    # Catalog-master identity data: alternative names of this same entity
+    # (searchable) and, for a hidden duplicate/alias row, the slug of the
+    # canonical card its URL permanently redirects to.
+    aliases = models.JSONField(default=list, blank=True)
+    redirect_to = models.SlugField(blank=True, default="")
     class Meta:
         ordering = ["name"]
     def save(self, *args, **kwargs):
@@ -202,6 +207,8 @@ class Tool(models.Model):
     supported_models = models.ManyToManyField(
         ModelVersion, through="ToolModelSupport", related_name="supported_by_tools"
     )
+    aliases = models.JSONField(default=list, blank=True)
+    redirect_to = models.SlugField(blank=True, default="")
 
     class Meta:
         ordering = ["name"]

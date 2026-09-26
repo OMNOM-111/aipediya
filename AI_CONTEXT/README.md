@@ -19,5 +19,7 @@
 `AIpediya_Model_Verification_Master.xlsx` — **не сборка**, а единая
 каноническая база каталога (все Models и Tools, раздел «Каноническая база
 каталога (master)» в `AGENTS.md`). Её редактируют люди и агенты; импорт из
-Local — `manage.py catalog_master import`, проверка —
-`manage.py catalog_master check`.
+Local — `manage.py catalog_master import`, пересчёт — `catalog_master refresh`,
+проверка — `manage.py catalog_master check`, план синхронизации в Local —
+`catalog_master sync-local`. Инструкция владельцу — `docs/CATALOG_MASTER.md`.
+Прежние версии книги (v001–v012) — неактивные копии в `backups/`.

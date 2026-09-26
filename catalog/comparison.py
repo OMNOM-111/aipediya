@@ -174,6 +174,23 @@ def decorate(model, taxonomy_labels=None, price_unit='', benchmark=None, price_s
     return model
 
 
+def release_order_key(entry):
+    """Chronological key shared by Models and Tools, consistent with the master.
+
+    The master numbers public records by (verified date, name, Record ID), so
+    within one date the public number already encodes the agreed order. Using
+    (date, number) — instead of the date alone and relying on sort stability —
+    makes release_desc reverse same-date entries too, so numbers strictly
+    decrease (the 200 -> 197 -> 198 defect). Approximate dates keep their stored
+    start-of-period value; undated entries have no key and stay last.
+    """
+    released = entry.released or entry.approx_released
+    if released is None:
+        return None
+    number = entry.public_number if entry.public_number is not None else float("inf")
+    return (released, number, entry.pk)
+
+
 def sort_models(models, sort, benchmark=None):
     # Stable secondary key is the chronological number, then database identity.
     models.sort(key=lambda m: (m.public_number is None, m.public_number or m.pk))
@@ -187,7 +204,7 @@ def sort_models(models, sort, benchmark=None):
         if sort.startswith('developer_'): return m.developer_key or None
         if sort.startswith('status_'): return m.status_key or None
         if sort.startswith('context_'): return m.context
-        if sort.startswith('release_'): return m.released or m.approx_released
+        if sort.startswith('release_'): return release_order_key(m)
         if sort.startswith('price_'): return m.comparison_offer.amount if m.comparison_offer else None
         return m.comparison_evaluation.score if m.comparison_evaluation else None
     known = [m for m in models if key(m) is not None]
@@ -293,7 +310,7 @@ def sort_tools(tools, sort):
         if sort.startswith('local_'):
             return tool.local_key or None
         if sort.startswith('release_'):
-            return tool.released or tool.approx_released
+            return release_order_key(tool)
         return tool.public_number
 
     known = [tool for tool in tools if key(tool) is not None]

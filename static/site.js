@@ -351,6 +351,9 @@ if (infiniteScroll && modelRows && "IntersectionObserver" in window) {
     try {
       const response = await fetch(nextUrl, { headers: { "X-Requested-With": "AIpedia" } });
       if (!response.ok) throw new Error("Catalog page failed to load");
+      // A reply for an older listing (the sort/filter changed meanwhile, or the
+      // page came back from the history cache) must never add rows here.
+      if (infiniteScroll.dataset.nextUrl !== nextUrl) return;
       const wrapper = document.createElement("tbody");
       wrapper.innerHTML = await response.text();
       modelRows.append(...wrapper.children);

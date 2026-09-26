@@ -24,6 +24,8 @@ except ImportError:
 def master_row(record, name, released="", status="PUBLISHED", **extra):
     row = {c: "" for c in cm.MAIN["Models"]}
     decision = "PUBLIC" if status == "PUBLISHED" else "NEEDS_REVIEW"
+    if decision == "NEEDS_REVIEW":
+        extra.setdefault("Reason", "open question")
     row.update({
         "Record ID": record, "Name": name, "Developer": "Lab", "Status": status,
         "Publication Decision": decision,

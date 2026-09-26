@@ -30,9 +30,14 @@ class PermanentNumberAndDateTests(TestCase):
         second = self.model("Bravo", date(2023, 1, 1))
         first.refresh_from_db(); second.refresh_from_db()
         self.assertEqual((first.public_number, second.public_number), (1, 2))
+        # Owner rule 2026-09-26: a record without a verified exact or
+        # approximate date stays public but gets no chronological number.
         third = self.model("Charlie")
         third.refresh_from_db()
-        self.assertEqual(third.public_number, 3)
+        self.assertIsNone(third.public_number)
+        fourth = self.model("Delta", approx=date(2022, 5, 1), precision="month")
+        fourth.refresh_from_db()
+        self.assertEqual(fourth.public_number, 3)
 
     def test_approximate_date_renders_with_prefix_and_class(self):
         self.model("Aprx", approx=date(2024, 9, 1), precision="month")

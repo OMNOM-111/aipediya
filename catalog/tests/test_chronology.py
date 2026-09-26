@@ -48,20 +48,21 @@ class ChronologyTests(TestCase):
         self.model('Zulu', date(2024, 1, 1))
         self.model('Alpha', date(2025, 1, 1))
         undated = self.model('Undated')
-        # Every published entry now carries a permanent number, dated or not.
+        # Owner rule 2026-09-26: an entry without a verified date stays public
+        # but has no chronological number and sorts last.
         undated.refresh_from_db()
-        self.assertIsNotNone(undated.public_number)
-        number_before = undated.public_number
+        self.assertIsNone(undated.public_number)
         for direction, expected in [('desc', ['alpha', 'zulu', 'undated']), ('asc', ['zulu', 'alpha', 'undated'])]:
             response = self.client.get('/', {'sort': 'release_' + direction, 'lang': 'ru'}, follow=True)
             self.assertEqual([m.slug for m in response.context['page']], expected)
             self.assertContains(response, 'Дата выпуска не подтверждена')
-        # An approximate date sorts the entry by that date but keeps its number.
+        # An approximate date sorts the entry by that date and makes it eligible
+        # for a (provisional, next free) number until the master renumbers.
         undated.approx_released = date(2023, 6, 1)
         undated.approx_precision = 'month'
         undated.save(update_fields=['approx_released', 'approx_precision'])
         undated.refresh_from_db()
-        self.assertEqual(undated.public_number, number_before)
+        self.assertEqual(undated.public_number, 3)
         response = self.client.get('/', {'sort': 'release_asc', 'lang': 'ru'}, follow=True)
         self.assertEqual([m.slug for m in response.context['page']], ['undated', 'zulu', 'alpha'])
 
@@ -82,7 +83,7 @@ class ChronologyTests(TestCase):
             call_command('apply_release_chronology', str(path), stdout=StringIO())
             first.refresh_from_db(); second.refresh_from_db()
             self.assertEqual(first.public_number, 1)
-            self.assertEqual(second.public_number, 2)
+            self.assertIsNone(second.public_number)  # no verified date: no number
             count = PublicationRevision.objects.count()
             call_command('apply_release_chronology', str(path), stdout=StringIO())
             self.assertEqual(PublicationRevision.objects.count(), count)

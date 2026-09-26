@@ -1,127 +1,135 @@
 {
  "models": {
   "adaline-8b0c4540": {
-   "public_number": 305,
+   "public_number": null,
    "published": false
   },
   "albert-f3688209": {
-   "public_number": 306,
+   "public_number": null,
    "published": false
   },
   "alexnet-180951d8": {
-   "public_number": 307,
+   "public_number": null,
    "published": false
   },
   "aliceai-foundation-80b-a3b-base-19677187": {
-   "public_number": 308,
+   "public_number": null,
    "published": false
   },
   "allam-7b-4d3f90b4": {
-   "public_number": 309,
+   "public_number": null,
    "published": false
   },
+  "alphafold-3-9a669b23": {
+   "public_number": 34,
+   "published": true
+  },
   "amazon-nova-2-lite-43b653c0": {
-   "public_number": 158,
+   "public_number": 165,
    "published": true
   },
   "amazon-nova-2-pro-preview-807c8417": {
-   "public_number": 159,
+   "public_number": 166,
    "published": true
   },
   "amazon-nova-canvas-3c05ef45": {
-   "public_number": 62,
+   "public_number": 68,
    "published": true
   },
   "amazon-nova-lite-f10b45d5": {
-   "public_number": 63,
+   "public_number": 69,
    "published": true
   },
   "amazon-nova-micro-26ce725b": {
-   "public_number": 64,
+   "public_number": 70,
    "published": true
   },
   "amazon-nova-premier-e1ebcb91": {
-   "public_number": 93,
+   "public_number": 105,
    "published": true
   },
   "amazon-nova-pro-6c50bfc3": {
-   "public_number": 60,
+   "public_number": 71,
    "published": true
   },
   "amazon-nova-reel-1b171943": {
-   "public_number": 65,
+   "public_number": 72,
    "published": true
   },
   "apertus-v15-70b-344f8097": {
-   "public_number": 260,
+   "public_number": 266,
    "published": true
   },
   "apertus-v15-8b-5de97984": {
-   "public_number": 261,
+   "public_number": 267,
    "published": true
   },
   "arctic-7dd33d1d": {
-   "public_number": 310,
+   "public_number": null,
    "published": false
   },
   "attention-bahdanau-22018bee": {
-   "public_number": 311,
+   "public_number": null,
    "published": false
   },
+  "audiogen-c2c92003": {
+   "public_number": 20,
+   "published": true
+  },
   "auk-5a8f1067": {
-   "public_number": 292,
+   "public_number": 298,
    "published": true
   },
   "auk-flash-14134b6b": {
-   "public_number": 293,
+   "public_number": 299,
    "published": true
   },
   "aya-101-427feb62": {
-   "public_number": 312,
+   "public_number": null,
    "published": false
   },
   "aya-expanse-32b-e5f572dd": {
-   "public_number": 313,
+   "public_number": null,
    "published": false
   },
   "aya-expanse-8b-1c239f11": {
-   "public_number": 314,
+   "public_number": null,
    "published": false
   },
   "aya-vision-32b-65192990": {
-   "public_number": 315,
+   "public_number": null,
    "published": false
   },
   "aya-vision-8b-8615c0fd": {
-   "public_number": 316,
+   "public_number": null,
    "published": false
   },
   "baichuan-13b-62c76397": {
-   "public_number": 317,
+   "public_number": null,
    "published": false
   },
   "baichuan-7b-fbe0f530": {
-   "public_number": 318,
+   "public_number": null,
    "published": false
   },
   "baichuan2-13b-a0642d57": {
-   "public_number": 319,
+   "public_number": null,
    "published": false
   },
   "baichuan2-7b-1ba64056": {
-   "public_number": 320,
+   "public_number": null,
    "published": false
   },
   "bart-a97898c2": {
-   "public_number": 321,
+   "public_number": null,
    "published": false
   },
   "bert-base-27fa313c": {
-   "public_number": 322,
+   "public_number": null,
    "published": false
   },
   "bert-large-8497fc42": {
-   "public_number": 323,
+   "public_number": null,
    "published": false
   },
   "blenderbot-3-175b-fb95bf1d": {
@@ -129,35 +137,35 @@
    "published": true
   },
   "blenderbot-94b-f8d5f89f": {
-   "public_number": 324,
+   "public_number": null,
    "published": false
   },
   "bloom-176b-18a6f426": {
-   "public_number": 325,
+   "public_number": null,
    "published": false
   },
   "bloomz-176b-6418fce9": {
-   "public_number": 326,
+   "public_number": null,
    "published": false
   },
   "boltzmann-machine-babeaade": {
-   "public_number": 327,
+   "public_number": null,
    "published": false
   },
   "chatglm-6b-c0b31586": {
-   "public_number": 328,
+   "public_number": null,
    "published": false
   },
   "chatglm2-6b-bd21122b": {
-   "public_number": 329,
+   "public_number": null,
    "published": false
   },
   "chatglm3-6b-d2ec8709": {
-   "public_number": 330,
+   "public_number": null,
    "published": false
   },
   "chinchilla-70b-150a7176": {
-   "public_number": 331,
+   "public_number": null,
    "published": false
   },
   "claude-1-109a2931": {
@@ -165,967 +173,999 @@
    "published": true
   },
   "claude-10-api-snapshot-ba4593ad": {
-   "public_number": 332,
+   "public_number": null,
    "published": false
   },
   "claude-11-api-snapshot-11a647fb": {
-   "public_number": 333,
+   "public_number": null,
    "published": false
   },
   "claude-12-api-snapshot-dbfa728e": {
-   "public_number": 334,
+   "public_number": null,
    "published": false
   },
   "claude-13-api-snapshot-5074800f": {
-   "public_number": 335,
+   "public_number": null,
    "published": false
   },
   "claude-2-b165184c": {
-   "public_number": 14,
+   "public_number": 16,
    "published": true
   },
   "claude-21-abeffa80": {
-   "public_number": 20,
-   "published": true
-  },
-  "claude-3-haiku-20240307-82490930": {
-   "public_number": 27,
-   "published": true
-  },
-  "claude-3-haiku-fa05d2e6": {
-   "public_number": 28,
-   "published": true
-  },
-  "claude-3-opus-0a6b9ffd": {
-   "public_number": 25,
-   "published": true
-  },
-  "claude-3-opus-20240229-2a4107aa": {
    "public_number": 23,
    "published": true
   },
-  "claude-3-sonnet-20240229-dae5b2e3": {
-   "public_number": 24,
+  "claude-3-haiku-20240307-82490930": {
+   "public_number": null,
+   "published": false
+  },
+  "claude-3-haiku-fa05d2e6": {
+   "public_number": 30,
    "published": true
   },
+  "claude-3-opus-0a6b9ffd": {
+   "public_number": 28,
+   "published": true
+  },
+  "claude-3-opus-20240229-2a4107aa": {
+   "public_number": null,
+   "published": false
+  },
+  "claude-3-sonnet-20240229-dae5b2e3": {
+   "public_number": null,
+   "published": false
+  },
   "claude-3-sonnet-af9884fd": {
-   "public_number": 26,
+   "public_number": 29,
    "published": true
   },
   "claude-35-haiku-20241022-51029c52": {
-   "public_number": 53,
-   "published": true
+   "public_number": null,
+   "published": false
   },
   "claude-35-haiku-e42ec16c": {
-   "public_number": 52,
+   "public_number": 64,
    "published": true
   },
   "claude-35-sonnet-20240620-f0d408d7": {
-   "public_number": 34,
-   "published": true
+   "public_number": null,
+   "published": false
   },
   "claude-35-sonnet-20241022-076fdde9": {
-   "public_number": 54,
+   "public_number": 60,
    "published": true
   },
   "claude-35-sonnet-33801c09": {
-   "public_number": 33,
+   "public_number": 36,
    "published": true
   },
   "claude-37-sonnet-20250219-0b1374aa": {
-   "public_number": 69,
-   "published": true
+   "public_number": null,
+   "published": false
   },
   "claude-37-sonnet-c1304af4": {
-   "public_number": 70,
+   "public_number": 78,
    "published": true
   },
   "claude-fable-5-e8ba8499": {
-   "public_number": 236,
+   "public_number": 241,
    "published": true
   },
   "claude-fable-51-7531dff6": {
-   "public_number": 285,
+   "public_number": 291,
    "published": true
   },
   "claude-haiku-45-01aad30f": {
-   "public_number": 146,
+   "public_number": 153,
    "published": true
   },
   "claude-haiku-45-20251001-f3ba3acc": {
-   "public_number": 143,
-   "published": true
+   "public_number": null,
+   "published": false
   },
   "claude-instant-1-08b06766": {
    "public_number": 10,
    "published": true
   },
   "claude-instant-10-api-snapshot-dab976ca": {
-   "public_number": 336,
+   "public_number": null,
    "published": false
   },
   "claude-instant-11-api-snapshot-09a2abfc": {
-   "public_number": 337,
+   "public_number": null,
    "published": false
   },
   "claude-instant-12-api-snapshot-0d1acc44": {
-   "public_number": 338,
+   "public_number": null,
    "published": false
   },
   "claude-mythos-5-e29e580f": {
-   "public_number": 339,
+   "public_number": null,
    "published": false
   },
   "claude-opus-4-20250514-a5eb72f9": {
-   "public_number": 94,
-   "published": true
+   "public_number": null,
+   "published": false
   },
   "claude-opus-4-58c4b5d9": {
-   "public_number": 96,
-   "published": true
-  },
-  "claude-opus-41-20250805-34e09e29": {
-   "public_number": 127,
-   "published": true
-  },
-  "claude-opus-41-600423cc": {
-   "public_number": 126,
-   "published": true
-  },
-  "claude-opus-45-20251101-255d80a3": {
-   "public_number": 150,
-   "published": true
-  },
-  "claude-opus-45-4e9bb797": {
-   "public_number": 154,
-   "published": true
-  },
-  "claude-opus-46-fe255d9c": {
-   "public_number": 184,
-   "published": true
-  },
-  "claude-opus-47-934a55dc": {
-   "public_number": 210,
-   "published": true
-  },
-  "claude-opus-48-77081582": {
-   "public_number": 230,
-   "published": true
-  },
-  "claude-opus-5-1c2df4c8": {
-   "public_number": 262,
-   "published": true
-  },
-  "claude-sonnet-4-16b3f7ee": {
-   "public_number": 97,
-   "published": true
-  },
-  "claude-sonnet-4-20250514-27bffbfc": {
-   "public_number": 95,
-   "published": true
-  },
-  "claude-sonnet-45-20250929-4491d3dd": {
-   "public_number": 140,
-   "published": true
-  },
-  "claude-sonnet-45-23075902": {
-   "public_number": 139,
-   "published": true
-  },
-  "claude-sonnet-46-67e931da": {
-   "public_number": 190,
-   "published": true
-  },
-  "claude-sonnet-5-26497337": {
-   "public_number": 243,
-   "published": true
-  },
-  "clip-93b4a5e9": {
-   "public_number": 340,
-   "published": false
-  },
-  "code-llama-13b-244edc30": {
-   "public_number": 341,
-   "published": false
-  },
-  "code-llama-34b-6fe434d0": {
-   "public_number": 342,
-   "published": false
-  },
-  "code-llama-70b-7f56875d": {
-   "public_number": 343,
-   "published": false
-  },
-  "code-llama-7b-27121e65": {
-   "public_number": 344,
-   "published": false
-  },
-  "codestral-2405-059472ed": {
-   "public_number": 346,
-   "published": false
-  },
-  "codestral-2501-970c63df": {
-   "public_number": 347,
-   "published": false
-  },
-  "codestral-de461143": {
-   "public_number": 345,
-   "published": false
-  },
-  "codestral-embed-79e6c4d8": {
-   "public_number": 105,
-   "published": true
-  },
-  "codestral-mamba-7b-8f519e18": {
-   "public_number": 348,
-   "published": false
-  },
-  "cogvideox-3-a2fe3208": {
-   "public_number": 116,
-   "published": true
-  },
-  "cogview-4-57bb01c8": {
-   "public_number": 73,
-   "published": true
-  },
-  "cohere-transcribe-78970de8": {
-   "public_number": 349,
-   "published": false
-  },
-  "cohere-transcribe-arabic-07-2026-a7a6d392": {
-   "public_number": 249,
-   "published": true
-  },
-  "cohere-transcribe-arabic-0a352fb7": {
-   "public_number": 350,
-   "published": false
-  },
-  "command-1d3950b8": {
-   "public_number": 351,
-   "published": false
-  },
-  "command-a-03-2025-5d8ccd55": {
-   "public_number": 352,
-   "published": false
-  },
-  "command-a-05-2026-fa756fc5": {
-   "public_number": 221,
-   "published": true
-  },
-  "command-a-reasoning-08-2025-2dfd78b9": {
-   "public_number": 353,
-   "published": false
-  },
-  "command-a-translate-08-2025-38a373c4": {
-   "public_number": 354,
-   "published": false
-  },
-  "command-a-vision-07-2025-d4eb3495": {
-   "public_number": 355,
-   "published": false
-  },
-  "command-light-5155599e": {
-   "public_number": 356,
-   "published": false
-  },
-  "command-r-08-2024-95d972a3": {
-   "public_number": 358,
-   "published": false
-  },
-  "command-r-08-2024-d43e5a38": {
-   "public_number": 360,
-   "published": false
-  },
-  "command-r-c869ec03": {
-   "public_number": 357,
-   "published": false
-  },
-  "command-r-e52a2a02": {
-   "public_number": 359,
-   "published": false
-  },
-  "command-r7b-12-2024-182c1f08": {
-   "public_number": 361,
-   "published": false
-  },
-  "dalle-02437bea": {
-   "public_number": 362,
-   "published": false
-  },
-  "dalle-2-6b5c314d": {
-   "public_number": 363,
-   "published": false
-  },
-  "dalle-3-a33afed7": {
-   "public_number": 364,
-   "published": false
-  },
-  "dbrx-base-881c25e9": {
-   "public_number": 365,
-   "published": false
-  },
-  "dbrx-instruct-17f66030": {
-   "public_number": 366,
-   "published": false
-  },
-  "ddpm-27ac8559": {
-   "public_number": 367,
-   "published": false
-  },
-  "deep-belief-network-eca2584e": {
-   "public_number": 368,
-   "published": false
-  },
-  "deepseek-coder-13b-41b6eba6": {
-   "public_number": 369,
-   "published": false
-  },
-  "deepseek-coder-33b-2afcf2b9": {
-   "public_number": 370,
-   "published": false
-  },
-  "deepseek-coder-67b-65d42eb4": {
-   "public_number": 371,
-   "published": false
-  },
-  "deepseek-coder-v2-c151d241": {
-   "public_number": 374,
-   "published": false
-  },
-  "deepseek-llm-67b-c93d940c": {
-   "public_number": 372,
-   "published": false
-  },
-  "deepseek-llm-7b-c479084d": {
-   "public_number": 373,
-   "published": false
-  },
-  "deepseek-r1-distill-llama-70b-585a0ccd": {
-   "public_number": 376,
-   "published": false
-  },
-  "deepseek-r1-distill-llama-8b-39c2452a": {
-   "public_number": 377,
-   "published": false
-  },
-  "deepseek-r1-distill-qwen-14b-684fb42e": {
-   "public_number": 379,
-   "published": false
-  },
-  "deepseek-r1-distill-qwen-15b-dbdd84f8": {
-   "public_number": 378,
-   "published": false
-  },
-  "deepseek-r1-distill-qwen-32b-aab114c7": {
-   "public_number": 380,
-   "published": false
-  },
-  "deepseek-r1-distill-qwen-7b-43a5f686": {
-   "public_number": 381,
-   "published": false
-  },
-  "deepseek-r1-f4fb87af": {
-   "public_number": 375,
-   "published": false
-  },
-  "deepseek-r1-zero-cc861c23": {
-   "public_number": 382,
-   "published": false
-  },
-  "deepseek-v2-8e7cd2e8": {
-   "public_number": 383,
-   "published": false
-  },
-  "deepseek-v25-3f259c90": {
-   "public_number": 384,
-   "published": false
-  },
-  "deepseek-v3-5167aa7b": {
-   "public_number": 385,
-   "published": false
-  },
-  "deepseek-v31-b03a723b": {
-   "public_number": 386,
-   "published": false
-  },
-  "deepseek-v32-373c9ffd": {
-   "public_number": 387,
-   "published": false
-  },
-  "deepseek-v4-flash-0731-e8dc06e5": {
-   "public_number": 265,
-   "published": true
-  },
-  "deepseek-v4-pro-0813-c5a6b68e": {
-   "public_number": 275,
-   "published": true
-  },
-  "deepseek-v4-pro-2026-04-24": {
-   "public_number": 215,
-   "published": true
-  },
-  "deepseek-v41-flash-1d455a34": {
-   "public_number": 294,
-   "published": true
-  },
-  "deepseek-vl-13b-55141157": {
-   "public_number": 388,
-   "published": false
-  },
-  "deepseek-vl-7b-e59939b1": {
-   "public_number": 389,
-   "published": false
-  },
-  "devstral-medium-df3df30e": {
-   "public_number": 390,
-   "published": false
-  },
-  "devstral-small-10-41591a79": {
-   "public_number": 391,
-   "published": false
-  },
-  "devstral-small-11-1fcce613": {
-   "public_number": 392,
-   "published": false
-  },
-  "diffusiongemma-26b-a4b-it-428856e3": {
-   "public_number": 238,
-   "published": true
-  },
-  "eleven-dubbing-v1-241c4ab4": {
-   "public_number": 393,
-   "published": false
-  },
-  "eleven-dubbing-v2-bf9fe195": {
-   "public_number": 231,
-   "published": true
-  },
-  "eleven-english-v1-13a5dac4": {
-   "public_number": 394,
-   "published": false
-  },
-  "eleven-flash-turbo-0d8ef8ef": {
-   "public_number": 395,
-   "published": false
-  },
-  "eleven-flash-v2-96a5302a": {
-   "public_number": 396,
-   "published": false
-  },
-  "eleven-flash-v25-5f894937": {
-   "public_number": 397,
-   "published": false
-  },
-  "eleven-multilingual-v1-90024aa9": {
-   "public_number": 398,
-   "published": false
-  },
-  "eleven-multilingual-v2-833c0947": {
-   "public_number": 18,
-   "published": true
-  },
-  "eleven-music-d60ed664": {
-   "public_number": 128,
-   "published": true
-  },
-  "eleven-turbo-v2-fc703420": {
-   "public_number": 399,
-   "published": false
-  },
-  "eleven-turbo-v25-b7ce1ae1": {
-   "public_number": 400,
-   "published": false
-  },
-  "eleven-v3-42cde628": {
-   "public_number": 108,
-   "published": true
-  },
-  "eleven-v3-conversational-15ae3db9": {
-   "public_number": 186,
-   "published": true
-  },
-  "elman-network-5c9dfdf3": {
-   "public_number": 401,
-   "published": false
-  },
-  "elmo-d59c43f9": {
-   "public_number": 402,
-   "published": false
-  },
-  "embed-english-light-v30-96538e3f": {
-   "public_number": 403,
-   "published": false
-  },
-  "embed-english-v30-2491fd5d": {
-   "public_number": 404,
-   "published": false
-  },
-  "embed-multilingual-v30-0a9498a5": {
-   "public_number": 405,
-   "published": false
-  },
-  "embed-v40-ab3d8284": {
-   "public_number": 406,
-   "published": false
-  },
-  "ernie-30-titan-8489d856": {
-   "public_number": 407,
-   "published": false
-  },
-  "ernie-40-0b2c0d1a": {
-   "public_number": 408,
-   "published": false
-  },
-  "ernie-45-5ceb04e1": {
-   "public_number": 409,
-   "published": false
-  },
-  "ernie-bot-ernie-35-5f4efb19": {
-   "public_number": 410,
-   "published": false
-  },
-  "ernie-x1-c6736d62": {
-   "public_number": 411,
-   "published": false
-  },
-  "evie-8b-714ce35b": {
-   "public_number": 412,
-   "published": false
-  },
-  "evollm-jp-a-v1-7b-3d1930fc": {
-   "public_number": 413,
-   "published": false
-  },
-  "exaone-20-6b3d6f79": {
-   "public_number": 414,
-   "published": false
-  },
-  "exaone-30-78b-5d13c3a3": {
-   "public_number": 415,
-   "published": false
-  },
-  "exaone-35-24b-7f6d0263": {
-   "public_number": 416,
-   "published": false
-  },
-  "exaone-35-32b-8d6eb608": {
-   "public_number": 417,
-   "published": false
-  },
-  "exaone-35-78b-229ac327": {
-   "public_number": 418,
-   "published": false
-  },
-  "exaone-40-9d0b00ae": {
-   "public_number": 117,
-   "published": true
-  },
-  "exaone-45-33b-497b830b": {
-   "public_number": 208,
-   "published": true
-  },
-  "falcon-180b-e1d69945": {
-   "public_number": 419,
-   "published": false
-  },
-  "falcon-2-11b-a14c0ca3": {
-   "public_number": 420,
-   "published": false
-  },
-  "falcon-3-10b-39daf20f": {
-   "public_number": 421,
-   "published": false
-  },
-  "falcon-3-1b-816fb5e9": {
-   "public_number": 422,
-   "published": false
-  },
-  "falcon-3-3b-fdba59a5": {
-   "public_number": 423,
-   "published": false
-  },
-  "falcon-3-7b-0b012a7e": {
-   "public_number": 424,
-   "published": false
-  },
-  "falcon-40b-8dca244e": {
-   "public_number": 425,
-   "published": false
-  },
-  "falcon-7b-9dd9fe0d": {
-   "public_number": 426,
-   "published": false
-  },
-  "falcon-ocr-07e0429a": {
-   "public_number": 427,
-   "published": false
-  },
-  "falcon-perception-300m-4b5a5320": {
-   "public_number": 429,
-   "published": false
-  },
-  "falcon-perception-cb699bd4": {
-   "public_number": 428,
-   "published": false
-  },
-  "fara-15-27b-8c580b31": {
-   "public_number": 226,
-   "published": true
-  },
-  "fara-15-4b-02563a27": {
-   "public_number": 227,
-   "published": true
-  },
-  "fara-15-9b-98aec4f3": {
-   "public_number": 228,
-   "published": true
-  },
-  "flamingo-80b-a131270d": {
-   "public_number": 430,
-   "published": false
-  },
-  "flux-3-ab65a7ab": {
-   "public_number": 268,
-   "published": true
-  },
-  "flux-video-edit-fast-e50abbf6": {
-   "public_number": 431,
-   "published": false
-  },
-  "flux-video-upscale-e29d2e3c": {
-   "public_number": 279,
-   "published": true
-  },
-  "flux1-dev-7026fb49": {
-   "public_number": 432,
-   "published": false
-  },
-  "flux1-fill-pro-d7f16ebb": {
-   "public_number": 435,
-   "published": false
-  },
-  "flux1-kontext-max-9f25b064": {
    "public_number": 106,
    "published": true
   },
-  "flux1-kontext-pro-c9914f2f": {
+  "claude-opus-41-20250805-34e09e29": {
+   "public_number": null,
+   "published": false
+  },
+  "claude-opus-41-600423cc": {
+   "public_number": 136,
+   "published": true
+  },
+  "claude-opus-45-20251101-255d80a3": {
+   "public_number": null,
+   "published": false
+  },
+  "claude-opus-45-4e9bb797": {
+   "public_number": 161,
+   "published": true
+  },
+  "claude-opus-46-fe255d9c": {
+   "public_number": 190,
+   "published": true
+  },
+  "claude-opus-47-934a55dc": {
+   "public_number": 215,
+   "published": true
+  },
+  "claude-opus-48-77081582": {
+   "public_number": 235,
+   "published": true
+  },
+  "claude-opus-5-1c2df4c8": {
+   "public_number": 268,
+   "published": true
+  },
+  "claude-sonnet-4-16b3f7ee": {
    "public_number": 107,
    "published": true
   },
-  "flux1-pro-51da3e13": {
-   "public_number": 433,
+  "claude-sonnet-4-20250514-27bffbfc": {
+   "public_number": null,
    "published": false
   },
-  "flux1-schnell-664ea04b": {
-   "public_number": 434,
+  "claude-sonnet-45-20250929-4491d3dd": {
+   "public_number": null,
    "published": false
   },
-  "flux11-pro-1367f3bd": {
-   "public_number": 51,
+  "claude-sonnet-45-23075902": {
+   "public_number": 148,
    "published": true
   },
-  "flux11-pro-raw-6db356c7": {
-   "public_number": 58,
+  "claude-sonnet-46-67e931da": {
+   "public_number": 196,
    "published": true
   },
-  "flux11-pro-ultra-ff451a32": {
-   "public_number": 59,
+  "claude-sonnet-5-26497337": {
+   "public_number": 248,
    "published": true
   },
-  "flux2-93b876e2": {
-   "public_number": 436,
+  "clip-93b4a5e9": {
+   "public_number": null,
    "published": false
   },
-  "flux2-dev-3ea8cac7": {
-   "public_number": 155,
-   "published": true
-  },
-  "flux2-flex-b224c434": {
-   "public_number": 156,
-   "published": true
-  },
-  "flux2-klein-4b-17c07f0f": {
-   "public_number": 176,
-   "published": true
-  },
-  "flux2-klein-9b-862fb6b1": {
-   "public_number": 177,
-   "published": true
-  },
-  "flux2-max-76f6c0c1": {
-   "public_number": 169,
-   "published": true
-  },
-  "flux2-pro-b1d95095": {
-   "public_number": 157,
-   "published": true
-  },
-  "fred-t5-17b-e3e0ebb3": {
-   "public_number": 437,
+  "code-llama-13b-244edc30": {
+   "public_number": null,
    "published": false
   },
-  "fugu-ultra-30efec3e": {
-   "public_number": 241,
+  "code-llama-34b-6fe434d0": {
+   "public_number": null,
+   "published": false
+  },
+  "code-llama-70b-7f56875d": {
+   "public_number": null,
+   "published": false
+  },
+  "code-llama-7b-27121e65": {
+   "public_number": null,
+   "published": false
+  },
+  "codestral-2405-059472ed": {
+   "public_number": null,
+   "published": false
+  },
+  "codestral-2501-970c63df": {
+   "public_number": null,
+   "published": false
+  },
+  "codestral-de461143": {
+   "public_number": null,
+   "published": false
+  },
+  "codestral-embed-79e6c4d8": {
+   "public_number": 115,
    "published": true
   },
-  "gemini-10-nano-f0ed7097": {
-   "public_number": 21,
+  "codestral-mamba-7b-8f519e18": {
+   "public_number": null,
+   "published": false
+  },
+  "cogvideox-3-a2fe3208": {
+   "public_number": 126,
    "published": true
   },
-  "gemini-10-pro-ebfdd108": {
-   "public_number": 22,
+  "cogview-4-57bb01c8": {
+   "public_number": 81,
    "published": true
   },
-  "gemini-10-ultra-ecb517d1": {
-   "public_number": 438,
+  "cohere-transcribe-78970de8": {
+   "public_number": null,
    "published": false
   },
-  "gemini-15-flash-6f02af01": {
-   "public_number": 439,
-   "published": false
-  },
-  "gemini-15-pro-ce5e019f": {
-   "public_number": 440,
-   "published": false
-  },
-  "gemini-20-flash-48a60df0": {
-   "public_number": 441,
-   "published": false
-  },
-  "gemini-20-flash-lite-a95f290a": {
-   "public_number": 442,
-   "published": false
-  },
-  "gemini-25-flash-902f4208": {
-   "public_number": 443,
-   "published": false
-  },
-  "gemini-25-flash-lite-1c911aec": {
-   "public_number": 444,
-   "published": false
-  },
-  "gemini-25-pro-c8160485": {
-   "public_number": 445,
-   "published": false
-  },
-  "gemini-3-pro-image-fbb2caf5": {
-   "public_number": 153,
+  "cohere-transcribe-arabic-07-2026-a7a6d392": {
+   "public_number": 254,
    "published": true
   },
-  "gemini-3-pro-preview-4c620280": {
-   "public_number": 446,
+  "cohere-transcribe-arabic-0a352fb7": {
+   "public_number": null,
    "published": false
   },
-  "gemini-31-flash-lite-image-7d4267da": {
-   "public_number": 244,
-   "published": true
-  },
-  "gemini-31-flash-lite-preview-7f8335ac": {
-   "public_number": 447,
+  "command-1d3950b8": {
+   "public_number": null,
    "published": false
   },
-  "gemini-31-flash-live-preview-027a2841": {
-   "public_number": 203,
-   "published": true
-  },
-  "gemini-31-flash-tts-preview-54794803": {
-   "public_number": 209,
-   "published": true
-  },
-  "gemini-35-flash-6f4d3568": {
-   "public_number": 220,
-   "published": true
-  },
-  "gemini-35-flash-lite-cedf836d": {
-   "public_number": 258,
-   "published": true
-  },
-  "gemini-35-live-translate-e9e0e710": {
-   "public_number": 448,
+  "command-a-03-2025-5d8ccd55": {
+   "public_number": null,
    "published": false
   },
-  "gemini-35-transcribe-4a2a6a85": {
-   "public_number": 280,
+  "command-a-05-2026-fa756fc5": {
+   "public_number": 226,
    "published": true
   },
-  "gemini-35-transcribe-live-fd2bb178": {
+  "command-a-reasoning-08-2025-2dfd78b9": {
+   "public_number": null,
+   "published": false
+  },
+  "command-a-translate-08-2025-38a373c4": {
+   "public_number": null,
+   "published": false
+  },
+  "command-a-vision-07-2025-d4eb3495": {
+   "public_number": null,
+   "published": false
+  },
+  "command-light-5155599e": {
+   "public_number": null,
+   "published": false
+  },
+  "command-r-08-2024-95d972a3": {
+   "public_number": null,
+   "published": false
+  },
+  "command-r-08-2024-d43e5a38": {
+   "public_number": null,
+   "published": false
+  },
+  "command-r-c869ec03": {
+   "public_number": null,
+   "published": false
+  },
+  "command-r-e52a2a02": {
+   "public_number": null,
+   "published": false
+  },
+  "command-r7b-12-2024-182c1f08": {
+   "public_number": null,
+   "published": false
+  },
+  "dalle-02437bea": {
+   "public_number": null,
+   "published": false
+  },
+  "dalle-2-6b5c314d": {
+   "public_number": null,
+   "published": false
+  },
+  "dalle-3-a33afed7": {
+   "public_number": null,
+   "published": false
+  },
+  "dbrx-base-881c25e9": {
+   "public_number": null,
+   "published": false
+  },
+  "dbrx-instruct-17f66030": {
+   "public_number": null,
+   "published": false
+  },
+  "ddpm-27ac8559": {
+   "public_number": null,
+   "published": false
+  },
+  "deep-belief-network-eca2584e": {
+   "public_number": null,
+   "published": false
+  },
+  "deepseek-coder-13b-41b6eba6": {
+   "public_number": null,
+   "published": false
+  },
+  "deepseek-coder-33b-2afcf2b9": {
+   "public_number": null,
+   "published": false
+  },
+  "deepseek-coder-67b-65d42eb4": {
+   "public_number": null,
+   "published": false
+  },
+  "deepseek-coder-v2-c151d241": {
+   "public_number": null,
+   "published": false
+  },
+  "deepseek-llm-67b-c93d940c": {
+   "public_number": null,
+   "published": false
+  },
+  "deepseek-llm-7b-c479084d": {
+   "public_number": null,
+   "published": false
+  },
+  "deepseek-r1-distill-llama-70b-585a0ccd": {
+   "public_number": null,
+   "published": false
+  },
+  "deepseek-r1-distill-llama-8b-39c2452a": {
+   "public_number": null,
+   "published": false
+  },
+  "deepseek-r1-distill-qwen-14b-684fb42e": {
+   "public_number": null,
+   "published": false
+  },
+  "deepseek-r1-distill-qwen-15b-dbdd84f8": {
+   "public_number": null,
+   "published": false
+  },
+  "deepseek-r1-distill-qwen-32b-aab114c7": {
+   "public_number": null,
+   "published": false
+  },
+  "deepseek-r1-distill-qwen-7b-43a5f686": {
+   "public_number": null,
+   "published": false
+  },
+  "deepseek-r1-f4fb87af": {
+   "public_number": null,
+   "published": false
+  },
+  "deepseek-r1-zero-cc861c23": {
+   "public_number": null,
+   "published": false
+  },
+  "deepseek-v2-8e7cd2e8": {
+   "public_number": null,
+   "published": false
+  },
+  "deepseek-v25-3f259c90": {
+   "public_number": null,
+   "published": false
+  },
+  "deepseek-v3-5167aa7b": {
+   "public_number": null,
+   "published": false
+  },
+  "deepseek-v31-b03a723b": {
+   "public_number": null,
+   "published": false
+  },
+  "deepseek-v32-373c9ffd": {
+   "public_number": null,
+   "published": false
+  },
+  "deepseek-v4-flash-0731-e8dc06e5": {
+   "public_number": 271,
+   "published": true
+  },
+  "deepseek-v4-pro-0813-c5a6b68e": {
    "public_number": 281,
    "published": true
   },
-  "gemini-36-flash-c39dfa2e": {
-   "public_number": 259,
+  "deepseek-v4-pro-2026-04-24": {
+   "public_number": 220,
    "published": true
   },
-  "gemini-37-flash-b733bb9f": {
-   "public_number": 276,
+  "deepseek-v41-flash-1d455a34": {
+   "public_number": 301,
    "published": true
   },
-  "gemini-38-flash-c9fb1256": {
-   "public_number": 286,
-   "published": true
-  },
-  "gemini-38-live-a959d0c7": {
-   "public_number": 298,
-   "published": true
-  },
-  "gemini-38-live-extended-thinking-4ab0af55": {
-   "public_number": 299,
-   "published": true
-  },
-  "gemini-embedding-001-9d3df58d": {
-   "public_number": 449,
+  "deepseek-vl-13b-55141157": {
+   "public_number": null,
    "published": false
   },
-  "gemini-embedding-2-preview-00521ce6": {
-   "public_number": 450,
+  "deepseek-vl-7b-e59939b1": {
+   "public_number": null,
    "published": false
   },
-  "gemini-robotics-er-16-15650f97": {
-   "public_number": 451,
+  "devstral-medium-df3df30e": {
+   "public_number": null,
    "published": false
   },
-  "gemini-robotics-er-2-preview-b6f68afc": {
-   "public_number": 452,
+  "devstral-small-10-41591a79": {
+   "public_number": null,
    "published": false
   },
-  "gemma-4-26b-a4b-it-631076e8": {
-   "public_number": 205,
+  "devstral-small-11-1fcce613": {
+   "public_number": null,
+   "published": false
+  },
+  "diffusiongemma-26b-a4b-it-428856e3": {
+   "public_number": 243,
    "published": true
   },
-  "gemma-4-31b-it-6490a505": {
-   "public_number": 206,
-   "published": true
-  },
-  "generative-adversarial-network-gan-7b77e624": {
-   "public_number": 453,
+  "eleven-dubbing-v1-241c4ab4": {
+   "public_number": null,
    "published": false
   },
-  "giga-embeddings-10b-a18b-0826-eeef9c23": {
-   "public_number": 454,
-   "published": false
-  },
-  "giga-embeddings-3b-0826-f94cd188": {
-   "public_number": 455,
-   "published": false
-  },
-  "giga-embeddings-480m-0826-252d8c8f": {
-   "public_number": 456,
-   "published": false
-  },
-  "gigachat-35-432b-a28b-reasoning-02085d96": {
-   "public_number": 295,
+  "eleven-dubbing-v2-bf9fe195": {
+   "public_number": 236,
    "published": true
   },
-  "gigachat-746bcb71": {
-   "public_number": 457,
+  "eleven-english-v1-13a5dac4": {
+   "public_number": null,
    "published": false
   },
-  "glm-130b-e255b133": {
-   "public_number": 458,
+  "eleven-flash-turbo-0d8ef8ef": {
+   "public_number": null,
    "published": false
   },
-  "glm-4-32b-0414-128k-abc4bf37": {
-   "public_number": 460,
+  "eleven-flash-v2-96a5302a": {
+   "public_number": null,
    "published": false
   },
-  "glm-4-91251f65": {
-   "public_number": 459,
+  "eleven-flash-v25-5f894937": {
+   "public_number": null,
    "published": false
   },
-  "glm-45-174611d3": {
-   "public_number": 123,
-   "published": true
-  },
-  "glm-45-air-a5e8d550": {
-   "public_number": 124,
-   "published": true
-  },
-  "glm-45-airx-a2b31b4d": {
-   "public_number": 461,
+  "eleven-multilingual-v1-90024aa9": {
+   "public_number": null,
    "published": false
   },
-  "glm-45-flash-72c3e825": {
-   "public_number": 462,
+  "eleven-multilingual-v2-833c0947": {
+   "public_number": 21,
+   "published": true
+  },
+  "eleven-music-d60ed664": {
+   "public_number": 137,
+   "published": true
+  },
+  "eleven-turbo-v2-fc703420": {
+   "public_number": null,
    "published": false
   },
-  "glm-45-x-c6b9ab71": {
-   "public_number": 463,
+  "eleven-turbo-v25-b7ce1ae1": {
+   "public_number": null,
    "published": false
   },
-  "glm-45v-4e9f1a26": {
-   "public_number": 134,
+  "eleven-v3-42cde628": {
+   "public_number": 118,
    "published": true
   },
-  "glm-46-3b20359a": {
-   "public_number": 141,
+  "eleven-v3-conversational-15ae3db9": {
+   "public_number": 192,
    "published": true
   },
-  "glm-46v-a1671a63": {
-   "public_number": 164,
-   "published": true
-  },
-  "glm-46v-flash-271dacf4": {
-   "public_number": 464,
+  "elman-network-5c9dfdf3": {
+   "public_number": null,
    "published": false
   },
-  "glm-46v-flashx-3ecc3420": {
-   "public_number": 465,
+  "elmo-d59c43f9": {
+   "public_number": null,
    "published": false
   },
-  "glm-47-7bc07849": {
-   "public_number": 170,
-   "published": true
-  },
-  "glm-47-flash-b10e89fa": {
-   "public_number": 178,
-   "published": true
-  },
-  "glm-47-flashx-d95614de": {
-   "public_number": 466,
+  "embed-english-light-v30-96538e3f": {
+   "public_number": null,
    "published": false
   },
-  "glm-4v-15371532": {
-   "public_number": 467,
+  "embed-english-v30-2491fd5d": {
+   "public_number": null,
    "published": false
   },
-  "glm-5-b24d27e7": {
-   "public_number": 187,
-   "published": true
-  },
-  "glm-51-f38182d2": {
-   "public_number": 207,
-   "published": true
-  },
-  "glm-52-3dd42490": {
-   "public_number": 240,
-   "published": true
-  },
-  "glm-53-8e5ab5d9": {
-   "public_number": 278,
-   "published": true
-  },
-  "glm-53-flash-bdc83193": {
-   "public_number": 282,
-   "published": true
-  },
-  "glm-53-flashx-ff54e230": {
-   "public_number": 468,
+  "embed-multilingual-v30-0a9498a5": {
+   "public_number": null,
    "published": false
   },
-  "glm-asr-2512-965d77ed": {
-   "public_number": 165,
+  "embed-v40-ab3d8284": {
+   "public_number": null,
+   "published": false
+  },
+  "ernie-30-titan-8489d856": {
+   "public_number": null,
+   "published": false
+  },
+  "ernie-40-0b2c0d1a": {
+   "public_number": null,
+   "published": false
+  },
+  "ernie-45-5ceb04e1": {
+   "public_number": null,
+   "published": false
+  },
+  "ernie-bot-ernie-35-5f4efb19": {
+   "public_number": null,
+   "published": false
+  },
+  "ernie-x1-c6736d62": {
+   "public_number": null,
+   "published": false
+  },
+  "evie-8b-714ce35b": {
+   "public_number": null,
+   "published": false
+  },
+  "evollm-jp-a-v1-7b-3d1930fc": {
+   "public_number": null,
+   "published": false
+  },
+  "exaone-20-6b3d6f79": {
+   "public_number": null,
+   "published": false
+  },
+  "exaone-30-78b-5d13c3a3": {
+   "public_number": null,
+   "published": false
+  },
+  "exaone-35-24b-7f6d0263": {
+   "public_number": null,
+   "published": false
+  },
+  "exaone-35-32b-8d6eb608": {
+   "public_number": null,
+   "published": false
+  },
+  "exaone-35-78b-229ac327": {
+   "public_number": null,
+   "published": false
+  },
+  "exaone-40-9d0b00ae": {
+   "public_number": 127,
    "published": true
   },
-  "glm-image-e5c16eb7": {
-   "public_number": 175,
+  "exaone-45-33b-497b830b": {
+   "public_number": 213,
    "published": true
   },
-  "glm-ocr-16b45691": {
+  "falcon-180b-e1d69945": {
+   "public_number": null,
+   "published": false
+  },
+  "falcon-2-11b-a14c0ca3": {
+   "public_number": null,
+   "published": false
+  },
+  "falcon-3-10b-39daf20f": {
+   "public_number": null,
+   "published": false
+  },
+  "falcon-3-1b-816fb5e9": {
+   "public_number": null,
+   "published": false
+  },
+  "falcon-3-3b-fdba59a5": {
+   "public_number": null,
+   "published": false
+  },
+  "falcon-3-7b-0b012a7e": {
+   "public_number": null,
+   "published": false
+  },
+  "falcon-40b-8dca244e": {
+   "public_number": null,
+   "published": false
+  },
+  "falcon-7b-9dd9fe0d": {
+   "public_number": null,
+   "published": false
+  },
+  "falcon-ocr-07e0429a": {
+   "public_number": null,
+   "published": false
+  },
+  "falcon-perception-300m-4b5a5320": {
+   "public_number": null,
+   "published": false
+  },
+  "falcon-perception-cb699bd4": {
+   "public_number": null,
+   "published": false
+  },
+  "fara-15-27b-8c580b31": {
+   "public_number": 231,
+   "published": true
+  },
+  "fara-15-4b-02563a27": {
+   "public_number": 232,
+   "published": true
+  },
+  "fara-15-9b-98aec4f3": {
+   "public_number": 233,
+   "published": true
+  },
+  "flamingo-80b-a131270d": {
+   "public_number": null,
+   "published": false
+  },
+  "flux-3-ab65a7ab": {
+   "public_number": 274,
+   "published": true
+  },
+  "flux-video-edit-fast-e50abbf6": {
+   "public_number": null,
+   "published": false
+  },
+  "flux-video-upscale-e29d2e3c": {
+   "public_number": 285,
+   "published": true
+  },
+  "flux1-dev-7026fb49": {
+   "public_number": null,
+   "published": false
+  },
+  "flux1-fill-pro-d7f16ebb": {
+   "public_number": null,
+   "published": false
+  },
+  "flux1-kontext-max-9f25b064": {
+   "public_number": 116,
+   "published": true
+  },
+  "flux1-kontext-pro-c9914f2f": {
+   "public_number": 117,
+   "published": true
+  },
+  "flux1-pro-51da3e13": {
+   "public_number": null,
+   "published": false
+  },
+  "flux1-schnell-664ea04b": {
+   "public_number": null,
+   "published": false
+  },
+  "flux11-pro-1367f3bd": {
+   "public_number": 59,
+   "published": true
+  },
+  "flux11-pro-raw-6db356c7": {
+   "public_number": null,
+   "published": false
+  },
+  "flux11-pro-ultra-ff451a32": {
+   "public_number": 65,
+   "published": true
+  },
+  "flux2-93b876e2": {
+   "public_number": null,
+   "published": false
+  },
+  "flux2-dev-3ea8cac7": {
+   "public_number": 162,
+   "published": true
+  },
+  "flux2-flex-b224c434": {
+   "public_number": 163,
+   "published": true
+  },
+  "flux2-klein-4b-17c07f0f": {
    "public_number": 182,
    "published": true
   },
+  "flux2-klein-9b-862fb6b1": {
+   "public_number": 183,
+   "published": true
+  },
+  "flux2-max-76f6c0c1": {
+   "public_number": 176,
+   "published": true
+  },
+  "flux2-pro-b1d95095": {
+   "public_number": 164,
+   "published": true
+  },
+  "fred-t5-17b-e3e0ebb3": {
+   "public_number": null,
+   "published": false
+  },
+  "fugu-ultra-30efec3e": {
+   "public_number": 246,
+   "published": true
+  },
+  "gemini-10-nano-f0ed7097": {
+   "public_number": 24,
+   "published": true
+  },
+  "gemini-10-pro-ebfdd108": {
+   "public_number": 25,
+   "published": true
+  },
+  "gemini-10-ultra-ecb517d1": {
+   "public_number": null,
+   "published": false
+  },
+  "gemini-15-flash-6f02af01": {
+   "public_number": null,
+   "published": false
+  },
+  "gemini-15-pro-ce5e019f": {
+   "public_number": null,
+   "published": false
+  },
+  "gemini-20-flash-48a60df0": {
+   "public_number": null,
+   "published": false
+  },
+  "gemini-20-flash-lite-a95f290a": {
+   "public_number": null,
+   "published": false
+  },
+  "gemini-25-flash-902f4208": {
+   "public_number": null,
+   "published": false
+  },
+  "gemini-25-flash-lite-1c911aec": {
+   "public_number": null,
+   "published": false
+  },
+  "gemini-25-pro-c8160485": {
+   "public_number": null,
+   "published": false
+  },
+  "gemini-3-pro-image-fbb2caf5": {
+   "public_number": 160,
+   "published": true
+  },
+  "gemini-3-pro-preview-4c620280": {
+   "public_number": null,
+   "published": false
+  },
+  "gemini-31-flash-lite-image-7d4267da": {
+   "public_number": 249,
+   "published": true
+  },
+  "gemini-31-flash-lite-preview-7f8335ac": {
+   "public_number": null,
+   "published": false
+  },
+  "gemini-31-flash-live-preview-027a2841": {
+   "public_number": 208,
+   "published": true
+  },
+  "gemini-31-flash-tts-preview-54794803": {
+   "public_number": 214,
+   "published": true
+  },
+  "gemini-35-flash-6f4d3568": {
+   "public_number": 225,
+   "published": true
+  },
+  "gemini-35-flash-lite-cedf836d": {
+   "public_number": 264,
+   "published": true
+  },
+  "gemini-35-live-translate-e9e0e710": {
+   "public_number": null,
+   "published": false
+  },
+  "gemini-35-transcribe-4a2a6a85": {
+   "public_number": 286,
+   "published": true
+  },
+  "gemini-35-transcribe-live-fd2bb178": {
+   "public_number": 287,
+   "published": true
+  },
+  "gemini-36-flash-c39dfa2e": {
+   "public_number": 265,
+   "published": true
+  },
+  "gemini-37-flash-b733bb9f": {
+   "public_number": 282,
+   "published": true
+  },
+  "gemini-38-flash-c9fb1256": {
+   "public_number": 292,
+   "published": true
+  },
+  "gemini-38-live-a959d0c7": {
+   "public_number": 304,
+   "published": true
+  },
+  "gemini-38-live-extended-thinking-4ab0af55": {
+   "public_number": 305,
+   "published": true
+  },
+  "gemini-embedding-001-9d3df58d": {
+   "public_number": null,
+   "published": false
+  },
+  "gemini-embedding-2-preview-00521ce6": {
+   "public_number": null,
+   "published": false
+  },
+  "gemini-robotics-er-16-15650f97": {
+   "public_number": null,
+   "published": false
+  },
+  "gemini-robotics-er-2-preview-b6f68afc": {
+   "public_number": null,
+   "published": false
+  },
+  "gemma-2-27b-it-aa6d9fcd": {
+   "public_number": 39,
+   "published": true
+  },
+  "gemma-2-9b-it-80e1fe01": {
+   "public_number": 40,
+   "published": true
+  },
+  "gemma-2b-it-32d79260": {
+   "public_number": 26,
+   "published": true
+  },
+  "gemma-3-12b-it-3c580ffc": {
+   "public_number": 82,
+   "published": true
+  },
+  "gemma-3-1b-it-c61fb8e2": {
+   "public_number": 83,
+   "published": true
+  },
+  "gemma-3-27b-it-a816dfe8": {
+   "public_number": 84,
+   "published": true
+  },
+  "gemma-3-4b-it-754fe9a5": {
+   "public_number": 85,
+   "published": true
+  },
+  "gemma-4-26b-a4b-it-631076e8": {
+   "public_number": 210,
+   "published": true
+  },
+  "gemma-4-31b-it-6490a505": {
+   "public_number": 211,
+   "published": true
+  },
+  "gemma-7b-it-ca0ed2b6": {
+   "public_number": 27,
+   "published": true
+  },
+  "generative-adversarial-network-gan-7b77e624": {
+   "public_number": null,
+   "published": false
+  },
+  "giga-embeddings-10b-a18b-0826-eeef9c23": {
+   "public_number": null,
+   "published": false
+  },
+  "giga-embeddings-3b-0826-f94cd188": {
+   "public_number": null,
+   "published": false
+  },
+  "giga-embeddings-480m-0826-252d8c8f": {
+   "public_number": null,
+   "published": false
+  },
+  "gigachat-35-432b-a28b-reasoning-02085d96": {
+   "public_number": 302,
+   "published": true
+  },
+  "gigachat-746bcb71": {
+   "public_number": null,
+   "published": false
+  },
+  "glm-130b-e255b133": {
+   "public_number": null,
+   "published": false
+  },
+  "glm-4-32b-0414-128k-abc4bf37": {
+   "public_number": null,
+   "published": false
+  },
+  "glm-4-91251f65": {
+   "public_number": null,
+   "published": false
+  },
+  "glm-45-174611d3": {
+   "public_number": 133,
+   "published": true
+  },
+  "glm-45-air-a5e8d550": {
+   "public_number": 134,
+   "published": true
+  },
+  "glm-45-airx-a2b31b4d": {
+   "public_number": null,
+   "published": false
+  },
+  "glm-45-flash-72c3e825": {
+   "public_number": null,
+   "published": false
+  },
+  "glm-45-x-c6b9ab71": {
+   "public_number": null,
+   "published": false
+  },
+  "glm-45v-4e9f1a26": {
+   "public_number": 143,
+   "published": true
+  },
+  "glm-46-3b20359a": {
+   "public_number": 149,
+   "published": true
+  },
+  "glm-46v-a1671a63": {
+   "public_number": 171,
+   "published": true
+  },
+  "glm-46v-flash-271dacf4": {
+   "public_number": null,
+   "published": false
+  },
+  "glm-46v-flashx-3ecc3420": {
+   "public_number": null,
+   "published": false
+  },
+  "glm-47-7bc07849": {
+   "public_number": 177,
+   "published": true
+  },
+  "glm-47-flash-b10e89fa": {
+   "public_number": 184,
+   "published": true
+  },
+  "glm-47-flashx-d95614de": {
+   "public_number": null,
+   "published": false
+  },
+  "glm-4v-15371532": {
+   "public_number": null,
+   "published": false
+  },
+  "glm-5-b24d27e7": {
+   "public_number": 193,
+   "published": true
+  },
+  "glm-51-f38182d2": {
+   "public_number": 212,
+   "published": true
+  },
+  "glm-52-3dd42490": {
+   "public_number": 245,
+   "published": true
+  },
+  "glm-53-8e5ab5d9": {
+   "public_number": 284,
+   "published": true
+  },
+  "glm-53-flash-bdc83193": {
+   "public_number": 288,
+   "published": true
+  },
+  "glm-53-flashx-ff54e230": {
+   "public_number": null,
+   "published": false
+  },
+  "glm-asr-2512-965d77ed": {
+   "public_number": 172,
+   "published": true
+  },
+  "glm-image-e5c16eb7": {
+   "public_number": 181,
+   "published": true
+  },
+  "glm-ocr-16b45691": {
+   "public_number": 188,
+   "published": true
+  },
   "googlenet-inception-v1-89050faa": {
-   "public_number": 469,
+   "public_number": null,
    "published": false
   },
   "gopher-280b-add3bd47": {
@@ -1133,31 +1173,31 @@
    "published": true
   },
   "gpt-1-9f7e958c": {
-   "public_number": 470,
+   "public_number": null,
    "published": false
   },
   "gpt-2-117m-5e9d697c": {
-   "public_number": 472,
+   "public_number": null,
    "published": false
   },
   "gpt-2-15b-48c35cfc": {
-   "public_number": 471,
+   "public_number": null,
    "published": false
   },
   "gpt-2-345m-403c038c": {
-   "public_number": 473,
+   "public_number": null,
    "published": false
   },
   "gpt-2-774m-5957e1b2": {
-   "public_number": 474,
+   "public_number": null,
    "published": false
   },
   "gpt-3-175b-699ad416": {
-   "public_number": 475,
+   "public_number": null,
    "published": false
   },
   "gpt-35-turbo-16k-7aecbe47": {
-   "public_number": 476,
+   "public_number": null,
    "published": false
   },
   "gpt-35-turbo-5838c904": {
@@ -1165,15 +1205,15 @@
    "published": true
   },
   "gpt-4-1": {
-   "public_number": 82,
+   "public_number": 94,
    "published": true
   },
   "gpt-4-1-mini": {
-   "public_number": 83,
+   "public_number": 95,
    "published": true
   },
   "gpt-4-1-nano": {
-   "public_number": 84,
+   "public_number": 96,
    "published": true
   },
   "gpt-4-32k-66b5073a": {
@@ -1185,427 +1225,443 @@
    "published": true
   },
   "gpt-4-turbo-75a43068": {
-   "public_number": 19,
+   "public_number": 22,
    "published": true
   },
   "gpt-45-bb3673de": {
-   "public_number": 72,
+   "public_number": 80,
    "published": true
   },
   "gpt-4o-e792a0b1": {
-   "public_number": 32,
+   "public_number": 35,
    "published": true
   },
   "gpt-4o-mini": {
-   "public_number": 37,
-   "published": true
-  },
-  "gpt-4o-mini-transcribe-2101891e": {
-   "public_number": 75,
-   "published": true
-  },
-  "gpt-4o-mini-tts-274278d0": {
-   "public_number": 477,
-   "published": false
-  },
-  "gpt-4o-transcribe-c0eb2c95": {
-   "public_number": 76,
-   "published": true
-  },
-  "gpt-5": {
-   "public_number": 131,
-   "published": true
-  },
-  "gpt-5-1": {
-   "public_number": 152,
-   "published": true
-  },
-  "gpt-5-2": {
-   "public_number": 166,
-   "published": true
-  },
-  "gpt-5-2-pro": {
-   "public_number": 167,
-   "published": true
-  },
-  "gpt-5-3-codex": {
-   "public_number": 185,
-   "published": true
-  },
-  "gpt-5-4": {
-   "public_number": 192,
-   "published": true
-  },
-  "gpt-5-4-mini": {
-   "public_number": 199,
-   "published": true
-  },
-  "gpt-5-4-nano": {
-   "public_number": 200,
-   "published": true
-  },
-  "gpt-5-4-pro": {
-   "public_number": 193,
-   "published": true
-  },
-  "gpt-5-5": {
-   "public_number": 213,
-   "published": true
-  },
-  "gpt-5-5-pro": {
-   "public_number": 214,
-   "published": true
-  },
-  "gpt-5-mini": {
-   "public_number": 132,
-   "published": true
-  },
-  "gpt-5-nano": {
-   "public_number": 133,
-   "published": true
-  },
-  "gpt-5-pro": {
-   "public_number": 144,
-   "published": true
-  },
-  "gpt-56-cyber-a1db9056": {
-   "public_number": 478,
-   "published": false
-  },
-  "gpt-56-luna-642037b6": {
-   "public_number": 251,
-   "published": true
-  },
-  "gpt-56-sol-201e54cf": {
-   "public_number": 252,
-   "published": true
-  },
-  "gpt-56-terra-ecee13d5": {
-   "public_number": 253,
-   "published": true
-  },
-  "gpt-6-astra-d05a172f": {
-   "public_number": 288,
-   "published": true
-  },
-  "gpt-image-2-efbcfff2": {
-   "public_number": 212,
-   "published": true
-  },
-  "gpt-image-25-flare-e1a58dd2": {
-   "public_number": 290,
-   "published": true
-  },
-  "gpt-image-25-sunburst-58a8941e": {
-   "public_number": 291,
-   "published": true
-  },
-  "gpt-j-6b-b75bc257": {
-   "public_number": 479,
-   "published": false
-  },
-  "gpt-live-1-60f09da9": {
-   "public_number": 480,
-   "published": false
-  },
-  "gpt-live-transcribe-57aa6ad5": {
-   "public_number": 263,
-   "published": true
-  },
-  "gpt-neo-125m-c4ce9056": {
-   "public_number": 482,
-   "published": false
-  },
-  "gpt-neo-13b-8ab16707": {
-   "public_number": 481,
-   "published": false
-  },
-  "gpt-neo-27b-1b806f55": {
-   "public_number": 483,
-   "published": false
-  },
-  "gpt-neox-20b-031779a2": {
-   "public_number": 484,
-   "published": false
-  },
-  "gpt-oss-120b-12965eda": {
-   "public_number": 129,
-   "published": true
-  },
-  "gpt-oss-20b-335a1fbc": {
-   "public_number": 130,
-   "published": true
-  },
-  "gpt-realtime-21-f3f0c1d7": {
-   "public_number": 246,
-   "published": true
-  },
-  "gpt-realtime-21-mini-8ff2e8cc": {
-   "public_number": 247,
-   "published": true
-  },
-  "gpt-realtime-translate-228d1eb0": {
-   "public_number": 217,
-   "published": true
-  },
-  "gpt-realtime-whisper-f5e0ce27": {
-   "public_number": 218,
-   "published": true
-  },
-  "gpt-rosalind-53c723fb": {
-   "public_number": 485,
-   "published": false
-  },
-  "gpt-transcribe-71b7a2b4": {
-   "public_number": 264,
-   "published": true
-  },
-  "granite-30-2b-instruct-35706ff6": {
-   "public_number": 486,
-   "published": false
-  },
-  "granite-30-8b-instruct-cac28ba5": {
-   "public_number": 487,
-   "published": false
-  },
-  "granite-31-2b-instruct-a813b876": {
-   "public_number": 488,
-   "published": false
-  },
-  "granite-31-8b-instruct-c12ad629": {
-   "public_number": 489,
-   "published": false
-  },
-  "granite-31-moe-1b-4a693441": {
-   "public_number": 490,
-   "published": false
-  },
-  "granite-31-moe-3b-4087930c": {
-   "public_number": 491,
-   "published": false
-  },
-  "granite-32-2b-instruct-89c32255": {
-   "public_number": 492,
-   "published": false
-  },
-  "granite-32-8b-instruct-26ab1edd": {
-   "public_number": 493,
-   "published": false
-  },
-  "granite-32-vision-2b-ea91ca61": {
-   "public_number": 494,
-   "published": false
-  },
-  "granite-code-20b-5f84e802": {
-   "public_number": 495,
-   "published": false
-  },
-  "granite-code-34b-ac6c820c": {
-   "public_number": 496,
-   "published": false
-  },
-  "granite-code-3b-7031d221": {
-   "public_number": 497,
-   "published": false
-  },
-  "granite-code-8b-b6370cf8": {
-   "public_number": 498,
-   "published": false
-  },
-  "grok-1-4c68d88c": {
-   "public_number": 507,
-   "published": false
-  },
-  "grok-15-a81a34c3": {
-   "public_number": 508,
-   "published": false
-  },
-  "grok-15-vision-e3b3a00d": {
-   "public_number": 509,
-   "published": false
-  },
-  "grok-2-c3eaeda3": {
-   "public_number": 510,
-   "published": false
-  },
-  "grok-2-mini-0eba200f": {
-   "public_number": 511,
-   "published": false
-  },
-  "grok-3-9af8e08f": {
-   "public_number": 512,
-   "published": false
-  },
-  "grok-3-mini-02311146": {
-   "public_number": 513,
-   "published": false
-  },
-  "grok-4-0709-9f8f58bf": {
-   "public_number": 514,
-   "published": false
-  },
-  "grok-4-fast-non-reasoning-ce5be946": {
-   "public_number": 499,
-   "published": false
-  },
-  "grok-4-fast-reasoning-ec832c56": {
-   "public_number": 500,
-   "published": false
-  },
-  "grok-41-fast-non-reasoning-8f52114f": {
-   "public_number": 501,
-   "published": false
-  },
-  "grok-41-fast-reasoning-f050088a": {
-   "public_number": 502,
-   "published": false
-  },
-  "grok-43-b5d532c4": {
-   "public_number": 503,
-   "published": false
-  },
-  "grok-46-e73c784d": {
-   "public_number": 272,
-   "published": true
-  },
-  "grok-47-57cd0cab": {
-   "public_number": 304,
-   "published": true
-  },
-  "grok-code-fast-1-1ca6cb23": {
-   "public_number": 504,
-   "published": false
-  },
-  "grok-imagine-image-20-6b22c24d": {
-   "public_number": 269,
-   "published": true
-  },
-  "grok-imagine-image-pro-6171d547": {
-   "public_number": 505,
-   "published": false
-  },
-  "grok-imagine-video-15-f891b2bd": {
-   "public_number": 234,
-   "published": true
-  },
-  "grok-voice-api-27080172": {
-   "public_number": 506,
-   "published": false
-  },
-  "gru-fc2c352d": {
-   "public_number": 515,
-   "published": false
-  },
-  "hailuo-3-bde77826": {
-   "public_number": 516,
-   "published": false
-  },
-  "hebbian-learning-rule-b3a2079d": {
-   "public_number": 517,
-   "published": false
-  },
-  "hopfield-network-3db627b0": {
-   "public_number": 518,
-   "published": false
-  },
-  "hunyuan-large-0c8a8584": {
-   "public_number": 519,
-   "published": false
-  },
-  "hunyuan-turbo-720d8f3e": {
-   "public_number": 520,
-   "published": false
-  },
-  "hunyuan-vision-86d671d0": {
-   "public_number": 521,
-   "published": false
-  },
-  "hunyuan3d-10-332a89aa": {
-   "public_number": 522,
-   "published": false
-  },
-  "hunyuan3d-20-d6b583b7": {
-   "public_number": 523,
-   "published": false
-  },
-  "hunyuan3d-2mini-turbo-c17df073": {
-   "public_number": 74,
-   "published": true
-  },
-  "hunyuanvideo-64a5e2ff": {
-   "public_number": 524,
-   "published": false
-  },
-  "hy-motion-10-009f04c5": {
-   "public_number": 172,
-   "published": true
-  },
-  "hy3-7b667d62": {
-   "public_number": 248,
-   "published": true
-  },
-  "hy4-preview-14d15e6a": {
-   "public_number": 284,
-   "published": true
-  },
-  "hyperclova-cbc9ebe9": {
-   "public_number": 525,
-   "published": false
-  },
-  "hyperclova-x-d7c16e46": {
-   "public_number": 526,
-   "published": false
-  },
-  "hyperclova-x-seed-05b-72172208": {
-   "public_number": 87,
-   "published": true
-  },
-  "hyperclova-x-seed-14b-think-602209ad": {
-   "public_number": 119,
-   "published": true
-  },
-  "hyperclova-x-seed-15b-e8631b7d": {
-   "public_number": 88,
-   "published": true
-  },
-  "hyperclova-x-seed-3b-3e1c5933": {
-   "public_number": 89,
-   "published": true
-  },
-  "imagen-2-0482881b": {
-   "public_number": 527,
-   "published": false
-  },
-  "imagen-3-2d9112e9": {
-   "public_number": 528,
-   "published": false
-  },
-  "imagen-4-babef52e": {
-   "public_number": 529,
-   "published": false
-  },
-  "jais-13b-a6826d94": {
-   "public_number": 530,
-   "published": false
-  },
-  "jais-30b-50b2ee17": {
-   "public_number": 531,
-   "published": false
-  },
-  "jamba-15-large-f86c9085": {
    "public_number": 41,
    "published": true
   },
+  "gpt-4o-mini-transcribe-2101891e": {
+   "public_number": 87,
+   "published": true
+  },
+  "gpt-4o-mini-tts-274278d0": {
+   "public_number": null,
+   "published": false
+  },
+  "gpt-4o-transcribe-c0eb2c95": {
+   "public_number": 88,
+   "published": true
+  },
+  "gpt-5": {
+   "public_number": 140,
+   "published": true
+  },
+  "gpt-5-1": {
+   "public_number": 159,
+   "published": true
+  },
+  "gpt-5-2": {
+   "public_number": 173,
+   "published": true
+  },
+  "gpt-5-2-pro": {
+   "public_number": 174,
+   "published": true
+  },
+  "gpt-5-3-codex": {
+   "public_number": 191,
+   "published": true
+  },
+  "gpt-5-4": {
+   "public_number": 199,
+   "published": true
+  },
+  "gpt-5-4-mini": {
+   "public_number": 204,
+   "published": true
+  },
+  "gpt-5-4-nano": {
+   "public_number": 205,
+   "published": true
+  },
+  "gpt-5-4-pro": {
+   "public_number": 200,
+   "published": true
+  },
+  "gpt-5-5": {
+   "public_number": 218,
+   "published": true
+  },
+  "gpt-5-5-pro": {
+   "public_number": 219,
+   "published": true
+  },
+  "gpt-5-mini": {
+   "public_number": 141,
+   "published": true
+  },
+  "gpt-5-nano": {
+   "public_number": 142,
+   "published": true
+  },
+  "gpt-5-pro": {
+   "public_number": 152,
+   "published": true
+  },
+  "gpt-56-cyber-a1db9056": {
+   "public_number": null,
+   "published": false
+  },
+  "gpt-56-luna-642037b6": {
+   "public_number": 257,
+   "published": true
+  },
+  "gpt-56-sol-201e54cf": {
+   "public_number": 258,
+   "published": true
+  },
+  "gpt-56-terra-ecee13d5": {
+   "public_number": 259,
+   "published": true
+  },
+  "gpt-6-astra-d05a172f": {
+   "public_number": 294,
+   "published": true
+  },
+  "gpt-image-2-efbcfff2": {
+   "public_number": 217,
+   "published": true
+  },
+  "gpt-image-25-flare-e1a58dd2": {
+   "public_number": 296,
+   "published": true
+  },
+  "gpt-image-25-sunburst-58a8941e": {
+   "public_number": 297,
+   "published": true
+  },
+  "gpt-j-6b-b75bc257": {
+   "public_number": null,
+   "published": false
+  },
+  "gpt-live-1-60f09da9": {
+   "public_number": 255,
+   "published": true
+  },
+  "gpt-live-transcribe-57aa6ad5": {
+   "public_number": 269,
+   "published": true
+  },
+  "gpt-neo-125m-c4ce9056": {
+   "public_number": null,
+   "published": false
+  },
+  "gpt-neo-13b-8ab16707": {
+   "public_number": null,
+   "published": false
+  },
+  "gpt-neo-27b-1b806f55": {
+   "public_number": null,
+   "published": false
+  },
+  "gpt-neox-20b-031779a2": {
+   "public_number": null,
+   "published": false
+  },
+  "gpt-oss-120b-12965eda": {
+   "public_number": 138,
+   "published": true
+  },
+  "gpt-oss-20b-335a1fbc": {
+   "public_number": 139,
+   "published": true
+  },
+  "gpt-realtime-21-f3f0c1d7": {
+   "public_number": 251,
+   "published": true
+  },
+  "gpt-realtime-21-mini-8ff2e8cc": {
+   "public_number": 252,
+   "published": true
+  },
+  "gpt-realtime-translate-228d1eb0": {
+   "public_number": 222,
+   "published": true
+  },
+  "gpt-realtime-whisper-f5e0ce27": {
+   "public_number": 223,
+   "published": true
+  },
+  "gpt-rosalind-53c723fb": {
+   "public_number": null,
+   "published": false
+  },
+  "gpt-transcribe-71b7a2b4": {
+   "public_number": 270,
+   "published": true
+  },
+  "granite-30-2b-instruct-35706ff6": {
+   "public_number": null,
+   "published": false
+  },
+  "granite-30-8b-instruct-cac28ba5": {
+   "public_number": null,
+   "published": false
+  },
+  "granite-31-2b-instruct-a813b876": {
+   "public_number": null,
+   "published": false
+  },
+  "granite-31-8b-instruct-c12ad629": {
+   "public_number": null,
+   "published": false
+  },
+  "granite-31-moe-1b-4a693441": {
+   "public_number": null,
+   "published": false
+  },
+  "granite-31-moe-3b-4087930c": {
+   "public_number": null,
+   "published": false
+  },
+  "granite-32-2b-instruct-89c32255": {
+   "public_number": null,
+   "published": false
+  },
+  "granite-32-8b-instruct-26ab1edd": {
+   "public_number": null,
+   "published": false
+  },
+  "granite-32-vision-2b-ea91ca61": {
+   "public_number": null,
+   "published": false
+  },
+  "granite-code-20b-5f84e802": {
+   "public_number": null,
+   "published": false
+  },
+  "granite-code-34b-ac6c820c": {
+   "public_number": null,
+   "published": false
+  },
+  "granite-code-3b-7031d221": {
+   "public_number": null,
+   "published": false
+  },
+  "granite-code-8b-b6370cf8": {
+   "public_number": null,
+   "published": false
+  },
+  "grok-1-4c68d88c": {
+   "public_number": null,
+   "published": false
+  },
+  "grok-15-a81a34c3": {
+   "public_number": null,
+   "published": false
+  },
+  "grok-15-vision-e3b3a00d": {
+   "public_number": null,
+   "published": false
+  },
+  "grok-2-c3eaeda3": {
+   "public_number": null,
+   "published": false
+  },
+  "grok-2-mini-0eba200f": {
+   "public_number": null,
+   "published": false
+  },
+  "grok-3-9af8e08f": {
+   "public_number": null,
+   "published": false
+  },
+  "grok-3-mini-02311146": {
+   "public_number": null,
+   "published": false
+  },
+  "grok-4-0709-9f8f58bf": {
+   "public_number": null,
+   "published": false
+  },
+  "grok-4-fast-non-reasoning-ce5be946": {
+   "public_number": null,
+   "published": false
+  },
+  "grok-4-fast-reasoning-ec832c56": {
+   "public_number": null,
+   "published": false
+  },
+  "grok-41-fast-non-reasoning-8f52114f": {
+   "public_number": null,
+   "published": false
+  },
+  "grok-41-fast-reasoning-f050088a": {
+   "public_number": null,
+   "published": false
+  },
+  "grok-43-b5d532c4": {
+   "public_number": null,
+   "published": false
+  },
+  "grok-46-e73c784d": {
+   "public_number": 278,
+   "published": true
+  },
+  "grok-47-57cd0cab": {
+   "public_number": 310,
+   "published": true
+  },
+  "grok-code-fast-1-1ca6cb23": {
+   "public_number": null,
+   "published": false
+  },
+  "grok-imagine-image-20-6b22c24d": {
+   "public_number": 275,
+   "published": true
+  },
+  "grok-imagine-image-pro-6171d547": {
+   "public_number": null,
+   "published": false
+  },
+  "grok-imagine-video-15-f891b2bd": {
+   "public_number": 239,
+   "published": true
+  },
+  "grok-voice-api-27080172": {
+   "public_number": null,
+   "published": false
+  },
+  "gru-fc2c352d": {
+   "public_number": null,
+   "published": false
+  },
+  "hailuo-3-bde77826": {
+   "public_number": null,
+   "published": false
+  },
+  "hebbian-learning-rule-b3a2079d": {
+   "public_number": null,
+   "published": false
+  },
+  "hopfield-network-3db627b0": {
+   "public_number": null,
+   "published": false
+  },
+  "hunyuan-large-0c8a8584": {
+   "public_number": null,
+   "published": false
+  },
+  "hunyuan-turbo-720d8f3e": {
+   "public_number": null,
+   "published": false
+  },
+  "hunyuan-vision-86d671d0": {
+   "public_number": null,
+   "published": false
+  },
+  "hunyuan3d-10-332a89aa": {
+   "public_number": null,
+   "published": false
+  },
+  "hunyuan3d-20-d6b583b7": {
+   "public_number": null,
+   "published": false
+  },
+  "hunyuan3d-2mini-turbo-c17df073": {
+   "public_number": 86,
+   "published": true
+  },
+  "hunyuanvideo-64a5e2ff": {
+   "public_number": null,
+   "published": false
+  },
+  "hy-motion-10-009f04c5": {
+   "public_number": 179,
+   "published": true
+  },
+  "hy3-7b667d62": {
+   "public_number": 253,
+   "published": true
+  },
+  "hy4-preview-14d15e6a": {
+   "public_number": 290,
+   "published": true
+  },
+  "hyperclova-cbc9ebe9": {
+   "public_number": null,
+   "published": false
+  },
+  "hyperclova-x-d7c16e46": {
+   "public_number": null,
+   "published": false
+  },
+  "hyperclova-x-seed-05b-72172208": {
+   "public_number": 99,
+   "published": true
+  },
+  "hyperclova-x-seed-14b-think-602209ad": {
+   "public_number": 129,
+   "published": true
+  },
+  "hyperclova-x-seed-15b-e8631b7d": {
+   "public_number": 100,
+   "published": true
+  },
+  "hyperclova-x-seed-3b-3e1c5933": {
+   "public_number": 101,
+   "published": true
+  },
+  "imagen-2-0482881b": {
+   "public_number": null,
+   "published": false
+  },
+  "imagen-3-2d9112e9": {
+   "public_number": null,
+   "published": false
+  },
+  "imagen-4-babef52e": {
+   "public_number": null,
+   "published": false
+  },
+  "jais-13b-a6826d94": {
+   "public_number": null,
+   "published": false
+  },
+  "jais-30b-50b2ee17": {
+   "public_number": null,
+   "published": false
+  },
+  "jamba-15-large-f86c9085": {
+   "public_number": 46,
+   "published": true
+  },
   "jamba-15-mini-d6559504": {
-   "public_number": 42,
+   "public_number": 47,
    "published": true
   },
   "jamba-29e33df6": {
-   "public_number": 29,
+   "public_number": 31,
+   "published": true
+  },
+  "janus-1-3b-2c888a44": {
+   "public_number": 57,
+   "published": true
+  },
+  "janus-pro-1b-dc7be208": {
+   "public_number": 75,
+   "published": true
+  },
+  "janus-pro-7b-20b552d9": {
+   "public_number": 76,
+   "published": true
+  },
+  "janusflow-1-3b-d0249bce": {
+   "public_number": 66,
    "published": true
   },
   "jordan-network-716f8603": {
-   "public_number": 532,
+   "public_number": null,
    "published": false
   },
   "jurassic-1-jumbo-3bcc324f": {
@@ -1625,487 +1681,491 @@
    "published": true
   },
   "k-exaone-20-750b-a37b-da64adc6": {
-   "public_number": 266,
+   "public_number": 272,
    "published": true
   },
   "kanana-15-157b-a3b-18d06c4b": {
-   "public_number": 121,
+   "public_number": 131,
    "published": true
   },
   "kanana-15-21b-base-54ed3e64": {
-   "public_number": 99,
+   "public_number": 109,
    "published": true
   },
   "kanana-15-21b-instruct-f649eec2": {
-   "public_number": 100,
+   "public_number": 110,
    "published": true
   },
   "kanana-15-8b-base-86ed977b": {
-   "public_number": 101,
+   "public_number": 111,
    "published": true
   },
   "kanana-15-8b-instruct-99703790": {
-   "public_number": 102,
+   "public_number": 112,
    "published": true
   },
   "kanana-15-v-3b-e5811ec0": {
-   "public_number": 122,
+   "public_number": 132,
    "published": true
   },
   "kanana-essence-75065c20": {
-   "public_number": 533,
+   "public_number": null,
    "published": false
   },
   "kanana-nano-d70228ed": {
-   "public_number": 534,
+   "public_number": null,
    "published": false
   },
   "kandinsky-21-795d4924": {
-   "public_number": 535,
+   "public_number": null,
    "published": false
   },
   "kandinsky-22-bf2bfe55": {
-   "public_number": 536,
+   "public_number": null,
    "published": false
   },
   "kandinsky-3-64e11a36": {
-   "public_number": 537,
+   "public_number": null,
    "published": false
   },
   "kimi-k15-45cc957d": {
-   "public_number": 538,
+   "public_number": null,
    "published": false
   },
   "kimi-k2-436b25f1": {
-   "public_number": 539,
+   "public_number": null,
    "published": false
   },
   "kimi-k26-03b6a51b": {
-   "public_number": 211,
-   "published": true
-  },
-  "kimi-k27-code-b770ac42": {
-   "public_number": 239,
-   "published": true
-  },
-  "kimi-k3-40b65aea": {
-   "public_number": 255,
-   "published": true
-  },
-  "kimi-k3-max-8906b43f": {
-   "public_number": 256,
-   "published": true
-  },
-  "krutrim-1-c94606c9": {
-   "public_number": 540,
-   "published": false
-  },
-  "lamda-ba043e49": {
-   "public_number": 541,
-   "published": false
-  },
-  "leanstral-15-411a728b": {
-   "public_number": 245,
-   "published": true
-  },
-  "lenet-5-d0de3d9e": {
-   "public_number": 542,
-   "published": false
-  },
-  "llama-13b-ca5ec02d": {
-   "public_number": 543,
-   "published": false
-  },
-  "llama-2-13b-e1cf16d8": {
-   "public_number": 15,
-   "published": true
-  },
-  "llama-2-70b-2c854961": {
-   "public_number": 16,
-   "published": true
-  },
-  "llama-2-7b-8f481332": {
-   "public_number": 17,
-   "published": true
-  },
-  "llama-3-70b-instruct-a953989a": {
-   "public_number": 30,
-   "published": true
-  },
-  "llama-3-8b-instruct-29fc646f": {
-   "public_number": 31,
-   "published": true
-  },
-  "llama-3-elyza-jp-70b-525ffabd": {
-   "public_number": 35,
-   "published": true
-  },
-  "llama-3-elyza-jp-8b-d9dab6d1": {
-   "public_number": 36,
-   "published": true
-  },
-  "llama-31-405b-instruct-ce77e1fd": {
-   "public_number": 38,
-   "published": true
-  },
-  "llama-31-70b-instruct-441da955": {
-   "public_number": 39,
-   "published": true
-  },
-  "llama-31-8b-instruct-fcee1860": {
-   "public_number": 40,
-   "published": true
-  },
-  "llama-31-elyza-jp-70b-f11a923e": {
-   "public_number": 56,
-   "published": true
-  },
-  "llama-32-11b-vision-instruct-92eb31b4": {
-   "public_number": 47,
-   "published": true
-  },
-  "llama-32-1b-instruct-b48e8705": {
-   "public_number": 48,
-   "published": true
-  },
-  "llama-32-3b-instruct-62f5a648": {
-   "public_number": 49,
-   "published": true
-  },
-  "llama-32-90b-vision-instruct-88a989e6": {
-   "public_number": 50,
-   "published": true
-  },
-  "llama-33-70b-instruct-f9965971": {
-   "public_number": 67,
-   "published": true
-  },
-  "llama-33b-80cf7aa0": {
-   "public_number": 544,
-   "published": false
-  },
-  "llama-4-maverick-17b-128e-instruct-0a3c5b27": {
-   "public_number": 79,
-   "published": true
-  },
-  "llama-4-maverick-bf82d46d": {
-   "public_number": 545,
-   "published": false
-  },
-  "llama-4-scout-17b-16e-instruct-837f5a8d": {
-   "public_number": 80,
-   "published": true
-  },
-  "llama-4-scout-98884569": {
-   "public_number": 546,
-   "published": false
-  },
-  "llama-65b-186114bb": {
-   "public_number": 547,
-   "published": false
-  },
-  "llama-7b-c7b3d7ea": {
-   "public_number": 548,
-   "published": false
-  },
-  "llama-guard-3-11b-vision-4b706618": {
-   "public_number": 549,
-   "published": false
-  },
-  "llama-guard-3-1b-b561b1ce": {
-   "public_number": 550,
-   "published": false
-  },
-  "llama-guard-3-8b-0d5a578f": {
-   "public_number": 551,
-   "published": false
-  },
-  "llama-guard-4-12b-a6c96928": {
-   "public_number": 90,
-   "published": true
-  },
-  "llama-prompt-guard-2-22m-4036c92b": {
-   "public_number": 91,
-   "published": true
-  },
-  "llama-prompt-guard-2-86m-40344759": {
-   "public_number": 92,
-   "published": true
-  },
-  "lstm-95b91d69": {
-   "public_number": 552,
-   "published": false
-  },
-  "luminous-base-0e1fc52a": {
-   "public_number": 553,
-   "published": false
-  },
-  "luminous-extended-32e3998d": {
-   "public_number": 554,
-   "published": false
-  },
-  "luminous-supreme-542cfeff": {
-   "public_number": 555,
-   "published": false
-  },
-  "lyria-35-86454fa7": {
-   "public_number": 289,
-   "published": true
-  },
-  "madaline-d4cf72c4": {
-   "public_number": 556,
-   "published": false
-  },
-  "magenticbrain-7f41d924": {
-   "public_number": 219,
-   "published": true
-  },
-  "magistral-medium-10-a6aaf6e6": {
-   "public_number": 557,
-   "published": false
-  },
-  "magistral-small-10-57e4bb89": {
-   "public_number": 558,
-   "published": false
-  },
-  "mark-i-perceptron-adad9454": {
-   "public_number": 559,
-   "published": false
-  },
-  "mathstral-7b-594ebab8": {
-   "public_number": 560,
-   "published": false
-  },
-  "mccullochpitts-neuron-ca0424cd": {
-   "public_number": 561,
-   "published": false
-  },
-  "meena-26b-07a127e0": {
-   "public_number": 562,
-   "published": false
-  },
-  "minimax-01-6a0acd8e": {
-   "public_number": 565,
-   "published": false
-  },
-  "minimax-m2-144fd5f0": {
-   "public_number": 149,
-   "published": true
-  },
-  "minimax-m21-b4b6df50": {
-   "public_number": 171,
-   "published": true
-  },
-  "minimax-m25-376fe28f": {
-   "public_number": 188,
-   "published": true
-  },
-  "minimax-m27-4980de78": {
-   "public_number": 201,
-   "published": true
-  },
-  "minimax-m3-097dfd8e": {
-   "public_number": 232,
-   "published": true
-  },
-  "minimax-speech-01-09136d51": {
-   "public_number": 563,
-   "published": false
-  },
-  "minimax-text-01-b20496ef": {
-   "public_number": 566,
-   "published": false
-  },
-  "minimax-video-01-0cf33c81": {
-   "public_number": 564,
-   "published": false
-  },
-  "minimax-vl-01-adfb3c4a": {
-   "public_number": 567,
-   "published": false
-  },
-  "ministral-3-14b-0047dcfb": {
-   "public_number": 160,
-   "published": true
-  },
-  "ministral-3-3b-53c6b9e3": {
-   "public_number": 161,
-   "published": true
-  },
-  "ministral-3-8b-fd5ec0ba": {
-   "public_number": 162,
-   "published": true
-  },
-  "ministral-3b-1812824a": {
-   "public_number": 568,
-   "published": false
-  },
-  "ministral-8b-398010c4": {
-   "public_number": 569,
-   "published": false
-  },
-  "mistral-7b-v01-fe71a7e6": {
-   "public_number": 570,
-   "published": false
-  },
-  "mistral-7b-v02-2278552e": {
-   "public_number": 571,
-   "published": false
-  },
-  "mistral-7b-v03-df25e9e5": {
-   "public_number": 572,
-   "published": false
-  },
-  "mistral-large-10-98673e93": {
-   "public_number": 573,
-   "published": false
-  },
-  "mistral-large-20-a8b61194": {
-   "public_number": 574,
-   "published": false
-  },
-  "mistral-large-21-eab00bf3": {
-   "public_number": 575,
-   "published": false
-  },
-  "mistral-large-3-d5905fe5": {
-   "public_number": 163,
-   "published": true
-  },
-  "mistral-medium-10-8af9e594": {
-   "public_number": 576,
-   "published": false
-  },
-  "mistral-medium-3-ccbb9154": {
-   "public_number": 577,
-   "published": false
-  },
-  "mistral-medium-35-2b259c25": {
    "public_number": 216,
    "published": true
   },
+  "kimi-k27-code-b770ac42": {
+   "public_number": 244,
+   "published": true
+  },
+  "kimi-k3-40b65aea": {
+   "public_number": 261,
+   "published": true
+  },
+  "kimi-k3-max-8906b43f": {
+   "public_number": 262,
+   "published": true
+  },
+  "krutrim-1-c94606c9": {
+   "public_number": null,
+   "published": false
+  },
+  "lamda-ba043e49": {
+   "public_number": null,
+   "published": false
+  },
+  "leanstral-15-411a728b": {
+   "public_number": 250,
+   "published": true
+  },
+  "lenet-5-d0de3d9e": {
+   "public_number": null,
+   "published": false
+  },
+  "llama-13b-ca5ec02d": {
+   "public_number": null,
+   "published": false
+  },
+  "llama-2-13b-e1cf16d8": {
+   "public_number": 17,
+   "published": true
+  },
+  "llama-2-70b-2c854961": {
+   "public_number": 18,
+   "published": true
+  },
+  "llama-2-7b-8f481332": {
+   "public_number": 19,
+   "published": true
+  },
+  "llama-3-70b-instruct-a953989a": {
+   "public_number": 32,
+   "published": true
+  },
+  "llama-3-8b-instruct-29fc646f": {
+   "public_number": 33,
+   "published": true
+  },
+  "llama-3-elyza-jp-70b-525ffabd": {
+   "public_number": 37,
+   "published": true
+  },
+  "llama-3-elyza-jp-8b-d9dab6d1": {
+   "public_number": 38,
+   "published": true
+  },
+  "llama-31-405b-instruct-ce77e1fd": {
+   "public_number": 42,
+   "published": true
+  },
+  "llama-31-70b-instruct-441da955": {
+   "public_number": 43,
+   "published": true
+  },
+  "llama-31-8b-instruct-fcee1860": {
+   "public_number": 44,
+   "published": true
+  },
+  "llama-31-elyza-jp-70b-f11a923e": {
+   "public_number": 62,
+   "published": true
+  },
+  "llama-32-11b-vision-instruct-92eb31b4": {
+   "public_number": 52,
+   "published": true
+  },
+  "llama-32-1b-instruct-b48e8705": {
+   "public_number": 53,
+   "published": true
+  },
+  "llama-32-3b-instruct-62f5a648": {
+   "public_number": 54,
+   "published": true
+  },
+  "llama-32-90b-vision-instruct-88a989e6": {
+   "public_number": 55,
+   "published": true
+  },
+  "llama-33-70b-instruct-f9965971": {
+   "public_number": 74,
+   "published": true
+  },
+  "llama-33b-80cf7aa0": {
+   "public_number": null,
+   "published": false
+  },
+  "llama-4-maverick-17b-128e-instruct-0a3c5b27": {
+   "public_number": 91,
+   "published": true
+  },
+  "llama-4-maverick-bf82d46d": {
+   "public_number": null,
+   "published": false
+  },
+  "llama-4-scout-17b-16e-instruct-837f5a8d": {
+   "public_number": 92,
+   "published": true
+  },
+  "llama-4-scout-98884569": {
+   "public_number": null,
+   "published": false
+  },
+  "llama-65b-186114bb": {
+   "public_number": null,
+   "published": false
+  },
+  "llama-7b-c7b3d7ea": {
+   "public_number": null,
+   "published": false
+  },
+  "llama-guard-3-11b-vision-4b706618": {
+   "public_number": null,
+   "published": false
+  },
+  "llama-guard-3-1b-b561b1ce": {
+   "public_number": null,
+   "published": false
+  },
+  "llama-guard-3-8b-0d5a578f": {
+   "public_number": null,
+   "published": false
+  },
+  "llama-guard-4-12b-a6c96928": {
+   "public_number": 102,
+   "published": true
+  },
+  "llama-prompt-guard-2-22m-4036c92b": {
+   "public_number": 103,
+   "published": true
+  },
+  "llama-prompt-guard-2-86m-40344759": {
+   "public_number": 104,
+   "published": true
+  },
+  "lstm-95b91d69": {
+   "public_number": null,
+   "published": false
+  },
+  "luminous-base-0e1fc52a": {
+   "public_number": null,
+   "published": false
+  },
+  "luminous-extended-32e3998d": {
+   "public_number": null,
+   "published": false
+  },
+  "luminous-supreme-542cfeff": {
+   "public_number": null,
+   "published": false
+  },
+  "lyria-35-86454fa7": {
+   "public_number": 295,
+   "published": true
+  },
+  "madaline-d4cf72c4": {
+   "public_number": null,
+   "published": false
+  },
+  "magenticbrain-7f41d924": {
+   "public_number": 224,
+   "published": true
+  },
+  "magistral-medium-10-a6aaf6e6": {
+   "public_number": null,
+   "published": false
+  },
+  "magistral-small-10-57e4bb89": {
+   "public_number": null,
+   "published": false
+  },
+  "mark-i-perceptron-adad9454": {
+   "public_number": null,
+   "published": false
+  },
+  "mathstral-7b-594ebab8": {
+   "public_number": null,
+   "published": false
+  },
+  "mccullochpitts-neuron-ca0424cd": {
+   "public_number": null,
+   "published": false
+  },
+  "meena-26b-07a127e0": {
+   "public_number": null,
+   "published": false
+  },
+  "minimax-01-6a0acd8e": {
+   "public_number": null,
+   "published": false
+  },
+  "minimax-m2-144fd5f0": {
+   "public_number": 157,
+   "published": true
+  },
+  "minimax-m21-b4b6df50": {
+   "public_number": 178,
+   "published": true
+  },
+  "minimax-m25-376fe28f": {
+   "public_number": 194,
+   "published": true
+  },
+  "minimax-m27-4980de78": {
+   "public_number": 206,
+   "published": true
+  },
+  "minimax-m3-097dfd8e": {
+   "public_number": 237,
+   "published": true
+  },
+  "minimax-speech-01-09136d51": {
+   "public_number": null,
+   "published": false
+  },
+  "minimax-text-01-b20496ef": {
+   "public_number": null,
+   "published": false
+  },
+  "minimax-video-01-0cf33c81": {
+   "public_number": null,
+   "published": false
+  },
+  "minimax-vl-01-adfb3c4a": {
+   "public_number": null,
+   "published": false
+  },
+  "ministral-3-14b-0047dcfb": {
+   "public_number": 167,
+   "published": true
+  },
+  "ministral-3-3b-53c6b9e3": {
+   "public_number": 168,
+   "published": true
+  },
+  "ministral-3-8b-fd5ec0ba": {
+   "public_number": 169,
+   "published": true
+  },
+  "ministral-3b-1812824a": {
+   "public_number": null,
+   "published": false
+  },
+  "ministral-8b-398010c4": {
+   "public_number": null,
+   "published": false
+  },
+  "mistral-7b-v01-fe71a7e6": {
+   "public_number": null,
+   "published": false
+  },
+  "mistral-7b-v02-2278552e": {
+   "public_number": null,
+   "published": false
+  },
+  "mistral-7b-v03-df25e9e5": {
+   "public_number": null,
+   "published": false
+  },
+  "mistral-large-10-98673e93": {
+   "public_number": null,
+   "published": false
+  },
+  "mistral-large-20-a8b61194": {
+   "public_number": null,
+   "published": false
+  },
+  "mistral-large-21-eab00bf3": {
+   "public_number": null,
+   "published": false
+  },
+  "mistral-large-3-d5905fe5": {
+   "public_number": 170,
+   "published": true
+  },
+  "mistral-medium-10-8af9e594": {
+   "public_number": null,
+   "published": false
+  },
+  "mistral-medium-3-ccbb9154": {
+   "public_number": null,
+   "published": false
+  },
+  "mistral-medium-35-2b259c25": {
+   "public_number": 221,
+   "published": true
+  },
   "mistral-moderation-2-74c8e4cc": {
-   "public_number": 191,
-   "published": true
-  },
-  "mistral-moderation-4b8d3625": {
-   "public_number": 578,
-   "published": false
-  },
-  "mistral-nemo-12b-b8936604": {
-   "public_number": 579,
-   "published": false
-  },
-  "mistral-ocr-2-4460b322": {
-   "public_number": 581,
-   "published": false
-  },
-  "mistral-ocr-40-82177582": {
-   "public_number": 242,
-   "published": true
-  },
-  "mistral-ocr-41-0dd2b9e7": {
-   "public_number": 257,
-   "published": true
-  },
-  "mistral-ocr-c042bac2": {
-   "public_number": 580,
-   "published": false
-  },
-  "mistral-saba-24629bf0": {
-   "public_number": 582,
-   "published": false
-  },
-  "mistral-small-10-685a4d82": {
-   "public_number": 583,
-   "published": false
-  },
-  "mistral-small-20-5c6aac50": {
-   "public_number": 584,
-   "published": false
-  },
-  "mistral-small-30-80a53220": {
-   "public_number": 585,
-   "published": false
-  },
-  "mistral-small-31-d47f5658": {
-   "public_number": 586,
-   "published": false
-  },
-  "mistral-small-32-e091aed9": {
-   "public_number": 587,
-   "published": false
-  },
-  "mistral-small-4-10c41350": {
-   "public_number": 198,
-   "published": true
-  },
-  "mixtral-8x22b-315a6dd5": {
-   "public_number": 588,
-   "published": false
-  },
-  "mixtral-8x7b-458c84e2": {
-   "public_number": 589,
-   "published": false
-  },
-  "moonshot-v1-128k-79c55f78": {
-   "public_number": 590,
-   "published": false
-  },
-  "moonshot-v1-32k-5e223501": {
-   "public_number": 591,
-   "published": false
-  },
-  "moonshot-v1-8k-6e342c3d": {
-   "public_number": 592,
-   "published": false
-  },
-  "muse-glimmer-8d30a3c2": {
-   "public_number": 593,
-   "published": false
-  },
-  "muse-image-5c8d54d6": {
-   "public_number": 594,
-   "published": false
-  },
-  "muse-spark-13-77a09338": {
-   "public_number": 595,
-   "published": false
-  },
-  "muse-voice-transcribe-7bf6e346": {
-   "public_number": 596,
-   "published": false
-  },
-  "nemotron-3-super-120b-a12b-bf16-7aef286f": {
    "public_number": 197,
    "published": true
   },
+  "mistral-moderation-4b8d3625": {
+   "public_number": null,
+   "published": false
+  },
+  "mistral-nemo-12b-b8936604": {
+   "public_number": null,
+   "published": false
+  },
+  "mistral-ocr-2-4460b322": {
+   "public_number": null,
+   "published": false
+  },
+  "mistral-ocr-40-82177582": {
+   "public_number": 247,
+   "published": true
+  },
+  "mistral-ocr-41-0dd2b9e7": {
+   "public_number": 263,
+   "published": true
+  },
+  "mistral-ocr-c042bac2": {
+   "public_number": null,
+   "published": false
+  },
+  "mistral-saba-24629bf0": {
+   "public_number": null,
+   "published": false
+  },
+  "mistral-small-10-685a4d82": {
+   "public_number": null,
+   "published": false
+  },
+  "mistral-small-20-5c6aac50": {
+   "public_number": null,
+   "published": false
+  },
+  "mistral-small-30-80a53220": {
+   "public_number": null,
+   "published": false
+  },
+  "mistral-small-31-d47f5658": {
+   "public_number": null,
+   "published": false
+  },
+  "mistral-small-32-e091aed9": {
+   "public_number": null,
+   "published": false
+  },
+  "mistral-small-4-10c41350": {
+   "public_number": 203,
+   "published": true
+  },
+  "mixtral-8x22b-315a6dd5": {
+   "public_number": null,
+   "published": false
+  },
+  "mixtral-8x7b-458c84e2": {
+   "public_number": null,
+   "published": false
+  },
+  "moonshot-v1-128k-79c55f78": {
+   "public_number": null,
+   "published": false
+  },
+  "moonshot-v1-32k-5e223501": {
+   "public_number": null,
+   "published": false
+  },
+  "moonshot-v1-8k-6e342c3d": {
+   "public_number": null,
+   "published": false
+  },
+  "muse-glimmer-8d30a3c2": {
+   "public_number": null,
+   "published": false
+  },
+  "muse-image-5c8d54d6": {
+   "public_number": null,
+   "published": false
+  },
+  "muse-spark-13-77a09338": {
+   "public_number": null,
+   "published": false
+  },
+  "muse-voice-transcribe-7bf6e346": {
+   "public_number": null,
+   "published": false
+  },
+  "musicgen-9783d116": {
+   "public_number": 15,
+   "published": true
+  },
+  "nemotron-3-super-120b-a12b-bf16-7aef286f": {
+   "public_number": null,
+   "published": false
+  },
   "nemotron-3-super-2d4ec02c": {
-   "public_number": 196,
+   "public_number": 198,
    "published": true
   },
   "nemotron-3-ultra-550b-a55b-bf16-17196004": {
-   "public_number": 235,
+   "public_number": 240,
    "published": true
   },
   "nemotron-35-content-safety-0c6eb931": {
-   "public_number": 233,
+   "public_number": 238,
    "published": true
   },
   "nemotron-35-lightning-30b-a3b-bf16-8af433db": {
-   "public_number": 271,
+   "public_number": 277,
    "published": true
   },
   "nemotron-sea-lion-v48-120b-a12b-9efd2066": {
-   "public_number": 300,
+   "public_number": 306,
    "published": true
   },
   "nemotron-sea-lion-v48-30b-a3b-2d708c4d": {
-   "public_number": 301,
+   "public_number": 307,
    "published": true
   },
   "neocognitron-42a248a0": {
-   "public_number": 597,
+   "public_number": null,
    "published": false
   },
   "nllb-200-ffaac194": {
@@ -2113,1295 +2173,1319 @@
    "published": true
   },
   "north-micro-vision-instruct-d7b57415": {
-   "public_number": 273,
+   "public_number": 279,
    "published": true
   },
   "north-mini-code-10-2abc4e72": {
-   "public_number": 237,
+   "public_number": 242,
    "published": true
   },
   "north-small-translate-10-edfeef02": {
-   "public_number": 296,
+   "public_number": 300,
    "published": true
   },
   "o1-780c9b41": {
-   "public_number": 66,
+   "public_number": 73,
    "published": true
   },
   "o1-mini-f47977c9": {
-   "public_number": 45,
+   "public_number": 50,
    "published": true
   },
   "o1-preview-bff8fed0": {
-   "public_number": 46,
+   "public_number": 51,
    "published": true
   },
   "o3-7ff4bcfd": {
-   "public_number": 85,
+   "public_number": 97,
    "published": true
   },
   "o3-mini-b23b7b85": {
-   "public_number": 68,
-   "published": true
-  },
-  "o4-mini-6326526c": {
-   "public_number": 86,
-   "published": true
-  },
-  "ocr-41-177c0fd1": {
-   "public_number": 598,
-   "published": false
-  },
-  "olmo-1b-a43041bf": {
-   "public_number": 599,
-   "published": false
-  },
-  "olmo-2-13b-ac4d7953": {
-   "public_number": 600,
-   "published": false
-  },
-  "olmo-2-7b-b0f0b314": {
-   "public_number": 601,
-   "published": false
-  },
-  "olmo-7b-2d6629b4": {
-   "public_number": 602,
-   "published": false
-  },
-  "olmoe-1b-7b-96c6bd32": {
-   "public_number": 603,
-   "published": false
-  },
-  "opencalm-7b-076cbef0": {
-   "public_number": 604,
-   "published": false
-  },
-  "openhathi-7b-54f34c5f": {
-   "public_number": 605,
-   "published": false
-  },
-  "opt-125m-5fd3240c": {
-   "public_number": 607,
-   "published": false
-  },
-  "opt-13b-d0fa7cd6": {
-   "public_number": 606,
-   "published": false
-  },
-  "opt-30b-566115d0": {
-   "public_number": 608,
-   "published": false
-  },
-  "opt-66b-3b222b1a": {
-   "public_number": 610,
-   "published": false
-  },
-  "opt-67b-7d6aa6d3": {
-   "public_number": 609,
-   "published": false
-  },
-  "palm-2-d8ca3c69": {
-   "public_number": 13,
-   "published": true
-  },
-  "palm-540b-ad27989c": {
-   "public_number": 611,
-   "published": false
-  },
-  "parakeet-tdt-06b-v3-7658bc0f": {
-   "public_number": 135,
-   "published": true
-  },
-  "perceptron-267df511": {
-   "public_number": 612,
-   "published": false
-  },
-  "pharia-1-llm-7b-control-aligned-34e1d5a0": {
-   "public_number": 44,
-   "published": true
-  },
-  "pharia-1-llm-7b-control-ea3eb74f": {
-   "public_number": 43,
-   "published": true
-  },
-  "phi-1-34a2cb38": {
-   "public_number": 613,
-   "published": false
-  },
-  "phi-15-74e72178": {
-   "public_number": 614,
-   "published": false
-  },
-  "phi-2-75ab9f3f": {
-   "public_number": 615,
-   "published": false
-  },
-  "phi-3-medium-2cab5c83": {
-   "public_number": 616,
-   "published": false
-  },
-  "phi-3-mini-02580329": {
-   "public_number": 617,
-   "published": false
-  },
-  "phi-3-small-71f782f4": {
-   "public_number": 618,
-   "published": false
-  },
-  "phi-3-vision-31617fc1": {
-   "public_number": 619,
-   "published": false
-  },
-  "phi-35-mini-78d9c690": {
-   "public_number": 620,
-   "published": false
-  },
-  "phi-35-moe-dd00f185": {
-   "public_number": 621,
-   "published": false
-  },
-  "phi-35-vision-f9ff1af8": {
-   "public_number": 622,
-   "published": false
-  },
-  "phi-4-658c365e": {
-   "public_number": 623,
-   "published": false
-  },
-  "phi-4-mini-13d8d608": {
-   "public_number": 624,
-   "published": false
-  },
-  "phi-4-multimodal-10dc0dd7": {
-   "public_number": 625,
-   "published": false
-  },
-  "phi-4-reasoning-324a2e60": {
-   "public_number": 626,
-   "published": false
-  },
-  "phi-4-reasoning-plus-95f1e39b": {
-   "public_number": 627,
-   "published": false
-  },
-  "pixtral-12b-e2053092": {
-   "public_number": 628,
-   "published": false
-  },
-  "pixtral-large-4c9ba293": {
-   "public_number": 629,
-   "published": false
-  },
-  "plamo-100b-58991938": {
-   "public_number": 630,
-   "published": false
-  },
-  "plamo-13b-ce23b4d9": {
-   "public_number": 631,
-   "published": false
-  },
-  "plamo-2-8b-3bef329a": {
-   "public_number": 71,
-   "published": true
-  },
-  "plamo-20-prime-31b-cd7f441e": {
-   "public_number": 98,
-   "published": true
-  },
-  "plamo-21-prime-cee1a175": {
-   "public_number": 145,
-   "published": true
-  },
-  "plamo-22-prime-af56bfb2": {
-   "public_number": 179,
-   "published": true
-  },
-  "plamo-prime-088809ae": {
-   "public_number": 61,
-   "published": true
-  },
-  "plamo-translate-aba1ee70": {
-   "public_number": 104,
-   "published": true
-  },
-  "pythia-12b-cebe83e0": {
-   "public_number": 633,
-   "published": false
-  },
-  "pythia-14b-11ba5aa4": {
-   "public_number": 632,
-   "published": false
-  },
-  "pythia-70m-1561b116": {
-   "public_number": 634,
-   "published": false
-  },
-  "qwen-14b-1dbc4a69": {
-   "public_number": 635,
-   "published": false
-  },
-  "qwen-72b-cfc3106b": {
-   "public_number": 636,
-   "published": false
-  },
-  "qwen-7b-b72c558d": {
-   "public_number": 637,
-   "published": false
-  },
-  "qwen-audio-8dac1f9c": {
-   "public_number": 638,
-   "published": false
-  },
-  "qwen-image-21-a858263a": {
-   "public_number": 303,
-   "published": true
-  },
-  "qwen-sea-lion-v45-27b-it-a641a40e": {
-   "public_number": 222,
-   "published": true
-  },
-  "qwen-vl-bc76cb5c": {
-   "public_number": 639,
-   "published": false
-  },
-  "qwen-vl-chat-06d391b2": {
-   "public_number": 640,
-   "published": false
-  },
-  "qwen15-05b-f1c66b50": {
-   "public_number": 641,
-   "published": false
-  },
-  "qwen15-110b-b534ba4c": {
-   "public_number": 643,
-   "published": false
-  },
-  "qwen15-14b-a2c75967": {
-   "public_number": 644,
-   "published": false
-  },
-  "qwen15-18b-6ec524d9": {
-   "public_number": 642,
-   "published": false
-  },
-  "qwen15-32b-5efc3066": {
-   "public_number": 645,
-   "published": false
-  },
-  "qwen15-4b-7ce634c1": {
-   "public_number": 646,
-   "published": false
-  },
-  "qwen15-72b-00a14690": {
-   "public_number": 647,
-   "published": false
-  },
-  "qwen15-7b-89150a98": {
-   "public_number": 648,
-   "published": false
-  },
-  "qwen2-05b-8dfeb926": {
-   "public_number": 649,
-   "published": false
-  },
-  "qwen2-15b-4370075b": {
-   "public_number": 650,
-   "published": false
-  },
-  "qwen2-57b-a14b-8d58b035": {
-   "public_number": 651,
-   "published": false
-  },
-  "qwen2-72b-7b534fee": {
-   "public_number": 652,
-   "published": false
-  },
-  "qwen2-7b-ddd0b207": {
-   "public_number": 653,
-   "published": false
-  },
-  "qwen2-vl-2b-996edcd5": {
-   "public_number": 654,
-   "published": false
-  },
-  "qwen2-vl-72b-ff139bd1": {
-   "public_number": 655,
-   "published": false
-  },
-  "qwen2-vl-7b-6f050dab": {
-   "public_number": 656,
-   "published": false
-  },
-  "qwen25-05b-f5e3bac9": {
-   "public_number": 657,
-   "published": false
-  },
-  "qwen25-14b-b4b01af5": {
-   "public_number": 659,
-   "published": false
-  },
-  "qwen25-15b-01e6b9f3": {
-   "public_number": 658,
-   "published": false
-  },
-  "qwen25-32b-cc9b5deb": {
-   "public_number": 660,
-   "published": false
-  },
-  "qwen25-3b-b1dc5cf3": {
-   "public_number": 661,
-   "published": false
-  },
-  "qwen25-72b-b64d2480": {
-   "public_number": 662,
-   "published": false
-  },
-  "qwen25-7b-deafbeaf": {
-   "public_number": 663,
-   "published": false
-  },
-  "qwen25-coder-05b-06958418": {
-   "public_number": 664,
-   "published": false
-  },
-  "qwen25-coder-14b-cdae2884": {
-   "public_number": 666,
-   "published": false
-  },
-  "qwen25-coder-15b-5feab40f": {
-   "public_number": 665,
-   "published": false
-  },
-  "qwen25-coder-32b-05fd44d9": {
-   "public_number": 667,
-   "published": false
-  },
-  "qwen25-coder-3b-9b8f1989": {
-   "public_number": 668,
-   "published": false
-  },
-  "qwen25-coder-7b-856f10e9": {
-   "public_number": 669,
-   "published": false
-  },
-  "qwen25-omni-7b-61cbc63a": {
    "public_number": 77,
    "published": true
   },
-  "qwen25-vl-32b-870cef0e": {
-   "public_number": 670,
-   "published": false
-  },
-  "qwen25-vl-3b-9e9a10f4": {
-   "public_number": 671,
-   "published": false
-  },
-  "qwen25-vl-72b-3bfffbd5": {
-   "public_number": 672,
-   "published": false
-  },
-  "qwen25-vl-7b-303ef1bd": {
-   "public_number": 673,
-   "published": false
-  },
-  "qwen3-06b-e9412b9d": {
-   "public_number": 674,
-   "published": false
-  },
-  "qwen3-14b-f0a0b1c7": {
-   "public_number": 676,
-   "published": false
-  },
-  "qwen3-17b-1cb44886": {
-   "public_number": 675,
-   "published": false
-  },
-  "qwen3-235b-a22b-3282202f": {
-   "public_number": 677,
-   "published": false
-  },
-  "qwen3-30b-a3b-abf3c712": {
-   "public_number": 678,
-   "published": false
-  },
-  "qwen3-32b-d3d65117": {
-   "public_number": 679,
-   "published": false
-  },
-  "qwen3-4b-20c30c91": {
-   "public_number": 680,
-   "published": false
-  },
-  "qwen3-8b-6da783d9": {
-   "public_number": 681,
-   "published": false
-  },
-  "qwen3-asr-06b-504c078f": {
-   "public_number": 180,
+  "o4-mini-6326526c": {
+   "public_number": 98,
    "published": true
   },
-  "qwen3-asr-17b-d158d43f": {
-   "public_number": 181,
-   "published": true
-  },
-  "qwen3-coder-480b-a35b-instruct-1fa8b593": {
-   "public_number": 120,
-   "published": true
-  },
-  "qwen3-coder-720e9d03": {
-   "public_number": 682,
+  "ocr-41-177c0fd1": {
+   "public_number": null,
    "published": false
   },
-  "qwen3-embedding-06b-77ca7a9a": {
-   "public_number": 109,
-   "published": true
-  },
-  "qwen3-embedding-4b-25996213": {
-   "public_number": 110,
-   "published": true
-  },
-  "qwen3-embedding-8b-03fb42a9": {
-   "public_number": 111,
-   "published": true
-  },
-  "qwen3-reranker-06b-93dd8291": {
-   "public_number": 112,
-   "published": true
-  },
-  "qwen3-reranker-4b-b9e9a594": {
-   "public_number": 113,
-   "published": true
-  },
-  "qwen3-reranker-8b-2233bb1b": {
-   "public_number": 114,
-   "published": true
-  },
-  "qwen3-vl-8d8d32cf": {
-   "public_number": 683,
+  "olmo-1b-a43041bf": {
+   "public_number": null,
    "published": false
   },
-  "qwen38-24t-a95b-fc5f809f": {
-   "public_number": 274,
-   "published": true
-  },
-  "qwen38-27b-2d9346c1": {
-   "public_number": 277,
-   "published": true
-  },
-  "qwen38-flash-bff2cba7": {
-   "public_number": 684,
+  "olmo-2-13b-ac4d7953": {
+   "public_number": null,
    "published": false
   },
-  "qwen38-flash-next-181190a2": {
-   "public_number": 283,
-   "published": true
-  },
-  "qwen38-livetranslate-c09db33d": {
-   "public_number": 302,
-   "published": true
-  },
-  "qwen38-max-0902-32381f5b": {
-   "public_number": 287,
-   "published": true
-  },
-  "qwen38-max-0b915bf5": {
-   "public_number": 267,
-   "published": true
-  },
-  "qwq-32b-e39b4e88": {
-   "public_number": 685,
+  "olmo-2-7b-b0f0b314": {
+   "public_number": null,
    "published": false
   },
-  "rerank-english-v30-9ff280c1": {
-   "public_number": 686,
+  "olmo-7b-2d6629b4": {
+   "public_number": null,
    "published": false
   },
-  "rerank-multilingual-v30-9d2838f8": {
-   "public_number": 687,
+  "olmoe-1b-7b-96c6bd32": {
+   "public_number": null,
    "published": false
   },
-  "rerank-v35-08a82ee0": {
-   "public_number": 688,
+  "opencalm-7b-076cbef0": {
+   "public_number": null,
    "published": false
   },
-  "rerank-v40-fast-82f86885": {
-   "public_number": 689,
+  "openhathi-7b-54f34c5f": {
+   "public_number": null,
    "published": false
   },
-  "rerank-v40-pro-670814bd": {
-   "public_number": 690,
+  "opt-125m-5fd3240c": {
+   "public_number": null,
    "published": false
   },
-  "resnet-50-25e561e8": {
-   "public_number": 691,
+  "opt-13b-d0fa7cd6": {
+   "public_number": null,
    "published": false
   },
-  "roberta-b40faf3e": {
-   "public_number": 692,
+  "opt-30b-566115d0": {
+   "public_number": null,
    "published": false
   },
-  "rugpt-3-large-6f872217": {
-   "public_number": 693,
+  "opt-66b-3b222b1a": {
+   "public_number": null,
    "published": false
   },
-  "runway-act-two-fe953e93": {
-   "public_number": 118,
+  "opt-67b-7d6aa6d3": {
+   "public_number": null,
+   "published": false
+  },
+  "palm-2-d8ca3c69": {
+   "public_number": 14,
    "published": true
   },
-  "runway-aleph-2-ba558832": {
-   "public_number": 229,
-   "published": true
-  },
-  "runway-gen-4-image-2d1ba2df": {
-   "public_number": 694,
+  "palm-540b-ad27989c": {
+   "public_number": null,
    "published": false
   },
-  "runway-gen-4-image-turbo-c1622317": {
-   "public_number": 136,
+  "parakeet-tdt-06b-v3-7658bc0f": {
+   "public_number": 144,
    "published": true
   },
-  "runway-gen-4-turbo-d2d62ca2": {
-   "public_number": 81,
-   "published": true
-  },
-  "runway-gen-45-a857d281": {
-   "public_number": 168,
-   "published": true
-  },
-  "sarvam-105b-9175eb7c": {
-   "public_number": 194,
-   "published": true
-  },
-  "sarvam-2b-b7122cda": {
-   "public_number": 695,
+  "perceptron-267df511": {
+   "public_number": null,
    "published": false
   },
-  "sarvam-30b-ba107bb6": {
-   "public_number": 195,
+  "pharia-1-llm-7b-control-aligned-34e1d5a0": {
+   "public_number": 49,
    "published": true
   },
-  "sarvam-m-24b-58a80ce5": {
-   "public_number": 696,
+  "pharia-1-llm-7b-control-ea3eb74f": {
+   "public_number": 48,
+   "published": true
+  },
+  "phi-1-34a2cb38": {
+   "public_number": null,
    "published": false
   },
-  "sarvam-m-ce03bf75": {
-   "public_number": 103,
-   "published": true
-  },
-  "scribe-v1-9575deb2": {
-   "public_number": 697,
+  "phi-15-74e72178": {
+   "public_number": null,
    "published": false
   },
-  "scribe-v2-e1191f04": {
-   "public_number": 173,
+  "phi-2-75ab9f3f": {
+   "public_number": null,
+   "published": false
+  },
+  "phi-3-medium-2cab5c83": {
+   "public_number": null,
+   "published": false
+  },
+  "phi-3-mini-02580329": {
+   "public_number": null,
+   "published": false
+  },
+  "phi-3-small-71f782f4": {
+   "public_number": null,
+   "published": false
+  },
+  "phi-3-vision-31617fc1": {
+   "public_number": null,
+   "published": false
+  },
+  "phi-35-mini-78d9c690": {
+   "public_number": null,
+   "published": false
+  },
+  "phi-35-moe-dd00f185": {
+   "public_number": null,
+   "published": false
+  },
+  "phi-35-vision-f9ff1af8": {
+   "public_number": null,
+   "published": false
+  },
+  "phi-4-658c365e": {
+   "public_number": null,
+   "published": false
+  },
+  "phi-4-mini-13d8d608": {
+   "public_number": null,
+   "published": false
+  },
+  "phi-4-multimodal-10dc0dd7": {
+   "public_number": null,
+   "published": false
+  },
+  "phi-4-reasoning-324a2e60": {
+   "public_number": null,
+   "published": false
+  },
+  "phi-4-reasoning-plus-95f1e39b": {
+   "public_number": null,
+   "published": false
+  },
+  "pixtral-12b-e2053092": {
+   "public_number": null,
+   "published": false
+  },
+  "pixtral-large-4c9ba293": {
+   "public_number": null,
+   "published": false
+  },
+  "plamo-100b-58991938": {
+   "public_number": null,
+   "published": false
+  },
+  "plamo-13b-ce23b4d9": {
+   "public_number": null,
+   "published": false
+  },
+  "plamo-2-8b-3bef329a": {
+   "public_number": 79,
    "published": true
   },
-  "scribe-v2-medical-ee4cce87": {
-   "public_number": 297,
+  "plamo-20-prime-31b-cd7f441e": {
+   "public_number": 108,
    "published": true
   },
-  "scribe-v2-realtime-396d95c3": {
+  "plamo-21-prime-cee1a175": {
    "public_number": 151,
    "published": true
   },
-  "sdxl-turbo-1fff4c6b": {
-   "public_number": 698,
-   "published": false
-  },
-  "seedance-2-83b6c429": {
-   "public_number": 699,
-   "published": false
-  },
-  "seedance-2-fast-f61647ad": {
-   "public_number": 700,
-   "published": false
-  },
-  "seedance-2-mini-f7b24488": {
-   "public_number": 701,
-   "published": false
-  },
-  "seedream-5-lite-c7629e20": {
-   "public_number": 189,
+  "plamo-22-prime-af56bfb2": {
+   "public_number": 185,
    "published": true
   },
-  "seedream-5-pro-15cacd9d": {
-   "public_number": 250,
+  "plamo-prime-088809ae": {
+   "public_number": 67,
    "published": true
   },
-  "seq2seq-671dcf2c": {
-   "public_number": 702,
-   "published": false
-  },
-  "siglino-06b-0bf20023": {
-   "public_number": 703,
-   "published": false
-  },
-  "solar-107b-5067019c": {
-   "public_number": 704,
-   "published": false
-  },
-  "solar-pro-2-31b-b20a98f3": {
-   "public_number": 115,
+  "plamo-translate-aba1ee70": {
+   "public_number": 114,
    "published": true
   },
-  "solar-pro-4ec8597e": {
-   "public_number": 705,
+  "pythia-12b-cebe83e0": {
+   "public_number": null,
    "published": false
   },
-  "sora-2-a7b9fc7a": {
-   "public_number": 142,
+  "pythia-14b-11ba5aa4": {
+   "public_number": null,
+   "published": false
+  },
+  "pythia-70m-1561b116": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen-14b-1dbc4a69": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen-72b-cfc3106b": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen-7b-b72c558d": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen-audio-8dac1f9c": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen-image-21-a858263a": {
+   "public_number": 309,
    "published": true
   },
-  "sora-2-pro-95e82714": {
-   "public_number": 706,
-   "published": false
-  },
-  "speech-28-hd-31ac6036": {
-   "public_number": 707,
-   "published": false
-  },
-  "speech-28-turbo-689d6de7": {
-   "public_number": 708,
-   "published": false
-  },
-  "stable-audio-3-medium-1d67b621": {
-   "public_number": 223,
+  "qwen-sea-lion-v45-27b-it-a641a40e": {
+   "public_number": 227,
    "published": true
   },
-  "stable-audio-3-optimized-6c2cc03d": {
-   "public_number": 709,
+  "qwen-vl-bc76cb5c": {
+   "public_number": null,
    "published": false
   },
-  "stable-audio-3-small-music-2632c9a7": {
-   "public_number": 224,
+  "qwen-vl-chat-06d391b2": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen15-05b-f1c66b50": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen15-110b-b534ba4c": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen15-14b-a2c75967": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen15-18b-6ec524d9": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen15-32b-5efc3066": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen15-4b-7ce634c1": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen15-72b-00a14690": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen15-7b-89150a98": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen2-05b-8dfeb926": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen2-15b-4370075b": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen2-57b-a14b-8d58b035": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen2-72b-7b534fee": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen2-7b-ddd0b207": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen2-vl-2b-996edcd5": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen2-vl-72b-ff139bd1": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen2-vl-7b-6f050dab": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen25-05b-f5e3bac9": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen25-14b-b4b01af5": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen25-15b-01e6b9f3": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen25-32b-cc9b5deb": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen25-3b-b1dc5cf3": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen25-72b-b64d2480": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen25-7b-deafbeaf": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen25-coder-05b-06958418": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen25-coder-14b-cdae2884": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen25-coder-15b-5feab40f": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen25-coder-32b-05fd44d9": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen25-coder-3b-9b8f1989": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen25-coder-7b-856f10e9": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen25-omni-7b-61cbc63a": {
+   "public_number": 89,
    "published": true
   },
-  "stable-audio-3-small-sfx-a685bbca": {
-   "public_number": 225,
+  "qwen25-vl-32b-870cef0e": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen25-vl-3b-9e9a10f4": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen25-vl-72b-3bfffbd5": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen25-vl-7b-303ef1bd": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen3-06b-e9412b9d": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen3-14b-f0a0b1c7": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen3-17b-1cb44886": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen3-235b-a22b-3282202f": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen3-30b-a3b-abf3c712": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen3-32b-d3d65117": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen3-4b-20c30c91": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen3-8b-6da783d9": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen3-asr-06b-504c078f": {
+   "public_number": 186,
    "published": true
   },
-  "stable-audio-open-b03751ec": {
-   "public_number": 710,
-   "published": false
-  },
-  "stable-cascade-9f32ac40": {
-   "public_number": 711,
-   "published": false
-  },
-  "stable-diffusion-14-df3267b5": {
-   "public_number": 712,
-   "published": false
-  },
-  "stable-diffusion-15-4805cc93": {
-   "public_number": 713,
-   "published": false
-  },
-  "stable-diffusion-20-8039ea84": {
-   "public_number": 714,
-   "published": false
-  },
-  "stable-diffusion-21-c3f9134f": {
-   "public_number": 715,
-   "published": false
-  },
-  "stable-diffusion-3-medium-f9eb05f9": {
-   "public_number": 716,
-   "published": false
-  },
-  "stable-diffusion-35-large-bb09479e": {
-   "public_number": 55,
+  "qwen3-asr-17b-d158d43f": {
+   "public_number": 187,
    "published": true
   },
-  "stable-diffusion-35-large-turbo-5be69153": {
-   "public_number": 717,
-   "published": false
-  },
-  "stable-diffusion-35-medium-2ff6dd26": {
-   "public_number": 57,
+  "qwen3-coder-480b-a35b-instruct-1fa8b593": {
+   "public_number": 130,
    "published": true
   },
-  "stable-diffusion-xl-09-11fa8021": {
-   "public_number": 718,
+  "qwen3-coder-720e9d03": {
+   "public_number": null,
    "published": false
   },
-  "stable-diffusion-xl-10-fa30bbc5": {
-   "public_number": 719,
-   "published": false
-  },
-  "stable-video-diffusion-1c3210dc": {
-   "public_number": 720,
-   "published": false
-  },
-  "t5-427dc5ed": {
-   "public_number": 721,
-   "published": false
-  },
-  "text-davinci-001-686cbb84": {
-   "public_number": 722,
-   "published": false
-  },
-  "text-davinci-002-45ffa171": {
-   "public_number": 723,
-   "published": false
-  },
-  "text-davinci-003-4fa62a52": {
-   "public_number": 724,
-   "published": false
-  },
-  "time-delay-neural-network-tdnn-d1330c3b": {
-   "public_number": 725,
-   "published": false
-  },
-  "timesfm-30-f79bc0e1": {
-   "public_number": 726,
-   "published": false
-  },
-  "tiny-aya-earth-5d56751e": {
-   "public_number": 727,
-   "published": false
-  },
-  "tiny-aya-en-thinker-a718d364": {
-   "public_number": 731,
-   "published": false
-  },
-  "tiny-aya-fire-d728b7ba": {
-   "public_number": 728,
-   "published": false
-  },
-  "tiny-aya-global-bed060d1": {
-   "public_number": 729,
-   "published": false
-  },
-  "tiny-aya-water-ada94e0b": {
-   "public_number": 730,
-   "published": false
-  },
-  "transformer-af13be07": {
-   "public_number": 732,
-   "published": false
-  },
-  "tsuzumi-2-6d1154e9": {
-   "public_number": 174,
+  "qwen3-embedding-06b-77ca7a9a": {
+   "public_number": 119,
    "published": true
   },
-  "variational-autoencoder-vae-18417b4b": {
-   "public_number": 733,
-   "published": false
-  },
-  "veo-2-a2061cb1": {
-   "public_number": 735,
-   "published": false
-  },
-  "veo-3-6516e7df": {
-   "public_number": 736,
-   "published": false
-  },
-  "veo-31-360d1a50": {
-   "public_number": 147,
+  "qwen3-embedding-4b-25996213": {
+   "public_number": 120,
    "published": true
   },
-  "veo-31-fast-cbc4b97b": {
-   "public_number": 148,
+  "qwen3-embedding-8b-03fb42a9": {
+   "public_number": 121,
    "published": true
   },
-  "veo-31-lite-a2e55fd8": {
-   "public_number": 204,
+  "qwen3-reranker-06b-93dd8291": {
+   "public_number": 122,
    "published": true
   },
-  "veo-72ff5aff": {
-   "public_number": 734,
-   "published": false
-  },
-  "vgg-16-aa15a87e": {
-   "public_number": 737,
-   "published": false
-  },
-  "voxtral-mini-transcribe-2-bc935e7f": {
-   "public_number": 183,
+  "qwen3-reranker-4b-b9e9a594": {
+   "public_number": 123,
    "published": true
   },
-  "voxtral-mini-transcribe-realtime-5cda62c6": {
-   "public_number": 738,
+  "qwen3-reranker-8b-2233bb1b": {
+   "public_number": 124,
+   "published": true
+  },
+  "qwen3-vl-8d8d32cf": {
+   "public_number": null,
    "published": false
   },
-  "voxtral-tts-2f3ad2c0": {
+  "qwen38-24t-a95b-fc5f809f": {
+   "public_number": 280,
+   "published": true
+  },
+  "qwen38-27b-2d9346c1": {
+   "public_number": 283,
+   "published": true
+  },
+  "qwen38-flash-bff2cba7": {
+   "public_number": null,
+   "published": false
+  },
+  "qwen38-flash-next-181190a2": {
+   "public_number": 289,
+   "published": true
+  },
+  "qwen38-livetranslate-c09db33d": {
+   "public_number": 308,
+   "published": true
+  },
+  "qwen38-max-0902-32381f5b": {
+   "public_number": 293,
+   "published": true
+  },
+  "qwen38-max-0b915bf5": {
+   "public_number": 273,
+   "published": true
+  },
+  "qwq-32b-e39b4e88": {
+   "public_number": null,
+   "published": false
+  },
+  "rerank-english-v30-9ff280c1": {
+   "public_number": null,
+   "published": false
+  },
+  "rerank-multilingual-v30-9d2838f8": {
+   "public_number": null,
+   "published": false
+  },
+  "rerank-v35-08a82ee0": {
+   "public_number": null,
+   "published": false
+  },
+  "rerank-v40-fast-82f86885": {
+   "public_number": null,
+   "published": false
+  },
+  "rerank-v40-pro-670814bd": {
+   "public_number": null,
+   "published": false
+  },
+  "resnet-50-25e561e8": {
+   "public_number": null,
+   "published": false
+  },
+  "roberta-b40faf3e": {
+   "public_number": null,
+   "published": false
+  },
+  "rugpt-3-large-6f872217": {
+   "public_number": null,
+   "published": false
+  },
+  "runway-act-two-fe953e93": {
+   "public_number": 128,
+   "published": true
+  },
+  "runway-aleph-2-ba558832": {
+   "public_number": 234,
+   "published": true
+  },
+  "runway-gen-4-image-2d1ba2df": {
+   "public_number": null,
+   "published": false
+  },
+  "runway-gen-4-image-turbo-c1622317": {
+   "public_number": 145,
+   "published": true
+  },
+  "runway-gen-4-turbo-d2d62ca2": {
+   "public_number": 93,
+   "published": true
+  },
+  "runway-gen-45-a857d281": {
+   "public_number": 175,
+   "published": true
+  },
+  "sam-2-1-064c4826": {
+   "public_number": 56,
+   "published": true
+  },
+  "sam-2-330bb60e": {
+   "public_number": 45,
+   "published": true
+  },
+  "sarvam-105b-9175eb7c": {
+   "public_number": 201,
+   "published": true
+  },
+  "sarvam-2b-b7122cda": {
+   "public_number": null,
+   "published": false
+  },
+  "sarvam-30b-ba107bb6": {
    "public_number": 202,
    "published": true
   },
-  "wan-22-animate-14b-10b1612a": {
-   "public_number": 138,
+  "sarvam-m-24b-58a80ce5": {
+   "public_number": null,
+   "published": false
+  },
+  "sarvam-m-ce03bf75": {
+   "public_number": 113,
    "published": true
   },
-  "wan-22-animate-2-14b-d11d7821": {
-   "public_number": 270,
+  "scribe-v1-9575deb2": {
+   "public_number": null,
+   "published": false
+  },
+  "scribe-v2-e1191f04": {
+   "public_number": 180,
    "published": true
   },
-  "wan-22-s2v-14b-6675fc11": {
-   "public_number": 137,
+  "scribe-v2-medical-ee4cce87": {
+   "public_number": 303,
    "published": true
   },
-  "wan-22-ti2v-5b-ffe796a2": {
+  "scribe-v2-realtime-396d95c3": {
+   "public_number": 158,
+   "published": true
+  },
+  "sdxl-turbo-1fff4c6b": {
+   "public_number": null,
+   "published": false
+  },
+  "seedance-2-83b6c429": {
+   "public_number": null,
+   "published": false
+  },
+  "seedance-2-fast-f61647ad": {
+   "public_number": null,
+   "published": false
+  },
+  "seedance-2-mini-f7b24488": {
+   "public_number": null,
+   "published": false
+  },
+  "seedream-5-lite-c7629e20": {
+   "public_number": 195,
+   "published": true
+  },
+  "seedream-5-pro-15cacd9d": {
+   "public_number": 256,
+   "published": true
+  },
+  "segment-anything-model-sam-64ee423f": {
+   "public_number": 13,
+   "published": true
+  },
+  "seq2seq-671dcf2c": {
+   "public_number": null,
+   "published": false
+  },
+  "siglino-06b-0bf20023": {
+   "public_number": null,
+   "published": false
+  },
+  "solar-107b-5067019c": {
+   "public_number": null,
+   "published": false
+  },
+  "solar-pro-2-31b-b20a98f3": {
    "public_number": 125,
    "published": true
   },
+  "solar-pro-4ec8597e": {
+   "public_number": null,
+   "published": false
+  },
+  "sora-2-a7b9fc7a": {
+   "public_number": 150,
+   "published": true
+  },
+  "sora-2-pro-95e82714": {
+   "public_number": null,
+   "published": false
+  },
+  "speech-28-hd-31ac6036": {
+   "public_number": null,
+   "published": false
+  },
+  "speech-28-turbo-689d6de7": {
+   "public_number": null,
+   "published": false
+  },
+  "stable-audio-3-medium-1d67b621": {
+   "public_number": 228,
+   "published": true
+  },
+  "stable-audio-3-optimized-6c2cc03d": {
+   "public_number": null,
+   "published": false
+  },
+  "stable-audio-3-small-music-2632c9a7": {
+   "public_number": 229,
+   "published": true
+  },
+  "stable-audio-3-small-sfx-a685bbca": {
+   "public_number": 230,
+   "published": true
+  },
+  "stable-audio-open-b03751ec": {
+   "public_number": null,
+   "published": false
+  },
+  "stable-cascade-9f32ac40": {
+   "public_number": null,
+   "published": false
+  },
+  "stable-diffusion-14-df3267b5": {
+   "public_number": null,
+   "published": false
+  },
+  "stable-diffusion-15-4805cc93": {
+   "public_number": null,
+   "published": false
+  },
+  "stable-diffusion-20-8039ea84": {
+   "public_number": null,
+   "published": false
+  },
+  "stable-diffusion-21-c3f9134f": {
+   "public_number": null,
+   "published": false
+  },
+  "stable-diffusion-3-medium-f9eb05f9": {
+   "public_number": null,
+   "published": false
+  },
+  "stable-diffusion-35-large-bb09479e": {
+   "public_number": 61,
+   "published": true
+  },
+  "stable-diffusion-35-large-turbo-5be69153": {
+   "public_number": null,
+   "published": false
+  },
+  "stable-diffusion-35-medium-2ff6dd26": {
+   "public_number": 63,
+   "published": true
+  },
+  "stable-diffusion-xl-09-11fa8021": {
+   "public_number": null,
+   "published": false
+  },
+  "stable-diffusion-xl-10-fa30bbc5": {
+   "public_number": null,
+   "published": false
+  },
+  "stable-video-diffusion-1c3210dc": {
+   "public_number": null,
+   "published": false
+  },
+  "t5-427dc5ed": {
+   "public_number": null,
+   "published": false
+  },
+  "text-davinci-001-686cbb84": {
+   "public_number": null,
+   "published": false
+  },
+  "text-davinci-002-45ffa171": {
+   "public_number": null,
+   "published": false
+  },
+  "text-davinci-003-4fa62a52": {
+   "public_number": null,
+   "published": false
+  },
+  "time-delay-neural-network-tdnn-d1330c3b": {
+   "public_number": null,
+   "published": false
+  },
+  "timesfm-30-f79bc0e1": {
+   "public_number": null,
+   "published": false
+  },
+  "tiny-aya-earth-5d56751e": {
+   "public_number": null,
+   "published": false
+  },
+  "tiny-aya-en-thinker-a718d364": {
+   "public_number": null,
+   "published": false
+  },
+  "tiny-aya-fire-d728b7ba": {
+   "public_number": null,
+   "published": false
+  },
+  "tiny-aya-global-bed060d1": {
+   "public_number": null,
+   "published": false
+  },
+  "tiny-aya-water-ada94e0b": {
+   "public_number": null,
+   "published": false
+  },
+  "transformer-af13be07": {
+   "public_number": null,
+   "published": false
+  },
+  "tsuzumi-2-6d1154e9": {
+   "public_number": 156,
+   "published": true
+  },
+  "variational-autoencoder-vae-18417b4b": {
+   "public_number": null,
+   "published": false
+  },
+  "veo-2-a2061cb1": {
+   "public_number": null,
+   "published": false
+  },
+  "veo-3-6516e7df": {
+   "public_number": null,
+   "published": false
+  },
+  "veo-31-360d1a50": {
+   "public_number": 154,
+   "published": true
+  },
+  "veo-31-fast-cbc4b97b": {
+   "public_number": 155,
+   "published": true
+  },
+  "veo-31-lite-a2e55fd8": {
+   "public_number": 209,
+   "published": true
+  },
+  "veo-72ff5aff": {
+   "public_number": null,
+   "published": false
+  },
+  "vgg-16-aa15a87e": {
+   "public_number": null,
+   "published": false
+  },
+  "voxtral-mini-transcribe-2-bc935e7f": {
+   "public_number": 189,
+   "published": true
+  },
+  "voxtral-mini-transcribe-realtime-5cda62c6": {
+   "public_number": null,
+   "published": false
+  },
+  "voxtral-tts-2f3ad2c0": {
+   "public_number": 207,
+   "published": true
+  },
+  "wan-22-animate-14b-10b1612a": {
+   "public_number": 147,
+   "published": true
+  },
+  "wan-22-animate-2-14b-d11d7821": {
+   "public_number": 276,
+   "published": true
+  },
+  "wan-22-s2v-14b-6675fc11": {
+   "public_number": 146,
+   "published": true
+  },
+  "wan-22-ti2v-5b-ffe796a2": {
+   "public_number": 135,
+   "published": true
+  },
   "wan-dancer-14b-60691663": {
-   "public_number": 254,
+   "public_number": 260,
    "published": true
   },
   "wevisdoc-2b-b55f1747": {
-   "public_number": 739,
+   "public_number": null,
    "published": false
   },
   "wevisdoc-4b-670ff129": {
-   "public_number": 740,
+   "public_number": null,
    "published": false
   },
   "whisper-base-3b86cb7b": {
-   "public_number": 741,
+   "public_number": null,
    "published": false
   },
   "whisper-large-v1-6b4f5732": {
-   "public_number": 742,
+   "public_number": null,
    "published": false
   },
   "whisper-large-v2-744bf84e": {
-   "public_number": 743,
+   "public_number": null,
    "published": false
   },
   "whisper-large-v3-1e7d7d9b": {
-   "public_number": 744,
+   "public_number": null,
    "published": false
   },
+  "whisper-large-v3-turbo-f235c7e7": {
+   "public_number": 58,
+   "published": true
+  },
   "whisper-medium-930a5c0d": {
-   "public_number": 745,
+   "public_number": null,
    "published": false
   },
   "whisper-small-b19b4fb6": {
-   "public_number": 746,
+   "public_number": null,
    "published": false
   },
   "whisper-tiny-1f0a65eb": {
-   "public_number": 747,
+   "public_number": null,
    "published": false
   },
   "word2vec-cbow-c9f5380a": {
-   "public_number": 748,
+   "public_number": null,
    "published": false
   },
   "word2vec-skip-gram-eb20a7f2": {
-   "public_number": 749,
+   "public_number": null,
    "published": false
   },
   "xlnet-5391fbaf": {
-   "public_number": 750,
+   "public_number": null,
    "published": false
   },
   "yaart-d124395d": {
-   "public_number": 751,
+   "public_number": null,
    "published": false
   },
   "yalm-100b-7a7f28c3": {
-   "public_number": 752,
+   "public_number": null,
    "published": false
   },
   "yandexgpt-1-e56c59be": {
-   "public_number": 753,
+   "public_number": null,
    "published": false
   },
   "yandexgpt-2-b09e6235": {
-   "public_number": 754,
+   "public_number": null,
    "published": false
   },
   "yandexgpt-3-pro-9495aeb2": {
-   "public_number": 755,
+   "public_number": null,
    "published": false
   },
   "yandexgpt-4-pro-b685193f": {
-   "public_number": 756,
+   "public_number": null,
    "published": false
   },
   "yandexgpt-5-lite-8b-instruct-1be85824": {
-   "public_number": 78,
+   "public_number": 90,
    "published": true
   },
   "yi-15-34b-6b2cc581": {
-   "public_number": 757,
+   "public_number": null,
    "published": false
   },
   "yi-15-6b-c3a1fed7": {
-   "public_number": 758,
+   "public_number": null,
    "published": false
   },
   "yi-15-9b-030af81d": {
-   "public_number": 759,
+   "public_number": null,
    "published": false
   },
   "yi-34b-472e3a93": {
-   "public_number": 760,
+   "public_number": null,
    "published": false
   },
   "yi-6b-0fd3d576": {
-   "public_number": 761,
+   "public_number": null,
    "published": false
   },
   "yi-vl-34b-f8d5def8": {
-   "public_number": 762,
+   "public_number": null,
    "published": false
   },
   "yi-vl-6b-6fa58244": {
-   "public_number": 763,
+   "public_number": null,
    "published": false
   }
  },
  "public": {
-  "models": 304,
-  "tools": 138
+  "models": 310,
+  "tools": 139
  },
- "release": "release-2026-09-25-gsd-1-0",
+ "release": "catalog-master-v014",
  "schema": "aipedia-publication-state/1",
  "tools": {
   "adobe-firefly-9f88c8c9": {
-   "public_number": 18,
-   "published": true
-  },
-  "ai21-studio-9dc429fa": {
-   "public_number": 2,
-   "published": true
-  },
-  "aider-67a11cba": {
-   "public_number": 19,
-   "published": true
-  },
-  "alice-ai-da730eef": {
-   "public_number": 20,
-   "published": true
-  },
-  "amazon-nova-forge-e5333e99": {
-   "public_number": 21,
-   "published": true
-  },
-  "amazon-q-developer-d7b6203a": {
-   "public_number": 22,
-   "published": true
-  },
-  "antigravity-cli-b0aa4e36": {
-   "public_number": 23,
-   "published": true
-  },
-  "arize-phoenix-5d2d2c89": {
-   "public_number": 24,
-   "published": true
-  },
-  "artificial-analysis-010a7a4a": {
-   "public_number": 25,
-   "published": true
-  },
-  "autogen-349a8269": {
-   "public_number": 26,
-   "published": true
-  },
-  "aws-bedrock-224b9658": {
-   "public_number": 27,
-   "published": true
-  },
-  "azure-ai-foundry-f8725f3f": {
-   "public_number": 28,
-   "published": true
-  },
-  "blackbox-ai-fee3724c": {
-   "public_number": 29,
-   "published": true
-  },
-  "boltnew-0890845b": {
-   "public_number": 30,
-   "published": true
-  },
-  "braintrust-f9c94da0": {
-   "public_number": 31,
-   "published": true
-  },
-  "canva-magic-studio-a64e4d23": {
-   "public_number": 32,
-   "published": true
-  },
-  "cerebras-inference-f1ff4ead": {
-   "public_number": 33,
-   "published": true
-  },
-  "chatgpt-46cd5277": {
-   "public_number": 3,
-   "published": true
-  },
-  "claude-0e6dbf5a": {
-   "public_number": 5,
-   "published": true
-  },
-  "claude-code-ad4bceba": {
-   "public_number": 8,
-   "published": true
-  },
-  "cline-e0d25424": {
-   "public_number": 34,
-   "published": true
-  },
-  "clova-studio-e224eeb3": {
-   "public_number": 35,
-   "published": true
-  },
-  "coda-ai-5b7c3b09": {
-   "public_number": 36,
-   "published": true
-  },
-  "codex-59301cf4": {
-   "public_number": 9,
-   "published": true
-  },
-  "connected-papers-98d89fc4": {
    "public_number": 37,
    "published": true
   },
-  "consensus-af567171": {
-   "public_number": 38,
-   "published": true
-  },
-  "continue-224ab02d": {
-   "public_number": 39,
-   "published": true
-  },
-  "copyai-289a49f0": {
-   "public_number": 40,
-   "published": true
-  },
-  "crewai-86180409": {
-   "public_number": 41,
-   "published": true
-  },
-  "cursor-02a2dc32": {
-   "public_number": 42,
-   "published": true
-  },
-  "deepseek-chat-b3c3f2ff": {
-   "public_number": 43,
-   "published": true
-  },
-  "deepseek-harness-cff5d891": {
-   "public_number": 44,
-   "published": true
-  },
-  "descript-f02c6933": {
-   "public_number": 45,
-   "published": true
-  },
-  "devin-a859ce8a": {
-   "public_number": 46,
-   "published": true
-  },
-  "doubao-94fe37fe": {
-   "public_number": 47,
-   "published": true
-  },
-  "dreamstudio-fef8bffe": {
-   "public_number": 48,
-   "published": true
-  },
-  "dspy-900593c9": {
-   "public_number": 49,
-   "published": true
-  },
-  "eleven-sound-effects-fd3e24db": {
-   "public_number": 50,
-   "published": true
-  },
-  "eleven-speech-engine-5710146f": {
-   "public_number": 51,
-   "published": true
-  },
-  "eleven-voice-changer-1770e146": {
-   "public_number": 6,
-   "published": true
-  },
-  "eleven-voice-isolator-f5b2b323": {
-   "public_number": 7,
-   "published": true
-  },
-  "elevenlabs-d837e314": {
-   "public_number": 52,
-   "published": true
-  },
-  "elicit-cc496cff": {
-   "public_number": 53,
-   "published": true
-  },
-  "ernie-bot-wenxiaoyan-c704e130": {
-   "public_number": 54,
-   "published": true
-  },
-  "fathom-76015fb2": {
-   "public_number": 55,
-   "published": true
-  },
-  "firefliesai-b701b6b4": {
-   "public_number": 56,
-   "published": true
-  },
-  "fireworks-ai-ddb9e3a5": {
-   "public_number": 57,
-   "published": true
-  },
-  "flow-050287a2": {
-   "public_number": 58,
-   "published": true
-  },
-  "gemini-90ef8dfa": {
-   "public_number": 59,
-   "published": true
-  },
-  "gemini-cli-97009d71": {
-   "public_number": 10,
-   "published": true
-  },
-  "gemini-code-assist-611ff03b": {
-   "public_number": 60,
-   "published": true
-  },
-  "gigachat-ba8f6d4d": {
-   "public_number": 61,
-   "published": true
-  },
-  "github-70031cf2": {
-   "public_number": 62,
-   "published": true
-  },
-  "github-copilot-179ab1d0": {
-   "public_number": 1,
-   "published": true
-  },
-  "google-vertex-ai-e3b72b54": {
-   "public_number": 63,
-   "published": true
-  },
-  "gpt-live-1-e666ccf6": {
+  "ai21-studio-9dc429fa": {
    "public_number": 17,
    "published": true
   },
-  "grammarly-ac752788": {
-   "public_number": 64,
+  "aider-67a11cba": {
+   "public_number": 42,
    "published": true
   },
-  "grok-ae0564d8": {
-   "public_number": 65,
+  "alice-ai-da730eef": {
+   "public_number": 103,
    "published": true
   },
-  "grok-speech-to-text-cfab200f": {
-   "public_number": 13,
+  "amazon-nova-forge-e5333e99": {
+   "public_number": 105,
    "published": true
   },
-  "grok-speech-to-text-streaming-1109f624": {
-   "public_number": 14,
-   "published": true
-  },
-  "grok-text-to-speech-ade3260f": {
-   "public_number": 15,
-   "published": true
-  },
-  "grok-voice-agent-64dc28d2": {
-   "public_number": 12,
-   "published": true
-  },
-  "grok-voice-api-e5ae4c9e": {
+  "amazon-q-developer-d7b6203a": {
    "public_number": 66,
    "published": true
   },
-  "groqcloud-27d72cc2": {
-   "public_number": 67,
+  "antigravity-cli-b0aa4e36": {
+   "public_number": 111,
    "published": true
   },
-  "hailuo-ai-ab0a6ab6": {
-   "public_number": 68,
+  "arize-phoenix-5d2d2c89": {
+   "public_number": 34,
    "published": true
   },
-  "haystack-d1993c9b": {
-   "public_number": 69,
+  "artificial-analysis-010a7a4a": {
+   "public_number": null,
    "published": true
   },
-  "hugging-face-hub-82f7da3a": {
-   "public_number": 70,
+  "autogen-349a8269": {
+   "public_number": 55,
    "published": true
   },
-  "humanloop-a16219fe": {
-   "public_number": 71,
+  "aws-bedrock-224b9658": {
+   "public_number": 40,
    "published": true
   },
-  "ibm-watsonxai-d5247b6c": {
-   "public_number": 72,
+  "azure-ai-foundry-f8725f3f": {
+   "public_number": 92,
    "published": true
   },
-  "ideogram-db27a255": {
-   "public_number": 73,
+  "blackbox-ai-fee3724c": {
+   "public_number": null,
    "published": true
   },
-  "jasper-90457ca9": {
-   "public_number": 74,
-   "published": true
-  },
-  "jetbrains-ai-assistant-7b8bc179": {
-   "public_number": 75,
-   "published": true
-  },
-  "junie-5b254753": {
-   "public_number": 76,
-   "published": true
-  },
-  "kaggle-models-66ec6efe": {
-   "public_number": 77,
-   "published": true
-  },
-  "kimi-86b3adef": {
-   "public_number": 78,
-   "published": true
-  },
-  "kling-ai-c89c43f2": {
-   "public_number": 79,
-   "published": true
-  },
-  "label-studio-7801d5fd": {
-   "public_number": 80,
-   "published": true
-  },
-  "labelbox-9a3d740b": {
-   "public_number": 81,
-   "published": true
-  },
-  "langchain-5dde274b": {
-   "public_number": 82,
-   "published": true
-  },
-  "langsmith-2dc9d962": {
-   "public_number": 83,
-   "published": true
-  },
-  "le-chat-7cf9fd0d": {
-   "public_number": 84,
-   "published": true
-  },
-  "leonardo-ai-3a0cb141": {
-   "public_number": 85,
-   "published": true
-  },
-  "llamacpp-bd626fa5": {
-   "public_number": 86,
-   "published": true
-  },
-  "llamaindex-90b18d2d": {
+  "boltnew-0890845b": {
    "public_number": 87,
    "published": true
   },
-  "lm-arena-2a02f406": {
+  "braintrust-f9c94da0": {
+   "public_number": 61,
+   "published": true
+  },
+  "canva-magic-studio-a64e4d23": {
+   "public_number": 57,
+   "published": true
+  },
+  "cerebras-inference-f1ff4ead": {
+   "public_number": 85,
+   "published": true
+  },
+  "chatgpt-46cd5277": {
+   "public_number": 27,
+   "published": true
+  },
+  "claude-0e6dbf5a": {
+   "public_number": 47,
+   "published": true
+  },
+  "claude-code-ad4bceba": {
+   "public_number": 96,
+   "published": true
+  },
+  "cline-e0d25424": {
+   "public_number": null,
+   "published": true
+  },
+  "clova-studio-e224eeb3": {
+   "public_number": null,
+   "published": true
+  },
+  "coda-ai-5b7c3b09": {
+   "public_number": 41,
+   "published": true
+  },
+  "codex-59301cf4": {
+   "public_number": 97,
+   "published": true
+  },
+  "comfyui-4aec921a": {
+   "public_number": 30,
+   "published": true
+  },
+  "connected-papers-98d89fc4": {
+   "public_number": 13,
+   "published": true
+  },
+  "consensus-af567171": {
+   "public_number": 19,
+   "published": true
+  },
+  "continue-224ab02d": {
+   "public_number": 51,
+   "published": true
+  },
+  "copyai-289a49f0": {
+   "public_number": null,
+   "published": true
+  },
+  "crewai-86180409": {
+   "public_number": 63,
+   "published": true
+  },
+  "cursor-02a2dc32": {
+   "public_number": 60,
+   "published": true
+  },
+  "deepseek-chat-b3c3f2ff": {
+   "public_number": null,
+   "published": true
+  },
+  "deepseek-harness-cff5d891": {
+   "public_number": null,
+   "published": true
+  },
+  "descript-f02c6933": {
+   "public_number": 5,
+   "published": true
+  },
+  "devin-a859ce8a": {
+   "public_number": 76,
+   "published": true
+  },
+  "doubao-94fe37fe": {
    "public_number": 88,
    "published": true
   },
+  "dreamstudio-fef8bffe": {
+   "public_number": 22,
+   "published": true
+  },
+  "dspy-900593c9": {
+   "public_number": 58,
+   "published": true
+  },
+  "eleven-sound-effects-fd3e24db": {
+   "public_number": null,
+   "published": true
+  },
+  "eleven-speech-engine-5710146f": {
+   "public_number": null,
+   "published": true
+  },
+  "eleven-voice-changer-1770e146": {
+   "public_number": 75,
+   "published": true
+  },
+  "eleven-voice-isolator-f5b2b323": {
+   "public_number": 82,
+   "published": true
+  },
+  "elevenlabs-d837e314": {
+   "public_number": 31,
+   "published": true
+  },
+  "elicit-cc496cff": {
+   "public_number": 18,
+   "published": true
+  },
+  "ernie-bot-wenxiaoyan-c704e130": {
+   "public_number": 35,
+   "published": true
+  },
+  "fathom-76015fb2": {
+   "public_number": null,
+   "published": true
+  },
+  "firefliesai-b701b6b4": {
+   "public_number": null,
+   "published": true
+  },
+  "fireworks-ai-ddb9e3a5": {
+   "public_number": 68,
+   "published": true
+  },
+  "flow-050287a2": {
+   "public_number": 98,
+   "published": true
+  },
+  "gemini-90ef8dfa": {
+   "public_number": 71,
+   "published": true
+  },
+  "gemini-cli-97009d71": {
+   "public_number": 101,
+   "published": true
+  },
+  "gemini-code-assist-611ff03b": {
+   "public_number": 77,
+   "published": true
+  },
+  "gigachat-ba8f6d4d": {
+   "public_number": 54,
+   "published": true
+  },
+  "github-70031cf2": {
+   "public_number": 1,
+   "published": true
+  },
+  "github-copilot-179ab1d0": {
+   "public_number": 16,
+   "published": true
+  },
+  "google-ai-studio-9fb46df2": {
+   "public_number": 67,
+   "published": true
+  },
+  "google-vertex-ai-e3b72b54": {
+   "public_number": 15,
+   "published": true
+  },
+  "gpt-live-1-e666ccf6": {
+   "public_number": null,
+   "published": false
+  },
+  "grammarly-ac752788": {
+   "public_number": 2,
+   "published": true
+  },
+  "grok-ae0564d8": {
+   "public_number": 62,
+   "published": true
+  },
+  "grok-speech-to-text-cfab200f": {
+   "public_number": 108,
+   "published": true
+  },
+  "grok-speech-to-text-streaming-1109f624": {
+   "public_number": 109,
+   "published": true
+  },
+  "grok-text-to-speech-ade3260f": {
+   "public_number": 107,
+   "published": true
+  },
+  "grok-voice-agent-64dc28d2": {
+   "public_number": 104,
+   "published": true
+  },
+  "grok-voice-api-e5ae4c9e": {
+   "public_number": 106,
+   "published": true
+  },
+  "groqcloud-27d72cc2": {
+   "public_number": 74,
+   "published": true
+  },
+  "hailuo-ai-ab0a6ab6": {
+   "public_number": 83,
+   "published": true
+  },
+  "haystack-d1993c9b": {
+   "public_number": 11,
+   "published": true
+  },
+  "hugging-face-hub-82f7da3a": {
+   "public_number": null,
+   "published": true
+  },
+  "humanloop-a16219fe": {
+   "public_number": null,
+   "published": true
+  },
+  "ibm-watsonxai-d5247b6c": {
+   "public_number": 45,
+   "published": true
+  },
+  "ideogram-db27a255": {
+   "public_number": null,
+   "published": true
+  },
+  "jasper-90457ca9": {
+   "public_number": null,
+   "published": true
+  },
+  "jetbrains-ai-assistant-7b8bc179": {
+   "public_number": 44,
+   "published": true
+  },
+  "junie-5b254753": {
+   "public_number": 94,
+   "published": true
+  },
+  "kaggle-models-66ec6efe": {
+   "public_number": null,
+   "published": true
+  },
+  "kimi-86b3adef": {
+   "public_number": 80,
+   "published": true
+  },
+  "kling-ai-c89c43f2": {
+   "public_number": 81,
+   "published": true
+  },
+  "label-studio-7801d5fd": {
+   "public_number": 12,
+   "published": true
+  },
+  "labelbox-9a3d740b": {
+   "public_number": 9,
+   "published": true
+  },
+  "langchain-5dde274b": {
+   "public_number": 23,
+   "published": true
+  },
+  "langsmith-2dc9d962": {
+   "public_number": 50,
+   "published": true
+  },
+  "le-chat-7cf9fd0d": {
+   "public_number": 73,
+   "published": true
+  },
+  "leonardo-ai-3a0cb141": {
+   "public_number": 28,
+   "published": true
+  },
+  "llamacpp-bd626fa5": {
+   "public_number": 36,
+   "published": true
+  },
+  "llamaindex-90b18d2d": {
+   "public_number": 24,
+   "published": true
+  },
+  "lm-arena-2a02f406": {
+   "public_number": 39,
+   "published": true
+  },
   "lm-studio-bionic-3ac51e8d": {
-   "public_number": 89,
+   "public_number": 78,
    "published": true
   },
   "lovable-5eed0de9": {
@@ -3409,207 +3493,207 @@
    "published": true
   },
   "luma-dream-machine-7639cc3d": {
-   "public_number": 91,
-   "published": true
-  },
-  "meta-ai-f05512e0": {
-   "public_number": 92,
-   "published": true
-  },
-  "microsoft-copilot-80bf3d4a": {
-   "public_number": 93,
-   "published": true
-  },
-  "midjourney-6047a08d": {
-   "public_number": 94,
-   "published": true
-  },
-  "minimax-code-93f290d1": {
-   "public_number": 95,
-   "published": true
-  },
-  "minimax-speech-recognition-b5f156c4": {
-   "public_number": 96,
-   "published": true
-  },
-  "modelscope-6ff30701": {
-   "public_number": 97,
-   "published": true
-  },
-  "murf-ai-bbb09bfc": {
-   "public_number": 98,
-   "published": true
-  },
-  "notebooklm-6efd78c8": {
    "public_number": 99,
    "published": true
   },
-  "notion-ai-35eb36cf": {
-   "public_number": 100,
+  "meta-ai-f05512e0": {
+   "public_number": 56,
    "published": true
   },
-  "nvidia-build-eab0ba05": {
-   "public_number": 101,
+  "microsoft-copilot-80bf3d4a": {
+   "public_number": 64,
    "published": true
   },
-  "nvidia-ngc-7f095936": {
-   "public_number": 102,
+  "midjourney-6047a08d": {
+   "public_number": null,
    "published": true
   },
-  "ollama-1e62e6c9": {
-   "public_number": 4,
-   "published": true
-  },
-  "openrouter-45aa8479": {
-   "public_number": 103,
-   "published": true
-  },
-  "oracle-oci-generative-ai-db18c633": {
-   "public_number": 104,
-   "published": true
-  },
-  "otterai-f7910642": {
-   "public_number": 105,
-   "published": true
-  },
-  "perplexity-7a1d922e": {
-   "public_number": 106,
-   "published": true
-  },
-  "pika-ea286fc1": {
-   "public_number": 107,
-   "published": true
-  },
-  "playground-ai-7cda7b1d": {
-   "public_number": 108,
-   "published": true
-  },
-  "poe-bbc02ad7": {
-   "public_number": 109,
-   "published": true
-  },
-  "promptfoo-9fe1eaf7": {
-   "public_number": 110,
-   "published": true
-  },
-  "quillbot-0c3e1122": {
-   "public_number": 111,
-   "published": true
-  },
-  "qwen-chat-1b9debb8": {
+  "minimax-code-93f290d1": {
    "public_number": 112,
    "published": true
   },
+  "minimax-speech-recognition-b5f156c4": {
+   "public_number": null,
+   "published": true
+  },
+  "modelscope-6ff30701": {
+   "public_number": 25,
+   "published": true
+  },
+  "murf-ai-bbb09bfc": {
+   "public_number": 14,
+   "published": true
+  },
+  "notebooklm-6efd78c8": {
+   "public_number": 48,
+   "published": true
+  },
+  "notion-ai-35eb36cf": {
+   "public_number": 26,
+   "published": true
+  },
+  "nvidia-build-eab0ba05": {
+   "public_number": 89,
+   "published": true
+  },
+  "nvidia-ngc-7f095936": {
+   "public_number": 4,
+   "published": true
+  },
+  "ollama-1e62e6c9": {
+   "public_number": 46,
+   "published": true
+  },
+  "openrouter-45aa8479": {
+   "public_number": 32,
+   "published": true
+  },
+  "oracle-oci-generative-ai-db18c633": {
+   "public_number": 70,
+   "published": true
+  },
+  "otterai-f7910642": {
+   "public_number": 6,
+   "published": true
+  },
+  "perplexity-7a1d922e": {
+   "public_number": 29,
+   "published": true
+  },
+  "pika-ea286fc1": {
+   "public_number": null,
+   "published": true
+  },
+  "playground-ai-7cda7b1d": {
+   "public_number": null,
+   "published": true
+  },
+  "poe-bbc02ad7": {
+   "public_number": null,
+   "published": true
+  },
+  "promptfoo-9fe1eaf7": {
+   "public_number": 33,
+   "published": true
+  },
+  "quillbot-0c3e1122": {
+   "public_number": 7,
+   "published": true
+  },
+  "qwen-chat-1b9debb8": {
+   "public_number": 95,
+   "published": true
+  },
   "qwen-code-984fcfb7": {
-   "public_number": 11,
+   "public_number": 102,
    "published": true
   },
   "qwen-scope-86f19967": {
-   "public_number": 16,
+   "public_number": 110,
    "published": true
   },
   "recraft-5c5605ef": {
-   "public_number": 113,
+   "public_number": 69,
    "published": true
   },
   "replicate-88273dcd": {
-   "public_number": 114,
+   "public_number": 21,
    "published": true
   },
   "replit-agent-e4e5c5fc": {
-   "public_number": 115,
+   "public_number": 86,
    "published": true
   },
   "researchrabbit-10836755": {
-   "public_number": 116,
+   "public_number": null,
    "published": true
   },
   "roo-code-c6a1ecaa": {
-   "public_number": 117,
+   "public_number": 100,
    "published": true
   },
   "runway-e34e79e1": {
-   "public_number": 118,
+   "public_number": null,
    "published": true
   },
   "scale-ai-f930d93a": {
-   "public_number": 119,
+   "public_number": null,
    "published": true
   },
   "scispace-a7b05733": {
-   "public_number": 120,
+   "public_number": 20,
    "published": true
   },
   "scite-assistant-8d3d8dc1": {
-   "public_number": 121,
+   "public_number": 65,
    "published": true
   },
   "semantic-kernel-4a327f4f": {
-   "public_number": 122,
+   "public_number": null,
    "published": true
   },
   "slack-ai-7248abae": {
-   "public_number": 123,
+   "public_number": 72,
    "published": true
   },
   "sora-bd047027": {
-   "public_number": 124,
+   "public_number": 93,
    "published": true
   },
   "sourcegraph-cody-f6ae3521": {
-   "public_number": 125,
+   "public_number": 38,
    "published": true
   },
   "speechify-studio-76c7290f": {
-   "public_number": 126,
+   "public_number": null,
    "published": true
   },
   "suno-4e930621": {
-   "public_number": 127,
+   "public_number": 52,
    "published": true
   },
   "tabnine-c3655740": {
-   "public_number": 128,
+   "public_number": 10,
    "published": true
   },
   "together-ai-5f67e15b": {
-   "public_number": 129,
+   "public_number": 49,
    "published": true
   },
   "toloka-bb9e10a2": {
-   "public_number": 130,
+   "public_number": 3,
    "published": true
   },
   "udio-cf7b5053": {
-   "public_number": 131,
+   "public_number": 79,
    "published": true
   },
   "v0-21ef682a": {
-   "public_number": 132,
+   "public_number": 59,
    "published": true
   },
   "vllm-52de0570": {
-   "public_number": 133,
+   "public_number": 43,
    "published": true
   },
   "weights-biases-1841746e": {
-   "public_number": 134,
+   "public_number": 8,
    "published": true
   },
   "windsurf-0de02d58": {
-   "public_number": 135,
+   "public_number": 91,
    "published": true
   },
   "youcom-56912a5d": {
-   "public_number": 136,
+   "public_number": null,
    "published": true
   },
   "zed-ai-6c29b3d9": {
-   "public_number": 137,
+   "public_number": 84,
    "published": true
   },
   "zoom-ai-companion-76f2ef02": {
-   "public_number": 138,
+   "public_number": 53,
    "published": true
   }
  }

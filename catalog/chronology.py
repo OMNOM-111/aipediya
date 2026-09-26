@@ -1,10 +1,15 @@
-"""Permanent catalogue numbers: assigned once per published entry, never changed.
+"""Catalogue numbers of published entries.
 
-A public number is a stable identity for every published Model / Tool, kept in
-two independent sequences (Models, Tools). Existing numbers are preserved;
-missing ones are filled deterministically (by name, then slug). Numbers are
-never recomputed when a date, price, rating or sort changes — release-date
-ordering is a separate, runtime concern.
+Owner rule 2026-09-26 (D-2026-09-26-catalog-master-package): Public Number is
+the chronological position of a *public, dated* record; Models and Tools are
+numbered independently; the hidden reserve and undated records have no number.
+The chronological plan is computed in the catalog master and applied by
+``catalog_master sync-local``. The helpers below only give a provisional next
+number to a newly published *dated* record between two syncs.
+
+Identity is the slug (Record ID), never the number. Existing numbers are
+preserved here; missing ones of dated records are filled deterministically (by
+name, then slug). Sorting and filtering never recompute numbers.
 """
 from django.db import transaction
 from django.db.models import Max
@@ -31,10 +36,12 @@ def assign_catalog_numbers(using="default"):
         unnumbered = list(
             ModelVersion.objects.using(using).select_for_update()
             .filter(entry_type="model", published=True, public_number__isnull=True)
+            .exclude(released__isnull=True, approx_released__isnull=True)
         )
         if not unnumbered:
             return {"assigned": 0}
-        start = ModelVersion.objects.using(using).filter(entry_type="model").aggregate(
+        # public_number is unique across the whole table (legacy tool rows too)
+        start = ModelVersion.objects.using(using).aggregate(
             Max("public_number"))["public_number__max"] or 0
         assigned = _fill_numbers(
             unnumbered, start, using, ModelVersion, PublicationRevision,
@@ -49,6 +56,7 @@ def assign_tool_numbers(using="default"):
         unnumbered = list(
             Tool.objects.using(using).select_for_update()
             .filter(published=True, public_number__isnull=True)
+            .exclude(released__isnull=True, approx_released__isnull=True)
         )
         if not unnumbered:
             return {"assigned": 0}

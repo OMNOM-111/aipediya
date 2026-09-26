@@ -54,7 +54,9 @@ def inspect_archive(archive, expected_sha256):
         commit = manifest["commit"]
         if len(commit) != 40 or any(c not in "0123456789abcdef" for c in commit):
             raise SystemExit("Invalid commit in manifest")
-        if manifest.get("kind") not in {None, "code"}:
+        # "code-candidate": HEAD + listed verified working-tree files; its 40-hex id
+        # is the digest of those files (see tools/build_code_release.py).
+        if manifest.get("kind") not in {None, "code", "code-candidate"}:
             raise SystemExit("This command only accepts code-only archives")
         names = list(manifest["files"])
         for name in names:
@@ -69,7 +71,7 @@ def inspect_archive(archive, expected_sha256):
         return manifest, commit, names
 
 
-def planned_steps(commit, publication_state=None):
+def planned_steps(commit, publication_state=None, catalog_plan=None, translations=None):
     steps = [
         "verify archive SHA256 and secret-free manifest",
         "stage code under /srv/aipedia/releases/code-" + commit[:12],
@@ -78,6 +80,13 @@ def planned_steps(commit, publication_state=None):
         "online-backup /srv/aipedia/data/aipedia.sqlite3; never copy Local SQLite onto it",
         "manage.py check && collectstatic --noinput && migrate --noinput",
     ]
+    if catalog_plan:
+        steps.append("manage.py catalog_master apply-plan --plan-out " + catalog_plan
+                     + " (dry check, then --apply: verifies every expected old value by Record ID,"
+                     " writes atomically with revisions, renumbers; already applied -> no writes; mismatch -> abort)")
+    if translations:
+        steps.append("manage.py import_translations " + translations
+                     + " (only where the English source hash matches; no provider calls)")
     if publication_state:
         steps.append("manage.py sync_publication_state apply " + publication_state
                      + " --apply (approved Local published flags; aborts on any number mismatch)")
@@ -94,12 +103,17 @@ if __name__ == "__main__":
     parser.add_argument("--sha256", required=True)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--publication-state", help="Approved state manifest inside the release, e.g. data/release_state.json")
+    parser.add_argument("--catalog-plan", help="Catalog release plan inside the release (catalog_master release-plan)")
+    parser.add_argument("--translations", help="Translations export inside the release (export_translations)")
     args = parser.parse_args()
     archive = Path(args.archive)
     manifest, commit, names = inspect_archive(archive, args.sha256)
-    if args.publication_state and "app/" + args.publication_state not in names:
-        raise SystemExit("Publication state manifest is not in the release archive: " + args.publication_state)
-    report = {"commit": commit, "files": len(names), "steps": planned_steps(commit, args.publication_state),
+    for label, value in (("Publication state manifest", args.publication_state),
+                         ("Catalog plan", args.catalog_plan), ("Translations export", args.translations)):
+        if value and "app/" + value not in names:
+            raise SystemExit(label + " is not in the release archive: " + value)
+    report = {"commit": commit, "files": len(names),
+              "steps": planned_steps(commit, args.publication_state, args.catalog_plan, args.translations),
               "copies_sqlite": False}
     if args.dry_run:
         print(json.dumps(report, indent=2))
@@ -165,6 +179,11 @@ if __name__ == "__main__":
         stopped = True
         backup(DB, before)
         manage("migrate", "--noinput")
+        if args.catalog_plan:
+            manage("catalog_master", "apply-plan", "--plan-out", args.catalog_plan)
+            manage("catalog_master", "apply-plan", "--plan-out", args.catalog_plan, "--apply")
+        if args.translations:
+            manage("import_translations", args.translations)
         if args.publication_state:
             manage("sync_publication_state", "apply", args.publication_state, "--apply")
         os.rename(ROOT / "app", previous)
@@ -197,6 +216,8 @@ if __name__ == "__main__":
             "status": "deployed-origin-verified",
             "copied_sqlite": False,
             "publication_state": args.publication_state or None,
+            "catalog_plan": args.catalog_plan or None,
+            "translations": args.translations or None,
         }
         (stage / "DEPLOYMENT.json").write_text(json.dumps(state, indent=2))
         own_tree(stage)

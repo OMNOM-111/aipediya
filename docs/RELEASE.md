@@ -8,7 +8,12 @@
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный сайт работает на commit `634778807b2e82ca52dea1de150ea0810950d644`
+Текущий публичный сайт работает на выпуске `1a10421d9d7bcd68b2b1224ce74843bebd932e2c`
+(catalog-master-v014, tag `release-2026-09-26-catalog-master-v014`, 2026-09-26 18:18Z;
+310 Models / 139 Tools; отчёт — `docs/history/2026-09-26-catalog-master-v014-release.md`).
+Это id кандидата (digest файлов из `data/release/v014/CANDIDATE_FILES.txt` поверх
+`b3116cf6dc56`), а не hash git-commit; tag указывает на commit с теми же файлами кода.
+Предыдущий: commit `634778807b2e82ca52dea1de150ea0810950d644`
 (tag `release-2026-09-25-deploy-dispatch-lock`, 2026-09-25 22:54Z; отчёт —
 `docs/history/2026-09-25-naver-indexnow-activation.md`). Перед ним в тот же день:
 `386d4aaafd00` (`release-2026-09-25-indexnow-root-key`),
@@ -50,6 +55,21 @@ changelog.
 
 ## Changelog
 
+### release-2026-09-26-catalog-master-v014 — единая база каталога
+
+- Публично 310 моделей и 139 инструментов (было 304 / 138): 21 проверенное
+  дополнение (Gemma 1–3, SAM / SAM 2 / 2.1, Whisper large-v3-turbo, Janus-серия,
+  AlphaFold 3, MusicGen, AudioGen, ComfyUI, Google AI Studio), GPT-Live 1 в Models.
+- Скрыты 14 дублей той же модели с 301 на основную карточку (датированные ID
+  Claude, FLUX1.1 pro Raw, Nemotron 3 Super BF16); ошибочная карточка GPT-Live 1 в
+  Tools заменена 301 на модель.
+- Номера — хронологическая позиция публичной записи; порядок по номеру и по дате
+  строго монотонен в обе стороны (исправлен разворот записей одной даты).
+- Альтернативные названия находятся поиском; уточнены даты, лицензии, описания
+  30 инструментов, источники, платформы; 11 оценок Artificial Analysis скрыты до
+  подтверждения права показа.
+- Миграция `0019_catalog_master_aliases` (поля `aliases`, `redirect_to`).
+
 ### release-2026-09-25-gsd-1-0 — «Глобальная поисковая доступность» (GSD-1.0)
 
 - Постоянные адреса на каждом из 22 языков (`/ru/…`, `/zh-hans/…`; английский на
@@ -77,6 +97,72 @@ changelog.
 - Улучшения responsive/mobile и RTL (ar, fa).
 - 459 внутренних research-моделей сохранены в базе вне публичного каталога
   (без удаления данных, переводов и истории; постоянные номера 305–763 внутренние).
+
+## Общая серверная машина и SSH
+
+AIpediya и StratForge размещены на одной серверной машине. Исполнителям
+AIpediya разрешено использовать существующий настроенный SSH-доступ к этой
+общей машине для работ исключительно в контуре AIpediya. Запрет «не трогать
+StratForge» относится к файлам, данным, процессам, сервисам, туннелям,
+конфигурации и секретам StratForge, а не к самому факту SSH-подключения к общей
+машине. Не читать, не копировать, не изменять и не раскрывать приватные
+SSH-ключи; разрешено использовать уже настроенную SSH identity для подключения
+к общей машине, если действия строго ограничены контуром AIpediya. После входа
+сначала read-only: hostname, пользователь, `/srv/aipedia`, состояние только
+программы `aipedia`, текущий release (`/healthz`), серверный preflight.
+Каталоги StratForge не исследовать, его программы не трогать
+(`D-2026-09-26-shared-server-ssh`, `AGENTS.md`).
+
+Проверенный способ подключения (выпуск 2026-09-26; секреты в документ не входят):
+`ssh -o "ProxyCommand=cloudflared access ssh --hostname %h" -i <настроенная identity> stratforge@ssh-canary.stratforges.com`
+(Windows: `cloudflared` из `C:\Program Files (x86)\cloudflared\`; identity — уже
+настроенный файл в `~/.ssh`, его содержимое не читать и не выводить). Проверка ключа
+сервера остаётся включённой. Каталоги AIpediya принадлежат пользователю `aipedia` —
+чтение и выпуск через `sudo -n` (без интерактива); выпускной скрипт запускается
+`sudo -n python3 …/tools/deploy_code_release.py`. Граница: `/srv/aipedia`, программа
+`aipedia` в `/srv/aipedia/supervisord.conf`, `/tmp/aipedia-*` для архивов и preflight.
+Разрешение среды (подтверждение команд в Claude Code) — отдельно от разрешения
+владельца на выпуск.
+
+Серверный preflight (перед боевым запуском, живую БД не меняет): онлайн-копия
+`/srv/aipedia/data/aipedia.sqlite3` в `/srv/aipedia/backups/aipedia-preflight-*.sqlite3`
+(sqlite backup API от `aipedia`), распаковка архива в `/tmp/aipedia-preflight-*`, на
+копии `migrate` → `catalog_master apply-plan` (без `--apply`, затем с ним) →
+`import_translations` → `sync_publication_state apply` (dry-run) → повтор `apply-plan`.
+
+## Выпуск catalog-master-v014 (разрешён владельцем 2026-09-26)
+
+Разрешение: приёмка и разрешение владельца 2026-09-26
+(`D-2026-09-26-owner-acceptance-v014`) — кандидат `954db5a4586b` + исправление
+порядка номеров + исправление классификации GPT-Live 1. Состав после выпуска:
+310 Models / 139 Tools (было 304 / 138). Отчёт —
+`docs/history/2026-09-26-catalog-master-v014-release.md`.
+
+Данные выпуска: `data/release/v014/catalog_plan.json`,
+`data/release/v014/translations.json`, `data/release_state.json`; список файлов
+кандидата — `data/release/v014/CANDIDATE_FILES.txt`. Архив собирается из
+commit/tag выпуска обычной сборкой (`tools/build_code_release.py`); его
+соответствие испытанному кандидату проверяется по манифестам (отличаются только
+документы), и распакованный архив проходит полный набор тестов заново.
+
+На сервере (только контур AIpediya):
+1. read-only проверка (см. раздел выше) и `--dry-run`;
+2. `python3 tools/deploy_code_release.py <archive> --sha256 <digest> --catalog-plan data/release/v014/catalog_plan.json --translations data/release/v014/translations.json --publication-state data/release_state.json`.
+   Скрипт делает online-backup, `migrate`, `catalog_master apply-plan` (сначала
+   проверка всех ожидаемых старых значений по Record ID; любое несовпадение —
+   остановка и откат к backup, без принудительного применения и без
+   перестроения плана на сервере), `import_translations`,
+   `sync_publication_state` (контроль), переключение кода и проверку `/healthz`.
+3. Публичная проверка https://aipediya.com: версия, обе таблицы, порядок номеров
+   в обоих направлениях, подгрузка, фильтры, GPT-Live 1 в Models, 301 со старого
+   адреса Tools, поиск aliases, цены и единицы, sitemap (310/139), RU/EN.
+
+Граница проверки до выпуска: испытан исходный снимок Local, сверенный с
+публичными данными Production построчно; не копия серверной БД — поэтому
+серверный preflight обязателен.
+
+Предыдущий кандидат catalog-master-v013 (`954db5a4586b`) заменён этим выпуском и
+отдельно не публикуется.
 
 ## Собрать архив кода
 

@@ -1,11 +1,12 @@
 import copy
 import json
+import shutil
+import tempfile
 from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
 
 from django.apps import apps
-from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import SimpleTestCase, TestCase
@@ -18,7 +19,6 @@ from catalog.research import (
 from catalog.templatetags.catalog_tags import local
 
 COMMAND = "catalog.management.commands.import_research"
-FIXTURE = Path(settings.BASE_DIR) / "data/research/aipediya_catalog_2026-09-18.json"
 
 
 def row(record_id="AI-0001", **changes):
@@ -53,6 +53,52 @@ def run_import(doc, **options):
     return json.loads(output.getvalue())
 
 
+def archive_document():
+    """A controlled research archive with the shape of the real 2026-09-18 file.
+
+    The real archive (data/research/, deliberately not in the repository) is
+    not needed: this one covers every entity type, several offers (plans) of
+    one entry, one name used by two developers, one name used by a model and a
+    service, Cyrillic text and the declared counters the real file carries.
+    Expected: 13 offers; model 7 / product 3 / runtime 1 / service 2 offers;
+    names model 3 / product 2 / runtime 1 / service 2; 7 distinct entry names
+    (3 model, 5 other); 9 distinct (type, developer, name) entities.
+    """
+    rows = [
+        row("AI-0001", name="Alpha", developer="Lab A", plan="Free"),
+        row("AI-0002", name="Alpha", developer="Lab A", plan="Pro"),
+        row("AI-0003", name="Alpha", developer="Lab A", plan="Batch"),
+        row("AI-0004", name="Alpha", developer="Lab B", supplier="Lab B"),
+        row("AI-0005", name="Beta", developer="Lab A", plan="Standard"),
+        row("AI-0006", name="Beta", developer="Lab A", plan="Priority"),
+        row("AI-0007", name="Gamma", developer=None, supplier=None),
+        row("AI-0008", name="Studio", entity_type="product", plan="Plus"),
+        row("AI-0009", name="Studio", entity_type="product", plan="Team"),
+        row("AI-0010", name="Chat", entity_type="product", plan="В составе Pro"),
+        row("AI-0011", name="Runner", entity_type="runtime", access=["Download"]),
+        row("AI-0012", name="Cloud", entity_type="service"),
+        row("AI-0013", name="Beta", entity_type="service", developer="Lab C"),
+    ]
+    doc = document(*rows)
+    doc["sources"].append({"id": "second", "url": "https://example.org/second", "checked_at": "2026-09-18"})
+    doc["records"][12]["source_ids"] = ["source", "second"]
+    doc["limitations_ru"] = ["Непроверенные сведения не публикуются."]
+    doc.update({"row_count": 13, "unique_entry_names": 7, "unique_model_names": 3,
+                "unique_other_names": 5, "source_count": 2})
+    return doc
+
+
+class ArchiveFileMixin:
+    """Writes the controlled archive to a real file (UTF-8 with BOM)."""
+
+    def write_archive(self, doc=None):
+        directory = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, directory, True)
+        path = directory / "aipediya_catalog_test.json"
+        path.write_text(json.dumps(doc or archive_document(), ensure_ascii=False, indent=1), encoding="utf-8-sig")
+        return path
+
+
 def api_model(model_id="example/model", **changes):
     value = {
         "id": model_id, "hugging_face_id": "Example/Model",
@@ -69,7 +115,7 @@ def snapshot(*models):
     return {"data": rows, "total_count": len(rows), "links": {"next": None}}
 
 
-class ResearchValidationTests(SimpleTestCase):
+class ResearchValidationTests(ArchiveFileMixin, SimpleTestCase):
     def test_public_russian_source_terms_have_explicit_english_labels(self):
         command = __import__(
             "catalog.management.commands.promote_research", fromlist=["Command"]
@@ -89,20 +135,29 @@ class ResearchValidationTests(SimpleTestCase):
             "Pay-as-you-go · Price per video, not per second; duration and configuration need verification.",
         )
 
-    def test_real_archive_counts_use_exact_source_keys(self):
-        doc = read_document(FIXTURE)
+    def test_archive_file_counts_use_exact_source_keys(self):
+        doc = read_document(self.write_archive())
         summary = summarize(doc)
-        self.assertEqual(summary["offers"], 280)
-        self.assertEqual(summary["distinct_entry_names"], 217)
-        self.assertEqual(summary["distinct_model_names"], 198)
-        self.assertEqual(summary["distinct_other_names"], 19)
+        self.assertEqual(summary["offers"], 13)
+        self.assertEqual(summary["distinct_entry_names"], 7)
+        self.assertEqual(summary["distinct_model_names"], 3)
+        self.assertEqual(summary["distinct_other_names"], 5)
+        self.assertEqual(summary["distinct_entities"], 9)
         self.assertEqual(summary["distinct_names_by_entity_type"], {
-            "model": 198, "product": 9, "runtime": 2, "service": 8,
+            "model": 3, "product": 2, "runtime": 1, "service": 2,
         })
         self.assertEqual(summary["offers_by_entity_type"], {
-            "model": 235, "product": 33, "runtime": 4, "service": 8,
+            "model": 7, "product": 3, "runtime": 1, "service": 2,
         })
         self.assertEqual({r["publication_state"] for r in doc["records"]}, {"review_required"})
+        self.assertEqual(doc["limitations_ru"], ["Непроверенные сведения не публикуются."])
+
+    def test_archive_file_with_wrong_declared_counter_is_rejected(self):
+        for key, wrong in (("row_count", 280), ("unique_model_names", 198), ("source_count", 1)):
+            doc = archive_document()
+            doc[key] = wrong
+            with self.subTest(key=key), self.assertRaisesMessage(ResearchError, key):
+                read_document(self.write_archive(doc))
 
     def test_counts_do_not_merge_developers_or_count_plans_as_models(self):
         doc = document(row(), row("AI-0002", plan="Premium"),
@@ -150,7 +205,7 @@ class ResearchValidationTests(SimpleTestCase):
                 prepare_records(document(), batch)
 
 
-class ResearchImportTests(TestCase):
+class ResearchImportTests(ArchiveFileMixin, TestCase):
     def test_only_staging_is_written_and_reimport_preserves_review_decisions(self):
         call_command("seed_catalog", stdout=StringIO())
         public_models = [model for model in apps.get_app_config("catalog").get_models()
@@ -216,16 +271,27 @@ class ResearchImportTests(TestCase):
             run_import(document(row(), row("AI-0002", publication_state="accepted")))
         self.assertEqual(ResearchRecord.objects.count(), 0)
 
-    def test_actual_file_imports_all_280_rows_only_to_staging(self):
+    def test_archive_file_imports_every_row_only_to_staging(self):
+        call_command("seed_catalog", stdout=StringIO())
+        public_models = [model for model in apps.get_app_config("catalog").get_models()
+                         if model not in {ResearchRecord, ResearchRevision}]
+        before = {model: list(model.objects.order_by("pk").values()) for model in public_models}
+        path = self.write_archive()
         output = StringIO()
-        call_command("import_research", str(FIXTURE), stdout=output)
-        self.assertEqual(ResearchRecord.objects.count(), 280)
-        self.assertEqual(json.loads(output.getvalue())["created"], 280)
-        record = ResearchRecord.objects.get(external_id="AIpedia:2026-09-18:AI-0001")
-        original = read_document(FIXTURE)
-        self.assertEqual(record.payload["record"], original["records"][0])
-        self.assertEqual(record.payload["dataset"]["sources"], original["sources"])
+        call_command("import_research", str(path), stdout=output)
+        result = json.loads(output.getvalue())
+        self.assertEqual(ResearchRecord.objects.count(), 13)
+        self.assertEqual((result["created"], result["published"]), (13, 0))
+        original = read_document(path)
+        for index, source_row in enumerate(original["records"]):
+            record = ResearchRecord.objects.get(external_id="AIpedia:2026-09-18:%s" % source_row["record_id"])
+            self.assertEqual(record.payload["record"], original["records"][index])
+            self.assertEqual(record.payload["dataset"]["sources"], original["sources"])
         self.assertFalse(ResearchRecord.objects.exclude(state="review_required").exists())
+        self.assertEqual(before, {model: list(model.objects.order_by("pk").values()) for model in public_models})
+        again = StringIO()
+        call_command("import_research", str(path), stdout=again)
+        self.assertEqual((json.loads(again.getvalue())["created"], json.loads(again.getvalue())["unchanged"]), (0, 13))
 
 
 class OpenRouterEvidenceTests(SimpleTestCase):

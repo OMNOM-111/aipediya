@@ -4,6 +4,82 @@
 Отчёты законченных выпусков — `docs/history/`.
 Пакет для нового чата собирается командой `\.\.venv\Scripts\python.exe tools/pack_ai_context.py` и **не** редактируется как независимый источник.
 
+## Catalog master v014 — опубликовано и проверено — 2026-09-26 18:40 UTC
+
+- Статус: **опубликовано и проверено** (выпуск catalog-master-v014, отчёт
+  `docs/history/2026-09-26-catalog-master-v014-release.md`). Приёмка и разрешение
+  владельца — `D-2026-09-26-owner-acceptance-v014`.
+- Production: release `1a10421d9d7bcd68b2b1224ce74843bebd932e2c` (архив
+  `aipedia-code-1a10421d9d7b.zip`, SHA-256
+  `c80469b298a8221655030c735475fef2c945524a81c6d4466e2eaa74e4ec4377`), deploy
+  2026-09-26 18:18Z, `deployed-origin-verified`, backup
+  `/srv/aipedia/backups/aipedia-before-code-20260926T181857Z.sqlite3`. Публично
+  310 Models / 139 Tools; публичная проверка — `artifacts/catalog-master-v014/public_check.json`.
+- Исправлено по приёмке: порядок номеров (`D-2026-09-26-number-order`), GPT-Live 1
+  (`D-2026-09-26-gpt-live-1-classification`). Первый серверный preflight остановил
+  выпуск на расхождении pk цен (`offer-552…555`); план переведён на стабильные ключи
+  строк, второй preflight и выпуск прошли.
+- Master: `AI_CONTEXT/AIpediya_Model_Verification_Master.xlsx` v014 (v013 — резервная
+  копия в `backups/catalog-master-finalize-20260925/`).
+- Local: 310 / 139, совпадает с Production по выдаче (списки EN/DE, 1 248 карточек,
+  20 редиректов).
+- Тесты: рабочее дерево 260 OK (1 skip); архив выпуска в чистом окружении 258: 257 OK,
+  1 skip (`fcntl`, POSIX-only), 0 failed.
+- Оставшийся шаг: нет обязательных. Очередь: 441 модель резерва, 30 публичных
+  дополнений доступа/цен, 94 служебных расхождения, Kimi K3 (max), Grok Voice API,
+  основание показа оценок AA, вычитка машинных переводов.
+
+## Catalog master v013 — кандидат (заменён выпуском v014) — 2026-09-26 17:00 UTC
+
+- Статус на тот момент: основной этап базы завершён; кандидат проверен; ожидалась
+  приёмка. Заменён выпуском v014 (см. блок выше).
+- Окончательный кандидат (полные SHA-256; сводка — `artifacts/catalog-master-v013-final/FINAL_CANDIDATE.json`):
+  - код: `artifacts/code-release/aipedia-code-954db5a4586b.zip`,
+    `c623be31641c4ad1175ac911599555ddab9646ceba8e5333e71ee0d5cc8c7618`; id выпуска
+    `954db5a4586bf1d2b36fabb5ba0647b112bf17b3` = digest файлов из
+    `data/release/v013/CANDIDATE_FILES.txt` поверх базового commit
+    `b3116cf6dc563ccbd3c7e12eff8b428e40967547`; 304 файла, без SQLite/секретов;
+  - план каталога `data/release/v013/catalog_plan.json`:
+    `fd6281a04eb0962381cc9651374a90f3d69f99fc5276be6257e0b78cdace1c13`;
+  - переводы `data/release/v013/translations.json`:
+    `4c8f3c1354741cc6a12fddb40f450e2012b46d7ccc6cdd0a97074e513f58d075`;
+  - манифест публикации `data/release_state.json` (309/140):
+    `c13563fd4e9ff1d010c3ff0ca6b5b68e8996dfd9560361ada15264bcc70a2c33`;
+  - master `AI_CONTEXT/AIpediya_Model_Verification_Master.xlsx` (v013):
+    `7e0081324012706d5e2ac06debe1eefc4929b2785fbbdaada0ec91607626203c`.
+  Если после commit/tag пакет изменится — сверить с этими суммами и проверить
+  заново; прежний PASS не переносится.
+- Тесты архива (распакован вне проекта, чистое окружение: системный PATH + git,
+  без `AIPEDIA_*`/`PYTHON*`, `.env.local` и рабочего дерева; `.venv` только с
+  библиотеками; `python -E -s manage.py test catalog --settings=aipedia.test_settings -v 2`):
+  найдено 246, успешно 245, пропущено 1 (`fcntl` только POSIX — проверяется на
+  Linux-хосте), упало 0. Рабочее дерево: 248, OK (1 skip) — на 2 теста больше
+  из-за незакоммиченных тестов параллельной работы над историей сайта.
+  `test_import_research` больше не читает незакоммиченный `data/research/…json`:
+  контролируемый архив создаётся в тесте, проверки сохранены и дополнены.
+- Восстановление: внутри `apply-plan` (подделанный план → отказ без записи; сбой
+  посреди записи → откат); весь выпуск (сценарий
+  `artifacts/catalog-master-v013-final/release_process_recovery_script.py` на
+  окончательном архиве: сбой на переводах после успешного `apply-plan` и сбой
+  после переключения приложения → код побайтно = предыдущее приложение
+  (`634778807b2e`), БД = исходная: схема 0018, та же сумма каталога, 304
+  публичных; `migrate --check` предыдущего кода OK). supervisor/права Linux не
+  воспроизводились.
+- Граница Production: испытан исходный снимок Local, сверенный с публичными
+  данными Production построчно (304 + 138), — не копия серверной БД. Серверный
+  preflight `apply-plan` обязателен; при несовпадении — остановка без
+  принудительного применения и без перестроения плана на сервере.
+- Рабочий Local (для визуальной приёмки, `127.0.0.1:18810`): 309/140, состав —
+  `local_final_composition.json` (`a1e91589839cd280ca7468d16b682528abc4aa60b392bbd41648f651e63e79e3`),
+  база `2fd2aa6350224b37f467e5371128032c2219b3107142010560764c66db6611ba`; в этом
+  шаге не менялась. Проверка выдачи — текст/DOM/HTTP, не визуальная приёмка.
+- Отложено (очередь, не блокирует): 441 модель резерва; 30 публичных дополнений
+  доступа/цен; 94 служебных расхождения; Kimi K3 (max), Grok Voice API; основание
+  показа оценок AA; вычитка машинных переводов.
+- Реальных технических блокеров не осталось. Следующим выполнить: владельцу —
+  визуальная приёмка Local; выпуск — только после отдельного разрешения на этот
+  кандидат, по `docs/RELEASE.md`.
+
 ## История сайта: две среды и ярлык — Local, 2026-09-25 15:42 UTC
 
 - Изменено: по указанию владельца верх страницы `/ru/history/` содержит только
@@ -1021,7 +1097,39 @@ PASS; SQLite quick_check `ok`, foreign_key_check 0; `git diff --check` PASS.
 ## Передача на Production (серверные шаги, выполняет владелец на хосте)
 
 Развёртывание и перенос переводов запускаются **на самом сервере** `/srv/aipedia`
-(в этом окружении нет SSH к хосту AIpedia; StratForge-ключи не используются).
+(в этом окружении нет SSH к хосту AIpedia; [ЗАМЕНЕНО 2026-09-26: правило «StratForge-ключи не используются» неверно — см. AGENTS.md, раздел «Общая серверная машина и SSH»: разрешено использовать настроенную SSH identity к общей машине строго в контуре AIpediya, ключи не читать и не раскрывать]).
+Порядок строго по `docs/RELEASE.md`; Local SQLite на сервер не копируется;
+туннель, секреты и StratForge не трогаются.
+
+1. Локально собрать архив на релизном commit и сохранить SHA256:
+   `.\.venv\Scripts\python.exe tools/build_code_release.py`
+   (архив в `artifacts/code-release/aipedia-code-<commit12>.zip`, только
+   tracked-файлы, без SQLite/секретов).
+2. Локально проверить изолированно и dry-run:
+   `.\.venv\Scripts\python.exe tools/verify_isolated_release.py`
+   `.\.venv\Scripts\python.exe tools/deploy_code_release.py <archive> --sha256 <digest> --dry-run`
+3. Скопировать на сервер **два** файла (без Local SQLite): архив кода и
+   `artifacts/translation-data-release/translations-export.json` (42 260 записей,
+   15.3 MB, только переводы, без секретов).
+4. На сервере развернуть код:
+   `python3 tools/deploy_code_release.py /path/aipedia-code-<commit12>.zip --sha256 <digest>`
+   (останавливает только `aipedia`, online-backup серверной БД, перенос кода и
+   статики, `migrate` существующей БД, старт `aipedia`, проверка `/healthz`).
+5. На сервере перенести переводы в существующую серверную БД, идемпотентно и без
+   провайдера, сначала dry-run:
+   `python3 manage.py import_translations /path/translations-export.json --dry-run`
+   затем боевой прогон без `--dry-run`. Импорт применяет перевод только там, где
+   английский источник на сервере совпадает по sha256; несовпадения безопасно
+   пропускаются (остаётся английский), повторный запуск ничего не меняет.
+6. Публичная проверка `https://aipediya.com/`: `/healthz`, Модели и Инструменты,
+   карточка модели и инструмента, EN/UK/AR(RTL), локализованные описания и
+   страны, оригинальные бренды/ID/API/бенчмарки, правая панель (клик вне/Escape/
+   крестик), меню языков над панелью, смена языка сохраняет карточку, desktop и
+   mobile, защита числовых токенов (например «1M»).
+
+Экспорт переводов проверен на Local: `import_translations --dry-run` против той
+же базы даёт applied=0, unchanged=42 260 (полная идемпотентность).
+)]).
 Порядок строго по `docs/RELEASE.md`; Local SQLite на сервер не копируется;
 туннель, секреты и StratForge не трогаются.
 

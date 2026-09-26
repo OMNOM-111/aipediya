@@ -239,6 +239,7 @@ def _tool_catalog_context(request, selected_slug=None, hub=None):
     elif q:
         qs = qs.filter(
             Q(name__icontains=q)
+            | Q(aliases__icontains=q)
             | Q(version__icontains=q)
             | Q(developer__name__icontains=q)
             | Q(description__icontains=q)
@@ -468,7 +469,7 @@ def _catalog_context(request, selected_slug=None, hub=None):
     if q.startswith("#") and q[1:].isdigit():
         qs = qs.filter(public_number=int(q[1:]))
     elif q:
-        match = (Q(name__icontains=q) | Q(version__icontains=q)
+        match = (Q(name__icontains=q) | Q(aliases__icontains=q) | Q(version__icontains=q)
                  | Q(family__developer__name__icontains=q) | Q(description__icontains=q))
         for category in categories:
             if any(q.casefold() in label.casefold() for label in category.labels.values()):
@@ -747,10 +748,27 @@ def tool_catalog(request):
     return _render_catalog(request, _tool_catalog_context(request), listing=True)
 
 
+def _canonical_redirect(request, manager, hidden, slug, prefix, other=None, other_prefix=""):
+    """301 from a hidden duplicate/alias card to its published canonical card.
+
+    ``other`` covers a record classified on the wrong catalog (e.g. a model
+    listed as a tool): its canonical card lives in the other catalog."""
+    from django.http import HttpResponsePermanentRedirect
+    from .locale_urls import localize
+    target = hidden.filter(slug=slug).exclude(redirect_to="").values_list("redirect_to", flat=True).first()
+    if target and manager.filter(slug=target).exists():
+        return HttpResponsePermanentRedirect(localize("/%s/%s" % (prefix, target), request.aipedia_lang))
+    if target and other is not None and other.filter(slug=target).exists():
+        return HttpResponsePermanentRedirect(localize("/%s/%s" % (other_prefix, target), request.aipedia_lang))
+    return None
+
+
 @require_safe
 def detail(request, slug):
     if not readiness.public_models().filter(slug=slug).exists():
-        return _not_found(request)
+        return _canonical_redirect(request, readiness.public_models(),
+                                   ModelVersion.objects.filter(entry_type="model", published=False),
+                                   slug, "models", readiness.public_tools(), "tools") or _not_found(request)
     context = _catalog_context(request, selected_slug=slug)
     model = context["selected_model"]
     context["listing_title"] = context["seo"]["title"]
@@ -762,7 +780,8 @@ def detail(request, slug):
 @require_safe
 def tool_detail(request, slug):
     if not readiness.public_tools().filter(slug=slug).exists():
-        return _not_found(request)
+        return _canonical_redirect(request, readiness.public_tools(), Tool.objects.filter(published=False),
+                                   slug, "tools", readiness.public_models(), "models") or _not_found(request)
     context = _tool_catalog_context(request, selected_slug=slug)
     context["listing_title"] = context["seo"]["title"]
     context["seo"] = _entity_seo(request, context["selected_tool"], "tool")

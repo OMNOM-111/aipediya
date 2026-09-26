@@ -1,0 +1,34 @@
+# Release catalog-master-v014: base commit + exactly these working-tree files.
+# Continues candidate 954db5a4586b (catalog-master-v013) with the owner's two
+# acceptance fixes (number order, GPT-Live 1 classification).
+# Not included: parallel uncommitted work on the site history (catalog/product_history.py,
+# templates/product_history*.html, static/product-history*, tools/build_product_history.py,
+# tools/pack_ai_context.py and their tests, docs/timeline.json, docs/PRODUCT_HISTORY.md,
+# docs/SEARCH_DISCOVERY.md) and data/research/.
+catalog/catalog_master.py
+catalog/master_sync.py
+catalog/chronology.py
+catalog/comparison.py
+catalog/models.py
+catalog/views.py
+catalog/migrations/0019_catalog_master_aliases.py
+catalog/management/commands/catalog_master.py
+catalog/tests/test_catalog_master.py
+catalog/tests/test_catalog_master_sync.py
+catalog/tests/test_chronology.py
+catalog/tests/test_permanent_numbers.py
+catalog/tests/test_import_research.py
+catalog/tests/test_number_order.py
+static/site.js
+tools/build_code_release.py
+tools/deploy_code_release.py
+tools/master_editorial_2026_09_26.py
+tools/master_v014_gpt_live_2026_09_26.py
+data/release_state.json
+data/release/v014/catalog_plan.json
+data/release/v014/translations.json
+data/release/v014/CANDIDATE_FILES.txt
+docs/CATALOG_MASTER.md
+docs/RELEASE.md
+docs/history/2026-09-26-catalog-master-v013.md
+docs/history/2026-09-26-catalog-master-v014-release.md

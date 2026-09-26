@@ -12,6 +12,7 @@ import json
 import os
 import re
 import tempfile
+import urllib.parse
 import urllib.request
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -19,13 +20,39 @@ from pathlib import Path
 from .comparison import alphabet
 
 WORKBOOK_PATH = Path("AI_CONTEXT") / "AIpediya_Model_Verification_Master.xlsx"
-SCHEMA = "aipediya-catalog-master/3"
-UPGRADABLE_SCHEMAS = {"aipediya-catalog-master/2"}
+SCHEMA = "aipediya-catalog-master/4"
+UPGRADABLE_SCHEMAS = {"aipediya-catalog-master/2", "aipediya-catalog-master/3"}
 PRODUCTION_ORIGIN = "https://aipediya.com"
 MAX_VALIDATED_ROW = 5000
 
 STATUSES = ["PUBLISHED", "NEEDS_REVIEW"]
 DECISIONS = ["PUBLIC", "ARCHIVE", "NEEDS_REVIEW"]
+# Editorial reason codes per Publication Decision (column "Decision Code").
+DECISION_CODES = {
+    "PUBLIC": ["CURRENT_RELEASE", "HISTORICAL_RELEASE"],
+    "ARCHIVE": [
+        "DUPLICATE", "ALIAS_SNAPSHOT", "API_SNAPSHOT", "CONFIGURATION", "FORMAT_VARIANT",
+        "TECHNICAL_CHECKPOINT", "FAMILY_AGGREGATE", "MODEL_APP_SPLIT", "OUT_OF_SCOPE",
+        "CANCELLED", "TEST_ARTIFACT",
+    ],
+    "NEEDS_REVIEW": ["IDENTITY", "DATE", "EXISTENCE", "SCOPE", "SOURCE"],
+}
+ALL_DECISION_CODES = [code for codes in DECISION_CODES.values() for code in codes]
+# "Canonical / Parent Record ID" semantics. SAME_ENTITY relations mean the row
+# is the same thing as its canonical card under another name/form: its aliases
+# may lead (redirect) to that card. The others only relate distinct entities.
+RELATION_TYPES = ["DUPLICATE_OF", "ALIAS_OF", "FORMAT_OF", "MODE_OF", "SNAPSHOT_OF", "VARIANT_OF", "MEMBER_OF"]
+SAME_ENTITY = {"DUPLICATE_OF", "ALIAS_OF", "FORMAT_OF", "MODE_OF"}
+CODES_NEEDING_CANONICAL = {"DUPLICATE", "ALIAS_SNAPSHOT", "FORMAT_VARIANT", "CONFIGURATION"}
+ALIAS_SEPARATOR = " | "
+# An empty cell means "no new information"; this token explicitly clears a
+# value when the master is synchronised to Local.
+CLEAR = "<CLEAR>"
+MAX_RECORD_ID = 50  # Django SlugField length used by Local
+OFFER_UNITS = [
+    "input", "output", "image", "megapixel", "second", "minute", "month", "year", "hour",
+    "million_characters", "thousand_characters", "other", "request", "credit", "cache_read", "cache_write",
+]
 PRECISIONS = ["day", "month", "year"]
 YES_NO = ["YES", "NO"]
 MODEL_CATEGORIES = ["text", "image", "video", "audio", "other"]
@@ -42,7 +69,8 @@ WORKFLOW = [
     "Exact Release Date", "Approx Date", "Approx Precision",
 ]
 VERIFICATION = [
-    "Missing Data", "Reason", "Canonical / Parent Record ID", "Official Source",
+    "Missing Data", "Reason", "Decision Code", "Decision Date", "Decision Sources",
+    "Canonical / Parent Record ID", "Relation Type", "Aliases", "Official Source",
     "Secondary Source", "Last Verified", "On Local", "On Production", "Notes",
 ]
 MODEL_PUBLIC = [
@@ -203,6 +231,8 @@ def _verification(obj):
         if audit.get("media"):
             notes.append(audit["media"])
         return {"Status": "NEEDS_REVIEW", "Publication Decision": "NEEDS_REVIEW",
+                "Decision Code": "SOURCE", "Decision Date": now_utc()[:10],
+                "Reason": "Скрыт в Local (исследовательский слой): существование, дата и источники не проверены.",
                 "Official Source": "", "Secondary Source": "",
                 "Last Verified": "", "Notes": " ".join(notes)}
     official = evidence.get("source_url") or (obj.source.url if obj.source_id else "")
@@ -367,6 +397,18 @@ def local_snapshot():
     return snapshot, aux
 
 
+def production_sitemaps(get):
+    """Sitemap documents to scan: /sitemap.xml itself, or, when it is a
+    sitemap index (locale paths since GSD-1.0), its English root sitemap —
+    every locale lists the same public entities."""
+    root = get("/sitemap.xml")
+    if "<sitemapindex" not in root:
+        return [root]
+    children = re.findall(r"<loc>([^<]+)</loc>", root)
+    english = [u for u in children if u.rstrip("/").endswith("/en.xml")] or children[:1]
+    return [get(urllib.parse.urlsplit(url).path) for url in english]
+
+
 def fetch_production(origin=PRODUCTION_ORIGIN, timeout=60):
     """Read-only: slugs listed in the public sitemap plus the live release."""
     def get(path):
@@ -374,10 +416,10 @@ def fetch_production(origin=PRODUCTION_ORIGIN, timeout=60):
         with urllib.request.urlopen(request, timeout=timeout) as response:
             return response.read().decode("utf-8")
 
-    sitemap = get("/sitemap.xml")
     found = {"Models": set(), "Tools": set()}
-    for kind, slug in re.findall(r"<loc>[^<]*?/(models|tools)/([^?<]+)", sitemap):
-        found["Models" if kind == "models" else "Tools"].add(slug)
+    for sitemap in production_sitemaps(get):
+        for kind, slug in re.findall(r"<loc>[^<]*?/(models|tools)/([^?<]+)", sitemap):
+            found["Models" if kind == "models" else "Tools"].add(slug)
     release = ""
     try:
         release = json.loads(get("/healthz")).get("release", "")
@@ -389,11 +431,18 @@ def fetch_production(origin=PRODUCTION_ORIGIN, timeout=60):
 # ------------------------------------------------------------ master logic
 
 def missing_items(sheet, row):
+    row = {k: ("" if v == CLEAR else v) for k, v in row.items()}
     if row.get("Publication Decision") == "ARCHIVE":
-        # Archived variants need only their identity, source and reason.
-        return [key for column, key in (
-            ("Reason", "reason"), ("Official Source", "official_source"),
-            ("Last Verified", "last_verified")) if not row.get(column)]
+        # Archived rows need a justified, dated, sourced decision (and their
+        # canonical card when they are a duplicate/alias), not publication data.
+        items = [key for column, key in (
+            ("Decision Code", "decision_code"), ("Reason", "reason"),
+            ("Decision Date", "decision_date"), ("Last Verified", "last_verified")) if not row.get(column)]
+        if not row.get("Official Source") and not row.get("Decision Sources"):
+            items.append("decision_sources")
+        if row.get("Decision Code") in CODES_NEEDING_CANONICAL and not row.get("Canonical / Parent Record ID"):
+            items.append("canonical_record")
+        return items
     items = []
     if not row.get("Publication Decision"):
         items.append("publication_decision")
@@ -409,6 +458,57 @@ def missing_items(sheet, row):
     if not row.get("Description EN"):
         items.append("description_en")
     return items
+
+
+def split_aliases(value):
+    """Aliases cell -> list of names; the separator is ' | ' (pipe)."""
+    return [part.strip() for part in (value or "").split("|") if part.strip()]
+
+
+def _alias_key(name):
+    return " ".join((name or "").casefold().split())
+
+
+def alias_index(rows):
+    """Casefolded name/alias -> set of Record IDs claiming it (one sheet)."""
+    index = {}
+    for row in rows:
+        for name in [row.get("Name", "")] + split_aliases(row.get("Aliases")):
+            if name:
+                index.setdefault(_alias_key(name), set()).add(row["Record ID"])
+    return index
+
+
+def cross_parent(value):
+    """'Models:<id>' / 'Tools:<id>' -> (sheet, id) for a canonical card on the
+    other sheet (e.g. a model wrongly listed as a tool), else None."""
+    sheet, sep, record = (value or "").partition(":")
+    return (sheet, record) if sep and sheet in MAIN and record else None
+
+
+def canonical_target(row, by_id):
+    """Record ID a SAME_ENTITY row resolves to (following the chain), or ''."""
+    seen, current = set(), row
+    while current and current.get("Relation Type") in SAME_ENTITY and current.get("Canonical / Parent Record ID"):
+        if current["Record ID"] in seen:
+            return ""
+        seen.add(current["Record ID"])
+        current = by_id.get(current["Canonical / Parent Record ID"])
+    return current["Record ID"] if current and current is not row else ""
+
+
+def parent_cycles(rows):
+    """Record IDs that sit on a Canonical / Parent cycle."""
+    parent = {r["Record ID"]: r.get("Canonical / Parent Record ID", "") for r in rows if r.get("Record ID")}
+    cyclic = set()
+    for start in parent:
+        path, node = [], start
+        while node and node in parent and node not in path:
+            path.append(node)
+            node = parent[node]
+        if node in path:
+            cyclic.update(path[path.index(node):])
+    return cyclic
 
 
 def chronology_date(row):
@@ -438,8 +538,61 @@ def chronology_numbers(rows):
     return {r["Record ID"]: str(n) for n, r in enumerate(dated, 1)}
 
 
+def new_record_id(sheet, name, taken):
+    """Controlled Record ID for a new row: slug of the name + stable hash."""
+    import hashlib
+    base = re.sub(r"-+", "-", re.sub(r"[^a-z0-9]+", "-", (name or "").lower())).strip("-")[:MAX_RECORD_ID - 9]
+    base = base.strip("-") or "record"
+    salt = 0
+    while True:
+        digest = hashlib.sha1(("aipediya-master:%s:%s:%d" % (sheet, name, salt)).encode()).hexdigest()[:8]
+        record = "%s-%s" % (base, digest)
+        if record not in taken:
+            return record
+        salt += 1
+
+
+def normalize_drafts(workbook_rows, changelog, stamp):
+    """Rows typed by a person with only some known facts become drafts.
+
+    A row with a Name but no Record ID gets a controlled Record ID (kept from
+    then on); empty Status / Publication Decision become NEEDS_REVIEW with a
+    draft note, so an incomplete row is saved but never counts as publishable.
+    """
+    touched = 0
+    for sheet in MAIN:
+        rows = workbook_rows.get(sheet, [])
+        taken = {r.get("Record ID") for r in rows if r.get("Record ID")}
+        for row in rows:
+            changes = {}
+            if not row.get("Record ID"):
+                if not row.get("Name"):
+                    continue
+                changes["Record ID"] = new_record_id(sheet, row["Name"], taken)
+                taken.add(changes["Record ID"])
+            if not row.get("Status"):
+                changes["Status"] = "NEEDS_REVIEW"
+            if not row.get("Publication Decision"):
+                changes["Publication Decision"] = "NEEDS_REVIEW"
+                if not row.get("Decision Code"):
+                    changes["Decision Code"] = "SOURCE" if not row.get("Official Source") else "IDENTITY"
+                if not row.get("Reason"):
+                    changes["Reason"] = ("Черновик: строка добавлена вручную %s; нужна проверка идентичности, "
+                                         "источника и даты." % stamp[:10])
+                if not row.get("Decision Date"):
+                    changes["Decision Date"] = stamp[:10]
+            record = changes.get("Record ID") or row["Record ID"]
+            for field, value in changes.items():
+                changelog.append({"Timestamp (UTC)": stamp, "Sheet": sheet, "Record ID": record, "Field": field,
+                                  "Before": row.get(field, ""), "After": value, "Reason": "draft row normalised"})
+                row[field] = value
+            touched += bool(changes)
+    return touched
+
+
 def refresh_derived(workbook_rows, changelog, reason, stamp, quiet_ids=()):
     """Recompute Missing Data, counts and Public Numbers; log number changes."""
+    normalize_drafts(workbook_rows, changelog, stamp)
     counts = {}
     for aux_sheet in ("Offers", "Evaluations", "Access"):
         for row in workbook_rows.get(aux_sheet, []):
@@ -468,6 +621,79 @@ def refresh_derived(workbook_rows, changelog, reason, stamp, quiet_ids=()):
                     changed += 1
                 row["Public Number"] = new
     return changed
+
+
+# Meta labels once filled with finite-range Excel formulas (v004-v012). They are
+# now computed values, refreshed on every write, so added rows are never missed.
+COMPUTED_META = {
+    "Записей в каталоге": "records",
+    "Tools: охвачено проверкой": "covered_tools",
+    "Models: охвачено проверкой": "covered_models",
+    "Всего охвачено проверкой": "covered",
+    "Охват, не полнота проверки": "coverage_percent",
+    "Ещё не проверялись": "not_covered",
+    "Всего Tools": "tools",
+    "Tools с датой": "tools_dated",
+    "Tools без даты": "tools_undated",
+    "Заполненность дат Tools": "tools_dated_percent",
+    "Models: обязательные пробелы": "models_gaps",
+    "Предложено в архив, всего": "archive",
+}
+OBSOLETE_META = {"Без даты: ещё в очереди", "Без даты: проверено, не решено",
+                 "Проверено в этом проходе", "Проверено ранее"}
+
+
+def catalog_stats(workbook_rows):
+    """Reproducible counters; coverage counts unique (Sheet, Record ID) pairs."""
+    ids = {sheet: {r["Record ID"] for r in workbook_rows.get(sheet, [])} for sheet in MAIN}
+    covered = {sheet: set() for sheet in MAIN}
+    for event in workbook_rows.get("Changelog", []):
+        if event.get("Field") == "Verification result" and event.get("Record ID") in ids.get(event.get("Sheet"), ()):
+            covered[event["Sheet"]].add(event["Record ID"])
+    total = sum(len(v) for v in ids.values())
+    done = sum(len(v) for v in covered.values())
+    tools = workbook_rows.get("Tools", [])
+    dated = sum(1 for r in tools if chronology_date(r))
+    stats = {
+        "records": total, "covered_models": len(covered["Models"]), "covered_tools": len(covered["Tools"]),
+        "covered": done, "coverage_percent": "%.2f%%" % (100.0 * done / total if total else 0),
+        "not_covered": total - done, "tools": len(tools), "tools_dated": dated,
+        "tools_undated": len(tools) - dated,
+        "tools_dated_percent": "%.2f%%" % (100.0 * dated / len(tools) if tools else 0),
+        "models_gaps": sum(1 for r in workbook_rows.get("Models", []) if r.get("Missing Data")),
+        "archive": sum(1 for s in MAIN for r in workbook_rows.get(s, []) if r.get("Publication Decision") == "ARCHIVE"),
+    }
+    for sheet in MAIN:
+        for decision in DECISIONS:
+            stats["%s %s" % (sheet, decision)] = sum(
+                1 for r in workbook_rows.get(sheet, []) if r.get("Publication Decision") == decision)
+        stats["%s PUBLISHED" % sheet] = sum(1 for r in workbook_rows.get(sheet, []) if r.get("Status") == "PUBLISHED")
+    return stats
+
+
+def refresh_meta(meta, workbook_rows, stamp):
+    """Replace formula/obsolete Meta rows by computed values; add a summary."""
+    stats = catalog_stats(workbook_rows)
+    refreshed = {}
+    for key, value in meta.items():
+        if key in OBSOLETE_META:
+            continue
+        if key in COMPUTED_META:
+            value = str(stats[COMPUTED_META[key]])
+        elif str(value).startswith("="):
+            continue
+        refreshed[key] = value
+    refreshed["Computed (UTC)"] = stamp
+    refreshed["Computed counts"] = "; ".join(
+        "%s=%s" % (k, stats[k]) for k in stats if k.split(" ")[0] in MAIN)
+    refreshed["Coverage rule"] = ("Охват = уникальные пары (Sheet, Record ID) с событием Verification result "
+                                  "в Changelog; повторная проверка не увеличивает процент; это не полнота полей.")
+    return refreshed
+
+
+# Link rows identified by content: a link already in the master under a
+# master-made key is not imported again under its Local key.
+NATURAL_KEYS = {"Tool Platforms": ("Record ID", "Platform"), "Origins": ("Record ID", "Country")}
 
 
 def import_from_local(workbook_rows, snapshot, aux, production=None, stamp=None):
@@ -512,7 +738,11 @@ def import_from_local(workbook_rows, snapshot, aux, production=None, stamp=None)
     for sheet in AUX:
         rows = workbook_rows.setdefault(sheet, [])
         known = {r["Key"] for r in rows}
-        new = [{"Key": key, **values} for key, values in aux[sheet].items() if key not in known]
+        natural = NATURAL_KEYS.get(sheet)
+        if natural:
+            known_natural = {tuple(r.get(c, "") for c in natural) for r in rows}
+        new = [{"Key": key, **values} for key, values in aux[sheet].items() if key not in known
+               and not (natural and tuple(values.get(c, "") for c in natural) in known_natural)]
         rows.extend(new)
         if new:
             changelog.append({
@@ -530,17 +760,21 @@ def validate(workbook_rows, snapshot=None, aux=None):
     """Return (errors, warnings, drift) for the master workbook."""
     errors, warnings, drift = [], [], {}
     ids = {}
+    cross_parents = []
     for sheet in MAIN:
         categories = MODEL_CATEGORIES if sheet == "Models" else TOOL_CATEGORIES
         rows = workbook_rows.get(sheet, [])
         numbers = chronology_numbers(rows)
         seen, parents = {}, []
         for index, row in enumerate(rows, start=2):
+            row = {k: ("" if v == CLEAR else v) for k, v in row.items()}
             record = row.get("Record ID", "")
             where = "%s row %d (%s)" % (sheet, index, record or row.get("Name") or "?")
             if not record:
                 errors.append("%s: empty Record ID" % where)
                 continue
+            if len(record) > MAX_RECORD_ID:
+                errors.append("%s: Record ID longer than %d characters" % (where, MAX_RECORD_ID))
             if not RECORD_ID.match(record):
                 errors.append("%s: Record ID may contain only letters, digits, '-' and '_'" % where)
             if record in seen:
@@ -574,15 +808,35 @@ def validate(workbook_rows, snapshot=None, aux=None):
                 errors.append("%s: Publication Decision must be PUBLIC, ARCHIVE or NEEDS_REVIEW" % where)
             if status == "PUBLISHED" and decision != "PUBLIC":
                 errors.append("%s: PUBLISHED requires Publication Decision PUBLIC" % where)
+            code = row.get("Decision Code", "")
+            if code and code not in DECISION_CODES.get(decision, []):
+                errors.append("%s: Decision Code %s is not valid for %s" % (where, code, decision or "?"))
+            if row.get("Decision Date") and not _valid_iso(row["Decision Date"]):
+                errors.append("%s: Decision Date must be YYYY-MM-DD" % where)
             if decision == "ARCHIVE":
-                lacking = [c for c in ("Reason", "Official Source") if not row.get(c)]
+                lacking = [c for c in ("Reason", "Decision Code", "Decision Date") if not row.get(c)]
+                if not row.get("Official Source") and not row.get("Decision Sources"):
+                    lacking.append("Official Source or Decision Sources")
+                if code in CODES_NEEDING_CANONICAL and not row.get("Canonical / Parent Record ID"):
+                    lacking.append("Canonical / Parent Record ID")
                 if lacking:
                     errors.append("%s: ARCHIVE requires %s" % (where, ", ".join(lacking)))
+            elif decision == "NEEDS_REVIEW" and not row.get("Reason"):
+                errors.append("%s: NEEDS_REVIEW requires the open question in Reason" % where)
+            relation = row.get("Relation Type", "")
+            if relation and relation not in RELATION_TYPES:
+                errors.append("%s: unknown Relation Type %s" % (where, relation))
             parent = row.get("Canonical / Parent Record ID", "")
+            if relation and not parent:
+                errors.append("%s: Relation Type without Canonical / Parent Record ID" % where)
+            if relation in SAME_ENTITY and decision != "ARCHIVE":
+                errors.append("%s: %s rows are the same entity as their canonical card and must be ARCHIVE" % (where, relation))
             if parent == record:
                 errors.append("%s: Canonical / Parent Record ID points to itself" % where)
+            elif cross_parent(parent):
+                cross_parents.append((sheet, where, record, cross_parent(parent), relation, decision))
             elif parent:
-                parents.append((where, parent))
+                parents.append((where, parent, relation))
             if status == "PUBLISHED":
                 lacking = [c for c in ("Name", "Developer", "Official Source", "Last Verified") if not row.get(c)]
                 if lacking:
@@ -610,10 +864,50 @@ def validate(workbook_rows, snapshot=None, aux=None):
                 else:
                     kind = "Local Number differs from Public Number: renumber at sync"
                 warnings.append((kind, "%s [%s -> %s]" % (where, local_number or "-", public_number or "-")))
-        for where, parent in parents:
+        by_id = {r.get("Record ID"): r for r in rows if r.get("Record ID")}
+        for where, parent, relation in parents:
             if parent not in seen:
                 errors.append("%s: Canonical / Parent Record ID %s not found in %s" % (where, parent, sheet))
+            elif relation in SAME_ENTITY and by_id[parent].get("Publication Decision") == "ARCHIVE":
+                errors.append("%s: canonical %s is itself ARCHIVE (point to the published card)" % (where, parent))
+            elif relation in SAME_ENTITY and by_id[parent].get("Publication Decision") != "PUBLIC":
+                warnings.append(("canonical card is not PUBLIC: alias leads nowhere yet", where))
+        for record in sorted(parent_cycles(rows)):
+            errors.append("%s: Canonical / Parent Record ID cycle through %s" % (sheet, record))
+        claims = {}
+        for row in rows:
+            owner = canonical_target(row, by_id) or row.get("Record ID")
+            for name in [row.get("Name", "")] + split_aliases(row.get("Aliases")):
+                if name:
+                    claims.setdefault(_alias_key(name), set()).add(owner)
+        for row in rows:
+            owner = canonical_target(row, by_id) or row.get("Record ID")
+            others = claims.get(_alias_key(row.get("Name", "")), set()) - {owner}
+            if row.get("Name") and others:
+                warnings.append(("name matches another record or alias (possible duplicate / re-discovery; "
+                                 "an ARCHIVE decision stands unless reopened)",
+                                 "%s (%s) ~ %s" % (sheet, row.get("Record ID"), ", ".join(sorted(others)))))
+            for alias in split_aliases(row.get("Aliases")):
+                owners = claims.get(_alias_key(alias), set())
+                if len(owners) > 1:
+                    errors.append("%s (%s): alias %r is ambiguous, also claimed by %s" % (
+                        sheet, row.get("Record ID"), alias, ", ".join(sorted(owners - {row.get("Record ID")}))))
         ids[sheet] = set(seen)
+    for sheet, where, record, (target_sheet, target), relation, decision in cross_parents:
+        target_rows = {r.get("Record ID"): r for r in workbook_rows.get(target_sheet, [])}
+        target_row = target_rows.get(target)
+        if target_sheet == sheet:
+            errors.append("%s: use a plain Record ID for a canonical card on the same sheet" % where)
+        elif target_row is None:
+            errors.append("%s: Canonical / Parent Record ID %s:%s not found" % (where, target_sheet, target))
+        elif relation in SAME_ENTITY and target_row.get("Publication Decision") != "PUBLIC":
+            errors.append("%s: cross-sheet canonical %s:%s must be PUBLIC" % (where, target_sheet, target))
+        elif cross_parent(target_row.get("Canonical / Parent Record ID", "")) == (sheet, record):
+            errors.append("%s: Canonical / Parent Record ID cycle across sheets" % where)
+        if relation and relation not in SAME_ENTITY:
+            errors.append("%s: a cross-sheet canonical link must be a same-entity relation" % where)
+        if decision != "ARCHIVE":
+            errors.append("%s: a row linked to a canonical card on another sheet must be ARCHIVE" % where)
     for sheet in AUX:
         seen = set()
         for index, row in enumerate(workbook_rows.get(sheet, []), start=2):
@@ -628,6 +922,13 @@ def validate(workbook_rows, snapshot=None, aux=None):
                 errors.append("%s: Record Type must be model or tool" % where)
             elif row.get("Record ID") not in ids.get(target, set()):
                 errors.append("%s: Record ID %s not found in %s" % (where, row.get("Record ID"), target))
+            if sheet == "Offers":
+                # Empty Billing Unit means the standard unit label of the site
+                # (e.g. input = USD per 1M input tokens); "other" needs its own.
+                if row.get("Unit") not in OFFER_UNITS:
+                    errors.append("%s (%s): Offer Unit %r is not a site unit" % (where, row.get("Key"), row.get("Unit")))
+                elif row.get("Unit") == "other" and not row.get("Billing Unit"):
+                    errors.append("%s (%s): Unit other requires Billing Unit" % (where, row.get("Key")))
     if snapshot is not None:
         for sheet in MAIN:
             master = {r.get("Record ID"): r for r in workbook_rows.get(sheet, [])}
@@ -648,6 +949,10 @@ def validate(workbook_rows, snapshot=None, aux=None):
         for sheet in AUX:
             master = {r.get("Key"): r for r in workbook_rows.get(sheet, [])}
             missing = sorted(set(aux[sheet]) - set(master))
+            natural = NATURAL_KEYS.get(sheet)
+            if natural:
+                present = {tuple(r.get(c, "") for c in natural) for r in master.values()}
+                missing = [k for k in missing if tuple(aux[sheet][k].get(c, "") for c in natural) not in present]
             if missing:
                 errors.append("%s: %d Local rows absent from master: %s" % (
                     sheet, len(missing), ", ".join(missing[:10])))
@@ -685,7 +990,8 @@ def read_workbook(path=WORKBOOK_PATH):
         absent = [c for c in columns if c not in headers]
         if upgrading and sheet in MAIN:
             absent = [c for c in absent if c not in (
-                "Publication Decision", "Approx Precision", "Reason", "Canonical / Parent Record ID")]
+                "Publication Decision", "Approx Precision", "Reason", "Canonical / Parent Record ID",
+                "Decision Code", "Decision Date", "Decision Sources", "Relation Type", "Aliases")]
         if absent:
             raise ValueError("%s sheet %s lacks columns: %s" % (path, sheet, ", ".join(absent)))
         extra[sheet] = [h for h in headers if h and h not in columns]
@@ -702,24 +1008,30 @@ def read_workbook(path=WORKBOOK_PATH):
 
 
 RULES_RU = [
-    ("Назначение", "Единая каноническая база AIpediya: все Models и Tools — опубликованные, скрытые кандидаты и новые находки. Запись сначала появляется и проверяется здесь; затем PUBLISHED-строки синхронизируются в Local, а оттуда по docs/RELEASE.md — в Production."),
-    ("Status", "PUBLISHED — запись проверена и входит в публичный каталог. NEEDS_REVIEW — запись не в публичном каталоге и остаётся только в master (нерешённые вопросы или ARCHIVE)."),
-    ("Publication Decision", "PUBLIC — самостоятельная публичная модель/инструмент (Status PUBLISHED после проверки даты и источников). ARCHIVE — технический snapshot/checkpoint/dated API version/alias/дубликат/закрытая или кратковременная версия: остаётся в master, без Public Number, не в публичной таблице и sitemap, данные не удаляются, решение можно пересмотреть. NEEDS_REVIEW — существование, назначение или дата не подтверждены. Решение — только по официальному описанию (release, model card, API product vs snapshot/alias), не по похожему названию."),
-    ("Reason", "Почему запись не публикуется отдельно (обязательно для ARCHIVE) или что мешает решению."),
-    ("Canonical / Parent Record ID", "Record ID основной записи того же листа, если это вариант, snapshot или alias."),
+    ("Назначение", "Единая каноническая база AIpediya: все Models и Tools — опубликованные, скрытые кандидаты, архив и новые находки. Запись сначала появляется и проверяется здесь; затем изменения переносятся в Local (проверенная синхронизация) и только по docs/RELEASE.md и отдельной команде владельца — в Production. Действующая книга одна: AI_CONTEXT/AIpediya_Model_Verification_Master.xlsx; версии v001–v012 — неактивные резервные копии."),
+    ("Три разных понятия", "Publication Decision — редакционное решение (нужна ли самостоятельная карточка). Status — разрешено ли показывать запись в публичном каталоге при следующей проверенной синхронизации. On Local / On Production — фактическое наблюдаемое состояние контуров на дату проверки. Catalog Status — жизненный цикл продукта (active/deprecated/retired/archived), не редакционная ценность."),
+    ("Status", "PUBLISHED — разрешено к публикации: Publication Decision=PUBLIC и нет блокирующих пробелов (Missing Data пусто; исключение — уже опубликованная на сайте запись, у которой не хватает только даты: она остаётся без Public Number до решения владельца). NEEDS_REVIEW — не показывать публично (ARCHIVE, NEEDS_REVIEW или PUBLIC с блокирующим пробелом). PUBLISHED не означает, что запись уже на сайте."),
+    ("Publication Decision", "PUBLIC — подходит для самостоятельной публичной карточки: подтверждены идентичность, разработчик, назначение и тип выпуска, и понятно, почему нужна отдельная карточка. ARCHIVE — остаётся только во внутренней базе: доказанный дубль, alias или датированный идентификатор той же модели, режим/конфигурация, формат весов, технический checkpoint, семейный агрегат при наличии отдельных карточек, продукт не того листа, вне области каталога, отменённый выпуск, тестовый артефакт. NEEDS_REVIEW — есть конкретный нерешённый вопрос (в Reason). Закрытие продукта, малый размер, язык, страна или неизвестный бренд сами по себе не основание для ARCHIVE; недостаток сведений не маскировать ARCHIVE."),
+    ("Decision Code", "Код решения. PUBLIC: CURRENT_RELEASE / HISTORICAL_RELEASE. ARCHIVE: DUPLICATE, ALIAS_SNAPSHOT, API_SNAPSHOT, CONFIGURATION, FORMAT_VARIANT, TECHNICAL_CHECKPOINT, FAMILY_AGGREGATE, MODEL_APP_SPLIT, OUT_OF_SCOPE, CANCELLED, TEST_ARTIFACT. NEEDS_REVIEW: IDENTITY, DATE, EXISTENCE, SCOPE, SOURCE."),
+    ("Reason", "Индивидуальный комментарий: для ARCHIVE — установленный факт и отдельно редакционный вывод (не «мусор» и не «никому не нужно»); для NEEDS_REVIEW — точный незакрытый вопрос; для PUBLIC — зачем нужна отдельная карточка."),
+    ("Decision Date / Decision Sources", "Дата редакционного решения (YYYY-MM-DD) и основания (URL через ' | '). Для ARCHIVE обязательны код, Reason, дата и источник (Decision Sources или Official Source)."),
+    ("Canonical / Parent Record ID + Relation Type", "Связь с другой записью того же листа. DUPLICATE_OF / ALIAS_OF / FORMAT_OF / MODE_OF — та же сущность под другим именем или в другой форме: строка всегда ARCHIVE, канон — PUBLIC-запись, её имя и aliases ведут на канон. SNAPSHOT_OF / VARIANT_OF / MEMBER_OF — связь разных сущностей (версия, вариант, член семейства), не объединение. Цепочки к архиву и циклы запрещены. Цены и оценки между разными версиями не переносятся."),
+    ("Aliases", "Альтернативные названия той же сущности через ' | ' (пробел, вертикальная черта, пробел). Все aliases ищутся; один alias не может принадлежать двум разным каноническим записям. Вариант или семейство — не alias."),
+    ("Повторная находка", "Перед добавлением искать во всей книге (Name, Aliases, Developer, model ID, Official Source), включая ARCHIVE. Повторная находка не отменяет ARCHIVE: пересмотр — только явно, с новым основанием и записью в Changelog."),
     ("Approx Precision", "Вычисляется из Approx Date: year / month / day."),
-    ("Record ID", "Slug записи. Стабильная идентичность: после создания не меняется никогда (URL /models/<id>, /tools/<id>). Для новой записи — латиница, цифры, '-' и '_', уникально в листе."),
-    ("Public Number", "Вычисляется, вручную не править. Хронологический номер по verified release date среди PUBLISHED: точная дата, иначе ≈ дата (начало периода); при равной дате — по имени, затем Record ID. Новая модель получает следующий номер; найденная позже историческая встаёт на своё место, последующие номера сдвигаются — каждое изменение пишется в Changelog."),
-    ("Даты", "Exact Release Date — только подтверждённая (YYYY-MM-DD). Если точной нет, но есть надёжная дата первого публичного существования — Approx Date: ≈YYYY-MM или ≈YYYY-MM-DD. Обе сразу не заполнять. Дату git-коммита за дату выпуска не выдавать."),
-    ("Проверка", "Official Source — первичный источник; Secondary Source — независимое подтверждение; Last Verified — дата проверки (YYYY-MM-DD). У PUBLISHED обязательны Name, Developer, Official Source, Last Verified. Ссылки импорта лежат в Import Sources (unverified) и ничего не подтверждают."),
-    ("Missing Data", "Вычисляется: чего не хватает записи (publication_decision, name, developer, category, date, official_source, last_verified, description_en; для ARCHIVE — только reason, official_source, last_verified). Пусто = данных достаточно."),
-    ("On Local / On Production", "Факт публичности записи в Local (база) и на Production (публичный sitemap, только чтение). Расхождение со Status = работа для синхронизации."),
-    ("Local Number", "Номер, который сейчас стоит в Local. Отличие от Public Number = перенумерация при следующей синхронизации."),
-    ("Связанные листы", "Offers, Evaluations, Access, Facts, Origins, Tool Platforms — цены, оценки, доступ, факты, страны и платформы; связь по Record Type + Record ID. Key — стабильный ключ строки; для новой строки придумать уникальный (например offer-new-<record>-1)."),
-    ("Локализации", "EN и RU — редактируемые колонки. Остальные 20 локалей из записи лежат в *Other Locales (JSON) и выводятся из английского конвейером переводов."),
+    ("Record ID", "Slug записи. Стабильная идентичность: после создания не меняется и не переиспользуется (URL /models/<id>, /tools/<id>), не зависит от имени, сортировки, публикации или объединения."),
+    ("Public Number", "Вычисляется, вручную не править. Хронологический номер по verified release date среди PUBLISHED (отдельно Models и Tools): точная дата, иначе ≈ дата (начало периода); при равной дате — по имени, затем Record ID. Историческая вставка сдвигает последующие номера — каждое изменение пишется в Changelog. Непубличные записи и записи без подтверждённой даты номера не получают (сортируются в конце). Local получает номера через sync-local (правило владельца 2026-09-26), прежние номера сохраняются в ревизиях Local; Production — только отдельным выпуском."),
+    ("Даты", "Exact Release Date — только подтверждённая (YYYY-MM-DD). Иначе надёжная дата первого публичного существования — Approx Date: ≈YYYY-MM или ≈YYYY-MM-DD. Обе сразу не заполнять. Различать анонс, preview, фактический доступ, публикацию весов и обновление страницы. Дату git-коммита за дату выпуска не выдавать. Фиктивную дату ради номера не ставить."),
+    ("Проверка", "Official Source — первичный источник; Secondary Source — независимое подтверждение (качество и ограничения — в Notes); Last Verified — дата реальной проверки. У PUBLISHED обязательны Name, Developer, Official Source, Last Verified. Ссылки импорта в Import Sources (unverified) ничего не подтверждают."),
+    ("Missing Data", "Вычисляется: чего не хватает (publication_decision, name, developer, category, date, official_source, last_verified, description_en; для ARCHIVE — decision_code, reason, decision_date, decision_sources, last_verified, canonical_record для дублей). Неприменимые поля (контекст или benchmark у инструмента) пробелами не считаются. Пусто = формально достаточно, не «всё подтверждено»."),
+    ("On Local / On Production", "Факт публичности записи в Local (база) и на Production (публичный sitemap, только чтение) на дату из Meta. Расхождение со Status = работа для проверенной синхронизации."),
+    ("Local Number", "Номер, который сейчас стоит в Local. Отличие от Public Number = план перенумерации, применяемый только отдельным решением."),
+    ("Связанные листы", "Offers, Evaluations, Access, Facts, Origins, Tool Platforms — цены, оценки, доступ, факты, страны и платформы; связь по Record Type + Record ID. Key — стабильный ключ строки. Offers: цена в USD; пустой Billing Unit означает стандартную единицу сайта (input = за 1M входных токенов и т. д.), Unit=other требует Billing Unit. Evaluations: Public=YES только при подтверждённой идентичности и праве показа; результаты разработчика не выдавать за независимые. Facts с ключами проверки (scoped_verification и т. п.) — внутренние, на сайт не переносятся."),
+    ("Локализации", "EN и RU — редактируемые колонки. Остальные 20 локалей лежат в *Other Locales (JSON) и выводятся из английского конвейером переводов."),
     ("Неизвестное", "Оставлять пустым, не нулём и не догадкой."),
-    ("Changelog", "Журнал изменений master: импорт, перенумерация, ручные правки важных полей (агенту — добавить строку)."),
-    ("Команды", "Импорт/обновление из Local (master не перетирается): .\\.venv\\Scripts\\python.exe manage.py catalog_master import [--production] | Проверка: … manage.py catalog_master check [--production]"),
+    ("Changelog", "Журнал изменений master (только дописывается): импорт, решения, перенумерация, правки полей с Before/After и причиной."),
+    ("Пополнение", "Поиск во всей базе → обновление существующей записи или новая запись с новым Record ID → проверка источников → редакционное решение → refresh + check → пробная синхронизация на изолированной копии Local → приёмка владельцем → отдельно разрешённая публикация."),
+    ("Команды", "Пересчёт производных полей и Meta: .\\.venv\\Scripts\\python.exe manage.py catalog_master refresh | Импорт новых записей из Local (master не перетирается): … catalog_master import [--production] | Проверка: … catalog_master check [--production] | План синхронизации master → Local: … catalog_master sync-local [--apply] (без --apply ничего не пишет; применять сначала к копии через AIPEDIA_DB); после --apply выполнить import, чтобы книга получила новые ключи и фактическое On Local. Что переносится — docs/CATALOG_MASTER.md."),
     ("Production", "Таблица и команды не публикуют и не меняют Production; --production только читает публичный sitemap."),
 ]
 
@@ -794,6 +1106,8 @@ def write_workbook(workbook_rows, meta, path=WORKBOOK_PATH, extra=None):
         sheet.freeze_panes = "F2"
         validation(sheet, col["Status"], STATUSES)
         validation(sheet, col["Publication Decision"], DECISIONS)
+        validation(sheet, col["Decision Code"], ALL_DECISION_CODES)
+        validation(sheet, col["Relation Type"], RELATION_TYPES)
         decision = col["Publication Decision"]
         for value, color in (("PUBLIC", "C6E0B4"), ("ARCHIVE", "D9D9D9"), ("NEEDS_REVIEW", "FFF4CE")):
             sheet.conditional_formatting.add(
@@ -852,6 +1166,7 @@ def write_workbook(workbook_rows, meta, path=WORKBOOK_PATH, extra=None):
     lists = workbook.create_sheet("Lists")
     for index, (title, values) in enumerate([
             ("Status", STATUSES), ("Publication Decision", DECISIONS), ("YES/NO", YES_NO),
+            ("Decision Code", ALL_DECISION_CODES), ("Relation Type", RELATION_TYPES),
             ("Model Category", MODEL_CATEGORIES),
             ("Tool Category", TOOL_CATEGORIES), ("Catalog Status", CATALOG_STATUSES),
             ("Release Stage", STAGES), ("Local Execution", LOCAL_EXECUTION)], start=1):
