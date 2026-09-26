@@ -8,7 +8,7 @@
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный сайт работает на выпуске `1a10421d9d7bcd68b2b1224ce74843bebd932e2c`
+Текущий публичный сайт работает на commit `1a10421d9d7bcd68b2b1224ce74843bebd932e2c`
 (catalog-master-v014, tag `release-2026-09-26-catalog-master-v014`, 2026-09-26 18:18Z;
 310 Models / 139 Tools; отчёт — `docs/history/2026-09-26-catalog-master-v014-release.md`).
 Это id кандидата (digest файлов из `data/release/v014/CANDIDATE_FILES.txt` поверх
