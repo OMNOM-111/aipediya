@@ -7,8 +7,8 @@ Local therefore never sends. There is no scheduler; run it deliberately (or
 from a Production timer after the owner enables it).
 
 Per run: pending events due now, host allowlist, live-state gate (an upsert
-URL must answer 200 and a removed URL 404/410 on Production before it is
-announced), one POST of at most ``--batch`` URLs (IndexNow allows 10,000).
+URL must answer 200 and a removed URL 301/302/404/410 on Production before it
+is announced), one POST of at most ``--batch`` URLs (IndexNow allows 10,000).
 Responses: 200/202 -> sent; 400/422 -> failed (not retried); 403 -> run
 aborted, events stay pending (key problem); 429 and 5xx/network -> retried
 with exponential backoff up to ``--max-attempts``, then failed.
@@ -16,7 +16,7 @@ with exponential backoff up to ``--max-attempts``, then failed.
 import json
 from datetime import timedelta
 from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
+from urllib.request import HTTPRedirectHandler, Request, build_opener, urlopen
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
@@ -40,10 +40,17 @@ def http_post(url, payload, timeout=20):
         return error.code, error.headers.get("Retry-After") if error.headers else None
 
 
+class _NoFollowRedirect(HTTPRedirectHandler):
+    """Inspect the submitted URL itself, rather than its canonical destination."""
+
+    def redirect_request(self, request, fp, code, msg, headers, newurl):
+        return None
+
+
 def http_status(url, timeout=15):
     request = Request(url, method="GET", headers={"User-Agent": "AIpediya-IndexNow-livecheck/1.0"})
     try:
-        with urlopen(request, timeout=timeout) as response:
+        with build_opener(_NoFollowRedirect()).open(request, timeout=timeout) as response:
             return response.status
     except HTTPError as error:
         return error.code
@@ -88,7 +95,7 @@ class Command(BaseCommand):
                 continue
             if not options["no_live_check"]:
                 status = self.probe(event.url)
-                live = status == 200 if event.action == "upsert" else status in (404, 410)
+                live = status == 200 if event.action == "upsert" else status in (301, 302, 404, 410)
                 if not live:
                     self._retry(event, options["max_attempts"], status, "production-state-not-live")
                     deferred += 1

@@ -16,6 +16,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertContains(page, 'class="ph-git-detail"', count=1)
         self.assertEqual(page["Cache-Control"], "private, no-store")
         self.assertEqual(self.client.get("/ru/history/source/release").status_code, 200)
+        self.assertEqual(self.client.get("/history/source/GSD-1.0-release-scope").status_code, 200)
         self.assertEqual(self.client.get("/ru/history/source/secret").status_code, 404)
 
     def test_english_and_rtl_routes(self):

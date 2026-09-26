@@ -612,6 +612,22 @@ class DispatcherTests(TestCase):
         self.assertEqual(DiscoveryEvent.objects.get(url="https://aipediya.com/models/a").state, "pending")
         self.assertEqual(DiscoveryEvent.objects.get(url="https://aipediya.com/ru/models/b").state, "sent")
 
+    def test_live_gate_accepts_redirected_removed_url(self):
+        calls = self.run_dispatch(202, probe=lambda url, timeout=15: 200 if url.endswith("/a") else 301)
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(len(calls[0]["urlList"]), 2)
+        self.assertEqual(DiscoveryEvent.objects.filter(state="sent").count(), 2)
+
+    def test_live_probe_does_not_follow_redirect(self):
+        from catalog.management.commands import indexnow_dispatch as module
+        from urllib.error import HTTPError
+
+        with mock.patch.object(module, "build_opener") as build:
+            build.return_value.open.side_effect = HTTPError("https://aipediya.com/models/b", 301, "Moved", {}, None)
+            self.assertEqual(module.http_status("https://aipediya.com/models/b"), 301)
+            self.assertIsInstance(build.call_args.args[0], module._NoFollowRedirect)
+        self.assertIsNone(module._NoFollowRedirect().redirect_request(None, None, 301, "Moved", {}, "https://aipediya.com/models/a"))
+
     def test_retry_and_failure_codes(self):
         self.run_dispatch(429)
         event = DiscoveryEvent.objects.get(url="https://aipediya.com/models/a")
