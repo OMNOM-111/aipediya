@@ -171,7 +171,11 @@ async function openPanelFromLink(link, push) {
     if (title) {
       try { document.title = decodeURIComponent(title); } catch (_) {}
     }
-    if (push) history.pushState({ panel: slug }, "", link.href);
+    if (push) {
+      const listingUrl = history.state?.listingUrl ||
+        (ENTITY_PATH.test(location.pathname) ? null : location.pathname + location.search);
+      history.pushState({ panel: slug, listingUrl }, "", link.href);
+    }
   } catch (_) {
     if (requestId !== panelRequest) return;
     panel.innerHTML = `<p class="panel-error">${panelError}</p>`;
@@ -186,8 +190,15 @@ function closePanel(push) {
   highlightRow("");
   if (panel) panel.innerHTML = "";
   const closeUrl = new URL(location.href);
+  const listingUrl = history.state?.listingUrl;
   const entity = location.pathname.match(ENTITY_PATH);
-  if (entity) {
+  if (listingUrl) {
+    const listing = new URL(listingUrl, location.origin);
+    if (listing.origin === location.origin) {
+      closeUrl.pathname = listing.pathname;
+      closeUrl.search = listing.search;
+    }
+  } else if (entity) {
     // /ru/tools/x -> /ru/tools/ ; /models/x -> / (locale prefix kept)
     closeUrl.pathname = (entity[1] || "") + (entity[2] === "tools" ? "/tools/" : "/");
     closeUrl.searchParams.delete("tab");

@@ -127,7 +127,7 @@ def main():
     model, tool = public_models[0], public_tools[0]
     for source, target in [
         ("/?lang=ru", "/ru/"), ("/?lang=en", "/"), ("/?lang=zh-CN&kind=tool&sort=name_asc", "/zh-hans/tools/?sort=name_asc"),
-        (f"/models/{model}?lang=de&kind=model&page=1&tab=pricing", f"/de/models/{model}?tab=pricing"),
+        (f"/models/{model}?lang=de&kind=model&page=1&tab=pricing", f"/de/models/{model}"),
         (f"/tools/{tool}?lang=ar", f"/ar/tools/{tool}"), ("/privacy?lang=uk", "/uk/privacy"),
         ("/zh-Hans/", "/zh-hans/"), ("/pt_BR/tools/", "/pt-br/tools/"), ("/en/", "/"), ("/ru", "/ru/"),
         ("/?page=1", "/"), ("/?lang=zz", "/"),
@@ -160,6 +160,19 @@ def main():
     status, _, html = qa.get("/collections/music-models")
     qa.check("hubs", "thin hub music-models is noindex", status == 200 and 'content="noindex' in html, status)
 
+    # Finite, source-backed Search Visibility reference pages exist only in EN/RU.
+    for code in ("en", "ru"):
+        for suffix in ("/compare/model-context", "/api-pricing"):
+            path = prefix(code) + suffix
+            html = qa.indexable_page("search-reference", path, code, ("Organization", "BreadcrumbList"))
+            if html:
+                qa.check("search-reference", f"source-backed table {path}",
+                         "<table>" in html and html.count("<tr>") >= 5
+                         and 'rel="noopener noreferrer"' in html)
+    for suffix in ("/compare/model-context", "/api-pricing"):
+        status, _, _ = qa.get("/fr" + suffix)
+        qa.check("search-reference", f"no thin FR clone {suffix}", status == 404, status)
+
     # Datasets: gated off in Production until the owner picks a license.
     for path in ("/datasets/", "/datasets/models", "/datasets/aipediya-ai-tools.csv", "/datasets/manifest.json"):
         status, _, _ = qa.get(path)
@@ -186,7 +199,12 @@ def main():
     qa.check("robots", "robots 200", status == 200, status)
     qa.check("robots", "sitemap line", f"Sitemap: {PUBLIC}/sitemap.xml" in robots)
     qa.check("robots", "facets blocked", "Disallow: /*?q=" in robots and "Disallow: /*?partial=" in robots)
-    qa.check("robots", "card pagination allowed", "Allow: /models/*?page=" in robots)
+    qa.check("robots", "card query space blocked", "Disallow: /models/*?" in robots
+             and "Disallow: /tools/*?" in robots)
+    qa.check("robots", "no broad card page allow", "Allow: /models/*?page=" not in robots
+             and "Allow: /tools/*?page=" not in robots)
+    qa.check("robots", "exact observed migration exception",
+             "Allow: /models/gpt-4o-mini?lang=en$" in robots)
     qa.check("robots", "no global disallow", "\nDisallow: /\n" not in robots)
     qa.check("robots", "no AI-agent-specific rules (baseline unchanged)",
              not re.search(r"User-agent: (?!\*)", robots))
@@ -214,15 +232,34 @@ def main():
     qa.check("sitemap", "no duplicate loc", len(all_locs) == len(set(all_locs)), len(all_locs) - len(set(all_locs)))
     qa.check("sitemap", "no hidden record in sitemap", not any(loc.rsplit("/", 1)[-1] in hidden for loc in all_locs))
     qa.check("sitemap", "no localhost", not any("localhost" in loc or "127.0.0.1" in loc for loc in all_locs))
+    for path in ("/compare/model-context", "/ru/compare/model-context", "/api-pricing", "/ru/api-pricing"):
+        qa.check("sitemap", f"reference URL {path}", PUBLIC + path in all_locs)
 
-    # Hidden NEEDS_REVIEW models: 404 everywhere, including legacy and locale forms.
+    # Hidden records are 404; a retired alias may redirect directly to a
+    # published canonical card after the catalog master migration.
+    public_model_set = set(public_models)
+    def hidden_is_clean(path, status, headers):
+        if status == 404:
+            return True
+        target = headers.get("location", "")
+        want_prefix = "/ru/models/" if path.startswith("/ru/") or "?lang=ru" in path else "/models/"
+        if status != 301 or not target.startswith(want_prefix) or "?" in target:
+            return False
+        if target.rsplit("/", 1)[-1] not in public_model_set:
+            return False
+        final, _, _ = qa.get(target)
+        return final == 200
+
     for slug in hidden_models:
-        status, _, _ = qa.get(f"/models/{slug}")
-        qa.check("hidden", f"404 /models/{slug}", status == 404, status)
+        path = f"/models/{slug}"
+        status, headers, _ = qa.get(path)
+        qa.check("hidden", f"404 or canonical 301 {path}", hidden_is_clean(path, status, headers),
+                 f"{status} {headers.get('location', '')}")
     for slug in hidden_models[:10]:
         for path in (f"/ru/models/{slug}", f"/models/{slug}?lang=ru"):
-            status, _, _ = qa.get(path)
-            qa.check("hidden", f"404 {path}", status == 404, status)
+            status, headers, _ = qa.get(path)
+            qa.check("hidden", f"404 or canonical 301 {path}", hidden_is_clean(path, status, headers),
+                     f"{status} {headers.get('location', '')}")
 
     groups = {}
     for item in qa.results:

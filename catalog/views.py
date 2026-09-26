@@ -1046,7 +1046,7 @@ def release_acceptance(request):
 
 
 # Facet, search and fragment parameters are excluded from crawling; locale
-# paths, entity pages and plain ?page=N pagination stay crawlable. Exact
+# paths, entity pages and plain listing ?page=N pagination stay crawlable. Exact
 # previously discovered card URLs are allowed separately so crawlers can see
 # their 301, 404 or fragment noindex without opening a query-space wildcard.
 ROBOTS_BLOCKED_PARAMS = (
@@ -1059,10 +1059,9 @@ ROBOTS_BLOCKED_PARAMS = (
 def robots_rules():
     """(Allow|Disallow, pattern) for Production robots.txt, most general first.
 
-    Card URLs with any query (``?tab=``, ``?page=`` of the list behind the
-    panel, filters) are canonical duplicates of the clean card and are not
-    crawled; the tools listing's plain pagination stays allowed (longest-match
-    rule: ``Allow: /tools/?page=`` beats ``Disallow: /tools/*?``).
+    Card URLs with any query (``?tab=``, ``?page=``, filters) are canonical
+    duplicates of the clean card and are not crawled. Listing pagination stays
+    allowed, while only the exact observed GSC legacy card URLs are excepted.
     """
     rules = [("Allow", "/"), ("Disallow", "/admin/"), ("Disallow", "/healthz")]
     for param in ROBOTS_BLOCKED_PARAMS:
@@ -1071,11 +1070,11 @@ def robots_rules():
     for kind in ("models", "tools"):
         for prefix in ("", "/*"):
             rules.append(("Disallow", f"{prefix}/{kind}/*?"))
-            # A row link keeps the list page behind the panel (?page=N). Each
-            # card appears on exactly one list page, so this adds at most one
-            # canonicalized duplicate per card and keeps every card reachable.
-            rules.append(("Allow", f"{prefix}/{kind}/*?page="))
-            rules.append(("Disallow", f"{prefix}/{kind}/*?page=*&"))
+    # The tools listing shares its path prefix with tool cards. Permit only
+    # plain listing pagination; facet combinations remain blocked.
+    for prefix in ("", "/*"):
+        rules.append(("Allow", f"{prefix}/tools/?page="))
+        rules.append(("Disallow", f"{prefix}/tools/?page=*&"))
     from .legacy_search_urls import GSC_LEGACY_CARD_URLS
 
     # `$` anchors each exception to one observed URL, including parameter

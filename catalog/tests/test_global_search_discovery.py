@@ -256,17 +256,29 @@ class ReadinessAndSignalsTests(TestCase):
         self.assertIn("Disallow: /*?partial=", body)
         self.assertIn("Allow: /models/gpt-4o-mini?lang=en$", body)
         self.assertNotIn("Allow: /models/*?lang=", body)
+        self.assertNotIn("Allow: /models/*?page=", body)
+        self.assertNotIn("Allow: /tools/*?page=", body)
+        self.assertIn("Allow: /tools/?page=", body)
         from catalog.views import robots_allows
         allowed = ("/", "/ru/", "/?page=2", "/ru/tools/?page=2", "/tools/?page=3", "/models/x", "/ja/tools/y",
                    "/collections/coding-models?page=2", "/methodology", "/sitemap.xml")
-        allowed += ("/ru/models/x?page=2", "/tools/x?page=4")
         blocked = ("/?sort=name_asc", "/ru/?q=gpt", "/models/x?tab=pricing", "/ru/models/x?page=2&tab=checks",
-                   "/tools/?page=2&sort=name_asc", "/ru/tools/?page=2&platform=cli", "/?partial=rows", "/admin/")
+                   "/tools/?page=2&sort=name_asc", "/ru/tools/?page=2&platform=cli", "/?partial=rows", "/admin/",
+                   "/ru/models/x?page=2", "/tools/x?page=4", "/models/x?page=999999")
         for path in allowed:
             self.assertTrue(robots_allows(path), path)
         for path in blocked:
             self.assertFalse(robots_allows(path), path)
         self.assertNotIn("Disallow: /*?\n", body)
+
+    def test_listing_row_links_point_to_clean_cards(self):
+        ensure_tool()
+        for path, card_prefix in (("/?sort=name_asc", "/models/"),
+                                  ("/ru/tools/?sort=name_asc", "/ru/tools/")):
+            html = self.client.get(path).content.decode()
+            links = re.findall(r'<a class="model-name" href="([^"]+)"', html)
+            self.assertTrue(links, path)
+            self.assertTrue(all(link.startswith(card_prefix) and "?" not in link for link in links), path)
 
     def test_gsc_legacy_exceptions_are_exact_and_finite(self):
         from catalog.views import robots_allows

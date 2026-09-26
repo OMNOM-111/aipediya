@@ -62,10 +62,11 @@ def main():
     with override_settings(AIPEDIA_INDEXING_ALLOWED=True):
         for path in GSC_LEGACY_CARD_URLS:
             status, headers, body = get(path)
-            raw_location = headers.get("Location", "")
+            headers = {name.lower(): value for name, value in headers.items()}
+            raw_location = headers.get("location", "")
             parts = urlsplit(raw_location)
             location = parts.path + ("?" + parts.query if parts.query else "") if raw_location else ""
-            noindex = "noindex" in headers.get("X-Robots-Tag", "").lower() or bool(
+            noindex = "noindex" in headers.get("x-robots-tag", "").lower() or bool(
                 re.search(r'<meta name="robots" content="[^"]*noindex', body))
             record = {"url": path, "status": status, "location": location, "noindex": noindex,
                       "robots_allowed_local_rule": robots_allows(path)}

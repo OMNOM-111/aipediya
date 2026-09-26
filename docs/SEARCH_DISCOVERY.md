@@ -118,7 +118,7 @@ update; page views never change it. Limits checked by `seo_report`: ≤ 50,000 U
 | `page=1` | catalogs | — | 301 to clean URL |
 | `page` invalid / out of range | catalogs | — | 404 |
 | `tab` on a card; `page` + anything on a card | cards | robots-blocked unless an exact GSC migration exception | legacy `?lang=` full cards: one 301 to clean card; other duplicates: canonical = clean card |
-| `page=N` alone on a card (list page behind the panel) | cards | yes (≤ 1 per card) | canonical = clean card |
+| `page=N` alone on a card (old panel link) | cards | robots-blocked unless an exact GSC migration exception | canonical = clean card; catalog row links now use the clean card URL |
 | `q`, `sort`, `category`, `task`, `developer`, `access`, `status`, `benchmark`, `configuration`, `snapshot`, `evaluated_only`, `price_*`, `platform`, `local`, `ecosystem`, `model`, `tool` | catalogs / cards | robots-blocked | listings: `noindex,follow`, no canonical (a filtered selection is never declared a copy of the root); cards: canonical = clean card |
 | `partial=rows|panel` | fragments | robots-blocked unless an exact GSC migration exception | `X-Robots-Tag: noindex`; never carried into links |
 | `lang`, `kind` | legacy | — | 301 (section 1) |
@@ -126,10 +126,12 @@ update; page views never change it. Limits checked by `seo_report`: ≤ 50,000 U
 `robots.txt` (Production) blocks only the parameters above (`/*?p=` and `/*&p=`), any
 query on card URLs (`/models/*?`, `/*/models/*?`, `/tools/*?`, `/*/tools/*?` — canonical
 duplicates such as `?tab=` or filters), plus `/admin/` and `/healthz`. Locale paths and
-plain `page=` stay crawlable: `Allow: /models/*?page=` / `/tools/*?page=` win by longest
-match (a row link keeps the list page behind the panel; each card appears on exactly one
-list page, so at most one canonicalized duplicate per card); `…?page=*&` is blocked
-again. The 45 exact GSC card URL strings observed on 2026-09-26 have anchored
+plain listing `page=` stays crawlable. The tools listing uses the limited
+`Allow: /tools/?page=` and localized equivalent to distinguish it from tool
+cards; `…?page=*&` remains blocked. **No card-wide `Allow: */?page=` rule**
+is present. Catalog row links use clean card URLs, while the browser preserves
+the original listing URL when a panel is closed. The 45 exact GSC card URL
+strings observed on 2026-09-26 have anchored
 `Allow: <URL>$` exceptions, so crawlers can read their 301/404/noindex response.
 This list is finite; no wildcard `?lang=` permission opens arbitrary facet or
 pagination combinations. The own crawler uses the same rules
@@ -263,7 +265,8 @@ HTML is not cached with cookies (the site sets no language cookie server-side).
   emit events (by design of Django signals).
 * `manage.py indexnow_dispatch [--send]`: dry run unless `AIPEDIA_ENV=production`,
   `AIPEDIA_INDEXNOW_ENABLED=1`, a key and `--send`. Host allowlist, live-state gate
-  (upsert URL must be 200, removed URL 404/410 on Production), batch ≤ 10,000,
+  (upsert URL must be 200, removed URL 301/302/404/410 on Production; the
+  probe does not follow a redirect to its canonical destination), batch ≤ 10,000,
   200/202 → sent; 400/422 → failed; 403 → abort, keep pending; 429/5xx/network →
   exponential backoff, `--max-attempts` (default 6) then failed. Acceptance ≠ indexing.
 * `manage.py notify_indexnow --url … | --all` only queues (no network).
