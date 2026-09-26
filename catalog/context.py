@@ -244,12 +244,16 @@ def site_context(request):
         and settings.AIPEDIA_ADS_SLOT
     )
     from .static_pages import label_text
+    neutral_path = getattr(request, "aipedia_neutral_path", request.path)
+    options = language_options()
+    if neutral_path in ("/compare/model-context", "/api-pricing"):
+        options = [(code, native) for code, native in options if code in ("en", "ru")]
     return {
         "lang": lang,
         "dir": direction(lang),
         "lang_native": LANGUAGE_NAMES.get(lang, lang),
-        "language_options": language_options(),
-        "language_links": [(code, native, switch_url(request, code)) for code, native in language_options()],
+        "language_options": options,
+        "language_links": [(code, native, switch_url(request, code)) for code, native in options],
         "nav": {
             "home": localize("/", lang),
             "models": localize("/", lang),

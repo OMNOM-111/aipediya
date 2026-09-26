@@ -18,6 +18,8 @@ urlpatterns = [
     path("history/source/<slug:slug>", product_history.history_source, name="product_history_source"),
     path("collections/", views.collections_index, name="collections"),
     path("collections/<slug:slug>", views.collection, name="collection"),
+    path("compare/model-context", views.search_reference, {"topic": "context"}, name="model_context_comparison"),
+    path("api-pricing", views.search_reference, {"topic": "pricing"}, name="api_pricing"),
     path("datasets/", views.datasets_index, name="datasets"),
     re_path(r"^datasets/(?P<kind>models|tools)$", views.dataset_page, name="dataset_page"),
     # Language-neutral endpoints.

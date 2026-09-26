@@ -240,6 +240,7 @@ class Command(BaseCommand):
         entity_seen = set()
         blocked_skipped = 0
         noindex_pages = 0
+        error_urls = []
         while queue and len(seen) < limit:
             path = queue.popleft()
             if path in seen:
@@ -247,6 +248,8 @@ class Command(BaseCommand):
             seen.add(path)
             response = client.get(path)
             statuses[response.status_code] += 1
+            if response.status_code >= 400 and len(error_urls) < 50:
+                error_urls.append({"url": path, "status": response.status_code})
             if response.status_code != 200 or "text/html" not in response.get("Content-Type", ""):
                 continue
             html = response.content.decode("utf-8")
@@ -282,6 +285,7 @@ class Command(BaseCommand):
         return {
             "start": ["/", "/tools/"], "limit": limit, "fetched": len(seen), "queue_left": len(queue),
             "terminated": not queue, "status_counts": dict(statuses),
+            "error_urls": error_urls,
             "robots_blocked_links_skipped": blocked_skipped, "noindex_pages_fetched": noindex_pages,
             "public_entities": len(public), "reached_public_entities": len(public & entity_seen),
             "unreached_public_entities": sorted(f"{k}/{s}" for k, s in public - entity_seen)[:50],

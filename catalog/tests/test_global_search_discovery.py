@@ -4,6 +4,7 @@ import csv
 import io
 import json
 import re
+from types import SimpleNamespace
 from unittest import mock
 
 from django.core.management import call_command
@@ -11,9 +12,11 @@ from django.test import TestCase, override_settings
 
 from catalog import datasets, readiness
 from catalog.i18n import SUPPORTED_CODES
+from catalog.legacy_search_urls import GSC_LEGACY_CARD_URLS
 from catalog.locale_urls import URL_CODE, localize, split
 from catalog.models import ContentTranslation, DiscoveryEvent, ModelVersion, Offer, Tool
 from catalog.seo import json_ld_script, sitemap_urlsets
+from catalog.search_pages import _official_standard, context_rows, pricing_rows
 from catalog.translation_pipeline import source_hash
 
 
@@ -83,6 +86,9 @@ class LocaleUrlTests(TestCase):
                 self.assertEqual(lang, None if code == "en" else code)
         self.assertEqual(localize("/", "zh-Hans"), "/zh-hans/")
         self.assertEqual(localize("/tools/", "pt-BR"), "/pt-br/tools/")
+        for code in SUPPORTED_CODES:
+            for neutral in ("/compare/model-context", "/api-pricing"):
+                self.assertEqual(split(localize(neutral, code))[1], neutral)
 
     def test_every_route_type_legacy_redirect_is_single_hop(self):
         model = public_model()
@@ -92,7 +98,7 @@ class LocaleUrlTests(TestCase):
             "/?lang=en": "/",
             "/?lang=zh-CN&kind=tool&sort=name_asc": "/zh-hans/tools/?sort=name_asc",
             "/?kind=model&page=1": "/",
-            f"/models/{model.slug}?lang=de&kind=model&page=1&tab=pricing": f"/de/models/{model.slug}?tab=pricing",
+            f"/models/{model.slug}?lang=de&kind=model&page=1&tab=pricing": f"/de/models/{model.slug}",
             f"/tools/{tool.slug}?lang=ar&kind=tool": f"/ar/tools/{tool.slug}",
             "/privacy?lang=uk": "/uk/privacy",
             "/ru/?lang=de": "/ru/",
@@ -101,6 +107,9 @@ class LocaleUrlTests(TestCase):
             "/zh-cn/": "/zh-hans/",
             "/en/": "/",
             f"/en/models/{model.slug}": f"/models/{model.slug}",
+            f"/en/models/{model.slug}?lang=ru&page=3": f"/models/{model.slug}",
+            f"/zh-Hans/models/{model.slug}?lang=ru&sort=name_asc": f"/zh-hans/models/{model.slug}",
+            f"/ru/models/{model.slug}?lang=en&page=4": f"/ru/models/{model.slug}",
             "/ru": "/ru/",
         }
         for source, target in cases.items():
@@ -117,6 +126,38 @@ class LocaleUrlTests(TestCase):
                      "/collections/not-a-hub", "/be/"):
             response = self.client.get(path)
             self.assertEqual(response.status_code, 404, path)
+
+    def test_legacy_alias_redirects_to_published_card_in_query_language(self):
+        model = public_model()
+        alias = make_hidden(model, slug="old-card-alias")
+        alias.redirect_to = model.slug
+        alias.save(update_fields=["redirect_to"])
+        response = self.client.get(f"/models/{alias.slug}?lang=ru&page=3&tab=pricing")
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response["Location"], f"/ru/models/{model.slug}")
+        self.assertEqual(self.client.get(response["Location"]).status_code, 200)
+        prefixed = self.client.get(f"/zh-Hans/models/{alias.slug}?lang=ru&page=3")
+        self.assertEqual(prefixed.status_code, 301)
+        self.assertEqual(prefixed["Location"], f"/zh-hans/models/{model.slug}")
+
+    @override_settings(AIPEDIA_INDEXING_ALLOWED=True)
+    def test_legacy_fragment_is_noindex_not_a_redirect_or_full_card(self):
+        model = public_model()
+        response = self.client.get(
+            f"/models/{model.slug}?lang=ru&sort=status_asc&kind=model&page=3&partial=rows"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["X-Robots-Tag"], "noindex")
+        self.assertNotIn('rel="canonical"', response.content.decode())
+        self.assertEqual(self.client.get(f"/ru/models/{model.slug}").status_code, 200)
+
+    def test_legacy_catalog_filters_keep_the_requested_selection_noindex(self):
+        response = self.client.get("/?lang=ru&sort=name_asc&category=code")
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response["Location"], "/ru/?sort=name_asc&category=code")
+        filtered = self.client.get(response["Location"])
+        self.assertContains(filtered, 'name="robots" content="noindex,follow"')
+        self.assertNotContains(filtered, 'rel="canonical"')
 
     def test_explicit_url_ignores_cookie_accept_language_country_and_user_agent(self):
         self.client.cookies["aipedia_lang"] = "fa"
@@ -213,7 +254,8 @@ class ReadinessAndSignalsTests(TestCase):
         self.assertIn("Disallow: /*?q=", body)
         self.assertIn("Disallow: /*&sort=", body)
         self.assertIn("Disallow: /*?partial=", body)
-        self.assertNotIn("lang=", body)
+        self.assertIn("Allow: /models/gpt-4o-mini?lang=en$", body)
+        self.assertNotIn("Allow: /models/*?lang=", body)
         from catalog.views import robots_allows
         allowed = ("/", "/ru/", "/?page=2", "/ru/tools/?page=2", "/tools/?page=3", "/models/x", "/ja/tools/y",
                    "/collections/coding-models?page=2", "/methodology", "/sitemap.xml")
@@ -225,6 +267,23 @@ class ReadinessAndSignalsTests(TestCase):
         for path in blocked:
             self.assertFalse(robots_allows(path), path)
         self.assertNotIn("Disallow: /*?\n", body)
+
+    def test_gsc_legacy_exceptions_are_exact_and_finite(self):
+        from catalog.views import robots_allows
+
+        self.assertEqual(len(GSC_LEGACY_CARD_URLS), 45)
+        self.assertEqual(len(set(GSC_LEGACY_CARD_URLS)), 45)
+        for path in GSC_LEGACY_CARD_URLS:
+            self.assertTrue(robots_allows(path), path)
+            self.assertFalse(robots_allows(path + "&sort=price_asc"), path)
+            self.assertFalse(robots_allows(path + "&partial=panel"), path)
+        for path in (
+            "/models/gpt-4o-mini?lang=ru",
+            "/models/gpt-4o-mini?lang=en&page=999999",
+            "/models/gpt-4o-mini?sort=price_asc&lang=en",
+            "/models/gpt-4o-mini?lang=en&partial=rows",
+        ):
+            self.assertFalse(robots_allows(path), path)
 
     def test_canonical_never_uses_request_host(self):
         response = self.client.get("/", HTTP_HOST="evil.example")
@@ -298,6 +357,69 @@ class ReadinessAndSignalsTests(TestCase):
         body = self.client.get("/methodology").content.decode()
         self.assertIn("does not calculate its own rating", body)
         self.assertIn("no automatic daily monitoring", body)
+
+
+@override_settings(AIPEDIA_INDEXING_ALLOWED=True)
+class SearchReferenceTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        call_command("seed_catalog", verbosity=0)
+
+    def test_context_guide_is_factual_indexable_and_only_en_ru(self):
+        self.assertGreaterEqual(len(context_rows()), 5)
+        for path, canonical in (("/compare/model-context", "https://aipediya.com/compare/model-context"),
+                                ("/ru/compare/model-context", "https://aipediya.com/ru/compare/model-context")):
+            response = self.client.get(path)
+            self.assertEqual(response.status_code, 200)
+            html = response.content.decode()
+            self.assertIn(f'rel="canonical" href="{canonical}"', html)
+            self.assertIn('hreflang="en"', html)
+            self.assertIn('hreflang="ru"', html)
+            self.assertNotIn('hreflang="de"', html)
+            self.assertIn("/models/", html)
+        for code in SUPPORTED_CODES:
+            if code not in ("en", "ru"):
+                self.assertEqual(self.client.get(localize("/compare/model-context", code)).status_code, 404)
+                self.assertEqual(self.client.get(localize("/api-pricing", code)).status_code, 404)
+        self.assertEqual(self.client.get("/compare/model-context?page=2")["Location"], "/compare/model-context")
+        self.assertIn("/compare/model-context", self.client.get("/sitemaps/en.xml").content.decode())
+        self.assertNotIn("/de/compare/model-context", self.client.get("/sitemaps/de.xml").content.decode())
+
+    def test_pricing_guide_uses_only_coherent_standard_api_pairs(self):
+        suspect = SimpleNamespace(
+            service=SimpleNamespace(provider=SimpleNamespace(name="OpenAI")),
+            source=SimpleNamespace(url="https://ollama.com/pricing"),
+            conditions={"en": "Ollama cloud price; first-party may differ"},
+        )
+        self.assertFalse(_official_standard(suspect))
+        suspect.source.url = "https://developers.openai.com/api/pricing"
+        suspect.conditions = {"ru": "Точный scope не нормализован; см. источник"}
+        self.assertFalse(_official_standard(suspect))
+        for row in pricing_rows():
+            incoming, outgoing = row["input"], row["output"]
+            self.assertEqual(incoming.model_id, outgoing.model_id)
+            self.assertEqual(incoming.service_id, outgoing.service_id)
+            self.assertEqual((incoming.unit, outgoing.unit), ("input", "output"))
+            self.assertIsNotNone(incoming.source.url)
+            self.assertIsNotNone(outgoing.source.url)
+            self.assertTrue(_official_standard(incoming))
+            self.assertTrue(_official_standard(outgoing))
+        # The small seed contains fewer than five verified pairs: it must not
+        # create a thin indexable landing page or a sitemap entry.
+        if len(pricing_rows()) < 5:
+            self.assertEqual(self.client.get("/api-pricing").status_code, 404)
+            self.assertNotIn("/api-pricing", self.client.get("/sitemaps/en.xml").content.decode())
+
+    def test_generic_model_snippet_uses_only_recorded_facts(self):
+        model = public_model()
+        model.description = {"en": f"{model.name} is a model from Example. Exact version: {model.slug}.",
+                             "ru": f"{model.name} — модель Example. Точная версия: {model.slug}."}
+        model.context = 123456
+        model.save(update_fields=["description", "context"])
+        html = self.client.get(f"/models/{model.slug}").content.decode()
+        self.assertIn("Context: 123,456 tokens", html)
+        self.assertNotIn("Exact version:", html.split("</head>", 1)[0])
+        self.assertNotIn("$0", html.split("</head>", 1)[0])
 
 
 class DatasetTests(TestCase):

@@ -128,6 +128,11 @@ def site_pages():
         yield {"path": "/collections/", "langs": [c for c in SUPPORTED_CODES if c in hub_langs_any
                                                   and labels_ready(HUB_LABELS + ("collections_intro",), c)],
                "lastmod": None}
+    from .search_pages import context_rows, pricing_rows
+    if len(context_rows(5)) >= 5:
+        yield {"path": "/compare/model-context", "langs": ["en", "ru"], "lastmod": latest_model}
+    if len(pricing_rows()) >= 5:
+        yield {"path": "/api-pricing", "langs": ["en", "ru"], "lastmod": latest_model}
     if datasets_enabled():
         langs = dataset_page_langs()
         yield {"path": "/datasets/", "langs": langs, "lastmod": None}

@@ -45,14 +45,13 @@ _LOCALIZED = re.compile(
     r"|history/source/[-a-zA-Z0-9_]+"
     r"|collections/"
     r"|collections/[-a-z0-9]+"
+    r"|compare/model-context"
+    r"|api-pricing"
     r"|datasets/"
     r"|datasets/(?:models|tools)"
     r")$"
 )
 
-# Removed by a legacy redirect (the path now carries them). ``partial`` is kept
-# so a fragment request from an old cached page still receives a fragment.
-UX_PARAMS_DROPPED_ON_REDIRECT = frozenset({"lang", "kind"})
 # Never carried into a language-switcher link.
 DROPPED_ON_SWITCH = frozenset({"lang", "kind", "partial"})
 
@@ -121,22 +120,28 @@ def split(path):
 
 
 def legacy_target(neutral_path, query_dict):
-    """Equivalent locale address for an old ``?lang=`` / ``?kind=`` link.
+    """Clean canonical address for an old full-page ``?lang=`` / ``?kind=`` link.
 
-    Returns ``(path_with_query, lang)``. An unknown ``lang`` value is dropped
-    (English address); ``kind=tool`` on the catalog root maps to ``/tools/``.
+    Returns ``(path_with_query, lang)``. Card and static-page presentation
+    parameters are discarded so old card URLs resolve in one hop to the clean
+    document. Catalog filters, sorting and pagination are retained for users;
+    filtered listings remain robots-blocked and noindex. Fragment requests are
+    handled separately by middleware. ``kind=tool`` on the catalog root maps
+    to ``/tools/``.
     """
     lang = normalize_lang(query_dict.get("lang")) or DEFAULT_LANG
-    params = query_dict.copy()
-    kind = params.get("kind")
+    kind = query_dict.get("kind")
     if neutral_path == "/" and kind == "tool":
         neutral_path = "/tools/"
-    for key in UX_PARAMS_DROPPED_ON_REDIRECT:
-        params.pop(key, None)
-    if params.get("page") == "1":
-        params.pop("page")
-    query = params.urlencode()
-    return localize(neutral_path, lang) + ("?" + query if query else ""), lang
+    if neutral_path in ("/", "/tools/"):
+        params = query_dict.copy()
+        for key in ("lang", "kind"):
+            params.pop(key, None)
+        if params.get("page") == "1":
+            params.pop("page", None)
+        query = params.urlencode()
+        return localize(neutral_path, lang) + ("?" + query if query else ""), lang
+    return localize(neutral_path, lang), lang
 
 
 def switch_url(request, code):

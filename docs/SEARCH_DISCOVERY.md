@@ -4,8 +4,10 @@ Canonical contract for how AIpediya is exposed to search engines and AI search.
 Status of the version: `docs/timeline.json` (GSD-1.0) and `docs/EXECUTION_STATE.md`.
 Decisions: `docs/DECISIONS.md` (`D-2026-09-25-locale-paths`, `D-2026-09-25-seo-readiness`,
 `D-2026-09-25-facets-pagination`, `D-2026-09-25-datasets-license-gate`,
-`D-2026-09-25-discovery-outbox`). Nothing in this file has been applied to Production
-until a release of GSD-1.0 is approved by the owner (`docs/RELEASE.md`).
+`D-2026-09-25-discovery-outbox`). GSD-1.0 was released on 2026-09-25. The
+Search Visibility Optimization update follows that architecture; release state
+and public verification are recorded in `docs/RELEASE.md` and
+`docs/history/2026-09-26-search-visibility-release.md`.
 
 ## 1. Language URLs
 
@@ -19,6 +21,8 @@ until a release of GSD-1.0 is approved by the owner (`docs/RELEASE.md`).
 | Collections | `/collections/`, `/collections/<slug>` | `/ar/collections/<slug>` |
 | Open data | `/datasets/`, `/datasets/models`, `/datasets/tools` | `/ru/datasets/models` |
 | Privacy | `/privacy` | `/de/privacy` |
+| Context comparison | `/compare/model-context` | `/ru/compare/model-context` (EN/RU only) |
+| API token prices | `/api-pricing` | `/ru/api-pricing` (EN/RU only) |
 
 * Path codes are lower-case BCP-47 (`zh-hans`, `zh-hant`, `pt-br`); `hreflang` uses the
   canonical tag (`zh-Hans`, `pt-BR`). One builder: `catalog/locale_urls.py`.
@@ -37,7 +41,7 @@ until a release of GSD-1.0 is approved by the owner (`docs/RELEASE.md`).
 | `/?lang=ru` | `/ru/` |
 | `/?lang=en` | `/` |
 | `/?lang=ru&kind=tool&sort=name_asc` | `/ru/tools/?sort=name_asc` |
-| `/models/<id>?lang=de&kind=model&page=1&tab=pricing` | `/de/models/<id>?tab=pricing` |
+| `/models/<id>?lang=de&kind=model&page=1&tab=pricing` | `/de/models/<id>` |
 | `/tools/<id>?lang=zh-CN` | `/zh-hans/tools/<id>` |
 | `/privacy?lang=uk` | `/uk/privacy` |
 | `/zh-Hans/…`, `/pt_BR/…`, `/zh-cn/…`, `/pt/…` | `/zh-hans/…`, `/pt-br/…` |
@@ -47,9 +51,12 @@ until a release of GSD-1.0 is approved by the owner (`docs/RELEASE.md`).
 | `/?lang=zz` (unknown value) | `/` |
 | `/?page=1`, `/ru/?page=1` | `/`, `/ru/` |
 
-  UX parameters (`q`, `sort`, filters, `tab`, `page>1`) are preserved; `lang` and `kind`
-  are consumed; `partial` is preserved so a fragment request from an old cached page still
-  gets a fragment. Unknown or unpublished records answer **404** on every form of the
+  On legacy full-card requests the presentation parameters (`page`, `sort`, `tab`,
+  `kind`, `lang`) are discarded in one 301 to the clean canonical card. A confirmed
+  hidden alias redirects directly to its published card. Listing filters and
+  pagination are retained for visitors but remain robots-blocked and noindex.
+  An old `partial=rows|panel` card request returns a fragment with `X-Robots-Tag:
+  noindex`, not a full-card redirect. Unknown or unpublished records answer **404** on every form of the
   address (never a redirect to the home page). Region remaps to another language
   (`/be/`, `/ca/`) are 404, not aliases.
 
@@ -110,10 +117,10 @@ update; page views never change it. Limits checked by `seo_report`: ≤ 50,000 U
 | `page=N` (N≥2, in range) | catalogs, collections | yes | yes, self-canonical, prev/next |
 | `page=1` | catalogs | — | 301 to clean URL |
 | `page` invalid / out of range | catalogs | — | 404 |
-| `tab` on a card; `page` + anything on a card | cards | robots-blocked | canonical = clean card |
+| `tab` on a card; `page` + anything on a card | cards | robots-blocked unless an exact GSC migration exception | legacy `?lang=` full cards: one 301 to clean card; other duplicates: canonical = clean card |
 | `page=N` alone on a card (list page behind the panel) | cards | yes (≤ 1 per card) | canonical = clean card |
 | `q`, `sort`, `category`, `task`, `developer`, `access`, `status`, `benchmark`, `configuration`, `snapshot`, `evaluated_only`, `price_*`, `platform`, `local`, `ecosystem`, `model`, `tool` | catalogs / cards | robots-blocked | listings: `noindex,follow`, no canonical (a filtered selection is never declared a copy of the root); cards: canonical = clean card |
-| `partial=rows|panel` | fragments | robots-blocked | `X-Robots-Tag: noindex`; never carried into links |
+| `partial=rows|panel` | fragments | robots-blocked unless an exact GSC migration exception | `X-Robots-Tag: noindex`; never carried into links |
 | `lang`, `kind` | legacy | — | 301 (section 1) |
 
 `robots.txt` (Production) blocks only the parameters above (`/*?p=` and `/*&p=`), any
@@ -122,7 +129,10 @@ duplicates such as `?tab=` or filters), plus `/admin/` and `/healthz`. Locale pa
 plain `page=` stay crawlable: `Allow: /models/*?page=` / `/tools/*?page=` win by longest
 match (a row link keeps the list page behind the panel; each card appears on exactly one
 list page, so at most one canonicalized duplicate per card); `…?page=*&` is blocked
-again. The own crawler uses the same rules
+again. The 45 exact GSC card URL strings observed on 2026-09-26 have anchored
+`Allow: <URL>$` exceptions, so crawlers can read their 301/404/noindex response.
+This list is finite; no wildcard `?lang=` permission opens arbitrary facet or
+pagination combinations. The own crawler uses the same rules
 (`catalog.views.robots_allows`). Every public record
 is reachable through plain `<a href>` pagination without JavaScript (own crawler).
 Local serves `Disallow: /` and `X-Robots-Tag: noindex, nofollow` on every response.
@@ -138,6 +148,26 @@ Finite registry in `catalog/hubs.py` (10 entries, published records only, minimu
 not "better"), `coding-tools`. No per-filter or per-country/year generator exists.
 Aggregates for future reports: `manage.py catalog_stats` (current state only; no
 history, no rating).
+
+### Search reference pages (Search Visibility Optimization)
+
+Two distinct EN/RU pages use only published records already checked in the
+catalog master: `/compare/model-context` compares documented context-window
+sizes across models with a known value; `/api-pricing` pairs active primary
+standard text-token input and output prices from the **same API service**,
+with an official provider-domain price source and normalized scope. Third-party
+reseller prices and offers whose scope is explicitly unresolved are excluded.
+Both explain their selection and limitations, link to each model card and
+source, expose check dates, and link to the existing coding/API/long-context
+collections and methodology. They require at least five qualifying rows.
+Unknown values are omitted, never zero. Batch/cache/audio/image and special
+long-context rates do not enter the standard price comparison. No new model
+data, benchmark rankings, country claims or pairwise doorway pages are created.
+The other 20 locales have no authored page text and therefore no indexable
+versions, sitemap entries or language-switcher links for these two routes.
+Card metadata with the known generic “Exact version” wording is enriched for
+EN/RU from already published context/API/price-presence facts; master prose,
+card data and design remain unchanged.
 
 ## 7. Open datasets
 

@@ -71,6 +71,29 @@ def _entity_seo(request, entity, kind):
     name = f"{entity.name}{version}"
     title = f"{name} — {label_text(suffix_key, lang)} ({developer}) | AIpediya"
     description = localized(entity.description, lang) if entity.description else name
+    # Some imported cards have only the generic "model from X / exact version"
+    # sentence. Give their EN/RU search snippets the verified facts already on
+    # the card, without changing the master text or inventing a price/score.
+    if kind == "model" and lang in ("en", "ru") and (
+        "Exact version:" in description or "Точная версия:" in description
+    ):
+        if lang == "ru":
+            facts = [f"{name} — модель {developer}."]
+            if entity.context:
+                facts.append(f"Контекст: {entity.context:,} токенов.")
+            if any(access.service.kind == "api" for access in entity.accesses.all()):
+                facts.append("Доступ через API подтверждён.")
+            if not any(offer.active and offer.amount is not None for offer in entity.offers.all()):
+                facts.append("Проверенной цены в AIpediya нет.")
+        else:
+            facts = [f"{name} by {developer}."]
+            if entity.context:
+                facts.append(f"Context: {entity.context:,} tokens.")
+            if any(access.service.kind == "api" for access in entity.accesses.all()):
+                facts.append("Documented API access.")
+            if not any(offer.active and offer.amount is not None for offer in entity.offers.all()):
+                facts.append("No verified price in AIpediya.")
+        description = " ".join(facts)
     ready = [code for code in readiness.ready_locales(entity) if labels_ready([suffix_key], code)]
     from .context import t
     listing = ("/tools/", t("tools_tab", lang)) if kind == "tool" else ("/", t("models_tab", lang))
@@ -819,8 +842,54 @@ def collections_index(request):
     seo = page_signals("/collections/", lang, title=f"{title} | AIpediya",
                        description=label_text("collections_intro", lang), ready_langs=ready,
                        breadcrumbs=[("AIpediya", "/"), (title, "/collections/")])
+    from .search_pages import COPY
     return render(request, "collections.html", {"seo": seo, "items": items, "title": title,
-                                                "intro": label_text("collections_intro", lang)})
+                                                "intro": label_text("collections_intro", lang),
+                                                "search_copy": COPY.get(lang),
+                                                "context_url": localize("/compare/model-context", lang),
+                                                "pricing_url": localize("/api-pricing", lang)})
+
+
+@require_safe
+def search_reference(request, topic):
+    """Authored EN/RU reference pages; no filter or locale parameter variants."""
+    from .search_pages import COPY, context_rows, pricing_rows
+
+    lang = request.aipedia_lang
+    if lang not in COPY:
+        return _not_found(request)
+    is_context = topic == "context"
+    neutral = "/compare/model-context" if is_context else "/api-pricing"
+    if request.META.get("QUERY_STRING"):
+        return HttpResponsePermanentRedirect(localize(neutral, lang))
+    copy = COPY[lang]
+    rows = context_rows() if is_context else pricing_rows()
+    if not is_context:
+        from .price_text import full_conditions
+        for row in rows:
+            row["condition_in"] = full_conditions(row["input"].conditions, lang)
+            row["condition_out"] = full_conditions(row["output"].conditions, lang)
+    # A data-driven page without enough verified entries would be thin.
+    if len(rows) < 5:
+        return _not_found(request)
+    key = "context" if is_context else "pricing"
+    title = copy[f"{key}_title"]
+    seo = page_signals(neutral, lang, title=f"{title} | AIpediya",
+                       description=copy[f"{key}_description"], ready_langs=("en", "ru"),
+                       breadcrumbs=[("AIpediya", "/"),
+                                    (label_text("collections", lang), "/collections/"),
+                                    (title, neutral)])
+    return render(request, "search_reference.html", {
+        "seo": seo, "title": title, "copy": copy, "rows": rows,
+        "is_context": is_context, "intro": copy[f"{key}_intro"],
+        "method": copy[f"{key}_method"],
+        "context_url": localize("/compare/model-context", lang),
+        "pricing_url": localize("/api-pricing", lang),
+        "coding_url": localize("/collections/coding-models", lang),
+        "api_url": localize("/collections/api-models", lang),
+        "long_url": localize("/collections/long-context-models", lang),
+        "methodology_url": localize("/methodology", lang),
+    })
 
 
 @require_safe
@@ -977,9 +1046,9 @@ def release_acceptance(request):
 
 
 # Facet, search and fragment parameters are excluded from crawling; locale
-# paths, entity pages and plain ?page=N pagination stay crawlable. Those URLs
-# also answer noindex (listings) or canonicalize to the entity (cards), so a
-# URL discovered before this rule still resolves consistently.
+# paths, entity pages and plain ?page=N pagination stay crawlable. Exact
+# previously discovered card URLs are allowed separately so crawlers can see
+# their 301, 404 or fragment noindex without opening a query-space wildcard.
 ROBOTS_BLOCKED_PARAMS = (
     "q", "sort", "category", "task", "developer", "access", "status", "benchmark", "configuration",
     "snapshot", "evaluated_only", "price_unit", "price_scope", "price_variant", "price_modality",
@@ -1007,6 +1076,12 @@ def robots_rules():
             # canonicalized duplicate per card and keeps every card reachable.
             rules.append(("Allow", f"{prefix}/{kind}/*?page="))
             rules.append(("Disallow", f"{prefix}/{kind}/*?page=*&"))
+    from .legacy_search_urls import GSC_LEGACY_CARD_URLS
+
+    # `$` anchors each exception to one observed URL, including parameter
+    # order and values. Any added facet, page or partial combination stays
+    # blocked by the card query rules above.
+    rules.extend(("Allow", path + "$") for path in GSC_LEGACY_CARD_URLS)
     return rules
 
 
