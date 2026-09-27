@@ -8,7 +8,17 @@
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный выпуск — **Tools chronology + Cloudflare CSP**, 2026-09-27
+Текущий публичный выпуск — **Catalog 325 Models / 147 Tools**, 2026-09-27
+22:00 UTC: commit `9ddba83c176aa3f6793362d6345b797c76ddf987`, tag
+`release-2026-09-27-catalog-325-147`. Архив `aipedia-code-9ddba83c176a.zip`,
+SHA-256 `7b8fa47b7c4da09f746b6ab17f4baa92efebab05bcebb140cefac94fb40020d7`.
+`/healthz`, серверная SQLite и публичный браузер подтвердили 325 Models / 147
+Tools. `catalog_master qa --production`: PASS; полный GSD Production QA:
+1657/1657. Backups и отчёт — `docs/history/2026-09-27-catalog-325-147-release.md`.
+
+### Предыдущий публичный выпуск — Tools chronology + Cloudflare CSP
+
+Tools chronology + Cloudflare CSP, 2026-09-27
 19:13 UTC: commit `cf4ac9a33f8d4467510d6b76ebe115ce7e1803d3`, tag
 `release-2026-09-27-tools-chronology-csp`. Архив
 `aipedia-code-cf4ac9a33f8d.zip`, SHA-256
