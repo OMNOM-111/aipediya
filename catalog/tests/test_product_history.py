@@ -62,7 +62,7 @@ class ProductHistoryTests(SimpleTestCase):
         organic_id = "release-2026-09-26-search-visibility-optimization-v2"
         self.assertEqual(entries[organic_id]["stage"], "released")
         self.assertEqual(registry["product_history"]["current_production"]["release_tag"],
-                         "release-2026-09-27-tools-chronology-csp")
+                         "release-2026-09-27-catalog-325-147")
         paid_card = next(row for row in registry["product_history"]["milestones"] if row["release_id"] == paid_id)
         self.assertTrue(paid_card["open"])
         self.assertEqual(paid_card["progress"], "planned")
@@ -81,7 +81,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn("Проверено владельцем", card["tags_ru"])
         self.assertNotIn("Визуальная проверка ожидается", card["tags_ru"])
         self.assertIn("Визуальная проверка", task["owner_ru"])
-        self.assertEqual(registry["product_history"]["current_production"]["release_tag"], "release-2026-09-27-tools-chronology-csp")
+        self.assertEqual(registry["product_history"]["current_production"]["release_tag"], "release-2026-09-27-catalog-325-147")
 
     @override_settings(AIPEDIA_ENV="production", SECURE_SSL_REDIRECT=False)
     def test_history_is_private_in_production(self):
