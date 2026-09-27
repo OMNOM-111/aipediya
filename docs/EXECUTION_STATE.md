@@ -4,6 +4,30 @@
 Отчёты законченных выпусков — `docs/history/`.
 Пакет для нового чата собирается командой `\.\.venv\Scripts\python.exe tools/pack_ai_context.py` и **не** редактируется как независимый источник.
 
+## Каталог 325 Models / 147 Tools — Production VERIFIED, 2026-09-27
+
+- Изменено: проверенное владельцем Local-состояние опубликовано штатным
+  `tools/server.py deploy` через `aipediya-prod`. Публичный commit
+  `9ddba83c176aa3f6793362d6345b797c76ddf987`; tag
+  `release-2026-09-27-catalog-325-147`. Добавлены 4 модели и 4 инструмента,
+  обновлены 7 записей и пересчитаны номера. Local SQLite не копировалась.
+- Проверки: серверные preflight, dry-run, deploy, health, catalog,
+  verify-release и `catalog_master qa --production` — PASS. Production SQLite:
+  325/325 Models и 147/147 Tools пронумерованы, integrity OK, FK 0.
+  Публичный GSD check 34/34, полный Production QA 1657/1657. Браузер RU/EN:
+  счётчики 325/147, LongCat #325 и новые инструменты видны.
+  Backup до и после выпуска, SHA архива и детали —
+  `docs/history/2026-09-27-catalog-325-147-release.md`.
+- Local / GitHub / Production: Local PASS и утверждён владельцем; release
+  commit `9ddba83`, docs commit `c4c9422` и tag
+  `release-2026-09-27-catalog-325-147` отправлены в `origin/main`;
+  Production опубликована и проверена. Исходные посторонние dirty/untracked
+  файлы сохранены.
+- Не завершено: 35 известных неполных фактов master остаются в очереди
+  качества; прямой тариф LongCat 2.5 API не подтверждён, показанная цена —
+  Vercel AI Gateway. Следующим выполнить исследование этих фактов сначала
+  в master и Local; новый Production выпуск — только по отдельной команде.
+
 ## Tools chronology + Cloudflare CSP — Production VERIFIED, 2026-09-27
 
 - Изменено: Production выпуска `cf4ac9a33f8d4467510d6b76ebe115ce7e1803d3`

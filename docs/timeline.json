@@ -783,12 +783,25 @@
       "owner_decision": "Approved exact Tools/CSP Production release, 2026-09-27",
       "production_verified_at": "2026-09-27T19:22:30Z",
       "note": "Owner approved the exact 167-change plan and Production release. Local and Production have 143 published/numbered Tools, 60 exact and 83 approximate dates, numbers 1-143; Models remain 321. Production backup, server trial, deploy, browser and Cloudflare beacon/CSP checks passed."
+    },
+    {
+      "release_id": "release-2026-09-27-catalog-325-147",
+      "title": "Catalog 325 Models / 147 Tools",
+      "environment": "production",
+      "stage": "released",
+      "status": "DONE",
+      "started": "2026-09-27",
+      "history": "docs/history/2026-09-27-catalog-325-147-release.md",
+      "revision": "9ddba83c176aa3f6793362d6345b797c76ddf987",
+      "owner_decision": "Owner approved verified Local 325 Models / 147 Tools for Production, 2026-09-27",
+      "production_verified_at": "2026-09-27T22:05:12Z",
+      "note": "Preflight, deploy, server database QA, public browser, and GSD Production QA 1657/1657 passed."
     }
   ],
   "product_history": {
     "visibility": "Local only; no owner authentication exists for this page on Production",
-    "production_evidence": "docs/history/2026-09-27-tools-chronology-csp-release.md",
-    "production_verified_at": "2026-09-27T19:22:30Z",
+    "production_evidence": "docs/history/2026-09-27-catalog-325-147-release.md",
+    "production_verified_at": "2026-09-27T22:05:12Z",
     "milestones": [
       {
         "release_id": "release-2026-09-20-chronology",
@@ -1298,26 +1311,43 @@
         "next_ru": "Опубликовано и проверено (tag release-2026-09-27-adaptive-ui). Новых действий по этапу нет.",
         "next_en": "Published and verified (tag release-2026-09-27-adaptive-ui). No further action for this stage.",
         "source": "execution-state"
+      },
+      {
+        "id": "CATALOG-2026-09-25-27",
+        "title_ru": "Обновление каталога 25–27 сентября",
+        "title_en": "Catalog updates from September 25–27",
+        "goal_ru": "Добавить восемь проверенных карточек и обновления существующих моделей и инструментов через canonical master, проверить в Local и выпустить утверждённое состояние.",
+        "goal_en": "Add eight verified records and update existing models and tools through the canonical master, verify in Local and release the approved state.",
+        "done_ru": "PRODUCTION: 4 модели и 4 инструмента добавлены, 7 карточек обновлены, 325 Models и 147 Tools пронумерованы; архивированных записей нет. Акционные цены LongCat отделены от стандартных.",
+        "done_en": "PRODUCTION: four models and four tools added, seven existing records updated, 325 Models and 147 Tools numbered; none archived. LongCat promotional prices are distinct from standard rates.",
+        "qa_ru": "Local catalog_master QA PASS, 309 catalog tests OK (1 skip), визуальная приёмка владельца. Серверные preflight/deploy/health/catalog/verify-release PASS; Production QA 1657/1657; браузер RU/EN 325/147.",
+        "qa_en": "Local catalog_master QA PASS, 309 catalog tests OK (1 skip), owner visual acceptance. Server preflight/deploy/health/catalog/verify-release PASS; Production QA 1657/1657; RU/EN browser 325/147.",
+        "owner_ru": "Владелец принял Local 325 Models / 147 Tools и отдельно разрешил этот Production выпуск по docs/RELEASE.md.",
+        "owner_en": "Owner accepted Local 325 Models / 147 Tools and explicitly authorized this Production release per docs/RELEASE.md.",
+        "next_ru": "Следующим исследовать 35 известных неполных фактов master и прямой тариф LongCat 2.5; новый выпуск начинать с Local и отдельного разрешения.",
+        "next_en": "Next, investigate 35 known incomplete master facts and the direct LongCat 2.5 price; start any new release from Local with separate authorization.",
+        "source": "2026-09-27-catalog-325-147-release",
+        "progress": "done"
       }
     ],
     "current_production": {
-      "release_tag": "release-2026-09-27-tools-chronology-csp",
-      "revision": "cf4ac9a33f8d4467510d6b76ebe115ce7e1803d3",
-      "release_id": "cf4ac9a33f8d4467510d6b76ebe115ce7e1803d3",
-      "confirmed_at": "2026-09-27 19:22",
-      "evidence": "Live /healthz, server database compare, catalog_master qa --production, gsd_production_qa 1657/1657, browser beacon 200 and RUM 204",
-      "status_ru": "Опубликовано и проверено: /healthz подтвердил cf4ac9a; Tools 143/143 с номерами 1–143 и датами 60 exact / 83 approximate; Cloudflare beacon 200, RUM 204.",
-      "status_en": "Published and verified: /healthz confirmed cf4ac9a; Tools 143/143 numbered 1–143, with 60 exact and 83 approximate dates; Cloudflare beacon 200, RUM 204.",
-      "source": "2026-09-27-tools-chronology-csp-release",
+      "release_tag": "release-2026-09-27-catalog-325-147",
+      "revision": "9ddba83c176aa3f6793362d6345b797c76ddf987",
+      "release_id": "9ddba83c176aa3f6793362d6345b797c76ddf987",
+      "confirmed_at": "2026-09-27 22:05",
+      "evidence": "Live /healthz, server database compare, catalog_master qa --production, gsd_production_qa 1657/1657, RU/EN public browser",
+      "status_ru": "Опубликовано и проверено: /healthz подтвердил 9ddba83; 325/325 Models и 147/147 Tools пронумерованы; Production QA 1657/1657.",
+      "status_en": "Published and verified: /healthz confirmed 9ddba83; all 325 Models and 147 Tools numbered; Production QA 1657/1657.",
+      "source": "2026-09-27-catalog-325-147-release",
       "capabilities_ru": [
-        "321 модель без изменений; 143 опубликованных инструмента имеют номера 1–143.",
-        "60 точных и 83 приблизительных даты; другие фактические данные каталога сохранены.",
-        "CSP разрешает Cloudflare Analytics; beacon 200 и same-origin RUM 204; /history/ на Production — 404."
+        "325 опубликованных моделей и 147 инструментов; номера непрерывны.",
+        "Новые LongCat, Qwen3Guard-Stream, GPT Researcher, KoboldCpp, Darkbloom и vMLX.",
+        "Состояние публикации соответствует утверждённому Local; /history/ на Production — 404."
       ],
       "capabilities_en": [
-        "321 models unchanged; all 143 published tools are numbered 1–143.",
-        "60 exact and 83 approximate dates; other factual catalog data is preserved.",
-        "CSP permits Cloudflare Analytics; beacon 200 and same-origin RUM 204; /history/ remains 404 on Production."
+        "325 published models and 147 tools, all numbered without gaps.",
+        "New LongCat, Qwen3Guard-Stream, GPT Researcher, KoboldCpp, Darkbloom and vMLX records.",
+        "Publication state matches approved Local; /history/ remains 404 on Production."
       ]
     }
   }
