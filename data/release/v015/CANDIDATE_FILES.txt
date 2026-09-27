@@ -1,0 +1,17 @@
+# Release catalog-master-v015: base 0702405 (published search-visibility line,
+# code 61adedd) + exactly these files. Master v015: 11 new models, 4 new tools,
+# 9 corrections, renumbering of 18 tools; new models carry their price/access rows.
+# Not included: parallel uncommitted work of main (site history viewer, AI_CONTEXT
+# packer, docs/timeline.json, docs/PRODUCT_HISTORY.md) and data/research/.
+catalog/catalog_master.py
+catalog/master_sync.py
+catalog/tests/test_catalog_master_sync.py
+tools/master_v015_import_2026_09_26.py
+data/release_state.json
+data/release/v015/catalog_plan.json
+data/release/v015/translations.json
+data/release/v015/CANDIDATE_FILES.txt
+docs/CATALOG_MASTER.md
+docs/RELEASE.md
+docs/EXECUTION_STATE.md
+docs/history/2026-09-26-catalog-master-v015.md

@@ -692,8 +692,23 @@ def refresh_meta(meta, workbook_rows, stamp):
 
 
 # Link rows identified by content: a link already in the master under a
-# master-made key is not imported again under its Local key.
-NATURAL_KEYS = {"Tool Platforms": ("Record ID", "Platform"), "Origins": ("Record ID", "Country")}
+# master-made key is not imported again under its Local key. Price rows are
+# identified by their unique Research Key, access rows by owner + service +
+# evidence (rows that sync-local created from master rows of a new record).
+NATURAL_KEYS = {
+    "Tool Platforms": ("Record ID", "Platform"), "Origins": ("Record ID", "Country"),
+    "Offers": ("Research Key",),
+    "Access": ("Record Type", "Record ID", "Service", "Service Kind", "Service URL", "Source URL"),
+}
+
+
+def natural_key(sheet, values):
+    """Content identity of a link row, or None (no natural key / incomplete)."""
+    columns = NATURAL_KEYS.get(sheet)
+    if not columns:
+        return None
+    key = tuple(values.get(c, "") for c in columns)
+    return key if all(key) else None
 
 
 def import_from_local(workbook_rows, snapshot, aux, production=None, stamp=None):
@@ -738,11 +753,9 @@ def import_from_local(workbook_rows, snapshot, aux, production=None, stamp=None)
     for sheet in AUX:
         rows = workbook_rows.setdefault(sheet, [])
         known = {r["Key"] for r in rows}
-        natural = NATURAL_KEYS.get(sheet)
-        if natural:
-            known_natural = {tuple(r.get(c, "") for c in natural) for r in rows}
+        known_natural = {natural_key(sheet, r) for r in rows} - {None}
         new = [{"Key": key, **values} for key, values in aux[sheet].items() if key not in known
-               and not (natural and tuple(values.get(c, "") for c in natural) in known_natural)]
+               and natural_key(sheet, values) not in known_natural]
         rows.extend(new)
         if new:
             changelog.append({
@@ -949,10 +962,8 @@ def validate(workbook_rows, snapshot=None, aux=None):
         for sheet in AUX:
             master = {r.get("Key"): r for r in workbook_rows.get(sheet, [])}
             missing = sorted(set(aux[sheet]) - set(master))
-            natural = NATURAL_KEYS.get(sheet)
-            if natural:
-                present = {tuple(r.get(c, "") for c in natural) for r in master.values()}
-                missing = [k for k in missing if tuple(aux[sheet][k].get(c, "") for c in natural) not in present]
+            present = {natural_key(sheet, r) for r in master.values()} - {None}
+            missing = [k for k in missing if natural_key(sheet, aux[sheet][k]) not in present]
             if missing:
                 errors.append("%s: %d Local rows absent from master: %s" % (
                     sheet, len(missing), ", ".join(missing[:10])))

@@ -10,8 +10,7 @@ Push в GitHub **не** публикует сайт. Ярлык Local, кноп�
 
 Текущий публичный выпуск — **Search Visibility Optimization v2**, 2026-09-26
 21:47 UTC: commit `61adedd6ea5e6a0955d51d87374fa2fa9bcc7799`, tag
-`release-2026-09-26-search-visibility-optimization-v2`. По коду публичный
-сайт работает на commit `61adedd6ea5e6a0955d51d87374fa2fa9bcc7799`:
+`release-2026-09-26-search-visibility-optimization-v2`. По коду публичный сайт работает на commit `61adedd6ea5e6a0955d51d87374fa2fa9bcc7799`:
 `/healthz` подтвердил `environment=production` и commit; 310 Models / 139
 Tools сохранены. Архив `artifacts/code-release/aipedia-code-61adedd6ea5e.zip`,
 SHA-256 `8b8f2fa4bac3b6edce0868e4a963a795111d45695341c869ed824186e9ee625f`.
@@ -78,6 +77,18 @@ changelog.
   `docs/history/`.
 
 ## Changelog
+
+### release-2026-09-26-catalog-master-v015 — новые модели 22–24 сентября
+
+- 11 новых моделей с ценами, доступом, датами и переводами на 22 языка: Claude Opus 5.5,
+  GPT-6 Sol, GPT-6 Luna, Gemini 3.8 Flash TTS, Gemini 3.8 Flash-Lite TTS, Nemotron 3
+  Diarization, Speech TTS Live, Sarvam Vision 2.1, GLiNER2.5-Decide, FLUX 3 Action DROID,
+  FLUX 3 Action SO-101 — номера 311–321 по подтверждённой дате выпуска; 1–310 без изменений.
+- 4 новых инструмента (Alice AI Pro for Business, Qwen Intelligence, Yandex AI Studio,
+  SourceCraft); 18 инструментов получили новый хронологический номер.
+- Исправлены категория/задачи 9 моделей (GPT-5.6, GPT-6 Astra, Claude 5-серия,
+  Claude Haiku 4.5 — контекст 200K); записи NEEDS_REVIEW не публикуются.
+- Публично 321 Models / 143 Tools (было 310 / 139). Миграций нет.
 
 ### release-2026-09-26-search-visibility-optimization-v2
 
@@ -196,6 +207,18 @@ commit/tag выпуска обычной сборкой (`tools/build_code_relea
 
 Предыдущий кандидат catalog-master-v013 (`954db5a4586b`) заменён этим выпуском и
 отдельно не публикуется.
+
+## Выпуск catalog-master-v015
+
+Состав и проверки — `docs/history/2026-09-26-catalog-master-v015.md`. Данные:
+`data/release/v015/catalog_plan.json`, `data/release/v015/translations.json`,
+`data/release_state.json` (321 / 143); список файлов — `data/release/v015/CANDIDATE_FILES.txt`.
+Ветка `release/catalog-master-v015` продолжает опубликованную линию `0702405`
+(код `61adedd`), а не `main`. Порядок на сервере — как для v014: read-only проверка,
+`--dry-run`, затем `deploy_code_release.py <archive> --sha256 <digest> --catalog-plan
+data/release/v015/catalog_plan.json --translations data/release/v015/translations.json
+--publication-state data/release_state.json`; публичная проверка —
+`artifacts/catalog-master-v015/v015_check.py https://aipediya.com`.
 
 ## Собрать архив кода
 

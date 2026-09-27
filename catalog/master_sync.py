@@ -18,11 +18,14 @@ What is transferred (see docs/CATALOG_MASTER.md, "Контракт sync-local"):
 * platforms of PUBLISHED tools: missing ones are added, none removed;
 * existing access rows: service kind / URL / compute location / name, only when
   that service belongs to this one access row (shared services are reported);
-* creation of PUBLISHED master rows that Local lacks.
+* creation of PUBLISHED master rows that Local lacks, together with their own
+  master price (Offers) and access rows: a new card arrives complete, with
+  Suitable/Limitations EN/RU and its release evidence. Rows are matched later
+  by content (Research Key; owner + service + evidence), never duplicated.
 
 Everything else that differs for a PUBLISHED record (names, developers,
 families, sources, other texts, platforms, origin countries, new or changed
-access rows, new price/evaluation rows, ...) is NOT written: it is returned as
+access rows and new price/evaluation rows of existing records, ...) is NOT written: it is returned as
 ``unsupported`` items and reported as a warning by the command, never hidden
 behind a general "synchronised" message. Drafts and deferred/archived records
 are not created and their fields are not synced (they are not public).
@@ -187,7 +190,8 @@ def plan(workbook_rows, snapshot=None, aux=None):
             publish = row.get("Status") == "PUBLISHED"
             if obj is None:
                 if publish:
-                    changes.append({"sheet": sheet, "id": rid, "kind": "create", "row": row})
+                    changes.append({"sheet": sheet, "id": rid, "kind": "create", "row": row,
+                                    **_linked_rows(workbook_rows, sheet, rid)})
                 continue
             wanted = {}
             if obj.published != publish:
@@ -314,6 +318,18 @@ def plan(workbook_rows, snapshot=None, aux=None):
     return changes
 
 
+def _linked_rows(workbook_rows, sheet, record_id):
+    """Master price/access rows owned by a model that sync-local creates.
+
+    Tools keep such rows on a legacy ModelVersion that sync-local does not
+    create, so their rows stay in the ``unsupported`` report."""
+    if sheet != "Models":
+        return {}
+    return {key: [dict(r) for r in workbook_rows.get(aux_sheet, [])
+                  if r.get("Record ID") == record_id and r.get("Record Type") == "model"]
+            for aux_sheet, key in (("Offers", "offers"), ("Access", "access"))}
+
+
 def _locator(obj, owner_after=None, service_after=None):
     """Stable, database-independent address of a price/evaluation/access row.
 
@@ -420,12 +436,13 @@ def _unsupported(workbook_rows, snapshot, aux, published_ids):
             for column in columns:
                 items.append({"sheet": sheet, "id": rid, "kind": "unsupported", "columns": [column],
                               "category": "service" if column in SERVICE_ONLY else "public"})
-    local_platforms = {(v.get("Record ID"), v.get("Platform")) for v in aux.get("Tool Platforms", {}).values()}
-    local_origins = {(v.get("Record ID"), v.get("Country")) for v in aux.get("Origins", {}).values()}
     from .models import Access
     exclusive = {"access-%d" % a.pk for a in Access.objects.all() if _exclusive_service(a)}
+    created = {row["Record ID"]: row for row in workbook_rows["Models"]
+               if row["Record ID"] in published_ids["Models"] and row["Record ID"] not in snapshot["Models"]}
     for sheet in cm.AUX:
         local_rows = aux.get(sheet, {})
+        local_natural = {cm.natural_key(sheet, v) for v in local_rows.values()} - {None}
         for row in workbook_rows.get(sheet, []):
             owner = cm.RECORD_TYPE_SHEET.get(row.get("Record Type"))
             if row.get("Record ID") not in published_ids.get(owner, ()):
@@ -434,10 +451,12 @@ def _unsupported(workbook_rows, snapshot, aux, published_ids):
                 continue  # internal verification facts never go to the site
             local = local_rows.get(row.get("Key"))
             if local is None:
-                if sheet == "Tool Platforms" and (row.get("Record ID"), row.get("Platform")) in local_platforms:
-                    continue  # same link already in Local under its own key
-                if sheet == "Origins" and (row.get("Record ID"), row.get("Country")) in local_origins:
-                    continue
+                if cm.natural_key(sheet, row) in local_natural:
+                    continue  # same row already in Local under its own key
+                new_model = created.get(row.get("Record ID")) if owner == "Models" else None
+                if new_model is not None and (sheet in ("Offers", "Access") or (
+                        sheet == "Origins" and row.get("Country") in _split(new_model.get("Origin Countries", "")))):
+                    continue  # created together with the new model
                 items.append({"sheet": sheet, "id": row.get("Key"), "kind": "unsupported",
                               "record": row.get("Record ID"), "columns": ["new row"], "category": "public"})
                 continue
@@ -498,12 +517,17 @@ def _create(change, today):
     }
     if sheet == "Models":
         family, _ = ModelFamily.objects.get_or_create(name=row.get("Family") or row["Name"], developer=developer)
+        texts = {attr: {} for attr, _lang in MODEL_TEXT_FIELDS.values()}
+        for column, (attr, lang) in MODEL_TEXT_FIELDS.items():
+            if row.get(column) and row[column] != CLEAR:
+                texts[attr][lang] = row[column]
         obj = ModelVersion(family=family, entry_type="model", tasks=_split(row.get("Tasks", "")),
                            input_modalities=_split(row.get("Input Modalities", "")),
                            output_modalities=_split(row.get("Output Modalities", "")),
                            context=int(row["Context"]) if row.get("Context") else None,
                            license=row.get("License", ""), open_weights=row.get("Open Weights") == "YES",
-                           release_stage=row.get("Release Stage", ""), **common)
+                           release_stage=row.get("Release Stage", ""), release_evidence=_evidence(row),
+                           **texts, **common)
     else:
         obj = Tool(developer=developer, purposes=_split(row.get("Purposes", "")),
                    local_execution=row.get("Local Execution", ""), official_url=row.get("Official URL", ""), **common)
@@ -513,11 +537,83 @@ def _create(change, today):
             if Country.objects.filter(code=code).exists():
                 ModelOriginCountry.objects.get_or_create(model=obj, country_id=code, defaults={
                     "source": source, "checked": checked, "position": position})
+        for offer_row in change.get("offers", []):
+            _create_offer(obj, offer_row, today)
+        for access_row in change.get("access", []):
+            _create_access(obj, access_row, today)
     else:
         for platform in Platform.objects.filter(code__in=_split(row.get("Platforms", ""))):
             ToolPlatform.objects.get_or_create(tool=obj, platform=platform, defaults={
                 "source": source, "checked": checked})
     return obj
+
+
+def _evidence(row):
+    import json
+    try:
+        value = json.loads(row.get("Release Evidence (JSON)") or "{}")
+    except ValueError:
+        return {}
+    return value if isinstance(value, dict) else {}
+
+
+def _row_date(value, today):
+    try:
+        return date.fromisoformat(value) if value and value != CLEAR else today
+    except ValueError:
+        return today
+
+
+def _service_for(row, today):
+    """The service named by a master row: reused when identical, else created."""
+    from .models import Organization, Service
+    fields = {"name": row["Service"], "kind": row["Service Kind"], "url": row["Service URL"]}
+    service = Service.objects.filter(**fields).order_by("pk").first()
+    if service is None:
+        provider = row.get("Provider") or row["Service"]
+        organization = Organization.objects.filter(name=provider).first()
+        if organization is None:
+            organization = Organization.objects.create(
+                name=provider, source=_source({"url": row["Service URL"], "publisher": provider}), checked=today)
+        service = Service.objects.create(provider=organization, compute_location=row.get("Compute Location", ""),
+                                         **fields)
+    return service
+
+
+def _create_offer(model, row, today):
+    import json
+    from .models import Offer
+    if not row.get("Research Key"):
+        raise ValueError("Offers %s: a new price row needs a Research Key" % row.get("Key"))
+    if Offer.objects.filter(research_key=row["Research Key"]).exists():
+        raise ValueError("Offers %s: Research Key already used" % row.get("Key"))
+    service = _service_for(row, today)
+    if (row["Unit"] in {"month", "year"}) != (service.kind in {"web", "app", "cli", "ide"}) or (
+            row["Unit"] not in {"month", "year"} and service.kind != "api"):
+        raise ValueError("Offers %s: unit %s does not fit service kind %s" % (row.get("Key"), row["Unit"], service.kind))
+    try:
+        extra = json.loads(row.get("Conditions Extra (JSON)") or "{}")
+    except ValueError:
+        extra = {}
+    conditions = {**(extra if isinstance(extra, dict) else {}),
+                  **{lang: row[column] for column, lang in (("Conditions EN", "en"), ("Conditions RU", "ru"))
+                     if row.get(column)}}
+    if not conditions.get("ru"):
+        raise ValueError("Offers %s: Conditions RU is required" % row.get("Key"))
+    Offer.objects.create(
+        model=model, service=service, amount=Decimal(row["Amount"]) if row.get("Amount") else None,
+        unit=row["Unit"], billing_unit=row.get("Billing Unit", "") if row["Unit"] == "other" else "",
+        conditions=conditions, source=_source({"url": row["Source URL"], "publisher": row.get("Provider", "")}),
+        checked=_row_date(row.get("Checked"), today), active=row.get("Active") != "NO",
+        primary=row.get("Primary") == "YES", research_key=row["Research Key"])
+
+
+def _create_access(model, row, today):
+    from .models import Access
+    service = _service_for(row, today)
+    source = _source({"url": row.get("Source URL") or row["Service URL"], "publisher": row.get("Provider", "")})
+    Access.objects.get_or_create(model=model, service=service, defaults={
+        "source": source, "checked": _row_date(row.get("Checked"), today)})
 
 
 def _renumber(targets):
@@ -781,7 +877,10 @@ def final_state_problems(plan):
         if published != plan["final_published"][sheet]:
             problems.append("%s published set differs from the plan" % sheet)
         numbers = dict(manager.values_list("slug", "public_number"))
-        wrong = [slug for slug, number in plan["final_numbers"][sheet].items() if numbers.get(slug, "absent") != number]
+        # a master draft that was never created (NEEDS_REVIEW) is planned
+        # without a number: absent from the database is its correct state
+        wrong = [slug for slug, number in plan["final_numbers"][sheet].items()
+                 if numbers.get(slug, "absent" if number is not None else None) != number]
         if wrong:
             problems.append("%s numbers differ from the plan: %s" % (sheet, wrong[:5]))
     return problems

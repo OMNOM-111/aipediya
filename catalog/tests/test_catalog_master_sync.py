@@ -468,3 +468,113 @@ class CrossCatalogReclassificationTests(MasterSyncTests):
         self.assertIn("must be ARCHIVE", text)
         tool.update({"Canonical / Parent Record ID": "Models:ghost"})
         self.assertIn("not found", "\n".join(cm.validate(rows)[0]))
+
+
+@unittest.skipUnless(HAS_OPENPYXL, "openpyxl is not installed")
+class NewModelLinkedRowsTests(MasterSyncTests):
+    """A new PUBLISHED model arrives with its own master price and access rows."""
+
+    def test_add_fix_alias_draft_and_rerun_without_duplicates(self):  # covered by the parent class
+        pass
+
+    def test_empty_cell_keeps_value_and_clear_token_erases_it(self):
+        pass
+
+    def test_mass_change_guard_and_failing_master_write_nothing(self):
+        pass
+
+    def add_new_model(self, rows):
+        service = {"Service": "Lab · API", "Service Kind": "api", "Service URL": "https://example.com/api",
+                   "Provider": "Lab", "Compute Location": "cloud"}
+        rows["Models"].append(master_row(
+            "fresh", "Fresh", "2026-09-22", Family="Fresh", **{
+                "Description RU": "новая", "Limitations EN": "Closed weights", "Limitations RU": "Закрытые веса",
+                "Release Evidence (JSON)": '{"date_text": "2026-09-22", "source_url": "https://example.com/launch"}'}))
+        for key, unit, amount, primary, active in (("offer-aa11", "input", "2", "YES", "YES"),
+                                                   ("offer-bb22", "output", "10", "YES", "YES"),
+                                                   ("offer-cc33", "input", "4", "NO", "NO")):
+            rows["Offers"].append({"Key": key, "Record Type": "model", "Record ID": "fresh", **service,
+                                   "Amount": amount, "Unit": unit, "Conditions EN": "Standard; USD per 1M tokens",
+                                   "Conditions RU": "Standard; USD за 1M токенов", "Primary": primary,
+                                   "Active": active, "Source URL": "https://example.com/pricing",
+                                   "Checked": "2026-09-26", "Research Key": "v015:" + key,
+                                   "Conditions Extra (JSON)": '{"currency": "USD"}'})
+        rows["Access"].append({"Key": "access-dd44", "Record Type": "model", "Record ID": "fresh", **service,
+                               "Source URL": "https://example.com/fresh", "Checked": "2026-09-26"})
+        rows["Access"].append({"Key": "access-ee55", "Record Type": "model", "Record ID": "fresh",
+                               "Service": "Lab weights", "Service Kind": "download",
+                               "Service URL": "https://example.com/weights", "Provider": "Lab",
+                               "Compute Location": "local", "Source URL": "https://example.com/weights",
+                               "Checked": "2026-09-26"})
+
+    def test_new_model_gets_prices_access_texts_without_duplicates(self):
+        from catalog.models import Access, Offer
+        self.model("old")
+        self.command("import")
+        self.edit(self.add_new_model)
+        self.assertIn("check: OK", self.command("check"))
+        dry = self.command("sync-local")
+        self.assertNotIn("Offers:new row", dry)
+        self.assertNotIn("Access:new row", dry)
+        self.command("sync-local", apply=True)
+        fresh = ModelVersion.objects.get(slug="fresh")
+        self.assertEqual((fresh.published, fresh.released, fresh.limitations),
+                         (True, date(2026, 9, 22), {"en": "Closed weights", "ru": "Закрытые веса"}))
+        self.assertEqual(fresh.release_evidence["source_url"], "https://example.com/launch")
+        offers = {o.research_key: o for o in Offer.objects.filter(model=fresh)}
+        self.assertEqual(sorted(offers), ["v015:offer-aa11", "v015:offer-bb22", "v015:offer-cc33"])
+        first = offers["v015:offer-aa11"]
+        self.assertEqual((first.amount, first.unit, first.primary, first.active, first.service.kind),
+                         (2, "input", True, True, "api"))
+        self.assertEqual(first.conditions, {"currency": "USD", "en": "Standard; USD per 1M tokens",
+                                            "ru": "Standard; USD за 1M токенов"})
+        self.assertFalse(offers["v015:offer-cc33"].active)
+        self.assertEqual(sorted(a.service.kind for a in Access.objects.filter(model=fresh)), ["api", "download"])
+        self.assertEqual(Offer.objects.filter(model=fresh).values("service").distinct().count(), 1)
+        page = self.client.get("/models/fresh")
+        self.assertEqual(page.status_code, 200)
+        self.assertIn("Closed weights", page.content.decode())
+
+        counts = (Offer.objects.count(), Access.objects.count())
+        self.command("import")
+        rows = cm.read_workbook(self.path)[0]
+        self.assertEqual(sum(1 for r in rows["Offers"] if r["Record ID"] == "fresh"), 3)
+        self.assertEqual(sum(1 for r in rows["Access"] if r["Record ID"] == "fresh"), 2)
+        self.assertIn("check: OK", self.command("check"))
+        again = self.command("sync-local", apply=True)
+        self.assertIn("applied: 0 changes", again)
+        self.assertNotIn("new row", again)
+        self.assertEqual(counts, (Offer.objects.count(), Access.objects.count()))
+
+    def test_release_plan_creates_the_model_with_its_rows(self):
+        import json
+        from catalog.models import Access, Offer
+        self.model("old")
+        self.command("import")
+
+        def change(rows):
+            self.add_new_model(rows)
+            rows["Models"].append(master_row("draft-only", "Draft Only", "2026-09-24", status="NEEDS_REVIEW"))
+        self.edit(change)
+        out = self.tmp / "plan.json"
+        self.command("release-plan", plan_out=str(out), release="test")
+        plan = json.loads(out.read_text(encoding="utf-8"))
+        create = [c for c in plan["changes"] if c["kind"] == "create"]
+        self.assertEqual([(c["id"], len(c["offers"]), len(c["access"])) for c in create], [("fresh", 3, 2)])
+        self.assertIn("final state matches", self.command("apply-plan", plan_out=str(out), apply=True))
+        fresh = ModelVersion.objects.get(slug="fresh")
+        self.assertEqual((Offer.objects.filter(model=fresh).count(), Access.objects.filter(model=fresh).count()), (3, 2))
+        self.assertIn("already applied", self.command("apply-plan", plan_out=str(out), apply=True))
+        self.assertEqual(Offer.objects.filter(model=fresh).count(), 3)
+        self.assertFalse(ModelVersion.objects.filter(slug="draft-only").exists())
+
+    def test_price_row_without_research_key_rolls_back_the_sync(self):
+        def change(rows):
+            self.add_new_model(rows)
+            rows["Offers"][-1]["Research Key"] = ""
+        self.model("old")
+        self.command("import")
+        self.edit(change)
+        with self.assertRaisesMessage(CommandError, "needs a Research Key"):
+            self.command("sync-local", apply=True)
+        self.assertFalse(ModelVersion.objects.filter(slug="fresh").exists())

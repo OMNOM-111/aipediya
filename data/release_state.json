@@ -324,6 +324,10 @@
    "public_number": 268,
    "published": true
   },
+  "claude-opus-5-5": {
+   "public_number": 311,
+   "published": true
+  },
   "claude-sonnet-4-16b3f7ee": {
    "public_number": 107,
    "published": true
@@ -796,6 +800,14 @@
    "public_number": 274,
    "published": true
   },
+  "flux-3-action-droid": {
+   "public_number": 316,
+   "published": true
+  },
+  "flux-3-action-so101": {
+   "public_number": 317,
+   "published": true
+  },
   "flux-video-edit-fast-e50abbf6": {
    "public_number": null,
    "published": false
@@ -915,6 +927,14 @@
   "gemini-25-pro-c8160485": {
    "public_number": null,
    "published": false
+  },
+  "gemini-3-8-flash-lite-tts": {
+   "public_number": 313,
+   "published": true
+  },
+  "gemini-3-8-flash-tts": {
+   "public_number": 312,
+   "published": true
   },
   "gemini-3-pro-image-fbb2caf5": {
    "public_number": 160,
@@ -1059,6 +1079,10 @@
   "gigachat-746bcb71": {
    "public_number": null,
    "published": false
+  },
+  "gliner-2-5-decide": {
+   "public_number": 319,
+   "published": true
   },
   "glm-130b-e255b133": {
    "public_number": null,
@@ -1326,6 +1350,14 @@
   },
   "gpt-6-astra-d05a172f": {
    "public_number": 294,
+   "published": true
+  },
+  "gpt-6-luna": {
+   "public_number": 314,
+   "published": true
+  },
+  "gpt-6-sol": {
+   "public_number": 315,
    "published": true
   },
   "gpt-image-2-efbcfff2": {
@@ -2136,6 +2168,10 @@
    "public_number": 15,
    "published": true
   },
+  "nemotron-3-diarization": {
+   "public_number": 318,
+   "published": true
+  },
   "nemotron-3-super-120b-a12b-bf16-7aef286f": {
    "public_number": null,
    "published": false
@@ -2756,6 +2792,10 @@
    "public_number": 113,
    "published": true
   },
+  "sarvam-vision-2-1": {
+   "public_number": 320,
+   "published": true
+  },
   "scribe-v1-9575deb2": {
    "public_number": null,
    "published": false
@@ -3080,6 +3120,10 @@
    "public_number": null,
    "published": false
   },
+  "yandex-speech-tts-live": {
+   "public_number": 321,
+   "published": true
+  },
   "yandexgpt-1-e56c59be": {
    "public_number": null,
    "published": false
@@ -3130,10 +3174,10 @@
   }
  },
  "public": {
-  "models": 310,
-  "tools": 139
+  "models": 321,
+  "tools": 143
  },
- "release": "catalog-master-v014",
+ "release": "release-2026-09-26-catalog-master-v015",
  "schema": "aipedia-publication-state/1",
  "tools": {
   "adobe-firefly-9f88c8c9": {
@@ -3149,11 +3193,15 @@
    "published": true
   },
   "alice-ai-da730eef": {
-   "public_number": 103,
+   "public_number": 105,
+   "published": true
+  },
+  "alice-ai-pro-business": {
+   "public_number": 116,
    "published": true
   },
   "amazon-nova-forge-e5333e99": {
-   "public_number": 105,
+   "public_number": 107,
    "published": true
   },
   "amazon-q-developer-d7b6203a": {
@@ -3161,7 +3209,7 @@
    "published": true
   },
   "antigravity-cli-b0aa4e36": {
-   "public_number": 111,
+   "public_number": 113,
    "published": true
   },
   "arize-phoenix-5d2d2c89": {
@@ -3213,7 +3261,7 @@
    "published": true
   },
   "claude-code-ad4bceba": {
-   "public_number": 96,
+   "public_number": 97,
    "published": true
   },
   "cline-e0d25424": {
@@ -3229,7 +3277,7 @@
    "published": true
   },
   "codex-59301cf4": {
-   "public_number": 97,
+   "public_number": 98,
    "published": true
   },
   "comfyui-4aec921a": {
@@ -3329,7 +3377,7 @@
    "published": true
   },
   "flow-050287a2": {
-   "public_number": 98,
+   "public_number": 99,
    "published": true
   },
   "gemini-90ef8dfa": {
@@ -3337,7 +3385,7 @@
    "published": true
   },
   "gemini-cli-97009d71": {
-   "public_number": 101,
+   "public_number": 102,
    "published": true
   },
   "gemini-code-assist-611ff03b": {
@@ -3377,23 +3425,23 @@
    "published": true
   },
   "grok-speech-to-text-cfab200f": {
-   "public_number": 108,
+   "public_number": 110,
    "published": true
   },
   "grok-speech-to-text-streaming-1109f624": {
-   "public_number": 109,
+   "public_number": 111,
    "published": true
   },
   "grok-text-to-speech-ade3260f": {
-   "public_number": 107,
+   "public_number": 109,
    "published": true
   },
   "grok-voice-agent-64dc28d2": {
-   "public_number": 104,
+   "public_number": 106,
    "published": true
   },
   "grok-voice-api-e5ae4c9e": {
-   "public_number": 106,
+   "public_number": 108,
    "published": true
   },
   "groqcloud-27d72cc2": {
@@ -3493,7 +3541,7 @@
    "published": true
   },
   "luma-dream-machine-7639cc3d": {
-   "public_number": 99,
+   "public_number": 100,
    "published": true
   },
   "meta-ai-f05512e0": {
@@ -3509,7 +3557,7 @@
    "published": true
   },
   "minimax-code-93f290d1": {
-   "public_number": 112,
+   "public_number": 114,
    "published": true
   },
   "minimax-speech-recognition-b5f156c4": {
@@ -3581,15 +3629,19 @@
    "published": true
   },
   "qwen-chat-1b9debb8": {
-   "public_number": 95,
+   "public_number": 96,
    "published": true
   },
   "qwen-code-984fcfb7": {
-   "public_number": 102,
+   "public_number": 103,
+   "published": true
+  },
+  "qwen-intelligence": {
+   "public_number": 115,
    "published": true
   },
   "qwen-scope-86f19967": {
-   "public_number": 110,
+   "public_number": 112,
    "published": true
   },
   "recraft-5c5605ef": {
@@ -3609,7 +3661,7 @@
    "published": true
   },
   "roo-code-c6a1ecaa": {
-   "public_number": 100,
+   "public_number": 101,
    "published": true
   },
   "runway-e34e79e1": {
@@ -3638,6 +3690,10 @@
   },
   "sora-bd047027": {
    "public_number": 93,
+   "published": true
+  },
+  "sourcecraft": {
+   "public_number": 95,
    "published": true
   },
   "sourcegraph-cody-f6ae3521": {
@@ -3682,6 +3738,10 @@
   },
   "windsurf-0de02d58": {
    "public_number": 91,
+   "published": true
+  },
+  "yandex-ai-studio": {
+   "public_number": 104,
    "published": true
   },
   "youcom-56912a5d": {
