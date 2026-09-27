@@ -54,7 +54,7 @@ MODEL_FIELDS = {
 }
 TOOL_FIELDS = {
     "Category": "category", "Purposes": "purposes", "Local Execution": "local_execution",
-    "Official URL": "official_url", "Catalog Status": "catalog_status",
+    "Official URL": "official_url", "Catalog Status": "catalog_status", "Version": "version",
 }
 TEXT_FIELDS = {"Description EN": ("description", "en"), "Description RU": ("description", "ru")}
 MODEL_TEXT_FIELDS = {"Suitable EN": ("suitable", "en"), "Suitable RU": ("suitable", "ru"),
@@ -313,21 +313,108 @@ def plan(workbook_rows, snapshot=None, aux=None):
                             "before": {"public": evaluation.public}, "after": {"public": public},
                             "identity": {"model": evaluation.model.slug}, "locator": _locator(evaluation)})
 
+    created = {(c["sheet"], c["id"]) for c in changes if c["kind"] == "create"}
+    changes.extend(_new_rows(workbook_rows, published_ids, created))
+    changes.extend(_developer_countries(workbook_rows, published_ids))
     if snapshot is not None:
         changes.extend(_unsupported(workbook_rows, snapshot, aux or {}, published_ids))
     return changes
 
 
 def _linked_rows(workbook_rows, sheet, record_id):
-    """Master price/access rows owned by a model that sync-local creates.
-
-    Tools keep such rows on a legacy ModelVersion that sync-local does not
-    create, so their rows stay in the ``unsupported`` report."""
-    if sheet != "Models":
-        return {}
+    """Master price/access rows owned by a record that sync-local creates
+    (a tool's rows live on its legacy product row, created with them)."""
+    record_type = "model" if sheet == "Models" else "tool"
     return {key: [dict(r) for r in workbook_rows.get(aux_sheet, [])
-                  if r.get("Record ID") == record_id and r.get("Record Type") == "model"]
+                  if r.get("Record ID") == record_id and r.get("Record Type") == record_type]
             for aux_sheet, key in (("Offers", "offers"), ("Access", "access"))}
+
+
+# Values found in Organization.country that are not a country.
+NOT_A_COUNTRY = {"", "open source", "community"}
+
+
+def _new_rows(workbook_rows, published_ids, created):
+    """New master rows (price, access, origin country, evaluation) of existing
+    PUBLISHED records. Each is identified by content so a re-run, an import
+    and a release plan recognise it: offers by Research Key, evaluations by
+    Observation Key, access by owner + service + evidence, origins by model +
+    country. Rows without such an identity stay in the ``unsupported`` report."""
+    from .models import Access, Country, Evaluation, ModelOriginCountry, ModelVersion, Offer, Tool
+
+    changes = []
+    research_keys = set(Offer.objects.exclude(research_key=None).values_list("research_key", flat=True))
+    observation_keys = set(Evaluation.objects.exclude(observation_key=None).values_list("observation_key", flat=True))
+    origins = set(ModelOriginCountry.objects.values_list("model__slug", "country_id"))
+    countries = set(Country.objects.values_list("code", flat=True))
+    models = set(ModelVersion.objects.filter(entry_type="model").values_list("slug", flat=True))
+    tools = dict(Tool.objects.values_list("slug", "legacy_version__slug"))
+    accesses = set(Access.objects.values_list("model__slug", "service__name", "service__url", "source__url"))
+    local_keys = {"offer-%d" % pk for pk in Offer.objects.values_list("pk", flat=True)}
+    local_keys |= {"access-%d" % pk for pk in Access.objects.values_list("pk", flat=True)}
+    local_keys |= {"origin-%d" % pk for pk in ModelOriginCountry.objects.values_list("pk", flat=True)}
+    local_keys |= {"evaluation-%d" % pk for pk in Evaluation.objects.values_list("pk", flat=True)}
+
+    def owner(row):
+        sheet = cm.RECORD_TYPE_SHEET.get(row.get("Record Type"))
+        rid = row.get("Record ID")
+        if row.get("Key") in local_keys:
+            return None  # an existing Local row (its differences are handled or reported elsewhere)
+        if rid not in published_ids.get(sheet, ()) or (sheet, rid) in created:
+            return None
+        if sheet == "Models":
+            return ("model:" + rid, rid) if rid in models else None
+        return ("tool:" + rid, tools.get(rid) or "") if rid in tools else None
+
+    for row in workbook_rows.get("Offers", []):
+        found = owner(row)
+        key = row.get("Research Key", "")
+        if found and key and key not in research_keys:
+            changes.append({"sheet": "Offers", "id": row["Key"], "kind": "offer_new", "owner": found[0], "row": dict(row)})
+    for row in workbook_rows.get("Access", []):
+        found = owner(row)
+        if not found or not all(row.get(c) for c in ("Service", "Service Kind", "Service URL", "Source URL")):
+            continue
+        if (found[1], row["Service"], row["Service URL"], row["Source URL"]) in accesses:
+            continue
+        if found[1] and any(a[0] == found[1] and a[1] == row["Service"] and a[2] == row["Service URL"] for a in accesses):
+            continue  # same service already linked (one access row per model and service)
+        changes.append({"sheet": "Access", "id": row["Key"], "kind": "access_new", "owner": found[0], "row": dict(row)})
+    for row in workbook_rows.get("Origins", []):
+        found = owner(row)
+        if (found and found[0].startswith("model:") and row.get("Country") in countries and row.get("Source URL")
+                and (row["Record ID"], row["Country"]) not in origins):
+            changes.append({"sheet": "Origins", "id": row["Key"], "kind": "origin_new", "owner": found[0], "row": dict(row)})
+    for row in workbook_rows.get("Evaluations", []):
+        found = owner(row)
+        key = row.get("Observation Key", "")
+        if found and found[0].startswith("model:") and key and key not in observation_keys:
+            changes.append({"sheet": "Evaluations", "id": row["Key"], "kind": "evaluation_new", "owner": found[0],
+                            "row": dict(row)})
+    return changes
+
+
+def _developer_countries(workbook_rows, published_ids):
+    """Fill a developer's country from the master when Local has none (or a
+    placeholder such as "Open source"). A different existing country is never
+    overwritten: it stays an ``unsupported`` difference for review."""
+    from .models import ModelVersion, Tool
+
+    changes, seen = [], set()
+    orgs = {m.slug: m.family.developer for m in ModelVersion.objects.filter(entry_type="model").select_related("family__developer")}
+    orgs.update({"tool:" + t.slug: t.developer for t in Tool.objects.select_related("developer")})
+    for sheet in cm.MAIN:
+        for row in workbook_rows[sheet]:
+            country = row.get("Developer Country", "")
+            if row["Record ID"] not in published_ids[sheet] or country.strip().casefold() in NOT_A_COUNTRY or country == CLEAR:
+                continue
+            org = orgs.get(row["Record ID"] if sheet == "Models" else "tool:" + row["Record ID"])
+            if org is None or org.name in seen or (org.country or "").strip().casefold() not in NOT_A_COUNTRY:
+                continue
+            seen.add(org.name)
+            changes.append({"sheet": sheet, "id": org.name, "kind": "org_country", "record": row["Record ID"],
+                            "before": {"country": org.country}, "after": {"country": country}})
+    return changes
 
 
 def _locator(obj, owner_after=None, service_after=None):
@@ -433,13 +520,16 @@ def _unsupported(workbook_rows, snapshot, aux, published_ids):
                 extra = set(_split(local_row.get("Platforms", ""))) - set(_split(row.get("Platforms", "")))
                 if not extra:
                     columns.remove("Platforms")  # only additions: supported
+            if "Developer Country" in columns and local_row.get("Developer Country", "").strip().casefold() in NOT_A_COUNTRY:
+                columns.remove("Developer Country")  # filled by org_country
             for column in columns:
                 items.append({"sheet": sheet, "id": rid, "kind": "unsupported", "columns": [column],
                               "category": "service" if column in SERVICE_ONLY else "public"})
-    from .models import Access
+    from .models import Access, Country
     exclusive = {"access-%d" % a.pk for a in Access.objects.all() if _exclusive_service(a)}
-    created = {row["Record ID"]: row for row in workbook_rows["Models"]
-               if row["Record ID"] in published_ids["Models"] and row["Record ID"] not in snapshot["Models"]}
+    created = {(sheet, row["Record ID"]): row for sheet in cm.MAIN for row in workbook_rows[sheet]
+               if row["Record ID"] in published_ids[sheet] and row["Record ID"] not in snapshot[sheet]}
+    countries = set(Country.objects.values_list("code", flat=True))
     for sheet in cm.AUX:
         local_rows = aux.get(sheet, {})
         local_natural = {cm.natural_key(sheet, v) for v in local_rows.values()} - {None}
@@ -453,10 +543,16 @@ def _unsupported(workbook_rows, snapshot, aux, published_ids):
             if local is None:
                 if cm.natural_key(sheet, row) in local_natural:
                     continue  # same row already in Local under its own key
-                new_model = created.get(row.get("Record ID")) if owner == "Models" else None
-                if new_model is not None and (sheet in ("Offers", "Access") or (
-                        sheet == "Origins" and row.get("Country") in _split(new_model.get("Origin Countries", "")))):
-                    continue  # created together with the new model
+                new_record = created.get((owner, row.get("Record ID")))
+                if new_record is not None and (sheet in ("Offers", "Access") or (
+                        sheet == "Origins" and row.get("Country") in _split(new_record.get("Origin Countries", "")))):
+                    continue  # created together with the new record
+                if new_record is None and (
+                        (sheet == "Offers" and row.get("Research Key"))
+                        or (sheet == "Access" and all(row.get(c) for c in ("Service", "Service Kind", "Service URL", "Source URL")))
+                        or (sheet == "Origins" and owner == "Models" and row.get("Country") in countries and row.get("Source URL"))
+                        or (sheet == "Evaluations" and owner == "Models" and row.get("Observation Key"))):
+                    continue  # new row of an existing record: offer_new / access_new / origin_new / evaluation_new
                 items.append({"sheet": sheet, "id": row.get("Key"), "kind": "unsupported",
                               "record": row.get("Record ID"), "columns": ["new row"], "category": "public"})
                 continue
@@ -545,7 +641,85 @@ def _create(change, today):
         for platform in Platform.objects.filter(code__in=_split(row.get("Platforms", ""))):
             ToolPlatform.objects.get_or_create(tool=obj, platform=platform, defaults={
                 "source": source, "checked": checked})
+        if change.get("offers") or change.get("access"):
+            container = _legacy_container(obj, today)
+            for offer_row in change.get("offers", []):
+                _create_offer(container, offer_row, today)
+            for access_row in change.get("access", []):
+                _create_access(container, access_row, today)
     return obj
+
+
+def _legacy_container(tool, today):
+    """The tool's legacy product row, which holds its prices and access rows
+    (as for every tool migrated from the model table); created when missing."""
+    from .models import ModelFamily, ModelVersion
+    if tool.legacy_version_id:
+        return tool.legacy_version
+    family, _ = ModelFamily.objects.get_or_create(name=tool.name, developer=tool.developer)
+    base = (tool.slug[:42] + "-legacy").strip("-")
+    slug, index = base, 1
+    while ModelVersion.objects.filter(slug=slug).exists():
+        index += 1
+        slug = "%s-%d" % (base[:47], index)
+    container = ModelVersion.objects.create(
+        family=family, name=tool.name, slug=slug, version=tool.version or tool.name, category="other",
+        entry_type={"api_platform": "api_service", "runtime": "runtime"}.get(tool.category, "product"),
+        source=tool.source, checked=today, published=True, catalog_status=tool.catalog_status or "active")
+    tool.legacy_version = container
+    tool.save(update_fields=["legacy_version"])
+    return container
+
+
+def _owner_for_new_row(label, today):
+    """ModelVersion that holds a new row of ``model:<slug>`` / ``tool:<slug>``."""
+    from .models import ModelVersion, Tool
+    kind, _sep, slug = label.partition(":")
+    if kind == "model":
+        return ModelVersion.objects.get(slug=slug, entry_type="model")
+    return _legacy_container(Tool.objects.get(slug=slug), today)
+
+
+def _create_origin(model, row, today):
+    from .models import ModelOriginCountry
+    position = int(row["Position"]) if str(row.get("Position", "")).isdigit() else model.origin_country_links.count()
+    ModelOriginCountry.objects.get_or_create(model=model, country_id=row["Country"], defaults={
+        "source": _source({"url": row["Source URL"]}), "checked": _row_date(row.get("Checked"), today),
+        "position": position})
+
+
+def _create_evaluation(model, row, today):
+    import json
+    from .models import Benchmark, Evaluation
+    if Evaluation.objects.filter(observation_key=row["Observation Key"]).exists():
+        raise ValueError("Evaluations %s: Observation Key already used" % row.get("Key"))
+    kind = row.get("Result Kind") or "independent"
+    independent = row.get("Independent") == "YES"
+    if independent != (kind == "independent"):
+        raise ValueError("Evaluations %s: Independent=%s contradicts Result Kind %s" % (row.get("Key"), row.get("Independent"), kind))
+    benchmark, _ = Benchmark.objects.get_or_create(name=row["Benchmark"], protocol=row["Protocol"], defaults={
+        "category": row.get("Benchmark Category") or "text", "unit": row.get("Unit") or "%",
+        "higher_is_better": row.get("Higher Is Better") != "NO"})
+    try:
+        extra = json.loads(row.get("Conditions Extra (JSON)") or "{}")
+    except ValueError:
+        extra = {}
+    conditions = {**(extra if isinstance(extra, dict) else {}),
+                  **{lang: row[column] for column, lang in (("Conditions EN", "en"), ("Conditions RU", "ru"))
+                     if row.get(column)}}
+
+    def decimal(value):
+        return Decimal(value) if value not in (None, "", CLEAR) else None
+    Evaluation.objects.create(
+        model=model, benchmark=benchmark, score=Decimal(row["Score"]), evaluator=row["Evaluator"],
+        independent=independent, public=row.get("Public") == "YES", result_kind=kind,
+        measured=date.fromisoformat(row["Measured"]) if row.get("Measured") else None,
+        conditions=conditions, source=_source({"url": row["Source URL"], "publisher": row["Evaluator"]}),
+        checked=_row_date(row.get("Checked"), today), observation_key=row["Observation Key"],
+        configuration=row.get("Configuration", ""), source_model=row.get("Source Model", ""),
+        source_record_id=row.get("Source Record ID", ""), snapshot=row.get("Snapshot", ""),
+        source_sha256=row.get("Source SHA256", ""), confidence_low=decimal(row.get("Confidence Low")),
+        confidence_high=decimal(row.get("Confidence High")))
 
 
 def _evidence(row):
@@ -646,7 +820,9 @@ def _renumber(targets):
     return changed
 
 
-WRITE_KINDS = ("create", "update", "reassign", "offer", "evaluation", "number", "platforms", "access_service")
+NEW_ROW_KINDS = ("offer_new", "access_new", "origin_new", "evaluation_new")
+WRITE_KINDS = ("create", "update", "reassign", "offer", "evaluation", "number", "platforms", "access_service",
+               "org_country", *NEW_ROW_KINDS)
 
 
 def _source(value):
@@ -684,6 +860,28 @@ def apply(changes, workbook_rows, max_changes=200, today=None, targets=None):
                                                        before={}, after=after)
                 else:
                     ToolPublicationRevision.objects.create(tool=obj, action=ACTION, before={}, after=after)
+                continue
+            if kind in NEW_ROW_KINDS:
+                owner = _owner_for_new_row(change["owner"], today)
+                {"offer_new": _create_offer, "access_new": _create_access, "origin_new": _create_origin,
+                 "evaluation_new": _create_evaluation}[kind](owner, change["row"], today)
+                Revision.objects.create(model=owner, entity="%s:%s" % (change["sheet"].lower(), change["id"])[:80],
+                                        action="sync_new", snapshot={"key": change["id"], "owner": change["owner"]})
+                continue
+            if kind == "org_country":
+                from .models import Organization
+                organization = Organization.objects.get(name=change["id"])
+                organization.country = change["after"]["country"]
+                organization.save(update_fields=["country"])
+                record = ModelVersion.objects.filter(slug=change["record"], entry_type="model").first()
+                if record is None:
+                    tool = Tool.objects.filter(slug=change["record"]).first()
+                    if tool is not None:
+                        ToolPublicationRevision.objects.create(tool=tool, action=ACTION, before={"developer_country": change["before"]["country"]},
+                                                               after={"developer_country": change["after"]["country"]})
+                else:
+                    Revision.objects.create(model=record, entity="organization:%s" % organization.pk, action="sync",
+                                            snapshot={"before": change["before"], "after": change["after"]})
                 continue
             if kind == "platforms":
                 tool = Tool.objects.get(slug=change["id"])
@@ -829,7 +1027,45 @@ def _current(change):
         if obj is None or obj.model.slug != change["identity"]["model"]:
             return None, "access %s identity differs" % key
         return {k: getattr(obj.service, k) for k in change["after"]}, ""
+    if kind in NEW_ROW_KINDS:
+        return _new_row_state(change)
+    if kind == "org_country":
+        from .models import Organization
+        organization = Organization.objects.filter(name=key).first()
+        if organization is None:
+            return None, "organization %s missing" % key
+        return {"country": organization.country}, ""
     return None, "unknown kind %s" % kind
+
+
+def _new_row_state(change):
+    """('absent' | 'present', problem) of a new row, found by its content identity."""
+    from .models import Access, Evaluation, ModelOriginCountry, ModelVersion, Offer, Tool
+    row, kind = change["row"], change["kind"]
+    owner_kind, _sep, slug = change["owner"].partition(":")
+    if owner_kind == "model":
+        holder = ModelVersion.objects.filter(slug=slug, entry_type="model").first()
+        if holder is None:
+            return None, "record %s missing" % slug
+    else:
+        tool = Tool.objects.filter(slug=slug).select_related("legacy_version").first()
+        if tool is None:
+            return None, "tool %s missing" % slug
+        holder = tool.legacy_version
+    if kind == "offer_new":
+        found = Offer.objects.filter(research_key=row["Research Key"]).first()
+        if found is not None and (holder is None or found.model_id != holder.pk):
+            return None, "offer %s exists under another record" % row["Research Key"]
+    elif kind == "evaluation_new":
+        found = Evaluation.objects.filter(observation_key=row["Observation Key"]).first()
+        if found is not None and found.model_id != holder.pk:
+            return None, "evaluation %s exists under another record" % row["Observation Key"]
+    elif kind == "origin_new":
+        found = ModelOriginCountry.objects.filter(model=holder, country_id=row["Country"]).first()
+    else:
+        found = holder and Access.objects.filter(model=holder, service__name=row["Service"],
+                                                 service__url=row["Service URL"]).first()
+    return ("present" if found else "absent"), ""
 
 
 def check_plan(plan):
@@ -844,7 +1080,7 @@ def check_plan(plan):
             problems.append(problem)
             continue
         kind = change["kind"]
-        if kind == "create":
+        if kind == "create" or kind in NEW_ROW_KINDS:
             before_ok, after_ok = current == "absent", current == "present"
         elif kind == "number":
             before_ok, after_ok = current == change["before"], current == change["after"]

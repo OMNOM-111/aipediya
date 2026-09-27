@@ -1,8 +1,9 @@
 # Search & discovery contract (GSD-1.0)
 
 Canonical contract for how AIpediya is exposed to search engines and AI search.
-Status of the version: `docs/timeline.json` (GSD-1.0) and `docs/EXECUTION_STATE.md`.
-Decisions: `docs/DECISIONS.md` (`D-2026-09-25-locale-paths`, `D-2026-09-25-seo-readiness`,
+Status of the version: `docs/timeline.json` (GSD-1.0), `docs/EXECUTION_STATE.md`,
+and `docs/RELEASE.md`. Decisions: `docs/DECISIONS.md`
+(`D-2026-09-25-locale-paths`, `D-2026-09-25-seo-readiness`,
 `D-2026-09-25-facets-pagination`, `D-2026-09-25-datasets-license-gate`,
 `D-2026-09-25-discovery-outbox`). GSD-1.0 was released on 2026-09-25. The
 Search Visibility Optimization update follows that architecture; release state
@@ -38,7 +39,8 @@ search-engine recrawl, indexed-page counts and ranking growth remain unverified.
   on Cookie/Accept-Language. A manual switcher choice is remembered only in the browser
   (cookie written by `site.js`); on a page reached from outside the site in another
   language, a small link offers the remembered language — never a redirect.
-* Permanent redirects (exactly one hop, verified by tests for every route type):
+* Historical GSD-1.0 redirect examples (the current full-card legacy redirect
+  strips presentation parameters; see the released P0 section below):
 
 | Old / non-canonical | New |
 |---|---|
@@ -141,7 +143,66 @@ This list is finite; no wildcard `?lang=` permission opens arbitrary facet or
 pagination combinations. The own crawler uses the same rules
 (`catalog.views.robots_allows`). Every public record
 is reachable through plain `<a href>` pagination without JavaScript (own crawler).
-Local serves `Disallow: /` and `X-Robots-Tag: noindex, nofollow` on every response.
+Local serves `Disallow: /`; content responses carry `X-Robots-Tag: noindex, nofollow`
+(middleware-issued redirects do not traverse `HeadersMiddleware`).
+
+### Released P0 URL migration (2026-09-26; Production verified)
+
+The GSC Pages export contained 45 distinct old card URLs with `lang`, `page`,
+`sort`, `kind`, `tab` and/or `partial=rows`. Local DB checks found 25 full-page
+URLs that now answer one 301 to the clean locale card (including three confirmed
+aliases), 19 withdrawn/unknown URLs that answer 404, and one public AJAX rows
+fragment that answers 200 with `X-Robots-Tag: noindex`. The two other fragment
+URLs belong to withdrawn records and answer 404. A path locale wins over a stray
+`lang` query, and noncanonical prefix spelling plus legacy query normalize in
+one hop. No retired entry is redirected to a generic catalog or home page.
+
+Full-page legacy **card** redirects discard `sort`, `page`, `tab` and
+other presentation parameters rather than sending the crawler to another
+query URL. Legacy catalog listings retain search/filter/sort/page values so
+their requested selection is not silently replaced by the whole catalog;
+filtered listing destinations remain robots-blocked and `noindex`.
+Existing AJAX `partial` requests on card URLs still return fragments
+for cached clients; public fragments carry `noindex` and no canonical/hreflang
+head. Current SSR card links use clean URLs; JavaScript remembers a bounded
+list-page context when closing a panel. Indexable listing
+`?page=N` and its self-canonical are unchanged.
+
+Production robots rules add exactly 45 `Allow: <observed URL>$`
+exceptions from `catalog/legacy_search_urls.py` to the existing card-query
+disallow rules. The `$` anchor prevents an exception matching extra parameters;
+new `?lang`, facet, sort and fragment combinations remain blocked. This finite
+exception lets Google/Bing recrawl the known old URLs to see their 301, 404 or
+`noindex` response without opening thousands of query combinations. The Local
+`/robots.txt` response in Local continues to be `Disallow: /`; tests apply the
+Production setting to inspect the rules. The GSC list is a dated
+observation and must be reviewed before adding any further exceptions.
+
+This design follows [Google's robots matching rules](https://developers.google.com/crawling/docs/robots-txt/robots-txt-spec),
+[Google's permanent redirect guidance](https://developers.google.com/search/docs/crawling-indexing/301-redirects),
+[Google's faceted navigation guidance](https://developers.google.com/crawling/docs/faceted-navigation),
+and [Bing Webmaster Guidelines](https://www.bing.com/webmasters/help/bing-webmaster-guidelines-30fba23a):
+robots controls crawl access, while a crawler must fetch an allowed legacy URL
+to observe its redirect or `noindex` response. Actual recrawl and index selection
+is pending fresh search-engine recrawl; public HTTP verification is complete.
+
+### Search Visibility Optimization v2: published additions
+
+The public sitemap now has 10,190 URLs across 22 child maps (10,186 before
+this release). Four new indexable URLs are the English/Russian finite
+`/compare/model-context` and `/api-pricing` pages. Context data covers 97
+published models with verified context-window facts. API pricing compares seven
+same-provider official standard primary text-token price pairs; unknown and
+non-comparable prices are omitted. No mass-generated facet, model-pair or
+price doorway pages were added. The SSR catalog rows link to clean card URLs.
+The interface still restores the original `?page=N` listing state on panel close.
+
+The IndexNow dispatcher accepts 301/302 when validating notices for removed
+old URLs, as permitted by the protocol. The existing Production scheduler
+accepted 330 redirected legacy URL notices and four new page notices; active
+pending and unresolved queues are zero as of 2026-09-26 21:59 UTC. Google
+Search Console and Bing Webmaster have not yet refreshed indexing/performance
+data. Submission acceptance is not indexing or ranking evidence.
 
 ## 6. Collections (hubs)
 
@@ -195,19 +256,20 @@ license and enables the flag.
 ## 8. Search engines, AI search and IndexNow
 
 Verification tokens: `GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION`,
-`YANDEX_SITE_VERIFICATION` (meta tags already supported). No account access was
-available to the implementing agent; nothing is "connected" without owner evidence.
+`YANDEX_SITE_VERIFICATION` (meta tags already supported). Evidence sources and
+freshness are stated per service below.
 
 | System | Discovery / verification | Technical readiness (Local) | Live access | Owner action |
 |---|---|---|---|---|
-| Google Search Console | URL-prefix property: HTML file / HTML tag / GA / GTM / DNS; Domain property: DNS only [G1] | sitemaps, hreflang, canonical, robots ready; meta token env var | Domain property verified by DNS TXT on 2026-09-25; `/sitemap.xml` status Successful | retain TXT; indexing is not implied |
-| Bing Webmaster Tools | XML file, `msvalidate.01` meta tag, CNAME, or import from GSC [B1]; IndexNow [B2] | ready; meta token env var; IndexNow outbox | GSC import added `https://aipediya.com/`; sitemap submitted 2026-09-25, status Processing | no verification or sitemap action remaining; IndexNow key remains separate |
-| Yandex Webmaster | `yandex-verification` meta tag, HTML file or DNS TXT [Y1]; IndexNow [Y2] | ready; meta token env var | owner reports: verified by DNS TXT, `/sitemap.xml` queued (2026-09-25) | none |
-| Seznam | IndexNow (`search.seznam.cz/indexnow`; one engine forwards to all participants) [S1] | outbox ready | none | IndexNow key activation only |
-| Naver Search Advisor | IndexNow participant with its own endpoint [I2]. Current console offered HTML file or HTML meta-tag verification | SSR setting and conditional head output implemented; `217/217` catalog tests PASS | meta tag live in Production HTML since 2026-09-25 22:02Z (`160be0f37037`, curl-verified) | click Verify, then submit `https://aipediya.com/sitemap.xml` |
+| Google Search Console | URL-prefix property: HTML file / HTML tag / GA / GTM / DNS; Domain property: DNS only [G1] | sitemaps, hreflang, canonical, robots ready; meta token env var | Cabinet snapshot/release evidence dated 2026-09-25: Domain property verified by DNS TXT; `/sitemap.xml` Successful. Not freshly rechecked in this documentation task. | retain TXT; take first performance/indexing snapshot when console is available; submission is not indexing |
+| Bing Webmaster Tools | XML file, `msvalidate.01` meta tag, CNAME, or import from GSC [B1]; IndexNow [B2] | ready; meta token env var; IndexNow outbox | Cabinet snapshot/release evidence dated 2026-09-25: imported from GSC; sitemap Processing, errors 0, warnings 0. Not freshly rechecked in this documentation task. | take first performance/indexing snapshot when console is available; IndexNow key remains separate |
+| Yandex Webmaster | `yandex-verification` meta tag, HTML file or DNS TXT [Y1]; IndexNow [Y2] | ready; meta token env var | Owner report dated 2026-09-25: DNS verification and main sitemap added/queued. Public DNS check dated 2026-09-25 via 1.1.1.1 found the expected root TXT. No current cabinet/role check. | take first performance/indexing snapshot when Yandex console is available |
+| Cloudflare DNS verification records | DNS TXT at the domain apex | Zone supplies TXT for GSC/Yandex ownership | Public DNS evidence dated 2026-09-25 via 1.1.1.1 returned expected Google and Yandex root TXT values; Cloudflare zone UI was not freshly inspected. | preserve both records; no DNS change requested |
+| Seznam | IndexNow (`search.seznam.cz/indexnow`; one engine forwards to all participants) [S1] | outbox ready | No separate Search Advisor cabinet evidence; IndexNow activation is recorded in the prior activation report only. | none identified |
+| Naver Search Advisor | IndexNow participant with its own endpoint [I2]. Historical ownership used HTML meta-tag | SSR setting and conditional head output implemented; `217/217` catalog tests PASS | Production tag curl-verified in activation report 2026-09-25 22:02Z; owner screenshots confirm ownership and sitemap submitted (screenshot date not recorded). Owner report 2026-09-26: official overseas-user form opened by another browser helper; request was submitted and accepted by Naver. No case number was shown; email response expected; account recovery is not yet confirmed. Property/sitemap state after restriction remains unknown. | await Naver email and confirmed account recovery; prior Browser Use denial in this session remains a separate open incident |
 | Baidu (ziyuan) | Official: site must be verified before sitemap submission; ≤ 50,000 URLs and ≤ 10 MB per sitemap file; submission does not guarantee crawling/indexing [BD1]. Concrete verification methods and account requirements: **unverified** (secondary guides only) | `/sitemaps/zh-hans.xml` fits the limits (458 URLs, ≈ 1.2 MB) | no Baidu tab or authenticated session among the inspected Chrome tabs (2026-09-25) | if account is available, register/verify and submit the zh-hans sitemap; otherwise owner may face identity/phone requirements |
-| Brave Search | Crawler has no distinct UA; does not crawl what Googlebot may not crawl; noindex (not robots) delists; URL submission at `search.brave.com/submit-url` [BR1] | ready (Googlebot not blocked) | none | optional: submit key URLs |
-| IndexNow protocol | Key file, batch POST ≤ 10,000 URLs, codes 200/202/400/403/422/429 [I1]; submission is shared with all participants; participants: Bing, Yandex, Seznam, Naver, Yep, Amazon (+ Internet Archive in the engines list); Google is not listed [I2][I3] | enabled on Production 2026-09-25; root key file `/<key>.txt` returns 200 | initial submission: 10,032 URLs accepted (HTTP 200, 3 POSTs); acceptance is not indexing | automatic: `aipedia-indexnow` scheduler every 300 s |
+| Brave Search | Crawler has no distinct UA; does not crawl what Googlebot may not crawl; noindex (not robots) delists; URL submission at `search.brave.com/submit-url` [BR1] | ready (Googlebot not blocked) | Owner report dated 2026-09-26: prior re-fetch request accepted; indexing status unknown. | none; do not resubmit without cause |
+| IndexNow protocol | Key file, batch POST ≤ 10,000 URLs, codes 200/202/400/403/422/429 [I1]; submission is shared with all participants; participants: Bing, Yandex, Seznam, Naver, Yep, Amazon (+ Internet Archive in the engines list); Google is not listed [I2][I3] | enabled on Production 2026-09-25; root key file `/<key>.txt` returns 200 | Activation report dated 2026-09-25: 10,032 URLs accepted (HTTP 200, 3 POSTs); at 22:54Z active pending/retry/unresolved all 0. Not queried from Production in current status update. | event-driven outbox and `aipedia-indexnow` scheduler every 300 s; deploy protected by shared lock; acceptance is not indexing |
 | OpenAI OAI-SearchBot | search crawler, honors robots; GPTBot = training; ChatGPT-User = user-triggered, robots may not apply; IP lists published [O1] | not blocked by current robots | spoofed-UA 200 only | none required for search visibility |
 | PerplexityBot | search (not training), honors robots; Perplexity-User user-triggered, generally ignores robots; IP lists published [P1] | not blocked | spoofed-UA 200 only | none |
 | Anthropic Claude-SearchBot | search; ClaudeBot = training; Claude-User = user-triggered; all honor robots.txt [A1] | not blocked | spoofed-UA 200 only | none |
@@ -299,21 +361,110 @@ production-mode HTML audit (canonical/hreflang/noindex/lang/dir/H1/title/descrip
 sitemap), robots-respecting own crawl, outbox state. Server logs, search consoles and AI
 referrals are reported as `not_connected` with `null` values — never zero.
 
-## 10. Owner actions (updated 2026-09-25)
+## 10. Owner actions (updated 2026-09-26)
 
-1. Google Search Console is verified as Domain property by DNS TXT; the main sitemap is
-   Successful. Bing imported the site from GSC and its main sitemap is Processing.
-2. Yandex Webmaster: verified by DNS TXT, main sitemap queued (owner report).
-3. Naver: the meta tag is live in Production HTML (`160be0f37037`). Owner: click Verify
-   in Naver Search Advisor, then submit `https://aipediya.com/sitemap.xml`.
-4. Baidu was not present in the inspected open tabs; no submission was made.
-5. IndexNow: enabled (key in the `[program:aipedia]` environment, root key file). The
-   initial submission of all 10,032 public URLs was accepted. Future changes are sent
-   automatically by the `aipedia-indexnow` scheduler (every 300 s); no owner action.
+1. Google: Domain property verified and main sitemap Successful in the 2026-09-25
+   cabinet/release evidence. Bing: GSC import and sitemap Processing in the same dated
+   evidence. Neither was freshly checked in this update.
+2. Yandex: DNS verification and sitemap added/queued per owner report dated 2026-09-25;
+   its expected root TXT was publicly checked that day. Console state was not refreshed.
+3. Naver: the owner screenshots record successful verification and sitemap submission;
+   activation report curl-verified the Production meta tag. The owner later reported
+   sign-in restriction `abnormal registration / mass-created ID` (2026-09-26). Cause is
+   unknown; post-restriction ownership/sitemap state is unverified. Owner reports:
+   “Запрос на снятие ограничения входа отправлен и принят Naver. Номер обращения на
+   экране не показан. Ожидается ответ по email. Восстановление доступа ещё не
+   подтверждено”. This is owner-reported; no document image, document details or form
+   personal fields are recorded. The Browser Use denial in this session remains a
+   separate open incident and is not evidence that the form itself is unavailable elsewhere.
+4. Baidu is deferred; this task did not start registration or submission.
+5. IndexNow: the 2026-09-25 activation report records the root key file, 10,032 accepted
+   URLs, event-driven outbox, 300-second scheduler and shared deploy/dispatch lock. Its
+   recorded counts are a dated snapshot; acceptance is not indexing.
 6. Decide the training-crawler policy (currently not defined; robots baseline unchanged).
 7. Datasets: choose a data license (or keep off). Then `AIPEDIA_DATASETS_PUBLIC=1`.
 8. Review agent-drafted translations of the new short texts
    (`data/discovery_translations.json`, `review_status: unreviewed`).
+
+### Independent audit snapshot (2026-09-25)
+
+* Checked now over HTTP: Production public/SEO QA 1596/1596 PASS at commit
+  `634778807b2e82ca52dea1de150ea0810950d644`; public check 34/34 PASS;
+  sitemap index and 22 child sitemaps returned successfully (10,032 Production URLs).
+* Checked now over public DNS via 1.1.1.1: root TXT contains the expected Google and
+  Yandex verification values. Cloudflare DNS dashboard itself was not accessible;
+  record counts and unrelated A/AAAA/CNAME/MX records were not audited in its UI.
+* Account evidence by source: Google and Bing statuses are from prior cabinet/activation
+  evidence, not a fresh browser audit. Yandex verification/sitemap status is owner-reported;
+  only its TXT was checked now via DNS. Naver verification and sitemap submission are
+  confirmed by the owner's screenshot; the activation report independently curl-verified
+  the Production meta tag, while the current Naver page is signed out. Brave status is
+  prior submission evidence only. No account state is inferred from a missing session.
+* Current browser permission settings blocked access to Google, Bing, and Cloudflare;
+  no Yandex Browser session was available and Naver required sign-in. No restrictions
+  were bypassed. For fresh console checks, the owner needs to sign in to the respective
+  service in a browser session that can be controlled here (and authorize browser access
+  if prompted). No registrations, submissions, code, server, or DNS were changed.
+
+### Search launch and open incidents (2026-09-26)
+
+* Google, Bing and Yandex ownership/sitemap results remain supported by the dated
+  cabinet/activation evidence and owner report described in the matrix. They were not
+  freshly rechecked during this documentation update. Cloudflare Google/Yandex TXT
+  values were publicly checked on 2026-09-25 via resolver 1.1.1.1.
+* Naver: owner screenshots confirm prior ownership verification and sitemap submission;
+  Production meta tag was curl-verified in the activation report (2026-09-25 22:02Z).
+  The owner later reported `abnormal registration / mass-created ID`. Exact cause is
+  unknown; current rights and sitemap status after restriction are unverified. Owner
+  update (2026-09-26): another browser helper opened the official overseas-user recovery
+  form. The owner now reports that the login-restriction request was submitted and
+  accepted by Naver; no case number was shown, response by email is expected, and account
+  recovery is not yet confirmed. No document image, document details or personal form
+  fields are included here.
+* Browser Use: with permissive settings shown in the interface, `mcp__cua_repl.js`
+  rejected `cua.getTab([идентификатор вкладки скрыт], browser: chrome)` for `help.naver.com`,
+  explicitly citing a saved user permission. The reason for the mismatch is unknown.
+  The owner reports submitting OpenAI feedback; no case number or acknowledgement is
+  available. The separate refusal remains open even though another helper reportedly opened
+  the official recovery form; the reason for the mismatch remains unknown.
+  Full chat/extension identifiers remain outside this repository.
+* IndexNow implementation/activation remains supported by the 2026-09-25 Production
+  report: event-driven outbox, scheduled dispatch and a shared deploy/dispatch lock;
+  recorded pending/retry/unresolved counts are historical, not current telemetry. Brave:
+  owner reports request accepted; indexing is unknown.
+* Baidu is deferred and was not started. Next work: capture the first actual indexing and
+  search-performance snapshot from accessible Google, Bing and Yandex consoles without
+  reconfiguring integrations.
+
+### Independent audit and content coverage (2026-09-26)
+
+Sources are marked per row: **current Browser Use**, **current public HTTP/DNS**,
+**owner screenshot/report**, or **previous release/cabinet report**. A missing live
+session is not a finding that a site/property is unconfigured.
+
+| System | Configuration evidence | Current independent check | Status / remaining check |
+|---|---|---|---|
+| Google Search Console | Domain property and `https://aipediya.com/sitemap.xml` Successful — previous cabinet/release evidence, 2026-09-25. Current Chrome tab identifies `sc-domain:aipediya.com`, but that alone is not a status check. | `mcp__cua_repl.js` `cua.getTab([идентификатор вкладки скрыт], browser: chrome)` refused access: saved user permission blocks `https://search.google.com`; no alternate access attempted. | Fresh processing/errors and clicks/impressions/index coverage unavailable; not zero. Prior status remains the latest evidence. |
+| Bing Webmaster Tools | Imported from GSC; sitemap Processing, 0 errors / warnings — previous cabinet/release evidence, 2026-09-25. Current Chrome tab identifies the aipediya.com sitemap view. | `mcp__cua_repl.js` `cua.getTab([идентификатор вкладки скрыт], browser: chrome)` refused access: saved user permission blocks `https://www.bing.com`; no alternate access attempted. | Fresh sitemap status, issues and performance metrics unavailable; not zero. |
+| Yandex Webmaster | Ownership and sitemap submission — owner report, 2026-09-25. | No Yandex Browser/session was exposed by current browser inventory. Public DNS TXT was rechecked now; see Cloudflare/DNS row. | Current owner role, sitemap processing and search statistics cannot be independently refreshed. |
+| Cloudflare verification DNS | Google and Yandex values were previously reported; no DNS mutation occurred in this task. | Current `Resolve-DnsName aipediya.com -Type TXT` returned the expected Google and Yandex values at the zone root. Cloudflare UI call was refused by Browser Use saved-permission policy. | TXT presence is publicly confirmed. UI record count/duplicates and unrelated A/AAAA/CNAME/MX records were not audited. |
+| Naver Search Advisor | Prior ownership verification and submitted sitemap are supported by owner screenshots; this task did not submit or verify again. | Current HTTP GET `/` returned 200 and contained the exact Naver verification meta tag. The current Chrome tab is the Naver sign-in page; account/property and sitemap state after restriction remain unavailable. | Owner reports recovery request accepted; no case number, reply awaited by email, access not confirmed. Do not repeat property/sitemap/recovery actions. |
+| IndexNow | Production activation report, 2026-09-25: automation enabled; 10,032 initial URLs accepted, scheduler every 300 s, shared dispatch/deploy lock; last recorded outbox counts at 22:54Z were 0 active pending / 0 retry / 0 unresolved and 5,016 resolved historical failures. | Current public HTML had no literal `AIPEDIA_INDEXNOW_KEY`; its only 32-hex match was a Cloudflare beacon token, not identified as the IndexNow key. The exact root key-file URL and server logs are unavailable through an approved read-only channel in this task. | Historical report only for key-file HTTP 200 and queue counts; current file/queue/log state not independently refreshed. Accepted submissions do not prove indexing. |
+| Brave | Owner report: re-fetch request accepted, 2026-09-26. | No independent indexing-status panel was available. | `previous re-fetch request submitted; indexing status independently unavailable`. |
+| Production SEO | Current HTTPS GET audit, 2026-09-26; see below. | `/`, `/robots.txt`, `/sitemap.xml`, `/healthz`, RU `/ru/`, AR `/ar/`, GPT-5.3-Codex model, Codex tool and Claude Code tool returned HTTP 200. `/healthz` returned `status=ok`, `environment=production`, commit `634778807b2e82ca52dea1de150ea0810950d644`, matching `docs/RELEASE.md`. Sitemap index and sampled RU/AR/EN children returned 200; index lists 22 language maps, sampled maps each contain 456 URLs. | Sampled pages had canonical, 23 hreflang links and x-default; RU=`lang=ru`, AR=`lang=ar dir=rtl`; the exact Naver tag was present. No checked page had the private-data markers searched for. This is a bounded sample, not a full crawl. |
+
+Browser Use produced direct saved-user-permission refusals for the open GSC, Bing and Cloudflare tabs even though the visible settings previously showed allow rules. The cause of that mismatch is unknown. The refusal text prohibits reaching the same pages through another browser surface, raw CDP or commands; none was attempted. This is a Browser Use access incident, not a configuration failure for those services. No owner action to change the already-permissive settings is requested; fresh cabinet evidence can be provided as screenshots if needed while the tool issue remains unresolved. Yandex is separately unavailable because no Yandex browser connection was exposed.
+
+#### Query direction → existing page → confirmed gap
+
+| Search direction | Existing public page/content observed | Confirmed gap |
+|---|---|---|
+| AI model catalog / model prices and capabilities | English catalog `/`; model detail `/models/gpt-5-3-codex` includes use, access, price and evaluator/score sections. | Catalogue breadth is not a promise of absolute completeness; per-model freshness and source coverage still need review. |
+| AI tools, especially code agents | `/tools/`; detail pages exist for Codex `/tools/codex-59301cf4` and Claude Code `/tools/claude-code-ad4bceba`, with supported ecosystem, platforms/access and pricing sections. | These are product records, not comparative hands-on evaluations of every workflow or version. |
+| Coding use cases | `/collections/coding-models` describes inclusion by documented programming use and explicitly says inclusion does not rank quality. | No dedicated page exists for every arbitrary task/filter combination; this is not itself an SEO defect. |
+| Independent evaluations / ratings | `/methodology` documents evaluator, benchmark, configuration, snapshot and check date. The sampled GPT-5.3-Codex page shows an Epoch AI ECI result and source-specific AA records. | No universal AIpediya-generated cross-model score is evidenced; coverage depends on source/test and comparable protocols. |
+
+No new pages or bulk-generated content were created. Dataset licensing, data quality and translation review remain separate open work.
 
 ## Advertising
 

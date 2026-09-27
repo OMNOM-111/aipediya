@@ -13,6 +13,7 @@ import json
 import os
 import re
 import subprocess
+import sys
 import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -34,16 +35,24 @@ SOURCE_FILES = [
     "docs/ACCEPTANCE.md",
     "docs/VERIFICATION.md",
     "docs/history/2026-09-20-chronology-release.md",
+    "docs/history/2026-09-26-offline-history-reference-match.md",
     ".cursor/rules/aipedia.mdc",
     "AI_CONTEXT/README.md",
     "tools/pack_ai_context.py",
+    "tools/build_product_history.py",
+    "catalog/product_history.py",
+    "catalog/tests/test_product_history.py",
+    "templates/product_history_standalone.html",
+    "static/product-history-offline.css",
+    "static/product-history.js",
     "tools/local/install-shortcuts.ps1",
     "tools/local/install-history-shortcut.ps1",
     "catalog/tests/test_pack_ai_context.py",
 ]
 DENIED_PARTS = {".venv", "__pycache__", "data/local", "node_modules"}
 DENIED_SUFFIXES = {
-    ".sqlite3", ".sqlite3-wal", ".sqlite3-shm", ".env", ".log", ".pyc",
+    ".sqlite", ".sqlite-wal", ".sqlite-shm", ".sqlite3", ".sqlite3-wal", ".sqlite3-shm",
+    ".db", ".db-wal", ".db-shm", ".db-journal", ".env", ".log", ".pyc",
     ".pem", ".p12", ".pfx", ".key",
 }
 DENIED_NAMES = {
@@ -476,6 +485,15 @@ def build_zip_bytes(markdown: str, manifest: dict, facts: dict, state: str) -> b
 
 
 def pack() -> dict:
+    build_history = subprocess.run(
+        [sys.executable, str(ROOT / "tools" / "build_product_history.py")],
+        cwd=ROOT, capture_output=True, text=True, check=False,
+    )
+    if build_history.returncode != 0:
+        raise RuntimeError(
+            "Could not rebuild timeline.html before AI_CONTEXT: "
+            + (build_history.stderr.strip() or build_history.stdout.strip())
+        )
     assembled_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     state = read_text("docs/EXECUTION_STATE.md")
     facts = collect_git()

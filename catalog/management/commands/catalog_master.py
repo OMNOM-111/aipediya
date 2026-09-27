@@ -14,6 +14,8 @@ sync-local - plan (default) or --apply the minimal master -> Local sync
 release-plan - write the sync plan of the master against THIS database (a
          copy of the release baseline) as a portable JSON release plan
          (--plan-out), with expected old values and final numbers.
+qa     - release QA of the database (+ master, + --production sitemap):
+         blocking errors, warnings and the data-quality queue.
 apply-plan - on the target database (e.g. Production after migrate): check
          the plan (--plan-out path) against expected old values; with --apply
          write it atomically. Already applied -> no writes; mismatch -> abort.
@@ -31,7 +33,7 @@ class Command(BaseCommand):
     help = "Import Local into, or check, the AIpediya Catalog Master workbook."
 
     def add_arguments(self, parser):
-        parser.add_argument("action", choices=["import", "refresh", "check", "sync-local", "release-plan", "apply-plan"])
+        parser.add_argument("action", choices=["import", "refresh", "check", "sync-local", "release-plan", "apply-plan", "qa"])
         parser.add_argument("--path", default=str(cm.WORKBOOK_PATH))
         parser.add_argument("--production", action="store_true",
                             help="Read the public sitemap to fill On Production (read-only).")
@@ -43,6 +45,7 @@ class Command(BaseCommand):
                             help="sync-local: refuse to write more create/update changes than this.")
         parser.add_argument("--plan-out", default="", help="sync-local/release-plan: write the plan as JSON; apply-plan: read it.")
         parser.add_argument("--release", default="", help="release-plan: release name recorded in the plan.")
+        parser.add_argument("--report", default="", help="qa: write the full JSON report here.")
 
     def handle(self, action, path, production, rebuild, max_lines, **opts):
         if action == "sync-local":
@@ -51,6 +54,8 @@ class Command(BaseCommand):
             return self.run_release_plan(Path(path), opts["plan_out"], opts["release"])
         if action == "apply-plan":
             return self.run_apply_plan(opts["plan_out"], opts["apply"])
+        if action == "qa":
+            return self.run_qa(Path(path), production, opts["report"])
         path = Path(path)
         live = None
         if production:
@@ -138,7 +143,7 @@ class Command(BaseCommand):
             for change in changes:
                 item = {k: v for k, v in change.items() if k != "row"}
                 if "row" in change:
-                    item["name"] = change["row"]["Name"]
+                    item["name"] = change["row"].get("Name") or change["row"].get("Key", "")
                 serial.append(item)
             Path(plan_out).write_text(json.dumps(serial, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
         if hidden_drift:
@@ -205,6 +210,36 @@ class Command(BaseCommand):
         except ValueError as exc:
             raise CommandError(str(exc))
         self.stdout.write("applied: %d writes; final state matches the plan" % written)
+
+    def run_qa(self, path, production, report):
+        import json
+        from catalog import catalog_qa
+
+        rows = self._load(path)[0] if path.exists() else None
+        live = None
+        if production:
+            try:
+                live = cm.fetch_production()
+            except OSError as exc:
+                raise CommandError("Production sitemap unavailable: %s" % exc)
+        result = catalog_qa.run(rows, live)
+        if report:
+            Path(report).write_text(json.dumps(result, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+        stats = result["stats"]
+        self.stdout.write("qa: models=%d tools=%d numbered=%s production=%s" % (
+            stats["models"], stats["tools"], stats["numbered"], stats["production_release"] or "-"))
+        self.stdout.write("data-quality queue: %d" % len(result["queue"]))
+        for item in result["queue"]:
+            self.stdout.write("  QUEUE " + item)
+        for item in result["warnings"][:10]:
+            self.stdout.write("  WARNING " + item)
+        if len(result["warnings"]) > 10:
+            self.stdout.write("  ... %d warnings in the report" % len(result["warnings"]))
+        for item in result["errors"]:
+            self.stdout.write("  ERROR " + item)
+        if result["errors"]:
+            raise CommandError("qa: %d blocking error(s)" % len(result["errors"]))
+        self.stdout.write("qa: PASS")
 
     def run_refresh(self, path):
         if not path.exists():

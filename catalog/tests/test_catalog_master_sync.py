@@ -3,6 +3,7 @@ import shutil
 import tempfile
 import unittest
 from datetime import date
+from decimal import Decimal
 from io import StringIO
 from pathlib import Path
 
@@ -578,3 +579,109 @@ class NewModelLinkedRowsTests(MasterSyncTests):
         with self.assertRaisesMessage(CommandError, "needs a Research Key"):
             self.command("sync-local", apply=True)
         self.assertFalse(ModelVersion.objects.filter(slug="fresh").exists())
+
+
+@unittest.skipUnless(HAS_OPENPYXL, "openpyxl is not installed")
+class ExistingRecordNewRowsTests(MasterSyncTests):
+    """New master price/access/origin/evaluation rows and developer countries
+    of records that already exist in Local (v015 final)."""
+
+    def test_add_fix_alias_draft_and_rerun_without_duplicates(self):  # covered by the parent class
+        pass
+
+    def test_empty_cell_keeps_value_and_clear_token_erases_it(self):
+        pass
+
+    def test_mass_change_guard_and_failing_master_write_nothing(self):
+        pass
+
+    def setUp(self):
+        super().setUp()
+        from catalog.models import Country
+        Country.objects.get_or_create(code="US", defaults={"name_ru": "США", "name_en": "United States"})
+        self.old = self.model("old")
+        self.org_tool = Organization.objects.create(name="Tool Lab", country="", source=self.source, checked=date(2026, 1, 1))
+        self.tool = Tool.objects.create(name="Kit", slug="kit", developer=self.org_tool, category="coding_agent",
+                                        source=self.source, checked=date(2026, 1, 1), released=date(2024, 2, 2))
+        self.command("import")
+
+    def add_rows(self, rows):
+        service = {"Service": "Lab · API", "Service Kind": "api", "Service URL": "https://example.com/api",
+                   "Provider": "Lab", "Compute Location": "cloud"}
+        rows["Offers"] += [
+            {"Key": "offer-new-1", "Record Type": "model", "Record ID": "old", **service, "Amount": "2", "Unit": "input",
+             "Conditions EN": "Standard", "Conditions RU": "Стандарт", "Primary": "YES", "Active": "YES",
+             "Source URL": "https://example.com/pricing", "Checked": "2026-09-27", "Research Key": "final:old:input"},
+            {"Key": "offer-new-2", "Record Type": "model", "Record ID": "old", **service, "Amount": "9", "Unit": "output",
+             "Conditions EN": "no key", "Conditions RU": "без ключа", "Active": "YES",
+             "Source URL": "https://example.com/pricing", "Checked": "2026-09-27"},
+            {"Key": "offer-new-3", "Record Type": "tool", "Record ID": "kit", "Service": "Kit plan", "Service Kind": "web",
+             "Service URL": "https://example.com/kit", "Provider": "Tool Lab", "Amount": "10", "Unit": "month",
+             "Conditions EN": "Start plan", "Conditions RU": "Тариф Start", "Primary": "YES", "Active": "NO",
+             "Conditions Extra (JSON)": '{"currency": "INR"}', "Source URL": "https://example.com/kit-pricing",
+             "Checked": "2026-09-27", "Research Key": "final:kit:month"}]
+        rows["Access"].append({"Key": "access-new-1", "Record Type": "tool", "Record ID": "kit", "Service": "Kit plan",
+                               "Service Kind": "web", "Service URL": "https://example.com/kit", "Provider": "Tool Lab",
+                               "Compute Location": "cloud", "Source URL": "https://example.com/kit", "Checked": "2026-09-27"})
+        rows["Origins"].append({"Key": "origin-new-1", "Record Type": "model", "Record ID": "old", "Country": "US",
+                                "Position": "0", "Source URL": "https://example.com/about", "Checked": "2026-09-27"})
+        rows["Evaluations"].append({
+            "Key": "evaluation-new-1", "Record Type": "model", "Record ID": "old", "Benchmark": "Bench", "Protocol": "p",
+            "Benchmark Category": "text", "Unit": "%", "Higher Is Better": "YES", "Score": "71.4", "Evaluator": "Epoch AI",
+            "Result Kind": "independent", "Independent": "YES", "Public": "YES", "Measured": "2026-09-22",
+            "Configuration": "max", "Conditions EN": "own run", "Conditions RU": "собственный прогон",
+            "Source URL": "https://epoch.ai/benchmarks", "Checked": "2026-09-27", "Observation Key": "a" * 64,
+            "Source Model": "old_max", "Source Record ID": "ebr.csv:1", "Snapshot": "2026-09-27"})
+        next(r for r in rows["Tools"] if r["Record ID"] == "kit")["Developer Country"] = "USA"
+
+    def test_new_rows_are_created_once_and_import_adds_nothing(self):
+        from catalog.models import Access, Evaluation, ModelOriginCountry, Offer
+        self.edit(self.add_rows)
+        dry = self.command("sync-local")
+        self.assertIn("offer_new", dry)
+        self.assertIn("Offers:new row", dry)  # the row without a Research Key stays reported
+        self.command("sync-local", apply=True)
+        self.assertEqual(sorted(Offer.objects.filter(model=self.old).values_list("research_key", flat=True)), ["final:old:input"])
+        self.tool.refresh_from_db()
+        container = self.tool.legacy_version
+        self.assertIsNotNone(container)
+        self.assertEqual((container.entry_type, container.published), ("product", True))
+        kit_offer = Offer.objects.get(research_key="final:kit:month")
+        self.assertEqual((kit_offer.model_id, kit_offer.active, kit_offer.conditions["currency"]), (container.pk, False, "INR"))
+        self.assertTrue(Access.objects.filter(model=container, service__name="Kit plan").exists())
+        self.assertTrue(ModelOriginCountry.objects.filter(model=self.old, country_id="US").exists())
+        self.assertEqual(Evaluation.objects.get(observation_key="a" * 64).score, Decimal("71.4"))
+        self.org_tool.refresh_from_db()
+        self.assertEqual(self.org_tool.country, "USA")
+        counts = (Offer.objects.count(), Access.objects.count(), Evaluation.objects.count())
+        self.command("import")
+        rows = cm.read_workbook(self.path)[0]
+        self.assertEqual(sum(1 for r in rows["Evaluations"] if r["Record ID"] == "old"), 1)
+        self.assertEqual(sum(1 for r in rows["Offers"] if r.get("Research Key") == "final:old:input"), 1)
+        self.assertIn("check: OK", self.command("check"))
+        self.assertIn("applied: 0 changes", self.command("sync-local", apply=True))
+        self.assertEqual(counts, (Offer.objects.count(), Access.objects.count(), Evaluation.objects.count()))
+
+    def test_release_plan_carries_new_rows(self):
+        import json
+        from catalog.models import Evaluation, Offer
+        self.edit(self.add_rows)
+        out = self.tmp / "plan.json"
+        self.command("release-plan", plan_out=str(out), release="t")
+        plan = json.loads(out.read_text(encoding="utf-8"))
+        self.assertEqual(plan["counts"]["offer_new"], 2)
+        self.assertEqual((plan["counts"]["evaluation_new"], plan["counts"]["origin_new"], plan["counts"]["org_country"]), (1, 1, 1))
+        self.assertIn("pending", self.command("apply-plan", plan_out=str(out)))
+        self.assertIn("final state matches", self.command("apply-plan", plan_out=str(out), apply=True))
+        self.assertIn("already applied", self.command("apply-plan", plan_out=str(out), apply=True))
+        self.assertEqual((Offer.objects.filter(research_key__startswith="final:").count(), Evaluation.objects.count()), (2, 1))
+
+    def test_contradictory_evaluation_rolls_back(self):
+        def change(rows):
+            self.add_rows(rows)
+            rows["Evaluations"][-1]["Result Kind"] = "developer"
+        self.edit(change)
+        with self.assertRaisesMessage(CommandError, "contradicts"):
+            self.command("sync-local", apply=True)
+        from catalog.models import Offer
+        self.assertFalse(Offer.objects.filter(research_key="final:old:input").exists())

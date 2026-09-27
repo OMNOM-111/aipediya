@@ -3177,7 +3177,7 @@
   "models": 321,
   "tools": 143
  },
- "release": "release-2026-09-26-catalog-master-v015",
+ "release": "release-2026-09-27-catalog-master-v015-final",
  "schema": "aipedia-publication-state/1",
  "tools": {
   "adobe-firefly-9f88c8c9": {

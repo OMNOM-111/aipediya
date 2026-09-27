@@ -697,7 +697,7 @@ def refresh_meta(meta, workbook_rows, stamp):
 # evidence (rows that sync-local created from master rows of a new record).
 NATURAL_KEYS = {
     "Tool Platforms": ("Record ID", "Platform"), "Origins": ("Record ID", "Country"),
-    "Offers": ("Research Key",),
+    "Offers": ("Research Key",), "Evaluations": ("Observation Key",),
     "Access": ("Record Type", "Record ID", "Service", "Service Kind", "Service URL", "Source URL"),
 }
 

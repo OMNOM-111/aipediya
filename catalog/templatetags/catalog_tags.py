@@ -38,6 +38,36 @@ def money(value):
     result = format(Decimal(value), "f").rstrip("0").rstrip(".")
     return result or "0"
 
+# Currency of a price row (stored with its conditions); USD when absent.
+CURRENCY_SIGNS = {"USD": ("$", ""), "INR": ("₹", ""), "JPY": ("¥", ""), "EUR": ("€", ""), "GBP": ("£", ""),
+                  "CNY": ("CN¥", ""), "RUB": ("", " ₽"), "KZT": ("", " ₸")}
+
+
+def offer_currency(offer):
+    conditions = getattr(offer, "conditions", None) or {}
+    return (conditions.get("currency") or "USD").upper() if isinstance(conditions, dict) else "USD"
+
+
+@register.filter
+def price(offer):
+    """Amount of a price row with its own currency sign (never a default $)."""
+    if offer is None or offer.amount is None:
+        return ""
+    code = offer_currency(offer)
+    prefix, suffix = CURRENCY_SIGNS.get(code, ("", " " + code))
+    return prefix + money(offer.amount) + suffix
+
+
+@register.filter
+def currencies(offers):
+    """"USD" or "USD, INR" for a panel heading."""
+    codes = []
+    for offer in offers or ():
+        code = offer_currency(offer)
+        if code not in codes:
+            codes.append(code)
+    return ", ".join(codes or ["USD"])
+
 @register.filter
 def catnum(value):
     if value in (None, ""):

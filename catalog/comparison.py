@@ -103,6 +103,8 @@ def offer_scope_tags(offer):
 def price_matches(offer, unit, scope='standard', variant='base', condition='', modality='text'):
     if not offer.active or offer.amount is None or offer.billing_unit or offer.unit != unit:
         return False
+    if ((offer.conditions or {}).get("currency") or "USD").upper() != "USD":
+        return False  # comparisons are in USD; other currencies are shown on the card only
     if offer.service.kind not in ({'web', 'app', 'cli', 'ide'} if unit in {'month', 'year'} else {'api'}):
         return False
     text = offer_condition_text(offer)

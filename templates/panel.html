@@ -61,10 +61,10 @@
 {% if model.philosophy %}<section class="panel-block"><h2>{{ ui.philosophy }}</h2><p{{ model.philosophy|fallback_attr:lang }}>{{ model.philosophy|local:lang }}</p></section>{% endif %}
 </section>
 <section class="tab-panel" id="tab-pricing" role="tabpanel" {% if panel_tab != 'pricing' %}hidden{% endif %}>
-<h2>{{ ui.price }} <span class="secondary">(USD)</span></h2>
+<h2>{{ ui.price }} <span class="secondary">({{ model.current_offers|currencies }})</span></h2>
 {% if model.current_offers %}
 <div class="table-scroll"><table class="detail-prices"><thead><tr><th>{{ ui.provider }}</th><th>{{ ui.price }}</th><th>{{ ui.conditions }}</th></tr></thead>
-<tbody>{% for offer in model.current_offers %}<tr><td>{{ offer.service.provider.name|local:lang }} · {{ offer.service.kind|label:lang }}</td><td>{% if offer.amount != None %}<b>&#36;{{ offer.amount|money }}</b> / {% if offer.billing_unit %}{{ offer.billing_unit|local:lang }}{% else %}{{ offer.unit|unit_label:lang }}{% endif %}{% endif %}</td><td>{{ offer.display_conditions }}<a class="secondary" href="{{ offer.source.url }}" target="_blank" rel="noopener noreferrer">{{ ui.source }} · {{ offer.checked|date:'d.m.Y' }}</a></td></tr>{% endfor %}</tbody></table></div>
+<tbody>{% for offer in model.current_offers %}<tr><td>{{ offer.service.provider.name|local:lang }} · {{ offer.service.kind|label:lang }}</td><td>{% if offer.amount != None %}<b>{{ offer|price }}</b> / {% if offer.billing_unit %}{{ offer.billing_unit|local:lang }}{% else %}{{ offer.unit|unit_label:lang }}{% endif %}{% endif %}</td><td>{{ offer.display_conditions }}<a class="secondary" href="{{ offer.source.url }}" target="_blank" rel="noopener noreferrer">{{ ui.source }} · {{ offer.checked|date:'d.m.Y' }}</a></td></tr>{% endfor %}</tbody></table></div>
 {% else %}<p class="missing empty-cell">{% if model.local_execution %}{{ ui.local_cost }}{% endif %}</p>{% endif %}
 </section>
 <section class="tab-panel" id="tab-checks" role="tabpanel" {% if panel_tab != 'checks' %}hidden{% endif %}>

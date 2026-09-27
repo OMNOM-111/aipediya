@@ -88,6 +88,20 @@ changelog.
 
 ## Changelog
 
+### release-2026-09-27-catalog-master-v015-final — финальная синхронизация v015
+
+- Счётчики: у каталога пояснено, сколько записей имеют № (подтверждённая дата) и
+  сколько без даты — Tools 143 = 116 с № + 27 без даты (раньше «116» из колонки №
+  читалось как количество).
+- Страны и флаги с источниками: 11 моделей и 15 инструментов; валюта цены
+  показывается по строке (₹, ₽, $), сравнения — только в USD.
+- +70 официальных цен (GPT-5.x, Gemini 3.1 Flash-Lite Image, Qwen3-Coder, Qwen3.8-LiveTranslate,
+  Kimi K2.6/K2.7 Code/K3, Solar Pro 2, Sarvam Vision 2.1, Speech TTS Live, SourceCraft с 01.10);
+  +19 способов доступа; +25 независимых результатов Epoch AI (Claude Opus 5.5, GPT-6 Sol,
+  Qwen3.8-Max, Qwen3.8 Max (0902), DeepSeek V4 Flash 0731); 9 проверенных пробелов оценок.
+- Постоянная release-QA `catalog_master qa` (`D-2026-09-27-release-qa-gate`).
+  Даты выпуска и номера моделей не изменялись; 321 Models / 143 Tools. Миграций нет.
+
 ### release-2026-09-26-catalog-master-v015 — новые модели 22–24 сентября
 
 - 11 новых моделей с ценами, доступом, датами и переводами на 22 языка: Claude Opus 5.5,
@@ -100,13 +114,20 @@ changelog.
   Claude Haiku 4.5 — контекст 200K); записи NEEDS_REVIEW не публикуются.
 - Публично 321 Models / 143 Tools (было 310 / 139). Миграций нет.
 
-### release-2026-09-26-search-visibility-optimization-v2
+### release-2026-09-26-search-visibility-optimization-v2 — Search Visibility Optimization
 
-45 GSC legacy URL исправлены (25 одношаговых 301, 19 корректных 404, один
-`200/noindex`); robots имеет только конечные точные исключения и не открывает
-фасеты. Опубликованы четыре обоснованных EN/RU URL сравнения контекста и
-официальных API-цен, чистые SSR-ссылки и исправление IndexNow для старых 301.
-Local 267 PASS + 1 skip; Production 45/45 legacy URL, 1657/1657 Search QA PASS.
+- 45 известных Google Search Console старых URL: 25 одношаговых 301 на чистые
+  карточки, 19 корректных 404 для снятых сущностей, один технический ответ
+  `200` с `X-Robots-Tag: noindex`. Исключения robots конечны и точны; широкие
+  разрешения `?page=` на карточках удалены.
+- Убраны параметрические ссылки на карточки из SSR-строк каталога; сохранён
+  возврат к странице пагинации в интерфейсе. Две конечные EN/RU страницы
+  сравнения контекста и официальных API-цен используют только проверенные данные.
+- IndexNow-диспетчер принимает 301/302 для уведомлений о старых URL. После
+  выпуска штатный scheduler обработал 334 точечных уведомления (330 старых
+  redirect URL и четыре новые страницы); принятие не означает индексацию.
+- Local: 268 тестов (267 PASS, один ожидаемый skip), `seo_report` без проблем.
+  Production: 45/45 старых URL и 1657/1657 проверок публичного Search QA PASS.
 
 
 ### release-2026-09-26-catalog-master-v014 — единая база каталога
@@ -217,6 +238,17 @@ commit/tag выпуска обычной сборкой (`tools/build_code_relea
 
 Предыдущий кандидат catalog-master-v013 (`954db5a4586b`) заменён этим выпуском и
 отдельно не публикуется.
+
+## Выпуск catalog-master-v015-final
+
+Состав и проверки — `docs/history/2026-09-27-catalog-master-v015-final.md`. Данные:
+`data/release/v015-final/catalog_plan.json` (план на исходном снимке Local, равном
+состоянию Production после v015), `data/release_state.json`; переводы не требуются.
+Порядок на сервере — как для v015: read-only, preflight на онлайн-копии, `--dry-run`,
+`deploy_code_release.py <archive> --sha256 <digest> --catalog-plan
+data/release/v015-final/catalog_plan.json --publication-state data/release_state.json`;
+после — `catalog_master qa --production` на Local и
+`artifacts/catalog-master-v015-final/final_check.py https://aipediya.com`.
 
 ## Выпуск catalog-master-v015
 

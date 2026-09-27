@@ -16,7 +16,7 @@
 <a class="type-tab{% if kind == 'model' %} is-active{% endif %}" href="{{ nav.models }}" {% if kind == 'model' and not hub %}aria-current="page"{% endif %}>{{ ui.models_tab }} <span>{{ counts.models|grouped }}</span></a>
 <a class="type-tab{% if kind == 'tool' %} is-active{% endif %}" href="{{ nav.tools }}" {% if kind == 'tool' and not hub %}aria-current="page"{% endif %}>{{ ui.tools_tab }} <span>{{ counts.tools|grouped }}</span></a>
 </nav>
-<div class="toolbar-end"><p class="catalog-counts"><span id="result-count">{{ found_count|grouped }}</span> {{ ui.results }}</p></div>
+<div class="toolbar-end"><p class="catalog-counts"><span id="result-count">{{ found_count|grouped }}</span> {{ ui.results }}{% if undated_count %}<span class="count-note" id="numbering-note" data-numbered="{{ numbered_count }}" data-undated="{{ undated_count }}"> · {{ ui.numbered_by_date }}: {{ numbered_count|grouped }} · {{ ui.undated_no_number }}: {{ undated_count|grouped }}</span>{% endif %}</p></div>
 </div>
 {% if filter_chips %}
 <ul class="filter-chips" aria-label="{{ ui.active_filters }}">{% for chip in filter_chips %}<li><a class="chip" href="{{ chip.href }}">{{ chip.label }} <span aria-hidden="true">×</span><span class="sr-only">{{ ui.clear_filter }}</span></a></li>{% endfor %}<li><a class="chip chip-reset" href="{{ request.path }}">{{ ui.reset }}</a></li></ul>

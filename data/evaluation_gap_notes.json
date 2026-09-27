@@ -1,5 +1,5 @@
 {
-  "checked": "2026-09-20",
+  "checked": "2026-09-27",
   "by_slug": {
     "gemini-38-live-a959d0c7": {
       "reason_code": "exact_version_not_in_checked_text_results",
@@ -6932,6 +6932,150 @@
         "https://artificialanalysis.ai/terms-of-use"
       ],
       "next_action": "Confirm a domain-specific measured result and its data licence."
+    },
+    "gpt-6-luna": {
+      "reason_code": "no_publishable_independent_evaluation",
+      "reason": {
+        "ru": "В снимке Epoch AI от 27.09.2026 нет собственного прогона GPT-6 Luna; лидерборды, условия которых запрещают републикацию (Artificial Analysis, Arena, LiveBench, SWE-bench), не используются.",
+        "en": "No Epoch AI own run of GPT-6 Luna in the 2026-09-27 snapshot; leaderboards whose terms block republication (Artificial Analysis, Arena, LiveBench, SWE-bench) are not used."
+      },
+      "checked": "2026-09-27",
+      "links": [
+        {
+          "url": "https://epoch.ai/benchmarks/use-this-data",
+          "label_ru": "Проверенный источник",
+          "label_en": "Checked source",
+          "kind": "checked_source"
+        }
+      ]
+    },
+    "gemini-3-8-flash-tts": {
+      "reason_code": "no_publishable_independent_evaluation",
+      "reason": {
+        "ru": "Модель синтеза речи: лицензированный независимый источник (прогоны Epoch AI) не содержит TTS-бенчмарков; публикуемой независимой TTS-оценки не найдено.",
+        "en": "Text-to-speech model: the licensed independent source (Epoch AI own runs) covers no TTS benchmarks; no publishable independent TTS evaluation found."
+      },
+      "checked": "2026-09-27",
+      "links": [
+        {
+          "url": "https://epoch.ai/benchmarks/use-this-data",
+          "label_ru": "Проверенный источник",
+          "label_en": "Checked source",
+          "kind": "checked_source"
+        }
+      ]
+    },
+    "gemini-3-8-flash-lite-tts": {
+      "reason_code": "no_publishable_independent_evaluation",
+      "reason": {
+        "ru": "Модель синтеза речи: лицензированный независимый источник (прогоны Epoch AI) не содержит TTS-бенчмарков; публикуемой независимой TTS-оценки не найдено.",
+        "en": "Text-to-speech model: the licensed independent source (Epoch AI own runs) covers no TTS benchmarks; no publishable independent TTS evaluation found."
+      },
+      "checked": "2026-09-27",
+      "links": [
+        {
+          "url": "https://epoch.ai/benchmarks/use-this-data",
+          "label_ru": "Проверенный источник",
+          "label_en": "Checked source",
+          "kind": "checked_source"
+        }
+      ]
+    },
+    "yandex-speech-tts-live": {
+      "reason_code": "no_publishable_independent_evaluation",
+      "reason": {
+        "ru": "Модель синтеза речи: публикуемой независимой оценки этой версии не найдено.",
+        "en": "Text-to-speech model: no publishable independent TTS evaluation of this exact version found."
+      },
+      "checked": "2026-09-27",
+      "links": [
+        {
+          "url": "https://epoch.ai/benchmarks/use-this-data",
+          "label_ru": "Проверенный источник",
+          "label_en": "Checked source",
+          "kind": "checked_source"
+        }
+      ]
+    },
+    "nemotron-3-diarization": {
+      "reason_code": "no_publishable_independent_evaluation",
+      "reason": {
+        "ru": "Модель диаризации: независимого результата этой версии с правом републикации не найдено; данные разработчика не считаются независимыми.",
+        "en": "Speaker-diarization model: no independent diarization result for this exact version with republication rights found; vendor figures are not independent."
+      },
+      "checked": "2026-09-27",
+      "links": [
+        {
+          "url": "https://epoch.ai/benchmarks/use-this-data",
+          "label_ru": "Проверенный источник",
+          "label_en": "Checked source",
+          "kind": "checked_source"
+        }
+      ]
+    },
+    "sarvam-vision-2-1": {
+      "reason_code": "no_publishable_independent_evaluation",
+      "reason": {
+        "ru": "OCR-модель документов: есть только результаты разработчика; независимой оценки точной версии не найдено.",
+        "en": "Document OCR model: only developer-reported results exist; no independent evaluation of the exact version found."
+      },
+      "checked": "2026-09-27",
+      "links": [
+        {
+          "url": "https://epoch.ai/benchmarks/use-this-data",
+          "label_ru": "Проверенный источник",
+          "label_en": "Checked source",
+          "kind": "checked_source"
+        }
+      ]
+    },
+    "gliner-2-5-decide": {
+      "reason_code": "no_publishable_independent_evaluation",
+      "reason": {
+        "ru": "Энкодер для извлечения и решений: есть только результаты разработчика; независимой оценки не найдено.",
+        "en": "Encoder for extraction/decisions: only developer-reported results exist; no independent evaluation found."
+      },
+      "checked": "2026-09-27",
+      "links": [
+        {
+          "url": "https://epoch.ai/benchmarks/use-this-data",
+          "label_ru": "Проверенный источник",
+          "label_en": "Checked source",
+          "kind": "checked_source"
+        }
+      ]
+    },
+    "flux-3-action-droid": {
+      "reason_code": "no_publishable_independent_evaluation",
+      "reason": {
+        "ru": "Политика робота: есть только оценки разработчика; независимого робототехнического бенчмарка точной версии не найдено.",
+        "en": "Robot policy: only developer-reported evaluations exist; no independent robotics benchmark of the exact version found."
+      },
+      "checked": "2026-09-27",
+      "links": [
+        {
+          "url": "https://epoch.ai/benchmarks/use-this-data",
+          "label_ru": "Проверенный источник",
+          "label_en": "Checked source",
+          "kind": "checked_source"
+        }
+      ]
+    },
+    "flux-3-action-so101": {
+      "reason_code": "no_publishable_independent_evaluation",
+      "reason": {
+        "ru": "Политика робота: есть только оценки разработчика; независимого робототехнического бенчмарка точной версии не найдено.",
+        "en": "Robot policy: only developer-reported evaluations exist; no independent robotics benchmark of the exact version found."
+      },
+      "checked": "2026-09-27",
+      "links": [
+        {
+          "url": "https://epoch.ai/benchmarks/use-this-data",
+          "label_ru": "Проверенный источник",
+          "label_en": "Checked source",
+          "kind": "checked_source"
+        }
+      ]
     }
   }
 }

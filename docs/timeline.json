@@ -31,7 +31,7 @@
       "title": "Глобальная поисковая доступность",
       "title_en": "Global Search & Discovery",
       "summary": "Подготовка AIpediya к обнаружению моделей, инструментов и полезных подборок в международных поисковых системах и AI-поиске на 22 языках.",
-      "app_version": "unreleased Local candidate on top of release-2026-09-25-local-approved (the project versions releases by tag release-YYYY-MM-DD-<name>; no separate semantic app version exists)",
+      "app_version": "release-2026-09-25-gsd-1-0 (GSD-1.0; Production release confirmed)",
       "environment": "production",
       "stage": "released",
       "base_revision": "791e4ac5bf7469de243464c640c4af05b7304b26",
@@ -457,7 +457,7 @@
               "text": "Discovery matrix: Google, Bing, Yandex, Baidu, Naver, Seznam/IndexNow, Brave and AI-search providers with verification method, readiness, live access and owner action",
               "implemented": true,
               "verified": true,
-              "evidence": "docs/SEARCH_DISCOVERY.md s.8 official-source matrix [G1-G4,B1-B3,Y1-Y3,S1,BD1,BR1,I1-I3,O1,P1,A1]; Naver verification + Baidu verification methods marked UNVERIFIED (official page unreachable / not found); Brave corrected (submit-url exists); training policy = not defined by owner (D-2026-09-25-training-crawlers-undefined)"
+              "evidence": "docs/SEARCH_DISCOVERY.md s.8 official-source matrix [G1-G4,B1-B3,Y1-Y3,S1,BD1,BR1,I1-I3,O1,P1,A1]. Status evidence as of 2026-09-26: Google Domain + sitemap Successful and Bing GSC import + sitemap Processing per 2026-09-25 cabinet/release evidence; Yandex DNS verification/sitemap per owner report, expected root TXT publicly checked 2026-09-25; Naver ownership and submitted sitemap per owner screenshots, Production meta tag curl-verified in 2026-09-25 activation report, later account restriction reported 2026-09-26 and current ownership/sitemap state after restriction unverified. Owner update 2026-09-26: login-restriction recovery request submitted and accepted by Naver; no case number shown, email reply expected, account recovery not yet confirmed. Browser Use tool denial with saved-user-permission message remains separately open; owner reports OpenAI feedback sent, no case/acknowledgement provided. IndexNow automated dispatcher/outbox and deploy lock per 2026-09-25 Production report. Baidu deferred, not started. Brave request accepted per owner report, indexing unknown; training policy = not defined by owner (D-2026-09-25-training-crawlers-undefined)."
             },
             {
               "id": "GSD-08.A2",
@@ -625,12 +625,137 @@
         "public_check": "34/34",
         "sitemap_loc": 10032
       }
+    },
+    {
+      "release_id": "release-2026-09-25-search-activation",
+      "title": "Search verification and IndexNow activation",
+      "environment": "production",
+      "stage": "released",
+      "revision": "634778807b2e82ca52dea1de150ea0810950d644",
+      "history": "docs/history/2026-09-25-naver-indexnow-activation.md"
+    },
+    {
+      "release_id": "HISTORY-OFFLINE-2026-09-26",
+      "title": "Standalone history viewer revision",
+      "environment": "local",
+      "stage": "local",
+      "status": "COMPLETED_LOCAL",
+      "owner_visual_review": "completed 2026-09-26 (owner reported checking; no further remarks supplied)",
+      "revision": null,
+      "history": "docs/history/2026-09-26-offline-history-reference-match.md"
+    },
+    {
+      "release_id": "release-2026-09-26-search-visibility-optimization-v2",
+      "title": "Search Visibility Optimization",
+      "environment": "production",
+      "stage": "released",
+      "revision": "61adedd6ea5e6a0955d51d87374fa2fa9bcc7799",
+      "history": "docs/history/2026-09-26-search-visibility-release.md"
+    },
+    {
+      "release_id": "release-2026-09-26-catalog-master-v015",
+      "title": "Catalog master v015: 11 new models (Sep 22–24, 2026)",
+      "environment": "production",
+      "stage": "released",
+      "status": "RELEASED",
+      "revision": "e36acfa351b28f441ec7ad91587b67201cb8aa85",
+      "history": "docs/history/2026-09-26-catalog-master-v015.md",
+      "new_models": [
+        {
+          "public_number": 311,
+          "name": "Claude Opus 5.5",
+          "developer": "Anthropic",
+          "release_date": "2026-09-22"
+        },
+        {
+          "public_number": 312,
+          "name": "Gemini 3.8 Flash TTS",
+          "developer": "Google",
+          "release_date": "2026-09-22"
+        },
+        {
+          "public_number": 313,
+          "name": "Gemini 3.8 Flash-Lite TTS",
+          "developer": "Google",
+          "release_date": "2026-09-22"
+        },
+        {
+          "public_number": 314,
+          "name": "GPT-6 Luna",
+          "developer": "OpenAI",
+          "release_date": "2026-09-22"
+        },
+        {
+          "public_number": 315,
+          "name": "GPT-6 Sol",
+          "developer": "OpenAI",
+          "release_date": "2026-09-22"
+        },
+        {
+          "public_number": 316,
+          "name": "FLUX 3 Action DROID",
+          "developer": "Black Forest Labs",
+          "release_date": "2026-09-23"
+        },
+        {
+          "public_number": 317,
+          "name": "FLUX 3 Action SO-101",
+          "developer": "Black Forest Labs",
+          "release_date": "2026-09-23"
+        },
+        {
+          "public_number": 318,
+          "name": "Nemotron 3 Diarization",
+          "developer": "NVIDIA",
+          "release_date": "2026-09-23"
+        },
+        {
+          "public_number": 319,
+          "name": "GLiNER2.5-Decide",
+          "developer": "Fastino AI",
+          "release_date": "2026-09-24"
+        },
+        {
+          "public_number": 320,
+          "name": "Sarvam Vision 2.1",
+          "developer": "Sarvam AI",
+          "release_date": "2026-09-24"
+        },
+        {
+          "public_number": 321,
+          "name": "Speech TTS Live",
+          "developer": "Yandex",
+          "release_date": "2026-09-24"
+        }
+      ],
+      "release_tag": "release-2026-09-26-catalog-master-v015",
+      "production_verified_at": "2026-09-27T01:38:00Z"
+    },
+    {
+      "release_id": "release-2026-09-27-catalog-master-v015-final",
+      "title": "Catalog master v015 final: counters, countries and flags, prices, independent evaluations, release QA",
+      "environment": "local",
+      "stage": "local",
+      "status": "COMPLETED_LOCAL",
+      "revision": null,
+      "history": "docs/history/2026-09-27-catalog-master-v015-final.md",
+      "note": "This stage changes no model release date; each v015 model keeps its confirmed date in release-2026-09-26-catalog-master-v015."
+    },
+    {
+      "release_id": "PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26",
+      "title": "Paid Search Experiment / Google Ads",
+      "environment": "local",
+      "stage": "planned",
+      "status": "PLANNED",
+      "planned_after": "2026-09-30",
+      "monthly_budget_usd_max": 15,
+      "history": "docs/EXECUTION_STATE.md"
     }
   ],
   "product_history": {
     "visibility": "Local only; no owner authentication exists for this page on Production",
-    "production_evidence": "docs/history/2026-09-25-local-approved-release.md",
-    "production_verified_at": "2026-09-25T03:21:00Z",
+    "production_evidence": "docs/history/2026-09-26-catalog-master-v015.md",
+    "production_verified_at": "2026-09-27T01:38:00Z",
     "milestones": [
       {
         "release_id": "release-2026-09-20-chronology",
@@ -713,21 +838,253 @@
       {
         "release_id": "GSD-1.0",
         "date": "2026-09-25",
-        "title_ru": "Поиск и история сайта",
-        "title_en": "Discovery and site history",
+        "title_ru": "Глобальная поисковая доступность",
+        "title_en": "Global Search & Discovery",
         "icon": "search-check",
         "tags_ru": [
-          "Языковые адреса",
-          "Поисковая доступность",
-          "История"
+          "22 языка",
+          "Sitemaps",
+          "Тематические подборки"
         ],
         "tags_en": [
-          "Language URLs",
-          "Search discovery",
-          "History"
+          "22 languages",
+          "Sitemaps",
+          "Search hubs"
         ],
-        "source": "GSD-1.0-release-scope",
-        "open": true
+        "source": "2026-09-25-gsd-1-0-release",
+        "open": false,
+        "capabilities_ru": [
+          "Постоянные языковые URL, SSR-карточки и локализованные SEO-сигналы",
+          "Sitemap, индексируемость, методика и тематические подборки",
+          "Выпуск GSD-1.0 подтверждён Production /healthz и release report"
+        ],
+        "capabilities_en": [
+          "Stable locale URLs, SSR cards and localized SEO signals",
+          "Sitemaps, indexability, methodology and topic hubs",
+          "GSD-1.0 release confirmed by Production /healthz and release report"
+        ],
+        "revision": "ba93f7ddf690f4a958405fbabfc65a59d3a9cfbf",
+        "owner_decision": "D-2026-09-25-release-process"
+      },
+      {
+        "release_id": "release-2026-09-25-search-activation",
+        "date": "2026-09-25",
+        "title_ru": "Активация поисковых каналов",
+        "title_en": "Search activation",
+        "icon": "radio-tower",
+        "tags_ru": [
+          "Naver meta-tag",
+          "IndexNow",
+          "Outbox и scheduler"
+        ],
+        "tags_en": [
+          "Naver meta tag",
+          "IndexNow",
+          "Outbox and scheduler"
+        ],
+        "capabilities_ru": [
+          "Корневой IndexNow key file и автоматическая отправка включены",
+          "Первичная отправка 10 032 URL принята; принятие не доказывает индексацию",
+          "Scheduler и deploy/dispatch lock опубликованы; Naver meta-tag проверен HTTP"
+        ],
+        "capabilities_en": [
+          "Root IndexNow key file and automatic submission enabled",
+          "Initial 10,032 URL submission accepted; acceptance does not prove indexing",
+          "Scheduler and deploy/dispatch lock released; Naver meta tag checked over HTTP"
+        ],
+        "revision": "634778807b2e82ca52dea1de150ea0810950d644",
+        "source": "2026-09-25-naver-indexnow-activation",
+        "open": false,
+        "owner_decision": "D-2026-09-25-release-process"
+      },
+      {
+        "release_id": "release-2026-09-26-search-visibility-optimization-v2",
+        "date": "2026-09-26",
+        "title_ru": "Оптимизация поисковой видимости",
+        "title_en": "Search Visibility Optimization",
+        "icon": "search-check",
+        "tags_ru": [
+          "Production",
+          "45 старых URL",
+          "22 локали"
+        ],
+        "tags_en": [
+          "Production",
+          "45 legacy URLs",
+          "22 locales"
+        ],
+        "capabilities_ru": [
+          "45 URL из GSC: 25 одношаговых 301, 19 ответов 404, один фрагмент noindex",
+          "Точечные robots-исключения без crawl traps; чистые ссылки и четыре проверенные EN/RU поисковые страницы",
+          "Local: 267 PASS + 1 skip, seo_report без проблем; Production: 1657/1657 проверок и 45/45 URL PASS",
+          "IndexNow обработал 334 точечных уведомления; новый обход и рост позиций пока не подтверждены"
+        ],
+        "capabilities_en": [
+          "45 GSC URLs: 25 one-hop 301s, 19 404s, one noindex fragment",
+          "Exact robots exceptions without crawl traps; clean links and four verified EN/RU search URLs",
+          "Local: 267 passes + 1 skip and clean seo_report; Production: 1657/1657 checks and 45/45 URLs pass",
+          "IndexNow processed 334 targeted notices; recrawl and ranking growth are not yet confirmed"
+        ],
+        "revision": "61adedd6ea5e6a0955d51d87374fa2fa9bcc7799",
+        "source": "2026-09-26-search-visibility-release",
+        "open": false,
+        "owner_decision": "Owner release authorization in this task"
+      },
+      {
+        "release_id": "HISTORY-OFFLINE-2026-09-26",
+        "date": "2026-09-26",
+        "title_ru": "Автономная история",
+        "title_en": "Offline history viewer",
+        "icon": "history",
+        "tags_ru": [
+          "Local-only",
+          "HTML без сервера",
+          "Проверено владельцем"
+        ],
+        "tags_en": [
+          "Local-only",
+          "Server-free HTML",
+          "Owner visual check complete"
+        ],
+        "capabilities_ru": [
+          "Отдельный автономный HTML формируется штатным сборщиком",
+          "Ярлык открывает его напрямую; Production и деплой не затрагиваются",
+          "Владелец 26.09 сообщил, что визуально проверил текущую версию; замечаний не указал"
+        ],
+        "capabilities_en": [
+          "Standalone HTML is generated by the normal builder",
+          "Shortcut opens it directly; Production and deployment are untouched",
+          "Owner reported visually checking the current version on Sep 26; no further remarks supplied"
+        ],
+        "revision": null,
+        "source": "2026-09-26-offline-history-reference-match",
+        "open": true,
+        "progress": "done"
+      },
+      {
+        "release_id": "release-2026-09-26-catalog-master-v015",
+        "date": "2026-09-26",
+        "title_ru": "Новые модели 22–24 сентября",
+        "title_en": "New models of Sep 22–24",
+        "icon": "library-big",
+        "tags_ru": [
+          "Production",
+          "11 моделей · №311–321",
+          "Master v015"
+        ],
+        "tags_en": [
+          "Production",
+          "11 models · #311–321",
+          "Master v015"
+        ],
+        "capabilities_ru": [
+          "22.09.2026 — Claude Opus 5.5 (Anthropic), №311",
+          "22.09.2026 — Gemini 3.8 Flash TTS (Google), №312",
+          "22.09.2026 — Gemini 3.8 Flash-Lite TTS (Google), №313",
+          "22.09.2026 — GPT-6 Luna (OpenAI), №314",
+          "22.09.2026 — GPT-6 Sol (OpenAI), №315",
+          "23.09.2026 — FLUX 3 Action DROID (Black Forest Labs), №316",
+          "23.09.2026 — FLUX 3 Action SO-101 (Black Forest Labs), №317",
+          "23.09.2026 — Nemotron 3 Diarization (NVIDIA), №318",
+          "24.09.2026 — GLiNER2.5-Decide (Fastino AI), №319",
+          "24.09.2026 — Sarvam Vision 2.1 (Sarvam AI), №320",
+          "24.09.2026 — Speech TTS Live (Yandex), №321",
+          "Также 4 новых инструмента (Alice AI Pro for Business, Qwen Intelligence, Yandex AI Studio, SourceCraft) и исправления 9 моделей; записи NEEDS_REVIEW не опубликованы",
+          "Новые карточки пришли с ценами, доступом и переводами на 22 языка; прежние ID, номера 1–310, цены, источники и журнал сохранены",
+          "Local PASS (272 теста, HTTP 144/144) → Timeline → Production 27.09 01:35 UTC (e36acfa, backup, без копирования SQLite) → Public PASS 144/144, GSD 34/34, 45/45 старых URL"
+        ],
+        "capabilities_en": [
+          "Sep 22, 2026 — Claude Opus 5.5 (Anthropic), #311",
+          "Sep 22, 2026 — Gemini 3.8 Flash TTS (Google), #312",
+          "Sep 22, 2026 — Gemini 3.8 Flash-Lite TTS (Google), #313",
+          "Sep 22, 2026 — GPT-6 Luna (OpenAI), #314",
+          "Sep 22, 2026 — GPT-6 Sol (OpenAI), #315",
+          "Sep 23, 2026 — FLUX 3 Action DROID (Black Forest Labs), #316",
+          "Sep 23, 2026 — FLUX 3 Action SO-101 (Black Forest Labs), #317",
+          "Sep 23, 2026 — Nemotron 3 Diarization (NVIDIA), #318",
+          "Sep 24, 2026 — GLiNER2.5-Decide (Fastino AI), #319",
+          "Sep 24, 2026 — Sarvam Vision 2.1 (Sarvam AI), #320",
+          "Sep 24, 2026 — Speech TTS Live (Yandex), #321",
+          "Also 4 new tools (Alice AI Pro for Business, Qwen Intelligence, Yandex AI Studio, SourceCraft) and corrections to 9 models; NEEDS_REVIEW records are not published",
+          "New cards arrive with prices, access and translations into 22 languages; existing IDs, numbers 1–310, prices, sources and history preserved",
+          "Local PASS (272 tests, HTTP 144/144) → Timeline → Production Sep 27 01:35 UTC (e36acfa, backup, no SQLite copy) → Public PASS 144/144, GSD 34/34, 45/45 legacy URLs"
+        ],
+        "revision": "e36acfa351b28f441ec7ad91587b67201cb8aa85",
+        "source": "2026-09-26-catalog-master-v015",
+        "open": false,
+        "owner_decision": "Owner release authorization in this task (full v015 package)"
+      },
+      {
+        "release_id": "release-2026-09-27-catalog-master-v015-final",
+        "date": "2026-09-27",
+        "title_ru": "Финальная синхронизация v015",
+        "title_en": "v015 final sync",
+        "icon": "shield-check",
+        "tags_ru": [
+          "Счётчики",
+          "Страны и флаги",
+          "Цены и оценки",
+          "Готово в Local"
+        ],
+        "tags_en": [
+          "Counters",
+          "Countries and flags",
+          "Prices and evaluations",
+          "Complete in Local"
+        ],
+        "capabilities_ru": [
+          "Tools: 143 опубликовано; 116 с датой выпуска имеют №, 27 без подтверждённой даты — пояснение у счётчика",
+          "Страны с источниками: 11 моделей и 15 инструментов; 3 инструмента без установленной страны — в очереди качества",
+          "Цены: +70 официальных строк (валюта, единица, контекст, источник); 20 проверенных пробелов вместо «$0»",
+          "Независимые оценки Epoch AI: +25 для 5 точных версий; 9 новых моделей — честный пробел",
+          "Постоянная release-QA: счётчики, флаги, цены, независимость оценок, источники, дубли, master ↔ Local ↔ Production",
+          "Даты выпуска моделей не менялись; Production — ожидает выпуска"
+        ],
+        "capabilities_en": [
+          "Tools: 143 published; the 116 with a release date carry №, 27 undated — explained next to the counter",
+          "Sourced countries: 11 models and 15 tools; 3 tools without an establishable country are in the quality queue",
+          "Prices: +70 official rows (currency, unit, context, source); 20 verified gaps instead of \"$0\"",
+          "Epoch AI independent results: +25 for 5 exact versions; 9 new models are verified gaps",
+          "Permanent release QA: counters, flags, prices, evaluation independence, sources, duplicates, master ↔ Local ↔ Production",
+          "No model release date changed; Production — awaiting release"
+        ],
+        "revision": null,
+        "source": "2026-09-27-catalog-master-v015-final",
+        "open": true,
+        "progress": "done"
+      },
+      {
+        "release_id": "PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26",
+        "date": "2026-09-26",
+        "title_ru": "Paid Search Experiment / Google Ads",
+        "title_en": "Paid Search Experiment / Google Ads",
+        "icon": "search-check",
+        "tags_ru": [
+          "PLANNED",
+          "Отдельный paid-эксперимент",
+          "Бюджет ≤ $15/месяц"
+        ],
+        "tags_en": [
+          "PLANNED",
+          "Separate paid experiment",
+          "Budget ≤ $15/month"
+        ],
+        "capabilities_ru": [
+          "Органические GSD-1.0 и Search Visibility Optimization уже опубликованы; эта задача относится только к paid acquisition, не к органическому ranking.",
+          "После контрольного замера 30.09.2026 собрать через Google Keyword Planner большой многоязычный master запросов по выбранным странам с volume, competition и CPC.",
+          "Кластеризовать запросы и выбрать небольшой первый набор Exact/Phrase для Search-кампании с жёстким общим бюджетом не более $10–15 в месяц.",
+          "Кампания ещё не создана и не запущена. После фактического запуска записать настройки и результаты в Timeline; paid clicks не смешивать с organic Search Console metrics."
+        ],
+        "capabilities_en": [
+          "Organic GSD-1.0 and Search Visibility Optimization are already published; this is a separate paid-acquisition experiment, not organic ranking work.",
+          "After the September 30, 2026 control measurement, use Google Keyword Planner to build a large multilingual query master with volume, competition and CPC for selected countries.",
+          "Cluster queries and choose a small initial Exact/Phrase set for a Search campaign with a strict total budget of no more than $10–15 per month.",
+          "No campaign has been created or launched. After an actual launch, record settings and results in Timeline; keep paid clicks separate from organic Search Console metrics."
+        ],
+        "revision": null,
+        "source": "execution-state",
+        "open": true,
+        "progress": "planned"
       }
     ],
     "additional_tasks": [
@@ -752,19 +1109,103 @@
         "id": "HISTORY",
         "title_ru": "История развития сайта",
         "title_en": "Site development history",
-        "goal_ru": "Показать подтверждённые выпуски и открытый Local-пакет владельцу.",
-        "goal_en": "Show confirmed releases and the open Local package to the owner.",
-        "done_ru": "Local-страница, реестр этапов и доступные из страницы документы-источники.",
-        "done_en": "Local page, milestone registry and source documents accessible from the page.",
-        "qa_ru": "Проверка текущего этапа указана в EXECUTION_STATE; личная приёмка владельцем ожидается.",
-        "qa_en": "Current stage checks are recorded in EXECUTION_STATE; owner acceptance is pending.",
-        "owner_ru": "Владелец подтвердил композицию: две верхние карточки и Git в последней панели. Приёмка обновлённой страницы ещё ожидается.",
-        "owner_en": "The owner specified two top cards and Git in the last panel. Acceptance of the updated page is still pending.",
-        "next_ru": "Владельцу просмотреть Local-страницу и оставить замечания или решение.",
-        "next_en": "Owner reviews the Local page and records feedback or a decision.",
+        "goal_ru": "Показать владельцу подтверждённые выпуски и состояние Local/Production.",
+        "goal_en": "Show confirmed releases and Local/Production state to the owner.",
+        "done_ru": "История использует docs/timeline.json, отчёты и фиксированный набор источников.",
+        "done_en": "History uses docs/timeline.json, release reports and an explicit source allowlist.",
+        "qa_ru": "Production выпусков сверяется с release report и доступным live /healthz; автономный HTML собирается отдельно.",
+        "qa_en": "Production releases are checked against release reports and available live /healthz; standalone HTML is generated separately.",
+        "owner_ru": "Текущий визуальный результат ещё не принят владельцем; новая версия Local-only.",
+        "owner_en": "The current visual result has not been accepted by the owner; the revision is Local-only.",
+        "next_ru": "Визуально проверить обновлённый автономный HTML после сборки.",
+        "next_en": "Visually review the rebuilt standalone HTML.",
         "source": "execution-state",
         "decision": "decisions"
+      },
+      {
+        "id": "HISTORY-OFFLINE-2026-09-26",
+        "title_ru": "Автономный просмотр истории",
+        "title_en": "Offline site history viewer",
+        "goal_ru": "Открывать полную историю сайта без запуска Local и сети.",
+        "goal_en": "Open the complete site history without starting Local or using the network.",
+        "done_ru": "Автономная история Local-only с двумя карточками сред, горизонтальной лентой выпусков и правой панелью подробностей приведена к композиции существующего эталона StratForge; AIpediya сохраняет собственные данные и единый источник docs/timeline.json.",
+        "done_en": "The Local-only standalone history now follows the composition of the existing StratForge reference, with two environment cards, a horizontal release timeline and a right details panel; AIpediya retains its own data and docs/timeline.json as the single source.",
+        "qa_ru": "Полный Local-набор catalog: 266 тестов OK (1 skipped); проверены отдельные состояния done/planned и сборка timeline.html. Агентский просмотр file:// заблокирован политикой браузера. Владелец 26.09 проверил предыдущую редакцию; новые маркеры отдельно ещё не принимал.",
+        "qa_en": "Full Local catalog suite: 266 tests OK (1 skipped); distinct done/planned states and timeline.html build verified. Agent file:// viewing was blocked by browser policy. Owner reviewed the previous edition on Sep 26; the new markers have not been separately accepted yet.",
+        "owner_ru": "Владелец 26.09 сообщил: «готово я проверил». Визуальная проверка текущей Local-only редакции завершена; новых замечаний не указано. Это не разрешение на Production.",
+        "owner_en": "Owner said on Sep 26 that the check is done. Visual review of this Local-only version is complete, with no new remarks supplied; this is not Production authorization.",
+        "next_ru": "Оставить автономную историю Local-only; принять замечания владельца по новым маркерам, если появятся.",
+        "next_en": "Keep the standalone history Local-only; address owner feedback on the new markers if provided.",
+        "source": "2026-09-26-offline-history-reference-match"
+      },
+      {
+        "id": "SEARCH-AUDIT-2026-09-26",
+        "title_ru": "Аудит поисковой видимости",
+        "title_en": "Search visibility audit",
+        "goal_ru": "Измерить обнаружение и реальные позиции AIpediya в глобальном поиске без изменения Production.",
+        "goal_en": "Measure discovery and real search positions without changing Production.",
+        "done_ru": "Создан один Excel-файл: 52 SERP-замера, текущие данные GSC, Bing и Cloudflare, техническая проверка и приоритеты. 22 языковые карты содержат 10 186 URL.",
+        "done_en": "One Excel audit records 52 SERP checks, live GSC, Bing and Cloudflare data, technical checks and priorities. The 22 locale sitemaps contain 10,186 URLs.",
+        "qa_ru": "Публичный read-only обход и реальные браузерные выдачи; интерфейс и каталог повторно не тестировались. Индекс GSC ещё обрабатывается; региональные кабинеты доступны не полностью.",
+        "qa_en": "Read-only public crawl and live browser SERPs; catalog and UI were not retested. GSC index coverage is still processing; regional consoles remain partially unavailable.",
+        "owner_ru": "Аудит Local-only; никаких изменений Production или утверждения нового выпуска.",
+        "owner_en": "Local-only audit; no Production changes or new release approval.",
+        "next_ru": "Технические пункты P0 и две проверенные поисковые страницы выпущены; после recrawl повторить GSC/Bing и те же 52 SERP-замера.",
+        "next_en": "P0 technical fixes and two verified search pages are released; after recrawl, repeat GSC/Bing checks and the same 52 SERP measurements.",
+        "source": "execution-state"
+      },
+      {
+        "id": "SEARCH-P0-URL-CLEANUP-2026-09-26",
+        "title_ru": "P0: очистка старых URL для поиска",
+        "title_en": "P0: legacy search URL cleanup",
+        "goal_ru": "Перевести реальные старые карточки на чистые URL, не открывая роботам бесконечные комбинации фильтров.",
+        "goal_en": "Move real legacy cards to clean URLs without opening unlimited filter combinations to crawlers.",
+        "done_ru": "Опубликовано: 45 точных URL GSC; 25 одношаговых 301, 19 корректных 404, один фрагмент 200/noindex. Широкого разрешения параметров в robots нет.",
+        "done_en": "Published: 45 exact GSC URLs; 25 one-hop 301s, 19 correct 404s, one 200/noindex fragment. No broad robots parameter allowance.",
+        "qa_ru": "Local 267 PASS + 1 skip, seo_report без проблем; Production 45/45 legacy URL и 1657/1657 Search QA PASS, /healthz подтвердил выпуск.",
+        "qa_en": "Local 267 passes + 1 skip, clean seo_report; Production 45/45 legacy URLs and 1657/1657 Search QA pass, /healthz confirms release.",
+        "owner_ru": "Владелец разрешил выпуск Search Visibility Optimization; опубликовано и проверено 26.09.2026.",
+        "owner_en": "Owner authorized Search Visibility Optimization; published and verified September 26, 2026.",
+        "next_ru": "После recrawl проверить GSC/Bing canonical, индексирование, показы, клики, страны и позиции; пока рост ranking не подтверждён.",
+        "next_en": "After recrawl, check GSC/Bing canonicals, indexing, impressions, clicks, countries and positions; ranking growth is not confirmed yet.",
+        "source": "2026-09-26-search-visibility-release"
+      },
+      {
+        "id": "PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26",
+        "title_ru": "Paid Search Experiment / Google Ads",
+        "title_en": "Paid Search Experiment / Google Ads",
+        "goal_ru": "Отдельно от органического SEO проверить платное привлечение пользователей Search-кампанией в пределах общего бюджета $10–15 в месяц.",
+        "goal_en": "Test paid Search acquisition separately from organic SEO within a total $10–15 monthly budget.",
+        "done_ru": "PLANNED: веха и границы эксперимента зафиксированы; Keyword Planner master, группы объявлений и кампания ещё не созданы.",
+        "done_en": "PLANNED: experiment scope is recorded; no Keyword Planner master, ad groups or campaign have been created.",
+        "qa_ru": "Проверено только состояние плана в Local Timeline; рекламных показов, кликов, расходов или настроек кампании пока нет.",
+        "qa_en": "Only the Local Timeline plan is checked; there are no campaign impressions, clicks, spend or settings yet.",
+        "owner_ru": "Владелец поручил добавить открытую карточку PLANNED; это не подтверждение запуска кампании.",
+        "owner_en": "Owner requested an open PLANNED card; this does not confirm a campaign launch.",
+        "next_ru": "После контрольного замера 30.09.2026 собрать многоязычный master через Google Keyword Planner (volume, competition, CPC по выбранным странам), кластеризовать и предложить небольшой Exact/Phrase стартовый набор; после реального запуска записать настройки и paid-результаты отдельно от органических метрик GSC.",
+        "next_en": "After the September 30, 2026 control measurement, collect a multilingual Keyword Planner master (volume, competition and CPC by selected country), cluster it and propose a small Exact/Phrase starter set; after a real launch, record settings and paid results separately from organic GSC metrics.",
+        "source": "execution-state"
       }
-    ]
+    ],
+    "current_production": {
+      "release_tag": "release-2026-09-26-catalog-master-v015",
+      "revision": "e36acfa351b28f441ec7ad91587b67201cb8aa85",
+      "release_id": "e36acfa351b28f441ec7ad91587b67201cb8aa85",
+      "confirmed_at": "2026-09-27 01:38",
+      "evidence": "Live /healthz and public v015 check",
+      "status_ru": "Опубликовано и проверено: /healthz подтвердил commit e36acfa; 144/144 публичных проверок v015, GSD 34/34, 45/45 старых URL.",
+      "status_en": "Published and verified: /healthz confirmed commit e36acfa; 144/144 public v015 checks, GSD 34/34, 45/45 legacy URLs.",
+      "source": "2026-09-26-catalog-master-v015",
+      "capabilities_ru": [
+        "321 модель и 143 инструмента; 11 новых моделей 22–24.09 под номерами 311–321.",
+        "Поисковые улучшения Search Visibility Optimization и 22 локали сохранены.",
+        "Автономный timeline.html остаётся локальным файлом и на сервер не выпускается."
+      ],
+      "capabilities_en": [
+        "321 models and 143 tools; 11 new models of Sep 22–24 numbered 311–321.",
+        "Search Visibility Optimization improvements and 22 locales remain.",
+        "Standalone timeline.html remains a local file and is not released to the server."
+      ]
+    }
   }
 }

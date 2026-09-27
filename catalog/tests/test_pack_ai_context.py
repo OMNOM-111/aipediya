@@ -25,6 +25,7 @@ class PackAiContextTests(SimpleTestCase):
     def test_deny_secrets_and_local_sqlite(self):
         deny = self.pack.deny
         self.assertTrue(deny("data/local/aipedia.sqlite3"))
+        self.assertTrue(deny("%SystemDrive%/ProgramData/Microsoft/Windows/Caches/cversions.2.db"))
         self.assertTrue(deny("data/local/secret.key"))
         self.assertTrue(deny(".env"))
         self.assertTrue(deny("deploy/.env.production"))
@@ -65,11 +66,14 @@ class PackAiContextTests(SimpleTestCase):
         self.assertIn("sources/tools/pack_ai_context.py", names)
         self.assertIn("sources/docs/PRODUCT_HISTORY.md", names)
         self.assertIn("sources/docs/timeline.json", names)
+        self.assertIn("sources/templates/product_history_standalone.html", names)
+        self.assertIn("sources/static/product-history-offline.css", names)
         self.assertIn("sources/tools/local/install-history-shortcut.ps1", names)
         self.assertTrue(any(name.endswith("install-shortcuts.ps1") for name in names))
         for name in names:
             self.assertFalse(self.pack.deny(name), name)
             self.assertFalse(name.endswith(".sqlite3"), name)
+            self.assertFalse(name.endswith(".db"), name)
             self.assertFalse(name.endswith(".env"), name)
             self.assertNotIn("secret.key", name)
         self.assertFalse(any("data/research/" in name for name in names))
