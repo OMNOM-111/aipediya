@@ -781,7 +781,7 @@
       "history": "docs/history/2026-09-27-tools-chronology-csp-release.md",
       "revision": "cf4ac9a33f8d4467510d6b76ebe115ce7e1803d3",
       "owner_decision": "Approved exact Tools/CSP Production release, 2026-09-27",
-      "production_verified_at": "2026-09-27T19:16:00Z",
+      "production_verified_at": "2026-09-27T19:22:30Z",
       "note": "Owner approved the exact 167-change plan and Production release. Local and Production have 143 published/numbered Tools, 60 exact and 83 approximate dates, numbers 1-143; Models remain 321. Production backup, server trial, deploy, browser and Cloudflare beacon/CSP checks passed."
     }
   ],

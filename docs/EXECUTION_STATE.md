@@ -25,14 +25,15 @@
   ограничена; browser network: Cloudflare beacon 200, `/cdn-cgi/rum` 204,
   console errors 0. Детали —
   `docs/history/2026-09-27-tools-chronology-csp-release.md`.
-- Local / GitHub / Production: Local PASS; код выпуска был сохранён локальным
-  commit, release docs/access wrapper готовятся к push и tag; Production VERIFIED.
+- Local / GitHub / Production: Local PASS; release commit `cf4ac9a` и
+  docs/access commit `c9ebe7b` отправлены в `origin/main`; tag
+  `release-2026-09-27-tools-chronology-csp` отправлен и указывает на
+  фактический Production commit `cf4ac9a`. Production VERIFIED.
   Посторонние untracked файлы (`%SystemDrive%/`, `.claude/`, `data/release/v013/`,
   `data/research/`, старый Claude task, history shortcut, производный
   `timeline.html`) сохранены и не входят в release docs commit.
-- Не завершено: собрать контекст/историю, push release docs/access contract
-  и tag. Следующим выполнить эти шаги;
-  новая публикация Production не требуется.
+- Не завершено: работ по этому выпуску нет. Следующим выполнять только новые
+  задачи по отдельному поручению; новая публикация Production не требуется.
 
 ## Предыдущий checkpoint: owner approved Production release, server phase pending, 2026-09-27
 

@@ -6,6 +6,9 @@ Owner approved the exact Local state and release of commit
 `artifacts/code-release/aipedia-code-cf4ac9a33f8d.zip`, SHA-256
 `8af0a16c7044a8208e5ac38aa1d6a156621c670ccbaeb17640895c7f6e46c7a0`.
 The 333-file archive contains no SQLite or secret. No Local DB was copied.
+The annotated tag `release-2026-09-27-tools-chronology-csp` points to the
+published commit; release docs and the server-access contract were committed
+as `c9ebe7b` and pushed to `origin/main` with the tag.
 
 ## Server trial and deployment
 
