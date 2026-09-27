@@ -11,6 +11,7 @@ from .marks import mark_for
 from .public_text import public_text
 
 SCOPE_GROUPS = {
+    "promo": ("limited-time promotional", "временная акционная"),
     "free": ("free", "бесплат"),
     "batch": ("batch",),
     "offpeak": ("off-peak", "off peak", "непиков"),

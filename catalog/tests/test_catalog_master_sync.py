@@ -548,6 +548,18 @@ class NewModelLinkedRowsTests(MasterSyncTests):
         self.assertNotIn("new row", again)
         self.assertEqual(counts, (Offer.objects.count(), Access.objects.count()))
 
+        def update_new_offer(rows):
+            row = next(r for r in rows["Offers"] if r.get("Research Key") == "v015:offer-aa11")
+            row["Key"] = "offer-%d" % offers["v015:offer-bb22"].pk  # Colliding DB PK must not select the wrong offer.
+            row["Conditions RU"] = "Временная акционная цена"
+
+        self.edit(update_new_offer)
+        self.command("sync-local", apply=True)
+        first.refresh_from_db()
+        self.assertEqual(first.conditions["ru"], "Временная акционная цена")
+        offers["v015:offer-bb22"].refresh_from_db()
+        self.assertNotEqual(offers["v015:offer-bb22"].conditions["ru"], "Временная акционная цена")
+
     def test_release_plan_creates_the_model_with_its_rows(self):
         import json
         from catalog.models import Access, Offer

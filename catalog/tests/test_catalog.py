@@ -53,6 +53,18 @@ class CatalogTests(TestCase):
         self.assertIsNone(next(model for model in standard.context["page"] if model.slug == offer.model.slug).comparison_offer)
         self.assertIsNotNone(next(model for model in all_prices.context["page"] if model.slug == offer.model.slug).comparison_offer)
 
+    def test_limited_time_price_is_excluded_from_standard_comparison(self):
+        offer = Offer.objects.get(model__slug="gemini-2-5-flash-lite", unit="input", primary=True)
+        offer.conditions = {
+            "en": "Limited-time promotional price per 1M input tokens",
+            "ru": "Временная акционная цена за 1 млн входных токенов",
+        }
+        offer.save(update_fields=["conditions"])
+        standard = self.client.get("/", {"price_unit": "input", "price_scope": "standard"})
+        all_prices = self.client.get("/", {"price_unit": "input", "price_scope": "all"})
+        self.assertIsNone(next(model for model in standard.context["page"] if model.slug == offer.model.slug).comparison_offer)
+        self.assertIsNotNone(next(model for model in all_prices.context["page"] if model.slug == offer.model.slug).comparison_offer)
+
     def test_benchmark_sort_respects_direction_and_missing(self):
         bench = Benchmark.objects.get(name="AIME 2025")
         response = self.client.get("/", {"benchmark": bench.pk, "sort": "check_best"})

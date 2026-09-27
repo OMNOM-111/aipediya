@@ -12,7 +12,12 @@ ROOT = Path("/srv/aipedia")
 SKIP = {"catalog_publicationrevision", "catalog_toolpublicationrevision",
         "catalog_revision", "catalog_researchrevision", "catalog_discoveryevent",
         "catalog_auditreport", "catalog_errorreport"}
-ALLOWED_TOOL_COLUMNS = {"released", "approx_released", "approx_precision", "public_number"}
+EXPECTED_TABLES = [
+    "catalog_access", "catalog_contenttranslation", "catalog_modelfamily",
+    "catalog_modelorigincountry", "catalog_modelversion", "catalog_offer",
+    "catalog_organization", "catalog_service", "catalog_source",
+    "catalog_tool", "catalog_toolplatform",
+]
 
 
 def rows(db, table):
@@ -48,15 +53,28 @@ def main():
                     for column, old_value in old_row.items():
                         if after[key][column] != old_value:
                             tool_columns[column] += 1
+        def published_counts(db):
+            models = [row[0] for row in db.execute(
+                "SELECT public_number FROM catalog_modelversion WHERE published=1 AND entry_type='model'")]
+            tools = [row[0] for row in db.execute(
+                "SELECT public_number FROM catalog_tool WHERE published=1")]
+            return {"models": len(models), "tools": len(tools),
+                    "models_numbered": None not in models and sorted(models) == list(range(1, len(models) + 1)),
+                    "tools_numbered": None not in tools and sorted(tools) == list(range(1, len(tools) + 1))}
+
+        before_counts, after_counts = published_counts(old), published_counts(new)
         report = {
             "before_database": str(old_path), "current_database": str(new_path),
             "changed_factual_tables": changed_tables,
             "tool_column_changes": dict(tool_columns),
+            "before": before_counts, "after": after_counts,
             "integrity": new.execute("PRAGMA integrity_check").fetchone()[0],
             "foreign_keys": len(new.execute("PRAGMA foreign_key_check").fetchall()),
         }
-        report["ok"] = (changed_tables == ["catalog_tool"] and
-                        set(tool_columns) <= ALLOWED_TOOL_COLUMNS and
+        report["ok"] = (changed_tables == EXPECTED_TABLES and
+                        (before_counts["models"], before_counts["tools"]) == (321, 143) and
+                        (after_counts["models"], after_counts["tools"]) == (325, 147) and
+                        after_counts["models_numbered"] and after_counts["tools_numbered"] and
                         report["integrity"] == "ok" and report["foreign_keys"] == 0)
         print(json.dumps(report, sort_keys=True))
 

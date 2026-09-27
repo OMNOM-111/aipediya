@@ -246,26 +246,33 @@ def plan(workbook_rows, snapshot=None, aux=None):
     # Existing price/access rows whose owner changed in the master (e.g. the
     # prices of a model wrongly listed as a tool) move to the new owner.
     reassigned = set()
+    offers_by_research_key = {o.research_key: o for o in Offer.objects.all() if o.research_key}
     for sheet, manager in (("Offers", Offer.objects), ("Access", Access.objects)):
         prefix = "offer-" if sheet == "Offers" else "access-"
         current = {prefix + str(o.pk): o for o in manager.select_related("model")}
         for row in workbook_rows.get(sheet, []):
-            obj = current.get(row.get("Key"))
+            obj = (offers_by_research_key.get(row.get("Research Key")) if sheet == "Offers"
+                   and row.get("Research Key") else None) or current.get(row.get("Key"))
+            if sheet == "Offers" and obj is not None and row.get("Research Key") and obj.research_key != row["Research Key"]:
+                obj = None  # Local PKs are not portable across SQLite databases.
             owner_sheet = cm.RECORD_TYPE_SHEET.get(row.get("Record Type"))
             if obj is None or row.get("Record ID") not in published_ids.get(owner_sheet, ()):
                 continue
             wanted = "%s:%s" % (row["Record Type"], row["Record ID"])
             have = _owner_label(obj.model)
             if have != wanted and _owner_version(wanted) is not None:
-                changes.append({"sheet": sheet, "id": row["Key"], "kind": "reassign",
+                changes.append({"sheet": sheet, "id": prefix + str(obj.pk), "kind": "reassign",
                                 "before": {"owner": have}, "after": {"owner": wanted},
                                 "locator": _locator(obj, owner_after=_owner_version(wanted).slug)})
-                reassigned.add(row["Key"])
+                reassigned.add(prefix + str(obj.pk))
 
     # Price rows (existing only) and evaluation visibility.
     offers = {"offer-%d" % o.pk: o for o in Offer.objects.all()}
+    offers_by_research_key = {o.research_key: o for o in offers.values() if o.research_key}
     for row in workbook_rows.get("Offers", []):
-        offer = offers.get(row.get("Key"))
+        offer = (offers_by_research_key.get(row.get("Research Key")) if row.get("Research Key") else None) or offers.get(row.get("Key"))
+        if offer is not None and row.get("Research Key") and offer.research_key != row["Research Key"]:
+            offer = None
         owner = cm.RECORD_TYPE_SHEET.get(row.get("Record Type"))
         if offer is None or row.get("Record ID") not in published_ids.get(owner, ()):
             continue
@@ -281,10 +288,10 @@ def plan(workbook_rows, snapshot=None, aux=None):
             wanted["source"] = {"url": source_url, "title": source_url[:200], "publisher": row.get("Provider", "")[:120]}
         if wanted:
             identity = _offer_identity(offer)
-            change = {"sheet": "Offers", "id": row["Key"], "kind": "offer",
+            change = {"sheet": "Offers", "id": "offer-" + str(offer.pk), "kind": "offer",
                       "before": {k: (offer.source.url if k == "source" else getattr(offer, k)) for k in wanted},
                       "after": wanted, "identity": identity, "locator": _locator(offer)}
-            if row.get("Key") in reassigned:
+            if "offer-" + str(offer.pk) in reassigned:
                 # the owner changes first (reassign is planned earlier), so the
                 # row may be found under either owner
                 target = _owner_version("%s:%s" % (row["Record Type"], row["Record ID"]))

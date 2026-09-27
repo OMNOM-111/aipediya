@@ -6,10 +6,12 @@ Application deployment still requires a separately approved release.
 """
 
 import argparse
+import hashlib
 import json
 import re
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 from deploy_code_release import inspect_archive
@@ -22,6 +24,30 @@ SERVICE = "aipedia"
 PLAN = "data/release/tools-chronology-csp-20260927/catalog_plan.json"
 PUBLICATION = "data/release_state.json"
 REPORT_DIR = ROOT / "artifacts" / "server-access"
+
+BASELINE_EXPORT = r'''
+import hashlib, json, os, sqlite3, sys, tempfile
+source = "/srv/aipedia/data/aipedia.sqlite3"
+fd, path = tempfile.mkstemp(prefix="aipedia-baseline-", suffix=".sqlite3", dir="/tmp")
+os.close(fd)
+try:
+    with sqlite3.connect("file:" + source + "?mode=ro", uri=True) as src, sqlite3.connect(path) as dst:
+        src.backup(dst)
+    with sqlite3.connect("file:" + path + "?mode=ro", uri=True) as db:
+        integrity = db.execute("PRAGMA integrity_check").fetchone()[0]
+        fk = len(db.execute("PRAGMA foreign_key_check").fetchall())
+    if integrity != "ok" or fk:
+        raise RuntimeError("AIpediya online snapshot failed integrity checks")
+    digest = hashlib.sha256()
+    with open(path, "rb") as snapshot:
+        while chunk := snapshot.read(1024 * 1024):
+            digest.update(chunk)
+            sys.stdout.buffer.write(chunk)
+    sys.stdout.buffer.flush()
+    print(json.dumps({"sha256": digest.hexdigest(), "integrity": integrity, "foreign_keys": fk}), file=sys.stderr)
+finally:
+    os.unlink(path)
+'''
 
 # This program is sent to the configured host over SSH stdin. It only reads
 # AIpediya state. Any failure is returned as a concrete field in its JSON.
@@ -58,14 +84,17 @@ if mode == "catalog":
 db=sqlite3.connect("file:/srv/aipedia/data/aipedia.sqlite3?mode=ro",uri=True)
 rows=db.execute("SELECT released,approx_released,public_number FROM catalog_tool WHERE published=1").fetchall()
 numbers=sorted(row[2] for row in rows if row[2] is not None)
+models=db.execute("SELECT public_number FROM catalog_modelversion WHERE published=1 AND entry_type='model'").fetchall()
+model_numbers=sorted(row[0] for row in models if row[0] is not None)
 print(json.dumps({"integrity":db.execute("PRAGMA integrity_check").fetchone()[0],
 "foreign_keys":len(db.execute("PRAGMA foreign_key_check").fetchall()),
 "published_tools":len(rows),"numbered_tools":len(numbers),
 "numbers_continuous":numbers==list(range(1,len(rows)+1)),
+"numbered_models":len(model_numbers),"model_numbers_continuous":model_numbers==list(range(1,len(models)+1)),
 "exact_dates":sum(bool(row[0]) for row in rows),
 "approximate_dates":sum(bool(row[1]) for row in rows),
 "without_date":sum(not row[0] and not row[1] for row in rows),
-"published_models":db.execute("SELECT COUNT(*) FROM catalog_modelversion WHERE published=1 AND entry_type='model'").fetchone()[0]}))"""
+"published_models":len(models)}))"""
     check = command("sudo", "-n", "python3", "-c", query)
     result["catalog"] = json.loads(check["stdout"]) if check["ok"] else check
 result["ok"] = (result.get("service", {"ok": True})["ok"]
@@ -76,10 +105,10 @@ result["ok"] = (result.get("service", {"ok": True})["ok"]
 if mode == "catalog":
     catalog = result["catalog"]
     result["ok"] = (catalog.get("integrity") == "ok" and catalog.get("foreign_keys") == 0
-        and catalog.get("published_tools") == 143 and catalog.get("numbered_tools") == 143
-        and catalog.get("numbers_continuous") and catalog.get("exact_dates") == 60
-        and catalog.get("approximate_dates") == 83 and catalog.get("without_date") == 0
-        and catalog.get("published_models") == 321)
+        and catalog.get("published_tools") == 147 and catalog.get("numbered_tools") == 147
+        and catalog.get("numbers_continuous") and catalog.get("without_date") == 0
+        and catalog.get("published_models") == 325 and catalog.get("numbered_models") == 325
+        and catalog.get("model_numbers_continuous"))
 print(json.dumps(result, sort_keys=True))
 '''
 
@@ -104,6 +133,34 @@ def observe(mode):
     if not report["ok"]:
         raise SystemExit("SERVER ACCESS = FAIL: see failed preflight fields above")
     print("SERVER ACCESS = PASS")
+
+
+def snapshot_baseline():
+    """Stream an online, integrity-checked AIpediya SQLite backup to ignored artifacts."""
+    target_dir = ROOT / "artifacts" / "catalog-release-20260927"
+    target_dir.mkdir(parents=True, exist_ok=True)
+    target = target_dir / ("production-baseline-" + time.strftime("%Y%m%dT%H%M%SZ", time.gmtime()) + ".sqlite3")
+    with target.open("xb") as output:
+        result = subprocess.run(["ssh", ALIAS, "sudo", "-n", "python3", "-"],
+                                input=BASELINE_EXPORT.encode(), stdout=output,
+                                stderr=subprocess.PIPE, timeout=600, check=False)
+    if result.returncode:
+        target.unlink(missing_ok=True)
+        raise SystemExit("SERVER ACCESS = FAIL: snapshot: " + result.stderr.decode(errors="replace")[-1000:])
+    try:
+        report = json.loads(result.stderr.decode().strip())
+    except ValueError as exc:
+        target.unlink(missing_ok=True)
+        raise SystemExit("SERVER ACCESS = FAIL: invalid snapshot report") from exc
+    digest = hashlib.sha256()
+    with target.open("rb") as source:
+        while chunk := source.read(1024 * 1024):
+            digest.update(chunk)
+    actual = digest.hexdigest()
+    if actual != report.get("sha256"):
+        target.unlink(missing_ok=True)
+        raise SystemExit("SERVER ACCESS = FAIL: snapshot SHA-256 mismatch")
+    print(json.dumps({"snapshot": str(target), "bytes": target.stat().st_size, **report}, indent=2))
 
 
 def release_archive(path, digest):
@@ -200,7 +257,7 @@ def verify_release(backup_name):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
-    for name in ("preflight", "health", "status", "catalog"):
+    for name in ("preflight", "health", "status", "catalog", "snapshot"):
         commands.add_parser(name)
     comparison = commands.add_parser("verify-release")
     comparison.add_argument("backup_name")
@@ -216,6 +273,9 @@ def main():
     args = parser.parse_args()
     if args.command in ("preflight", "health", "status", "catalog"):
         observe(args.command)
+        return
+    if args.command == "snapshot":
+        snapshot_baseline()
         return
     if args.command == "verify-release":
         verify_release(args.backup_name)

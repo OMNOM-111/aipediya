@@ -18,7 +18,6 @@ from pathlib import Path
 ROOT = Path("/srv/aipedia")
 DB = ROOT / "data/aipedia.sqlite3"
 BACKUPS = ROOT / "backups"
-ALLOWED_TOOL_COLUMNS = {"released", "approx_released", "approx_precision", "public_number"}
 
 
 def checked(command, *, cwd=None):
@@ -37,7 +36,8 @@ def snapshot(path):
         published = [row for row in tools.values() if row["published"]]
         numbers = sorted(row["public_number"] for row in published if row["public_number"] is not None)
         model_rows = {row["slug"]: dict(row) for row in db.execute("SELECT * FROM catalog_modelversion")}
-        models = db.execute("SELECT COUNT(*) FROM catalog_modelversion WHERE published=1 AND entry_type='model'").fetchone()[0]
+        models = [row for row in model_rows.values() if row["published"] and row["entry_type"] == "model"]
+        model_numbers = sorted(row["public_number"] for row in models if row["public_number"] is not None)
         return {
             "integrity": integrity, "foreign_keys": fk, "tools": tools, "model_rows": model_rows,
             "published_tools": len(published), "numbered_tools": len(numbers),
@@ -45,7 +45,8 @@ def snapshot(path):
             "exact_dates": sum(bool(row["released"]) for row in published),
             "approximate_dates": sum(bool(row["approx_released"]) for row in published),
             "without_date": sum(not row["released"] and not row["approx_released"] for row in published),
-            "published_models": models,
+            "published_models": len(models), "numbered_models": len(model_numbers),
+            "model_numbers_continuous": model_numbers == list(range(1, len(models) + 1)),
         }
 
 
@@ -72,7 +73,7 @@ def main():
     if before["integrity"] != "ok" or before["foreign_keys"]:
         raise RuntimeError("Production SQLite baseline failed integrity checks")
     stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
-    backup = BACKUPS / f"aipedia-preflight-tools-csp-{stamp}.sqlite3"
+    backup = BACKUPS / f"aipedia-preflight-catalog-325-147-{stamp}.sqlite3"
     if backup.exists():
         raise RuntimeError("Preflight backup path exists")
     with sqlite3.connect(f"file:{DB}?mode=ro", uri=True) as src, sqlite3.connect(backup) as dst:
@@ -102,39 +103,29 @@ def main():
         applied = checked(prefix + ["catalog_master", "apply-plan", "--plan-out", plan, "--apply"], cwd=app)
         dry_state = checked(prefix + ["sync_publication_state", "apply", publication], cwd=app)
     after = snapshot(backup)
-    changed = Counter()
-    for slug, row in before["tools"].items():
-        if slug not in after["tools"]:
-            raise RuntimeError("A Tool disappeared from trial database")
-        for column, old in row.items():
-            if after["tools"][slug][column] != old:
-                changed[column] += 1
-    if set(changed) - ALLOWED_TOOL_COLUMNS or set(after["tools"]) != set(before["tools"]):
-        raise RuntimeError("Trial changed Tool fields outside the approved scope")
-    expected_changes = {"public_number": 140, "released": 4, "approx_released": 23, "approx_precision": 23}
-    if dict(changed) != expected_changes:
-        raise RuntimeError(f"Trial Tool diff differs from approved Local: {dict(changed)}")
-    if (after["published_tools"], after["numbered_tools"], after["exact_dates"],
-            after["approximate_dates"], after["without_date"], after["published_models"]) != (143, 143, 60, 83, 0, 321):
+    if not set(before["tools"]).issubset(after["tools"]) or not set(before["model_rows"]).issubset(after["model_rows"]):
+        raise RuntimeError("Trial removed an existing catalog record")
+    if (before["published_models"], before["published_tools"]) != (321, 143):
+        raise RuntimeError("Production baseline differs from the approved release predecessor")
+    if (after["published_models"], after["numbered_models"],
+            after["published_tools"], after["numbered_tools"]) != (325, 325, 147, 147):
         raise RuntimeError("Trial catalog counts differ from approved Local: " +
                            repr({k: after[k] for k in ("published_tools", "numbered_tools",
-                               "exact_dates", "approximate_dates", "without_date", "published_models")}))
-    if after["integrity"] != "ok" or after["foreign_keys"] or not after["numbers_continuous"]:
+                               "published_models", "numbered_models")}))
+    if after["integrity"] != "ok" or after["foreign_keys"] or not after["numbers_continuous"] or not after["model_numbers_continuous"]:
         raise RuntimeError("Trial SQLite integrity or numbering failed")
-    if before["published_models"] != after["published_models"]:
-        raise RuntimeError("Model publication count changed")
-    if before["model_rows"] != after["model_rows"]:
-        raise RuntimeError("Trial changed Model rows")
-    if not dry_state:
-        raise RuntimeError("Publication-state dry-run returned no result")
+    if "models changed=0" not in dry_state or "tools changed=0" not in dry_state:
+        raise RuntimeError("Publication-state dry-run differs from the approved catalog plan")
     report = {
         "status": "PASS", "commit": commit, "sha256": digest, "backup": str(backup),
         "catalog_plan": plan, "publication_state": publication,
         "production_database_untouched": True,
         "before": {k: v for k, v in before.items() if k not in ("tools", "model_rows")},
         "trial": {k: v for k, v in after.items() if k not in ("tools", "model_rows")},
-        "tool_column_changes": dict(changed), "plan_dry_run": dry_plan[-600:],
-        "plan_apply": applied[-600:], "publication_dry_run": dry_state[-600:],
+        "created_models": len(after["model_rows"]) - len(before["model_rows"]),
+        "created_tools": len(after["tools"]) - len(before["tools"]),
+        "plan_dry_run": dry_plan[-600:], "plan_apply": applied[-600:],
+        "publication_dry_run": dry_state[-600:],
     }
     print(json.dumps(report, ensure_ascii=False, sort_keys=True))
 
