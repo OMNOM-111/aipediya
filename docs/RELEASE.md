@@ -8,9 +8,19 @@
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный выпуск — **Search Visibility Optimization v2**, 2026-09-26
+Текущий публичный выпуск — **catalog-master-v015**, 2026-09-27 01:35 UTC: commit
+`e36acfa351b28f441ec7ad91587b67201cb8aa85`, tag `release-2026-09-26-catalog-master-v015`.
+По коду публичный сайт работает на commit `e36acfa351b28f441ec7ad91587b67201cb8aa85`.
+Архив `aipedia-code-e36acfa351b2.zip`, SHA-256
+`d5225a113f5c48193bef5df508afac3282901983117292e6cb7d44a012488b09`; `/healthz` подтвердил
+commit и `environment=production`; 321 Models / 143 Tools. Отчёт —
+`docs/history/2026-09-26-catalog-master-v015.md`.
+
+### Предыдущий публичный выпуск — Search Visibility Optimization v2
+
+Search Visibility Optimization v2, 2026-09-26
 21:47 UTC: commit `61adedd6ea5e6a0955d51d87374fa2fa9bcc7799`, tag
-`release-2026-09-26-search-visibility-optimization-v2`. По коду публичный сайт работает на commit `61adedd6ea5e6a0955d51d87374fa2fa9bcc7799`:
+`release-2026-09-26-search-visibility-optimization-v2`. На дату этого выпуска код публичного сайта — commit `61adedd6ea5e6a0955d51d87374fa2fa9bcc7799`:
 `/healthz` подтвердил `environment=production` и commit; 310 Models / 139
 Tools сохранены. Архив `artifacts/code-release/aipedia-code-61adedd6ea5e.zip`,
 SHA-256 `8b8f2fa4bac3b6edce0868e4a963a795111d45695341c869ed824186e9ee625f`.

@@ -112,4 +112,41 @@ Release Evidence. Цена требует `Research Key` (по нему повт
 
 ## 6. Production
 
-Ожидает выпуска.
+Разрешение владельца в этой задаче (2026-09-27, ответ «Да, весь пакет v015» на вопрос с
+commit `e36acfa`, архивом и полным составом). Подключение — существующий SSH к общей
+машине, только контур AIpediya (`D-2026-09-26-shared-server-ssh`).
+
+- Read-only: хост `1cdfd28f030e`, программа `aipedia` RUNNING, `/healthz` — `61adedd…`,
+  свободно 383 ГБ.
+- Архив `aipedia-code-e36acfa351b2.zip`, SHA-256
+  `d5225a113f5c48193bef5df508afac3282901983117292e6cb7d44a012488b09` (совпал на сервере);
+  317 файлов; распакованный архив в чистом окружении — 274 теста OK (1 skip).
+- Preflight на онлайн-копии боевой БД
+  `/srv/aipedia/backups/aipedia-preflight-v015-20260927T013521Z.sqlite3` (integrity ok,
+  было 310/139): pending → 56 записей, итог = план; переводы 440; манифест 0 изменений;
+  повтор плана «already applied», повтор переводов 0; стало 321/143, номера 1–321.
+- `deploy_code_release.py` (2026-09-27 01:35:48Z): backup
+  `/srv/aipedia/backups/aipedia-before-code-20260927T013548Z.sqlite3`; migrate — нет
+  миграций; `apply-plan` pending → 56 записей, итог = план; `import_translations` 440;
+  `sync_publication_state --apply` 0 изменений (321/143); `aipedia` запущена;
+  статус `deployed-origin-verified`, `copied_sqlite=false`; предыдущий код —
+  `/srv/aipedia/releases/before-code-20260927T013548Z`; после —
+  `aipedia-after-code-20260927T013548Z.sqlite3`. Остальные программы AIpediya и
+  StratForge не перезапускались. Откат — `docs/RELEASE.md`, «Откат кода».
+
+## 7. Публичная проверка https://aipediya.com
+
+- `/healthz`: release `e36acfa351b28f441ec7ad91587b67201cb8aa85`, production.
+- `v015_check.py` — 144/144 PASS (`artifacts/catalog-master-v015/public_check.json`):
+  11 карточек EN/RU — 200, имя, номер 311–321, дата 22/23/24.09.2026, цены
+  Claude Opus 5.5 / GPT-6 / Gemini TTS; поиск по именам и алиасам; Speech Realtime Max
+  TTS Live, CLM-v0.1-8B и AX — 404 и не находятся; счётчики 321/143; порядок по
+  умолчанию 321 → 310; sitemap 321/143; 4 новых инструмента — 200.
+- Прежний поисковый выпуск сохранён: `gsd_public_check.py` 34/34, `search_visibility_qa.py`
+  45/45 старых URL (25 × 301, 19 × 404, 1 × 200 noindex), 0 ошибок.
+- Браузер: карточка GPT-6 Sol №315, 22.09.2026; Models 321 / Tools 143.
+- Master: `catalog_master import --production` — новые модели On Production = YES,
+  записи NEEDS_REVIEW — NO; Meta Production Release `e36acfa…`, sitemap 321/143;
+  `check: OK`.
+
+**Статус: Local PASS → Timeline обновлён → Production опубликован → Public PASS. Этап закрыт.**

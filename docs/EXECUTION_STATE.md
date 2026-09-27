@@ -4,7 +4,7 @@
 Отчёты законченных выпусков — `docs/history/`.
 Пакет для нового чата собирается командой `\.\.venv\Scripts\python.exe tools/pack_ai_context.py` и **не** редактируется как независимый источник.
 
-## catalog-master-v015 — Local PASS, кандидат выпуска, 2026-09-26
+## catalog-master-v015 — опубликовано и проверено, 2026-09-27 01:35 UTC
 
 - Изменено: master v015 установлен каноническим (два Record ID с точкой
   нормализованы до первой синхронизации, словарь задач/модальностей — Changelog);
@@ -15,11 +15,15 @@
 - Проверено: 274 теста (273 OK, 1 skip) в ветке кандидата; HTTP 144/144 на Local;
   пробный перенос плана на исходный снимок совпал с рабочим Local; история и
   номера сохранены (см. `docs/history/2026-09-26-catalog-master-v015.md`).
-- Local / GitHub / Production: Local обновлён; кандидат — ветка
-  `release/catalog-master-v015` от опубликованной линии `0702405`; Production на
-  `61adedd` (310/139) до выпуска.
-- Не завершено: выпуск на Production и публичная проверка. Следующим выполнить:
-  по разрешению владельца — `docs/RELEASE.md`, раздел «Выпуск catalog-master-v015».
+- Local / GitHub / Production: Local обновлён; выпуск — ветка
+  `release/catalog-master-v015`, commit `e36acfa` (tag
+  `release-2026-09-26-catalog-master-v015`), от опубликованной линии `0702405`;
+  Production: `/healthz` = `e36acfa…`, 321/143, backup до/после и откат — в отчёте.
+  GitHub: ветка и tag пока только локально (push не выполнялся).
+- Public PASS: `v015_check` 144/144, GSD 34/34, 45/45 старых URL.
+- Не завершено: push ветки/tag в GitHub; слияние линии выпуска с `main` (в `main` —
+  незакоммиченная работа истории сайта). Следующим выполнить: по команде владельца
+  push; затем свести `main` и `release/catalog-master-v015`.
 
 ## Search Visibility Optimization — опубликовано, 2026-09-26 21:47 UTC
 
