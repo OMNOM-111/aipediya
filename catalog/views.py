@@ -225,11 +225,16 @@ class CatalogPage:
         return self._end
 
 
-def _numbering_counts(page):
+def _numbering_counts(page, queryset=None):
     """How many found records carry a chronological № (confirmed release date)
     and how many are undated, so the № column is never read as a count."""
-    items = page.paginator.object_list
-    numbered = sum(1 for item in items if getattr(item, "public_number", None))
+    # The fast number-sort path builds a page from a queryset slice, leaving
+    # paginator.object_list empty. Count against the filtered queryset there.
+    if queryset is not None:
+        numbered = queryset.filter(public_number__isnull=False).count()
+    else:
+        items = page.paginator.object_list
+        numbered = sum(1 for item in items if getattr(item, "public_number", None))
     return {"numbered_count": numbered, "undated_count": page.paginator.count - numbered}
 
 
@@ -435,7 +440,7 @@ def _tool_catalog_context(request, selected_slug=None, hub=None):
         "counts": _catalog_counts(),
         "found_count": page.paginator.count,
         "shown_count": len(page.object_list),
-        **_numbering_counts(page),
+        **_numbering_counts(page, qs if fast_number_page else None),
         "categories": categories,
         "category": category,
         "tool_categories": tool_categories,
@@ -650,7 +655,7 @@ def _catalog_context(request, selected_slug=None, hub=None):
         "comparison_count": comparison_count,
         "developers": ModelVersion.objects.filter(published=True, entry_type="model").values("family__developer_id", "family__developer__name").distinct().order_by("family__developer__name"),
         "found_count": page.paginator.count, "shown_count": len(page.object_list),
-        **_numbering_counts(page),
+        **_numbering_counts(page, qs if fast_number_page else None),
         "kind": kind, "entry_type": entry_type, "entry_types": ENTRY_TYPES,
         "access": access, "developer": developer,
         "entity_kind": "model", "selected_entity": selected_model,

@@ -250,14 +250,15 @@ class MasterSyncNumbersAndRelationsTests(MasterSyncTests):
     def test_mass_change_guard_and_failing_master_write_nothing(self):
         pass
 
-    def test_numbers_follow_master_chronology_and_hidden_or_undated_get_none(self):
+    def test_numbers_follow_master_chronology_and_hidden_get_none(self):
         from catalog.models import Benchmark, Evaluation, Offer, Service
         self.model("late")
         ModelVersion.objects.filter(slug="late").update(released=date(2025, 1, 1))
         early = self.model("early")
         hidden = self.model("hidden", published=False)
-        undated_tool = Tool.objects.create(name="Undated", slug="undated", developer=self.org, category="ai_app",
-                                           source=self.source, checked=date(2026, 1, 1))
+        dated_tool = Tool.objects.create(name="Dated", slug="dated", developer=self.org, category="ai_app",
+                                         approx_released=date(2024, 6, 1), approx_precision="month",
+                                         source=self.source, checked=date(2026, 1, 1))
         service = Service.objects.create(name="API", provider=self.org, kind="api", url="https://example.com/api")
         offer = Offer.objects.create(model=early, service=service, amount="1.00", unit="input",
                                      conditions={"ru": "да", "en": "yes"}, source=self.source, checked=date(2026, 1, 1))
@@ -278,7 +279,7 @@ class MasterSyncNumbersAndRelationsTests(MasterSyncTests):
         self.assertIn("NOT transferred", out)
         numbers = {m.slug: m.public_number for m in ModelVersion.objects.all()}
         self.assertEqual((numbers["early"], numbers["late"], numbers["hidden"]), (1, 2, None))
-        self.assertIsNone(Tool.objects.get(pk=undated_tool.pk).public_number)
+        self.assertEqual(Tool.objects.get(pk=dated_tool.pk).public_number, 1)
         offer.refresh_from_db()
         evaluation.refresh_from_db()
         self.assertEqual((offer.amount, offer.billing_unit, evaluation.public), (2, "", False))

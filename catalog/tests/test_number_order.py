@@ -129,6 +129,16 @@ class NumberOrderTests(TestCase):
                 self.assertEqual(self.numbers(self.listing("/tools/", sort=sort)), expected)
         self.assertEqual(self.numbers(self.listing("/tools/")), [3, 2, 1, None, None])
 
+    def test_number_sort_count_note_uses_all_filtered_rows(self):
+        for path, expected in (("/", (8, 0)), ("/tools/", (3, 2))):
+            for sort in ("number_asc", "number_desc"):
+                with self.subTest(path=path, sort=sort):
+                    response = self.client.get(path, {"sort": sort})
+                    self.assertEqual(
+                        (response.context["numbered_count"], response.context["undated_count"]),
+                        expected,
+                    )
+
     def test_sorting_never_changes_stored_numbers(self):
         before = sorted(ModelVersion.objects.values_list("slug", "public_number"))
         for sort in ("release_desc", "number_asc", "name_asc", "developer_desc"):

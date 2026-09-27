@@ -92,6 +92,11 @@ class ValidationTests(unittest.TestCase):
         errors, _, _ = cm.validate(self.numbered(master_row("a", "A", "2024-01-01")))
         self.assertEqual(errors, [])
 
+    def test_published_without_exact_or_approximate_date_is_blocked(self):
+        errors, _, _ = cm.validate(self.numbered(master_row("a", "A")))
+        self.assertTrue(any("PUBLISHED requires exact release date or evidenced approximate" in e
+                            for e in errors), errors)
+
     def test_rule_violations_are_reported(self):
         rows = self.numbered(
             master_row("a", "A", "2024-01-01", **{"Approx Date": "≈2024-01"}),

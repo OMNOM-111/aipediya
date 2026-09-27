@@ -28,6 +28,7 @@ SOURCES = {
     "2026-09-26-catalog-master-v015": ("Новые модели v015 / Catalog master v015", "docs/history/2026-09-26-catalog-master-v015.md"),
     "2026-09-27-catalog-master-v015-final": ("Финальная синхронизация v015 / v015 final sync", "docs/history/2026-09-27-catalog-master-v015-final.md"),
     "2026-09-27-adaptive-ui-release": ("Адаптивный интерфейс / Adaptive UI release", "docs/history/2026-09-27-adaptive-ui-release.md"),
+    "2026-09-27-tools-count-cloudflare-csp-local": ("Tools и Cloudflare CSP / Tools and Cloudflare CSP", "docs/history/2026-09-27-tools-count-cloudflare-csp-local.md"),
 }
 
 

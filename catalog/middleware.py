@@ -125,7 +125,14 @@ class HeadersMiddleware:
         response = self.get_response(request)
         response["Referrer-Policy"] = "strict-origin-when-cross-origin"
         if not request.path.startswith("/admin/"):
-            response["Content-Security-Policy"] = "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'"
+            # Cloudflare automatically injects both the plain beacon URL and
+            # versioned URLs under /beacon.min.js/v... on public HTML pages.
+            response["Content-Security-Policy"] = (
+                "default-src 'self'; img-src 'self' data:; style-src 'self'; "
+                "script-src 'self' https://static.cloudflareinsights.com/beacon.min.js "
+                "https://static.cloudflareinsights.com/beacon.min.js/; "
+                "connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'"
+            )
         if not getattr(settings, "AIPEDIA_INDEXING_ALLOWED", False):
             # Local (and any non-production run) must never be indexed.
             response["X-Robots-Tag"] = "noindex, nofollow"

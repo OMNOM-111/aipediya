@@ -4,6 +4,203 @@
 Отчёты законченных выпусков — `docs/history/`.
 Пакет для нового чата собирается командой `\.\.venv\Scripts\python.exe tools/pack_ai_context.py` и **не** редактируется как независимый источник.
 
+## Tools chronology + Cloudflare CSP — owner approved Production release, server phase pending, 2026-09-27
+
+- Изменено: владелец утвердил проверенное Local-состояние и отдельно разрешил
+  его выпуск по `docs/RELEASE.md`. Текущая Production до выпуска подтверждена
+  публичным `/healthz`: `aa48e11bad7326340463654e33ba5e89769042b9`;
+  публичная `/tools/?sort=number_asc` отвечает 200. Production не менялась.
+- Для release candidate построен `data/release/tools-chronology-csp-20260927/catalog_plan.json`
+  из pre-apply online-копии Local: ровно 27 Tool date updates и 140 Tool
+  number updates, ноль других видов записей; план содержит expected-before
+  значения по Record ID. Манифест `data/release_state.json` обновлён с
+  Local: 321/143 публичных, 0 изменений флагов публикации, 0 Models, 140 Tool
+  numbers. На отдельной SQLite-копии apply-plan сделал 167 writes; все
+  фактические catalog-таблицы после применения побайтно равны утверждённой
+  рабочей Local. Различаются только временные данные журнала и outbox.
+- Финальный Local QA кандидата: `catalog_master check` OK, `qa` PASS,
+  `manage.py check` 0 issues, полный catalog suite 305 OK / 1 expected skip;
+  SQLite integrity OK и FK 0 на утверждённой Local и trial. Браузер Local
+  показывает Tools 143, сортировку 1…143, точные и `≈` даты. CSP regression
+  входит в полный suite. Другие незакоммиченные/untracked файлы сохраняются;
+  в выпуск попадут только точные файлы этапа.
+- Server access: штатный SSH через указанный в `docs/RELEASE.md` Cloudflare
+  transport отверг аутентификацию `Permission denied (publickey)`; секреты и
+  альтернативные credentials не исследовались. Запрошен путь к уже настроенной
+  identity или host alias. Серверный read-only baseline, server DB preflight,
+  backup, deploy и Production QA ещё **не выполнены**; серверный план нельзя
+  считать подтверждённым до проверки against Production SQLite.
+- Local / GitHub / Production: Local PASS и утверждён; release commit и push
+  ещё не сделаны; Production по-прежнему `aa48e11` и прежняя CSP.
+- Не завершено: release commit/artifact, а затем все серверные и публичные
+  проверки. Следующим выполнить: собрать точный release commit и архив без
+  посторонних файлов; после восстановления штатного SSH провести read-only
+  baseline и trial на копии Production DB, проверить план и backup, затем
+  штатный deploy и публичный QA. При невозможности SSH остановить только
+  серверную фазу, сохранив готовый release candidate.
+
+
+## Tools numbering and Cloudflare CSP — READY FOR OWNER REVIEW in Local, 2026-09-27
+
+- Изменено: владелец утвердил точный план canonical master → рабочая Local.
+  Перед записью план ещё раз совпал с принятой пробой: 167 поддерживаемых
+  изменений (27 дат, 140 номеров), без Record ID, названий, цен, оценок,
+  описаний, статуса публикации и других фактических полей. Перед применением
+  сделан online backup `backups/catalog-count-csp-20260927/aipedia-working-before-approved-143.sqlite3`.
+  Штатный `catalog_master sync-local --apply --max-changes 200` применил 167.
+- Рабочая Local SQLite: **143 опубликованных Tools; 143 с номером; 60 exact;
+  83 approximate; 0 без даты; номера 1–143 непрерывно, без дублей и дыр**.
+  Сравнение всех таблиц с backup: только `catalog_tool` изменил фактические
+  поля (140 `public_number`, 23 `approx_released`/`approx_precision`, 4 `released`);
+  Models и прочие данные карточек не изменились. Штатный путь также дописал
+  журнал публикаций Tools и pending discovery events; передача событий не
+  запускалась. `catalog_master import` — 0 новых строк, 0 пересчётов;
+  `catalog_master check` — OK; `catalog_master qa` — PASS для 321 Models и
+  143 Tools; повторный план — 0 применимых изменений.
+- Ревизии и outbox штатной синхронизации: 194 новых Tool publication revisions;
+  450 discovery events имеют `pending`, `attempts=0` — отправки не было.
+- Проверено: `PRAGMA integrity_check=ok`, FK ошибок 0; полный `manage.py test
+  catalog --settings=aipedia.test_settings` — 305 OK, 1 skip; `manage.py check`
+  — 0 issues. В настоящем браузере на рабочей SQLite RU/EN Tools: 143 строки,
+  oldest №1…143, newest №143…1, `≈` виден у approximate dates; RU/EN Models
+  показывают 321. Выявленный при browser QA дефект подписи «0 с номером» при
+  быстрой сортировке исправлен в `catalog/views.py` для Models и Tools;
+  регрессионный тест добавлен. Cloudflare CSP fix в `catalog/middleware.py`
+  и его тест сохранены без изменения.
+- Local / GitHub / Production:
+
+  | Слой | Фактическое состояние |
+  |---|---|
+  | Local | даты и номера Tools из canonical master применены в рабочую SQLite; Tools 143/143, 60 exact + 83 approximate; QA PASS; Timeline READY FOR OWNER REVIEW |
+  | GitHub | этот пакет не commit/push; текущие изменения остаются только в рабочем каталоге |
+  | Production | публичный release `aa48e11`, 143 Tools и 116 номеров, прежняя CSP; не изменялась |
+
+- Точный видимый Production diff относительно проверенной Local: 143 тех же
+  Record ID и названия; **140 изменений Public Number и 27 отображаемых дат**
+  (4 exact, 23 approximate), перечислены в
+  `artifacts/tool-count-csp-production-public-diff.md` и JSON. Это сравнение
+  публичной страницы с Local, не серверный DB preflight. Read-only SSH через
+  существующий транспорт завершился `Permission denied (publickey)`; ключи
+  не читались и сервер не менялся. DB-level diff и release dry-run потребуются
+  при разрешённом выпуске по `docs/RELEASE.md`.
+- Ранее существовавшие неподдерживаемые master↔Local различия остались вне
+  узкого sync (110 в JSON-плане; `check` сообщает более широкий drift по всем
+  листам). Их не применяли и не включали в 167 утверждённых изменений.
+- Файлы этапа: canonical XLSX, `catalog/catalog_master.py`, `catalog/views.py`,
+  `catalog/middleware.py`, тесты master/numbering/CSP/history,
+  `docs/timeline.json`, этот статус, отчёт истории и локальные evidence/plan/diff
+  в `artifacts/`; рядом остаются ранее существовавшие незакоммиченные файлы,
+  которые не очищались и не staging-ились.
+- Не завершено: визуальная приёмка Local владельцем и отдельное решение о
+  конкретном Production-выпуске. Следующим выполнить: владелец просматривает
+  Local и точный публичный diff; после отдельной команды на выпуск выполнить
+  серверный read-only preflight, backup, dry-run, штатный release и public QA.
+- `tools/pack_ai_context.py` пересобрал `timeline.html`, `AI_CONTEXT.md` и ZIP;
+  два предупреждения относятся к незакоммиченным изменениям и отсутствию
+  публикации. `git diff --check` — без ошибок.
+
+## Historical trial before owner-approved Local application, 2026-09-27
+
+- Изменено: владелец уточнил единое правило для опубликованных Models и Tools:
+  существующая публичная сущность должна иметь доказанную хронологическую
+  позицию, точную дату либо `≈` дату первого подтверждённого публичного
+  существования. Цель 143/143/0. Для оставшихся 21 Tools проведена адресная
+  проверка по датированным источникам; причины и URL сохранены в
+  `artifacts/tool-count-csp-date-evidence-20260927.json` и полях evidence
+  canonical master. Старый план на 115 изменений и пробная копия 122/21 ниже —
+  промежуточный результат, теперь заменён новым планом.
+- Canonical master: 143 опубликованы, 60 exact dates, 83 approximate dates,
+  0 без даты; Public Number 1–143 непрерывно без дублей. Пересчёт дописал
+  140 изменений номеров в Changelog. `catalog_master check` — OK. Копия master
+  до этого этапа: `backups/catalog-count-csp-20260927/AIpediya_Model_Verification_Master_before_21.xlsx`.
+- Trial Local: свежая online-копия исходной рабочей SQLite;
+  `artifacts/tool-count-csp-full-trial-plan.json` фиксирует exact diff:
+  27 дат + 140 номеров = 167 поддерживаемых изменений, 0 изменения публикации,
+  Record ID и иных полей. Читаемая владельцем таблица: `artifacts/tool-count-csp-full-trial-diff.md`.
+  Повторный read-only план против рабочей Local после обновления книги побайтно
+  совпал по JSON-данным с пробным планом.
+  Пробное применение: SQLite 143/143/0, `integrity_check=ok`, foreign key
+  errors=0. Штатные import/check/qa на отдельной копии master: OK/OK/PASS;
+  повторный план — 0 поддерживаемых изменений. RU/EN HTML выдал 143 строки,
+  oldest 1…143, newest 143…1; маркеры `≈` присутствуют. Рабочая Local SQLite остаётся
+  143/116/27 до приёмки владельцем нового diff.
+- CSP fix в `catalog/middleware.py` и его тест сохранены без изменений.
+  GitHub и Production в этом этапе не менялись. Production остаётся
+  `aa48e11`, 143/116/27 и прежняя CSP.
+- Файлы коррекции: `AGENTS.md`, `docs/DECISIONS.md`,
+  `catalog/catalog_master.py`, `catalog/tests/test_catalog_master.py`,
+  `catalog/tests/test_catalog_master_sync.py`, canonical XLSX,
+  `artifacts/complete_tool_dates.py`, дата/source ledger, новый план и diff,
+  `docs/timeline.json`, отчёт истории и этот статус. Существующие изменения
+  CSP не переписывались.
+- Проверено: `manage.py test catalog --settings=aipedia.test_settings` —
+  304 OK (1 skip); `catalog_master check` — OK; `catalog_master qa` на
+  пробной SQLite и пробной книге — PASS; повторный sync plan — 0 применимых
+  изменений; RU/EN oldest/newest HTML — 143/143 в правильном порядке.
+- Не завершено: приёмка владельцем нового полного diff для рабочей Local и
+  отдельное разрешение конкретного выпуска для Production. Следующим выполнить:
+  завершить QA пробной копии и сортировку, показать diff владельцу; после
+  приёмки сделать backup рабочей Local, выполнить штатный sync/import/check/qa.
+
+## Tools numbering and Cloudflare Analytics CSP — earlier 122/21 trial, superseded by owner correction
+
+- Изменено: аудит 143 Tools по master, рабочей Local SQLite, Production SQLite
+  (read-only) и публичной таблице. Исходно 116 с номером, 27 без даты/номера,
+  max №116; опубликованные Record ID и номера совпали. В master шесть дат
+  подтверждены официальными источниками (две приблизительные по месяцу),
+  хронология пересчитана с записью в Changelog: 122 с №, 21 без №, max №122.
+  Новых доказанных дублей или ошибочных Tool-записей не установлено; состав
+  публикации и 143 в счётчике сохраняются. Полный список 27, причины, источники
+  и 115 изменений пробного diff —
+  `docs/history/2026-09-27-tools-count-cloudflare-csp-local.md` и
+  `artifacts/tool-count-csp-trial-plan.json`.
+- Пробная Local-копия: `catalog_master check` OK; `sync-local` применил только
+  шесть дат и 109 номеров, повторный план — 0 поддерживаемых изменений;
+  `catalog_master qa` PASS. В браузере 127.0.0.1:18813 EN Models = 321,
+  EN/RU Tools = 143, из них 122 с № и 21 без №. Рабочая Local SQLite ещё
+  показывает 143/116/27: правило `AGENTS.md` требует приёмки diff владельцем
+  перед `sync-local --apply`. Поэтому QA против рабочей Local пока FAIL на
+  115 ожидаемых расхождениях. Пробная SQLite и резервная копия master находятся
+  в `backups/catalog-count-csp-20260927/`.
+- CSP: Production header `script-src 'self'` блокирует автоматически вставленный
+  Cloudflare `beacon.min.js/v31…`. В `catalog/middleware.py` добавлены только
+  точный и версионный URL beacon в `script-src` и `connect-src 'self'` для
+  same-origin `/cdn-cgi/rum`; добавлен `catalog/tests/test_csp.py`.
+  Cloudflare Dashboard не менялся; реальный telemetry POST проверяется после
+  отдельного разрешённого выпуска, не по Local. Существующие директивы CSP
+  оставлены строгими.
+- Local / GitHub / Production: код CSP, canonical XLSX, отчёт и Timeline только
+  в рабочем каталоге `main`; Local рабочая SQLite не изменена, временная копия
+  проверена; GitHub не обновлялся; Production `aa48e11` и серверная SQLite
+  не изменялись. Read-only публичный каталог остаётся 143/116/27.
+
+  | Слой | Состояние этой задачи |
+  |---|---|
+  | Local | master 143/122/21; пробная SQLite и браузер PASS; рабочая SQLite 143/116/27 до приёмки diff |
+  | GitHub | `origin/main` без этого maintenance этапа; локальный `main` с незакоммиченными файлами |
+  | Production | `aa48e11`, 143/116/27 и прежняя CSP; read-only аудит, без выпуска |
+
+- Файлы этого этапа: `catalog/middleware.py`, `catalog/tests/test_csp.py`,
+  `catalog/product_history.py`, `catalog/tests/test_product_history.py`,
+  `AI_CONTEXT/AIpediya_Model_Verification_Master.xlsx` (локальный untracked
+  canonical master), `docs/timeline.json`, этот статус и
+  `docs/history/2026-09-27-tools-count-cloudflare-csp-local.md`. До этапа уже
+  были untracked `%SystemDrive%/`, `.claude/`, ярлык истории, master XLSX,
+  `AIpediya_GSD_1_0_Claude_Task.md`, `data/release/v013/`, `data/research/`,
+  `timeline.html`; чужие файлы не очищались и не staging-ились.
+- Проверено: `manage.py test catalog --settings=aipedia.test_settings` —
+  303 теста, OK (1 skip); `manage.py check` — 0 issues;
+  `git diff --check` — 0 ошибок. EN Models и EN/RU Tools открывались в
+  настоящем браузере на пробной Local SQLite; консоль EN Models/Tools без
+  ошибок. История Local показала новую карточку in_progress и её источник
+  ответил HTTP 200; её тесты PASS. `tools/pack_ai_context.py` собрал
+  `AI_CONTEXT.md`, ZIP и автономный `timeline.html` (2 предупреждения о
+  незакоммиченном/непубличном состоянии, см. пакет).
+- Не завершено: приёмка владельцем diff для рабочей Local; проверка
+  Cloudflare beacon/telemetry на Production возможна лишь после конкретного
+  разрешённого выпуска. Следующим выполнить: после приёмки diff сделать backup
+  рабочей Local SQLite, штатный `sync-local --apply`, import/check/qa и UI QA;
+  затем отдельное решение владельца о Production-выпуске по `docs/RELEASE.md`.
 
 ## Выпуск aa48e11 (Adaptive UI) — опубликовано и проверено, 2026-09-27 16:30 UTC
 

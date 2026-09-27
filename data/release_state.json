@@ -3177,223 +3177,223 @@
   "models": 321,
   "tools": 143
  },
- "release": "release-2026-09-27-catalog-master-v015-final",
+ "release": "release-2026-09-27-tools-chronology-csp",
  "schema": "aipedia-publication-state/1",
  "tools": {
   "adobe-firefly-9f88c8c9": {
-   "public_number": 37,
+   "public_number": 53,
    "published": true
   },
   "ai21-studio-9dc429fa": {
-   "public_number": 17,
+   "public_number": 24,
    "published": true
   },
   "aider-67a11cba": {
-   "public_number": 42,
+   "public_number": 59,
    "published": true
   },
   "alice-ai-da730eef": {
-   "public_number": 105,
+   "public_number": 129,
    "published": true
   },
   "alice-ai-pro-business": {
-   "public_number": 116,
+   "public_number": 143,
    "published": true
   },
   "amazon-nova-forge-e5333e99": {
-   "public_number": 107,
+   "public_number": 131,
    "published": true
   },
   "amazon-q-developer-d7b6203a": {
-   "public_number": 66,
-   "published": true
-  },
-  "antigravity-cli-b0aa4e36": {
-   "public_number": 113,
-   "published": true
-  },
-  "arize-phoenix-5d2d2c89": {
-   "public_number": 34,
-   "published": true
-  },
-  "artificial-analysis-010a7a4a": {
-   "public_number": null,
-   "published": true
-  },
-  "autogen-349a8269": {
-   "public_number": 55,
-   "published": true
-  },
-  "aws-bedrock-224b9658": {
-   "public_number": 40,
-   "published": true
-  },
-  "azure-ai-foundry-f8725f3f": {
-   "public_number": 92,
-   "published": true
-  },
-  "blackbox-ai-fee3724c": {
-   "public_number": null,
-   "published": true
-  },
-  "boltnew-0890845b": {
-   "public_number": 87,
-   "published": true
-  },
-  "braintrust-f9c94da0": {
-   "public_number": 61,
-   "published": true
-  },
-  "canva-magic-studio-a64e4d23": {
-   "public_number": 57,
-   "published": true
-  },
-  "cerebras-inference-f1ff4ead": {
    "public_number": 85,
    "published": true
   },
-  "chatgpt-46cd5277": {
-   "public_number": 27,
+  "antigravity-cli-b0aa4e36": {
+   "public_number": 137,
    "published": true
   },
-  "claude-0e6dbf5a": {
+  "arize-phoenix-5d2d2c89": {
    "public_number": 47,
    "published": true
   },
-  "claude-code-ad4bceba": {
-   "public_number": 97,
+  "artificial-analysis-010a7a4a": {
+   "public_number": 89,
    "published": true
   },
-  "cline-e0d25424": {
-   "public_number": null,
+  "autogen-349a8269": {
+   "public_number": 73,
    "published": true
   },
-  "clova-studio-e224eeb3": {
-   "public_number": null,
+  "aws-bedrock-224b9658": {
+   "public_number": 56,
    "published": true
   },
-  "coda-ai-5b7c3b09": {
-   "public_number": 41,
+  "azure-ai-foundry-f8725f3f": {
+   "public_number": 116,
    "published": true
   },
-  "codex-59301cf4": {
-   "public_number": 98,
+  "blackbox-ai-fee3724c": {
+   "public_number": 57,
    "published": true
   },
-  "comfyui-4aec921a": {
-   "public_number": 30,
+  "boltnew-0890845b": {
+   "public_number": 111,
    "published": true
   },
-  "connected-papers-98d89fc4": {
-   "public_number": 13,
+  "braintrust-f9c94da0": {
+   "public_number": 80,
    "published": true
   },
-  "consensus-af567171": {
-   "public_number": 19,
-   "published": true
-  },
-  "continue-224ab02d": {
-   "public_number": 51,
-   "published": true
-  },
-  "copyai-289a49f0": {
-   "public_number": null,
-   "published": true
-  },
-  "crewai-86180409": {
-   "public_number": 63,
-   "published": true
-  },
-  "cursor-02a2dc32": {
-   "public_number": 60,
-   "published": true
-  },
-  "deepseek-chat-b3c3f2ff": {
-   "public_number": null,
-   "published": true
-  },
-  "deepseek-harness-cff5d891": {
-   "public_number": null,
-   "published": true
-  },
-  "descript-f02c6933": {
-   "public_number": 5,
-   "published": true
-  },
-  "devin-a859ce8a": {
+  "canva-magic-studio-a64e4d23": {
    "public_number": 76,
    "published": true
   },
-  "doubao-94fe37fe": {
-   "public_number": 88,
+  "cerebras-inference-f1ff4ead": {
+   "public_number": 108,
    "published": true
   },
-  "dreamstudio-fef8bffe": {
-   "public_number": 22,
+  "chatgpt-46cd5277": {
+   "public_number": 39,
    "published": true
   },
-  "dspy-900593c9": {
+  "claude-0e6dbf5a": {
+   "public_number": 64,
+   "published": true
+  },
+  "claude-code-ad4bceba": {
+   "public_number": 121,
+   "published": true
+  },
+  "cline-e0d25424": {
+   "public_number": 104,
+   "published": true
+  },
+  "clova-studio-e224eeb3": {
+   "public_number": 29,
+   "published": true
+  },
+  "coda-ai-5b7c3b09": {
    "public_number": 58,
    "published": true
   },
-  "eleven-sound-effects-fd3e24db": {
-   "public_number": null,
+  "codex-59301cf4": {
+   "public_number": 122,
    "published": true
   },
-  "eleven-speech-engine-5710146f": {
-   "public_number": null,
+  "comfyui-4aec921a": {
+   "public_number": 43,
    "published": true
   },
-  "eleven-voice-changer-1770e146": {
-   "public_number": 75,
+  "connected-papers-98d89fc4": {
+   "public_number": 16,
    "published": true
   },
-  "eleven-voice-isolator-f5b2b323": {
-   "public_number": 82,
+  "consensus-af567171": {
+   "public_number": 27,
    "published": true
   },
-  "elevenlabs-d837e314": {
-   "public_number": 31,
-   "published": true
-  },
-  "elicit-cc496cff": {
-   "public_number": 18,
-   "published": true
-  },
-  "ernie-bot-wenxiaoyan-c704e130": {
-   "public_number": 35,
-   "published": true
-  },
-  "fathom-76015fb2": {
-   "public_number": null,
-   "published": true
-  },
-  "firefliesai-b701b6b4": {
-   "public_number": null,
-   "published": true
-  },
-  "fireworks-ai-ddb9e3a5": {
+  "continue-224ab02d": {
    "public_number": 68,
    "published": true
   },
-  "flow-050287a2": {
-   "public_number": 99,
+  "copyai-289a49f0": {
+   "public_number": 17,
    "published": true
   },
-  "gemini-90ef8dfa": {
-   "public_number": 71,
+  "crewai-86180409": {
+   "public_number": 82,
    "published": true
   },
-  "gemini-cli-97009d71": {
-   "public_number": 102,
+  "cursor-02a2dc32": {
+   "public_number": 79,
    "published": true
   },
-  "gemini-code-assist-611ff03b": {
+  "deepseek-chat-b3c3f2ff": {
+   "public_number": 110,
+   "published": true
+  },
+  "deepseek-harness-cff5d891": {
+   "public_number": 140,
+   "published": true
+  },
+  "descript-f02c6933": {
+   "public_number": 6,
+   "published": true
+  },
+  "devin-a859ce8a": {
+   "public_number": 97,
+   "published": true
+  },
+  "doubao-94fe37fe": {
+   "public_number": 112,
+   "published": true
+  },
+  "dreamstudio-fef8bffe": {
+   "public_number": 33,
+   "published": true
+  },
+  "dspy-900593c9": {
    "public_number": 77,
    "published": true
   },
+  "eleven-sound-effects-fd3e24db": {
+   "public_number": 103,
+   "published": true
+  },
+  "eleven-speech-engine-5710146f": {
+   "public_number": 138,
+   "published": true
+  },
+  "eleven-voice-changer-1770e146": {
+   "public_number": 96,
+   "published": true
+  },
+  "eleven-voice-isolator-f5b2b323": {
+   "public_number": 105,
+   "published": true
+  },
+  "elevenlabs-d837e314": {
+   "public_number": 44,
+   "published": true
+  },
+  "elicit-cc496cff": {
+   "public_number": 25,
+   "published": true
+  },
+  "ernie-bot-wenxiaoyan-c704e130": {
+   "public_number": 50,
+   "published": true
+  },
+  "fathom-76015fb2": {
+   "public_number": 28,
+   "published": true
+  },
+  "firefliesai-b701b6b4": {
+   "public_number": 11,
+   "published": true
+  },
+  "fireworks-ai-ddb9e3a5": {
+   "public_number": 88,
+   "published": true
+  },
+  "flow-050287a2": {
+   "public_number": 123,
+   "published": true
+  },
+  "gemini-90ef8dfa": {
+   "public_number": 92,
+   "published": true
+  },
+  "gemini-cli-97009d71": {
+   "public_number": 126,
+   "published": true
+  },
+  "gemini-code-assist-611ff03b": {
+   "public_number": 98,
+   "published": true
+  },
   "gigachat-ba8f6d4d": {
-   "public_number": 54,
+   "public_number": 72,
    "published": true
   },
   "github-70031cf2": {
@@ -3401,15 +3401,15 @@
    "published": true
   },
   "github-copilot-179ab1d0": {
-   "public_number": 16,
+   "public_number": 22,
    "published": true
   },
   "google-ai-studio-9fb46df2": {
-   "public_number": 67,
+   "public_number": 87,
    "published": true
   },
   "google-vertex-ai-e3b72b54": {
-   "public_number": 15,
+   "public_number": 21,
    "published": true
   },
   "gpt-live-1-e666ccf6": {
@@ -3421,299 +3421,299 @@
    "published": true
   },
   "grok-ae0564d8": {
-   "public_number": 62,
-   "published": true
-  },
-  "grok-speech-to-text-cfab200f": {
-   "public_number": 110,
-   "published": true
-  },
-  "grok-speech-to-text-streaming-1109f624": {
-   "public_number": 111,
-   "published": true
-  },
-  "grok-text-to-speech-ade3260f": {
-   "public_number": 109,
-   "published": true
-  },
-  "grok-voice-agent-64dc28d2": {
-   "public_number": 106,
-   "published": true
-  },
-  "grok-voice-api-e5ae4c9e": {
-   "public_number": 108,
-   "published": true
-  },
-  "groqcloud-27d72cc2": {
-   "public_number": 74,
-   "published": true
-  },
-  "hailuo-ai-ab0a6ab6": {
-   "public_number": 83,
-   "published": true
-  },
-  "haystack-d1993c9b": {
-   "public_number": 11,
-   "published": true
-  },
-  "hugging-face-hub-82f7da3a": {
-   "public_number": null,
-   "published": true
-  },
-  "humanloop-a16219fe": {
-   "public_number": null,
-   "published": true
-  },
-  "ibm-watsonxai-d5247b6c": {
-   "public_number": 45,
-   "published": true
-  },
-  "ideogram-db27a255": {
-   "public_number": null,
-   "published": true
-  },
-  "jasper-90457ca9": {
-   "public_number": null,
-   "published": true
-  },
-  "jetbrains-ai-assistant-7b8bc179": {
-   "public_number": 44,
-   "published": true
-  },
-  "junie-5b254753": {
-   "public_number": 94,
-   "published": true
-  },
-  "kaggle-models-66ec6efe": {
-   "public_number": null,
-   "published": true
-  },
-  "kimi-86b3adef": {
-   "public_number": 80,
-   "published": true
-  },
-  "kling-ai-c89c43f2": {
    "public_number": 81,
    "published": true
   },
-  "label-studio-7801d5fd": {
-   "public_number": 12,
+  "grok-speech-to-text-cfab200f": {
+   "public_number": 134,
    "published": true
   },
-  "labelbox-9a3d740b": {
-   "public_number": 9,
+  "grok-speech-to-text-streaming-1109f624": {
+   "public_number": 135,
    "published": true
   },
-  "langchain-5dde274b": {
-   "public_number": 23,
+  "grok-text-to-speech-ade3260f": {
+   "public_number": 133,
    "published": true
   },
-  "langsmith-2dc9d962": {
-   "public_number": 50,
+  "grok-voice-agent-64dc28d2": {
+   "public_number": 130,
    "published": true
   },
-  "le-chat-7cf9fd0d": {
-   "public_number": 73,
+  "grok-voice-api-e5ae4c9e": {
+   "public_number": 132,
    "published": true
   },
-  "leonardo-ai-3a0cb141": {
-   "public_number": 28,
-   "published": true
-  },
-  "llamacpp-bd626fa5": {
-   "public_number": 36,
-   "published": true
-  },
-  "llamaindex-90b18d2d": {
-   "public_number": 24,
-   "published": true
-  },
-  "lm-arena-2a02f406": {
-   "public_number": 39,
-   "published": true
-  },
-  "lm-studio-bionic-3ac51e8d": {
-   "public_number": 78,
-   "published": true
-  },
-  "lovable-5eed0de9": {
-   "public_number": 90,
-   "published": true
-  },
-  "luma-dream-machine-7639cc3d": {
-   "public_number": 100,
-   "published": true
-  },
-  "meta-ai-f05512e0": {
-   "public_number": 56,
-   "published": true
-  },
-  "microsoft-copilot-80bf3d4a": {
-   "public_number": 64,
-   "published": true
-  },
-  "midjourney-6047a08d": {
-   "public_number": null,
-   "published": true
-  },
-  "minimax-code-93f290d1": {
-   "public_number": 114,
-   "published": true
-  },
-  "minimax-speech-recognition-b5f156c4": {
-   "public_number": null,
-   "published": true
-  },
-  "modelscope-6ff30701": {
-   "public_number": 25,
-   "published": true
-  },
-  "murf-ai-bbb09bfc": {
-   "public_number": 14,
-   "published": true
-  },
-  "notebooklm-6efd78c8": {
-   "public_number": 48,
-   "published": true
-  },
-  "notion-ai-35eb36cf": {
-   "public_number": 26,
-   "published": true
-  },
-  "nvidia-build-eab0ba05": {
-   "public_number": 89,
-   "published": true
-  },
-  "nvidia-ngc-7f095936": {
-   "public_number": 4,
-   "published": true
-  },
-  "ollama-1e62e6c9": {
-   "public_number": 46,
-   "published": true
-  },
-  "openrouter-45aa8479": {
-   "public_number": 32,
-   "published": true
-  },
-  "oracle-oci-generative-ai-db18c633": {
-   "public_number": 70,
-   "published": true
-  },
-  "otterai-f7910642": {
-   "public_number": 6,
-   "published": true
-  },
-  "perplexity-7a1d922e": {
-   "public_number": 29,
-   "published": true
-  },
-  "pika-ea286fc1": {
-   "public_number": null,
-   "published": true
-  },
-  "playground-ai-7cda7b1d": {
-   "public_number": null,
-   "published": true
-  },
-  "poe-bbc02ad7": {
-   "public_number": null,
-   "published": true
-  },
-  "promptfoo-9fe1eaf7": {
-   "public_number": 33,
-   "published": true
-  },
-  "quillbot-0c3e1122": {
-   "public_number": 7,
-   "published": true
-  },
-  "qwen-chat-1b9debb8": {
-   "public_number": 96,
-   "published": true
-  },
-  "qwen-code-984fcfb7": {
-   "public_number": 103,
-   "published": true
-  },
-  "qwen-intelligence": {
-   "public_number": 115,
-   "published": true
-  },
-  "qwen-scope-86f19967": {
-   "public_number": 112,
-   "published": true
-  },
-  "recraft-5c5605ef": {
-   "public_number": 69,
-   "published": true
-  },
-  "replicate-88273dcd": {
-   "public_number": 21,
-   "published": true
-  },
-  "replit-agent-e4e5c5fc": {
-   "public_number": 86,
-   "published": true
-  },
-  "researchrabbit-10836755": {
-   "public_number": null,
-   "published": true
-  },
-  "roo-code-c6a1ecaa": {
-   "public_number": 101,
-   "published": true
-  },
-  "runway-e34e79e1": {
-   "public_number": null,
-   "published": true
-  },
-  "scale-ai-f930d93a": {
-   "public_number": null,
-   "published": true
-  },
-  "scispace-a7b05733": {
-   "public_number": 20,
-   "published": true
-  },
-  "scite-assistant-8d3d8dc1": {
-   "public_number": 65,
-   "published": true
-  },
-  "semantic-kernel-4a327f4f": {
-   "public_number": null,
-   "published": true
-  },
-  "slack-ai-7248abae": {
-   "public_number": 72,
-   "published": true
-  },
-  "sora-bd047027": {
-   "public_number": 93,
-   "published": true
-  },
-  "sourcecraft": {
+  "groqcloud-27d72cc2": {
    "public_number": 95,
    "published": true
   },
-  "sourcegraph-cody-f6ae3521": {
-   "public_number": 38,
+  "hailuo-ai-ab0a6ab6": {
+   "public_number": 106,
    "published": true
   },
-  "speechify-studio-76c7290f": {
-   "public_number": null,
+  "haystack-d1993c9b": {
+   "public_number": 14,
    "published": true
   },
-  "suno-4e930621": {
-   "public_number": 52,
+  "hugging-face-hub-82f7da3a": {
+   "public_number": 19,
    "published": true
   },
-  "tabnine-c3655740": {
+  "humanloop-a16219fe": {
+   "public_number": 34,
+   "published": true
+  },
+  "ibm-watsonxai-d5247b6c": {
+   "public_number": 62,
+   "published": true
+  },
+  "ideogram-db27a255": {
+   "public_number": 69,
+   "published": true
+  },
+  "jasper-90457ca9": {
+   "public_number": 20,
+   "published": true
+  },
+  "jetbrains-ai-assistant-7b8bc179": {
+   "public_number": 61,
+   "published": true
+  },
+  "junie-5b254753": {
+   "public_number": 118,
+   "published": true
+  },
+  "kaggle-models-66ec6efe": {
+   "public_number": 49,
+   "published": true
+  },
+  "kimi-86b3adef": {
+   "public_number": 101,
+   "published": true
+  },
+  "kling-ai-c89c43f2": {
+   "public_number": 102,
+   "published": true
+  },
+  "label-studio-7801d5fd": {
+   "public_number": 15,
+   "published": true
+  },
+  "labelbox-9a3d740b": {
    "public_number": 10,
    "published": true
   },
+  "langchain-5dde274b": {
+   "public_number": 35,
+   "published": true
+  },
+  "langsmith-2dc9d962": {
+   "public_number": 67,
+   "published": true
+  },
+  "le-chat-7cf9fd0d": {
+   "public_number": 94,
+   "published": true
+  },
+  "leonardo-ai-3a0cb141": {
+   "public_number": 40,
+   "published": true
+  },
+  "llamacpp-bd626fa5": {
+   "public_number": 51,
+   "published": true
+  },
+  "llamaindex-90b18d2d": {
+   "public_number": 36,
+   "published": true
+  },
+  "lm-arena-2a02f406": {
+   "public_number": 55,
+   "published": true
+  },
+  "lm-studio-bionic-3ac51e8d": {
+   "public_number": 99,
+   "published": true
+  },
+  "lovable-5eed0de9": {
+   "public_number": 114,
+   "published": true
+  },
+  "luma-dream-machine-7639cc3d": {
+   "public_number": 124,
+   "published": true
+  },
+  "meta-ai-f05512e0": {
+   "public_number": 74,
+   "published": true
+  },
+  "microsoft-copilot-80bf3d4a": {
+   "public_number": 83,
+   "published": true
+  },
+  "midjourney-6047a08d": {
+   "public_number": 32,
+   "published": true
+  },
+  "minimax-code-93f290d1": {
+   "public_number": 139,
+   "published": true
+  },
+  "minimax-speech-recognition-b5f156c4": {
+   "public_number": 142,
+   "published": true
+  },
+  "modelscope-6ff30701": {
+   "public_number": 37,
+   "published": true
+  },
+  "murf-ai-bbb09bfc": {
+   "public_number": 18,
+   "published": true
+  },
+  "notebooklm-6efd78c8": {
+   "public_number": 65,
+   "published": true
+  },
+  "notion-ai-35eb36cf": {
+   "public_number": 38,
+   "published": true
+  },
+  "nvidia-build-eab0ba05": {
+   "public_number": 113,
+   "published": true
+  },
+  "nvidia-ngc-7f095936": {
+   "public_number": 5,
+   "published": true
+  },
+  "ollama-1e62e6c9": {
+   "public_number": 63,
+   "published": true
+  },
+  "openrouter-45aa8479": {
+   "public_number": 45,
+   "published": true
+  },
+  "oracle-oci-generative-ai-db18c633": {
+   "public_number": 91,
+   "published": true
+  },
+  "otterai-f7910642": {
+   "public_number": 7,
+   "published": true
+  },
+  "perplexity-7a1d922e": {
+   "public_number": 41,
+   "published": true
+  },
+  "pika-ea286fc1": {
+   "public_number": 86,
+   "published": true
+  },
+  "playground-ai-7cda7b1d": {
+   "public_number": 42,
+   "published": true
+  },
+  "poe-bbc02ad7": {
+   "public_number": 48,
+   "published": true
+  },
+  "promptfoo-9fe1eaf7": {
+   "public_number": 46,
+   "published": true
+  },
+  "quillbot-0c3e1122": {
+   "public_number": 8,
+   "published": true
+  },
+  "qwen-chat-1b9debb8": {
+   "public_number": 120,
+   "published": true
+  },
+  "qwen-code-984fcfb7": {
+   "public_number": 127,
+   "published": true
+  },
+  "qwen-intelligence": {
+   "public_number": 141,
+   "published": true
+  },
+  "qwen-scope-86f19967": {
+   "public_number": 136,
+   "published": true
+  },
+  "recraft-5c5605ef": {
+   "public_number": 90,
+   "published": true
+  },
+  "replicate-88273dcd": {
+   "public_number": 31,
+   "published": true
+  },
+  "replit-agent-e4e5c5fc": {
+   "public_number": 109,
+   "published": true
+  },
+  "researchrabbit-10836755": {
+   "public_number": 23,
+   "published": true
+  },
+  "roo-code-c6a1ecaa": {
+   "public_number": 125,
+   "published": true
+  },
+  "runway-e34e79e1": {
+   "public_number": 13,
+   "published": true
+  },
+  "scale-ai-f930d93a": {
+   "public_number": 4,
+   "published": true
+  },
+  "scispace-a7b05733": {
+   "public_number": 30,
+   "published": true
+  },
+  "scite-assistant-8d3d8dc1": {
+   "public_number": 84,
+   "published": true
+  },
+  "semantic-kernel-4a327f4f": {
+   "public_number": 52,
+   "published": true
+  },
+  "slack-ai-7248abae": {
+   "public_number": 93,
+   "published": true
+  },
+  "sora-bd047027": {
+   "public_number": 117,
+   "published": true
+  },
+  "sourcecraft": {
+   "public_number": 119,
+   "published": true
+  },
+  "sourcegraph-cody-f6ae3521": {
+   "public_number": 54,
+   "published": true
+  },
+  "speechify-studio-76c7290f": {
+   "public_number": 75,
+   "published": true
+  },
+  "suno-4e930621": {
+   "public_number": 70,
+   "published": true
+  },
+  "tabnine-c3655740": {
+   "public_number": 12,
+   "published": true
+  },
   "together-ai-5f67e15b": {
-   "public_number": 49,
+   "public_number": 66,
    "published": true
   },
   "toloka-bb9e10a2": {
@@ -3721,39 +3721,39 @@
    "published": true
   },
   "udio-cf7b5053": {
-   "public_number": 79,
+   "public_number": 100,
    "published": true
   },
   "v0-21ef682a": {
-   "public_number": 59,
+   "public_number": 78,
    "published": true
   },
   "vllm-52de0570": {
-   "public_number": 43,
+   "public_number": 60,
    "published": true
   },
   "weights-biases-1841746e": {
-   "public_number": 8,
+   "public_number": 9,
    "published": true
   },
   "windsurf-0de02d58": {
-   "public_number": 91,
+   "public_number": 115,
    "published": true
   },
   "yandex-ai-studio": {
-   "public_number": 104,
+   "public_number": 128,
    "published": true
   },
   "youcom-56912a5d": {
-   "public_number": null,
+   "public_number": 26,
    "published": true
   },
   "zed-ai-6c29b3d9": {
-   "public_number": 84,
+   "public_number": 107,
    "published": true
   },
   "zoom-ai-companion-76f2ef02": {
-   "public_number": 53,
+   "public_number": 71,
    "published": true
   }
  }

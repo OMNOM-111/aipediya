@@ -770,6 +770,16 @@
       "merged_to_main": true,
       "release_tag": "release-2026-09-27-adaptive-ui",
       "production_verified_at": "2026-09-27T16:30:00Z"
+    },
+    {
+      "release_id": "CATALOG-TOOLS-CSP-2026-09-27",
+      "title": "Catalog consistency & Cloudflare Analytics CSP",
+      "environment": "local",
+      "stage": "local",
+      "status": "READY FOR OWNER REVIEW",
+      "started": "2026-09-27",
+      "history": "docs/history/2026-09-27-tools-count-cloudflare-csp-local.md",
+      "note": "Owner approved the exact 167-change master-to-Local plan. Working Local SQLite now has 143 published/numbered Tools, 60 exact and 83 approximate dates, numbers 1-143 without gaps; Local database, browser and automated QA passed. Cloudflare CSP fix is preserved. Production aa48e11 is unchanged; release awaits a separate owner decision."
     }
   ],
   "product_history": {
@@ -1144,6 +1154,29 @@
         "source": "2026-09-27-adaptive-ui-release",
         "open": false,
         "progress": "done"
+      },
+      {
+        "release_id": "CATALOG-TOOLS-CSP-2026-09-27",
+        "date": "2026-09-27",
+        "title_ru": "Согласованность Tools и CSP Cloudflare Analytics",
+        "title_en": "Tools consistency and Cloudflare Analytics CSP",
+        "icon": "shield-check",
+        "tags_ru": ["Tools", "Даты выпуска", "CSP", "Local"],
+        "tags_en": ["Tools", "Release dates", "CSP", "Local"],
+        "capabilities_ru": [
+          "Аудит master, Local, Production read-only и публичной таблицы: 143 опубликованных Tools, 116 с № до исследования, 27 без даты; доказанных новых дублей нет.",
+          "Владелец утвердил diff; штатная синхронизация master → рабочая Local SQLite дала 143/143 пронумерованных Tools, 60 точных и 83 приблизительные даты. Проверки Local пройдены.",
+          "В коде CSP узко разрешены обычный и версионный URL Cloudflare beacon; same-origin telemetry разрешена через connect-src 'self'. Production не менялась."
+        ],
+        "capabilities_en": [
+          "Master, Local, read-only Production and public-table audit: 143 public Tools, previously 116 numbered and 27 undated; no newly proven duplicate.",
+          "The owner approved the diff; standard master → working Local SQLite sync produced 143/143 numbered Tools, 60 exact and 83 approximate dates. Local QA passed.",
+          "Code CSP narrowly permits the plain and versioned Cloudflare beacon URLs; connect-src 'self' allows same-origin telemetry. Production is unchanged."
+        ],
+        "revision": null,
+        "source": "2026-09-27-tools-count-cloudflare-csp-local",
+        "open": true,
+        "progress": "review"
       }
     ],
     "additional_tasks": [
