@@ -4,7 +4,37 @@
 Отчёты законченных выпусков — `docs/history/`.
 Пакет для нового чата собирается командой `\.\.venv\Scripts\python.exe tools/pack_ai_context.py` и **не** редактируется как независимый источник.
 
-## Tools chronology + Cloudflare CSP — owner approved Production release, server phase pending, 2026-09-27
+## Tools chronology + Cloudflare CSP — Production VERIFIED, 2026-09-27
+
+- Изменено: Production выпуска `cf4ac9a33f8d4467510d6b76ebe115ce7e1803d3`
+  развёрнута по утверждённому плану; предыдущий публичный commit `aa48e11`.
+  Canonical Production access: `python tools/server.py preflight` через
+  `aipediya-prod`; текущий preflight PASS. Отдельный server trial на online
+  backup подтвердил ровно 27 дат и 140 номеров без других фактических
+  изменений. Backup перед deploy и после него есть; Local SQLite не копировалась.
+- Фактическая Production SQLite: Tools 143/143, номера 1–143 без дыр/дублей,
+  60 exact, 83 approximate, 0 без даты; Models 321. Integrity OK, FK 0,
+  publication flags 0 изменений; служба `aipedia` RUNNING, `/healthz` =
+  `cf4ac9a33f8d4467510d6b76ebe115ce7e1803d3`.
+- Проверки: Local/Production catalog master check OK и QA PASS; полный
+  catalog suite 308 OK / 1 skip; `manage.py check` PASS; GSD public 34/34,
+  полный GSD Production QA 1657/1657. Read-only сравнение живой БД с backup:
+  только `catalog_tool` (140 номеров, 4 exact, 23 approximate/precision);
+  Models, цены, оценки, описания не изменились.
+  Публичный браузер RU/EN Tools oldest/newest и Models PASS. CSP строго
+  ограничена; browser network: Cloudflare beacon 200, `/cdn-cgi/rum` 204,
+  console errors 0. Детали —
+  `docs/history/2026-09-27-tools-chronology-csp-release.md`.
+- Local / GitHub / Production: Local PASS; код выпуска был сохранён локальным
+  commit, release docs/access wrapper готовятся к push и tag; Production VERIFIED.
+  Посторонние untracked файлы (`%SystemDrive%/`, `.claude/`, `data/release/v013/`,
+  `data/research/`, старый Claude task, history shortcut, производный
+  `timeline.html`) сохранены и не входят в release docs commit.
+- Не завершено: собрать контекст/историю, push release docs/access contract
+  и tag. Следующим выполнить эти шаги;
+  новая публикация Production не требуется.
+
+## Предыдущий checkpoint: owner approved Production release, server phase pending, 2026-09-27
 
 - Изменено: владелец утвердил проверенное Local-состояние и отдельно разрешил
   его выпуск по `docs/RELEASE.md`. Текущая Production до выпуска подтверждена
@@ -30,14 +60,24 @@
   identity или host alias. Серверный read-only baseline, server DB preflight,
   backup, deploy и Production QA ещё **не выполнены**; серверный план нельзя
   считать подтверждённым до проверки against Production SQLite.
-- Local / GitHub / Production: Local PASS и утверждён; release commit и push
-  ещё не сделаны; Production по-прежнему `aa48e11` и прежняя CSP.
-- Не завершено: release commit/artifact, а затем все серверные и публичные
-  проверки. Следующим выполнить: собрать точный release commit и архив без
-  посторонних файлов; после восстановления штатного SSH провести read-only
-  baseline и trial на копии Production DB, проверить план и backup, затем
-  штатный deploy и публичный QA. При невозможности SSH остановить только
-  серверную фазу, сохранив готовый release candidate.
+- Release commit: `cf4ac9a33f8d4467510d6b76ebe115ce7e1803d3`, ровно 17
+  точных файлов; архив `artifacts/code-release/aipedia-code-cf4ac9a33f8d.zip`,
+  SHA-256 `8af0a16c7044a8208e5ac38aa1d6a156621c670ccbaeb17640895c7f6e46c7a0`,
+  333 файла, нет SQLite/секретов; deploy `--dry-run` PASS с catalog plan и
+  publication manifest. Из распакованного архива: 305 тестов OK, 1 skip,
+  `manage.py check` PASS. GitHub push и tag оставлены до полного Production PASS.
+- Read-only публичная baseline: `/healthz` = `aa48e11bad7326340463654e33ba5e89769042b9`,
+  143 Tool Record ID, 116 с номером; Models 321 на публичном каталоге;
+  фактическая старая CSP `script-src 'self'`, Cloudflare beacon injected.
+  Локальный отчёт: `artifacts/tools-chronology-csp-release/public-baseline.json`.
+- Local / GitHub / Production: Local PASS и утверждён; release commit сохранён
+  локально, не push; Production по-прежнему `aa48e11` и прежняя CSP.
+- Не завершено: серверный read-only baseline, trial на копии Production DB,
+  backup, deploy и все публичные проверки. Следующим выполнить: при получении
+  точного пути к существующей настроенной SSH identity или host alias повторить
+  штатную read-only проверку; затем подтвердить план на серверной копии,
+  безопасный backup, штатный deploy и публичный QA. Если SSH остаётся недоступен,
+  остановить только серверную фазу и сохранить готовый release candidate.
 
 
 ## Tools numbering and Cloudflare CSP — READY FOR OWNER REVIEW in Local, 2026-09-27

@@ -19,6 +19,23 @@
 
 ## Общая серверная машина и SSH (правило владельца 2026-09-26)
 
+### Production server access (канонический контракт, 2026-09-27)
+
+Не выяснять способ подключения заново. Использовать `python tools/server.py
+preflight` и остальные команды `tools/server.py` через настроенный SSH alias
+`aipediya-prod`; точный порядок — `docs/RELEASE.md`. Codex и Claude Code
+используют один alias и один wrapper. Если подключение не проходит, проверить
+канонический alias и сообщить конкретную ошибку; альтернативные SSH credentials
+не искать. Private key, `.env`, токены и содержимое SSH identity не читать.
+
+Физическая машина может одновременно обслуживать AIpediya, StratForge,
+TradeForge и будущие проекты. Граница определяется приложением: AIpediya
+работает только в `/srv/aipedia`, его backups/releases, `/tmp/aipedia-*`,
+его Production SQLite и программе `aipedia`. Другие приложения, их БД,
+процессы и общесистемный tunnel вне области этой задачи. Для будущего проекта
+нужен отдельный project alias/root/service/DB/backup namespace/release tooling;
+рабочий транспорт машины не исследуется заново.
+
 AIpediya и StratForge размещены на одной серверной машине. Исполнителям
 AIpediya разрешено использовать существующий настроенный SSH-доступ к этой
 общей машине для работ исключительно в контуре AIpediya. Запрет «не трогать
@@ -54,12 +71,12 @@ Claude Code в режиме `Auto` на этой машине ожидаемо �
 чате режим `Auto` не снимает.
 
 - Local и GitHub работа — в любом режиме, без особых действий.
-- Перед первой серверной командой (SSH, preflight, backup, deploy, restart,
-  server verification) исполнитель Claude сообщает владельцу:
-  `Claude Code: Production server step requires Manual/Default/Ask permission mode; Auto is expected to block SSH identity use.`
+- Если `Auto` блокирует `python tools/server.py preflight` или другую штатную
+  серверную команду, исполнитель сообщает владельцу:
+  `Server access is configured. Claude Auto blocked execution. Switch Claude Code to Manual/Ask and rerun the same server command.`
 - Владелец переключает сессию в режим с подтверждением команд (Manual / Default /
   Ask — название зависит от версии интерфейса); исполнитель повторяет ту же
-  read-only SSH-проверку, дальше каждая серверная команда — через подтверждение
+  команду `tools/server.py`, дальше каждая серверная команда — через подтверждение
   интерфейса. После серверной работы режим можно вернуть.
 - В `Auto` не повторять SSH многократно, не искать другие ключи и credentials, не
   читать private key, не расширять себе permissions (правка

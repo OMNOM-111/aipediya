@@ -703,3 +703,24 @@
   на Production; серверный preflight и проверка после выпуска обязательны.
 - Источник: прямое уточнение владельца в задаче Tools 143 и targeted
   verification 21 оставшейся записи.
+
+## D-2026-09-27-canonical-production-server-access
+
+- Статус: подтверждено владельцем
+- Дата: 2026-09-27
+- Решение: единый проверенный транспорт для AIpediya — SSH alias
+  `aipediya-prod` в пользовательском SSH config и project wrapper
+  `python tools/server.py`. Исполнители начинают с `preflight`, не ищут
+  credentials, не читают private key и не собирают вручную SSH/SCP для
+  регулярных операций. Host-key verification остаётся строгой.
+- Общая физическая машина разрешена; граница доступа определяется проектом:
+  `/srv/aipedia`, его БД/backups/releases, `/tmp/aipedia-*` и программа
+  `aipedia`. Другие приложения, включая StratForge и TradeForge, вне scope.
+  Новые проекты получают собственный alias, root, service, DB, backup namespace
+  и release tooling на том же транспорте.
+- Codex и Claude Code используют один wrapper. При блокировке Auto в Claude
+  владелец переключает Manual/Ask, исполнитель повторяет ту же команду;
+  повторная диагностика SSH и поиск другого ключа не требуются. Codex handoff
+  остаётся запасным вариантом.
+- Источник: прямое поручение владельца стандартизировать Production server
+  access перед продолжением утверждённого выпуска `cf4ac9a33f8d`.

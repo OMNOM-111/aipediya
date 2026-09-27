@@ -8,7 +8,18 @@
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный выпуск — **adaptive-ui**, 2026-09-27 16:16 UTC: commit
+Текущий публичный выпуск — **Tools chronology + Cloudflare CSP**, 2026-09-27
+19:13 UTC: commit `cf4ac9a33f8d4467510d6b76ebe115ce7e1803d3`, tag
+`release-2026-09-27-tools-chronology-csp`. Архив
+`aipedia-code-cf4ac9a33f8d.zip`, SHA-256
+`8af0a16c7044a8208e5ac38aa1d6a156621c670ccbaeb17640895c7f6e46c7a0`.
+`/healthz` и серверная SQLite подтвердили 321 Models, 143 Tools, номера 1–143,
+60 точных и 83 приблизительные даты. Backup и отчёт —
+`docs/history/2026-09-27-tools-chronology-csp-release.md`.
+
+### Предыдущий публичный выпуск — adaptive-ui
+
+adaptive-ui, 2026-09-27 16:16 UTC: commit
 `aa48e11bad7326340463654e33ba5e89769042b9`, tag `release-2026-09-27-adaptive-ui`
 (`main` = опубликованная линия). По коду публичный сайт работает на commit `aa48e11bad7326340463654e33ba5e89769042b9`.
 Архив `aipedia-code-aa48e11bad73.zip`, SHA-256
@@ -105,6 +116,17 @@ changelog.
   `docs/history/`.
 
 ## Changelog
+
+### release-2026-09-27-tools-chronology-csp — Tools chronology и Cloudflare CSP
+
+- Утверждённый план изменил только 27 дат Tools и 140 Public Numbers; 143
+  опубликованных Tools имеют номера 1–143, 60 exact и 83 approximate дат.
+- Узкий CSP разрешил обычный и версионный Cloudflare beacon и same-origin RUM;
+  браузер Production получил beacon 200 и `/cdn-cgi/rum` 204.
+- Models, цены, оценки, описания и publication state не изменились.
+- Канонический серверный доступ через `python tools/server.py preflight` и
+  SSH alias `aipediya-prod` стандартизирован отдельно от состава опубликованного
+  архива; детали — `D-2026-09-27-canonical-production-server-access`.
 
 ### release-2026-09-27-adaptive-ui — адаптивный интерфейс
 
@@ -206,14 +228,51 @@ changelog.
 
 ## Общая серверная машина и SSH
 
+### Server access — единая точка входа
+
+В начале server phase выполнить **`python tools/server.py preflight`**. При
+`SERVER ACCESS = PASS` использовать тот же wrapper для `health`, `status`,
+`upload <archive> --sha256 <digest>`, `release-preflight <archive> --sha256
+<digest> [--catalog-plan ... --publication-state ...]` и `deploy <archive>
+--sha256 <digest> [--catalog-plan ... --publication-state ...]`. `deploy` требует
+успешный matching `release-preflight` report; `--dry-run` доступен отдельно.
+После выпуска `catalog` проверяет живые счётчики/целостность, а
+`verify-release <aipedia-before-code-...sqlite3>` сравнивает фактические данные
+с online backup до выпуска.
+Архив передаётся только в `/tmp/aipedia-*`, SHA-256 сверяется автоматически.
+Не собирать SSH/SCP-команду вручную и не искать credentials заново.
+
+На этой Windows-машине пользовательский `~/.ssh/config` содержит alias
+`aipediya-prod`: `HostName ssh-canary.stratforges.com`, `User stratforge`,
+`IdentityFile ~/.ssh/codex_stratforge_stage9`, `IdentitiesOnly yes`,
+`ProxyCommand "C:\Program Files (x86)\cloudflared\cloudflared.exe" access ssh
+--hostname %h`, `UserKnownHostsFile ~/.ssh/known_hosts`,
+`StrictHostKeyChecking yes`, `BatchMode yes`, `ConnectTimeout 20`. Это только
+параметры транспорта, без содержимого ключа/секретов. Если alias отсутствует
+на новом компьютере, настроить его из этого контракта и проверить `ssh -G
+aipediya-prod`; если он есть, сначала проверить его и вывести конкретную
+ошибку, не подбирать альтернативные ключи. Не ослаблять host-key verification.
+
+Физическая машина общая; project scope AIpediya: `/srv/aipedia`, его
+backups/releases/SQLite, программа `aipedia` и `/tmp/aipedia-*`. StratForge,
+TradeForge, будущие проекты и общесистемный tunnel вне scope AIpediya. Для
+нового проекта нужен отдельный alias/root/service/DB/backup namespace/tooling,
+а не повторный поиск транспорта.
+
+Codex выполняет эти команды напрямую в рамках разрешённого выпуска. Claude Code
+использует **тот же** wrapper и alias: если Auto блокирует серверную команду,
+сообщить владельцу `Server access is configured. Claude Auto blocked execution.
+Switch Claude Code to Manual/Ask and rerun the same server command.` После
+переключения повторить ту же команду. Handoff Codex — запасной путь.
+
 ### Executor preflight (обязательно перед первой серверной командой)
 
 1. Определить исполнителя серверной фазы.
 2. Исполнитель Claude Code:
    - Local/release preparation (тесты, tag, архив, SHA-256, `--dry-run`, публичная
      базовая линия) может выполняться в `Auto`;
-   - перед первым SSH владелец переводит сессию в Manual / Default / Ask (режим с
-     подтверждением команд); затем повторить read-only preflight и выполнять
+   - если Auto блокирует wrapper, владелец переводит сессию в Manual / Default / Ask
+     (режим с подтверждением команд); затем повторить ту же команду и выполнять
      серверные команды только через подтверждение интерфейса;
    - если режим изменить нельзя или владелец не хочет — **STOP SERVER PHASE** и
      подготовить handoff для Codex (ниже).
@@ -247,11 +306,8 @@ SSH-ключи; разрешено использовать уже настро�
 Каталоги StratForge не исследовать, его программы не трогать
 (`D-2026-09-26-shared-server-ssh`, `AGENTS.md`).
 
-Проверенный способ подключения (выпуск 2026-09-26; секреты в документ не входят):
-`ssh -o "ProxyCommand=cloudflared access ssh --hostname %h" -i <настроенная identity> stratforge@ssh-canary.stratforges.com`
-(Windows: `cloudflared` из `C:\Program Files (x86)\cloudflared\`; identity — уже
-настроенный файл в `~/.ssh`, его содержимое не читать и не выводить). Проверка ключа
-сервера остаётся включённой. Каталоги AIpediya принадлежат пользователю `aipedia` —
+Канонический способ подключения — `tools/server.py` и alias `aipediya-prod`
+(контракт выше). Проверка ключа сервера остаётся включённой. Каталоги AIpediya принадлежат пользователю `aipedia` —
 чтение и выпуск через `sudo -n` (без интерактива); выпускной скрипт запускается
 `sudo -n python3 …/tools/deploy_code_release.py`. Граница: `/srv/aipedia`, программа
 `aipedia` в `/srv/aipedia/supervisord.conf`, `/tmp/aipedia-*` для архивов и preflight.

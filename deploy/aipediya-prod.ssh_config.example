@@ -1,0 +1,12 @@
+# Add this Host block to the user SSH config on the approved Windows workstation.
+# Paths name existing files. Do not copy private key contents or secrets here.
+Host aipediya-prod
+    HostName ssh-canary.stratforges.com
+    User stratforge
+    IdentityFile ~/.ssh/codex_stratforge_stage9
+    IdentitiesOnly yes
+    ProxyCommand "C:\Program Files (x86)\cloudflared\cloudflared.exe" access ssh --hostname %h
+    UserKnownHostsFile ~/.ssh/known_hosts
+    StrictHostKeyChecking yes
+    BatchMode yes
+    ConnectTimeout 20

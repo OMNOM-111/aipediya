@@ -31,7 +31,7 @@ Django 5.2 LTS, SQLite, серверный HTML, WhiteNoise, Waitress.
 | Независимые хронологические номера моделей и инструментов | `catalog/chronology.py`, команда `apply_release_chronology` |
 | Импорт исследований | `catalog/management/commands/import_research.py` |
 | Сообщения пользователей | `contributions/` |
-| Выпуск | `docs/RELEASE.md`, `tools/build_code_release.py`, `tools/deploy_code_release.py` |
+| Выпуск и серверный доступ | `docs/RELEASE.md`, `tools/build_code_release.py`, `tools/server.py`, `tools/deploy_code_release.py` |
 
 ## Данные
 
@@ -42,4 +42,7 @@ Django 5.2 LTS, SQLite, серверный HTML, WhiteNoise, Waitress.
 Модели и инструменты имеют независимые фильтры, сортировки, панели и
 хронологические номера; смешанного публичного режима «Все» нет.
 Production SQLite на сервере: `/srv/aipedia/data/aipedia.sqlite3`.
+Production root — `/srv/aipedia`, программа Supervisor — `aipedia`.
+Операции с сервером начинаются с `python tools/server.py preflight`; полный
+Server Access Contract и граница доступа — в `docs/RELEASE.md`.
 В пакет контекста базы не класть; достаточно этой карты, счётчиков в статусе и безопасных примеров в документах.

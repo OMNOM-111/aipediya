@@ -774,18 +774,21 @@
     {
       "release_id": "CATALOG-TOOLS-CSP-2026-09-27",
       "title": "Catalog consistency & Cloudflare Analytics CSP",
-      "environment": "local",
-      "stage": "local",
-      "status": "READY FOR OWNER REVIEW",
+      "environment": "production",
+      "stage": "released",
+      "status": "RELEASED",
       "started": "2026-09-27",
-      "history": "docs/history/2026-09-27-tools-count-cloudflare-csp-local.md",
-      "note": "Owner approved the exact 167-change master-to-Local plan. Working Local SQLite now has 143 published/numbered Tools, 60 exact and 83 approximate dates, numbers 1-143 without gaps; Local database, browser and automated QA passed. Cloudflare CSP fix is preserved. Production aa48e11 is unchanged; release awaits a separate owner decision."
+      "history": "docs/history/2026-09-27-tools-chronology-csp-release.md",
+      "revision": "cf4ac9a33f8d4467510d6b76ebe115ce7e1803d3",
+      "owner_decision": "Approved exact Tools/CSP Production release, 2026-09-27",
+      "production_verified_at": "2026-09-27T19:16:00Z",
+      "note": "Owner approved the exact 167-change plan and Production release. Local and Production have 143 published/numbered Tools, 60 exact and 83 approximate dates, numbers 1-143; Models remain 321. Production backup, server trial, deploy, browser and Cloudflare beacon/CSP checks passed."
     }
   ],
   "product_history": {
     "visibility": "Local only; no owner authentication exists for this page on Production",
-    "production_evidence": "docs/history/2026-09-27-adaptive-ui-release.md",
-    "production_verified_at": "2026-09-27T16:30:00Z",
+    "production_evidence": "docs/history/2026-09-27-tools-chronology-csp-release.md",
+    "production_verified_at": "2026-09-27T19:22:30Z",
     "milestones": [
       {
         "release_id": "release-2026-09-20-chronology",
@@ -1161,22 +1164,24 @@
         "title_ru": "Согласованность Tools и CSP Cloudflare Analytics",
         "title_en": "Tools consistency and Cloudflare Analytics CSP",
         "icon": "shield-check",
-        "tags_ru": ["Tools", "Даты выпуска", "CSP", "Local"],
-        "tags_en": ["Tools", "Release dates", "CSP", "Local"],
+        "tags_ru": ["Tools", "Даты выпуска", "CSP", "Production"],
+        "tags_en": ["Tools", "Release dates", "CSP", "Production"],
         "capabilities_ru": [
           "Аудит master, Local, Production read-only и публичной таблицы: 143 опубликованных Tools, 116 с № до исследования, 27 без даты; доказанных новых дублей нет.",
           "Владелец утвердил diff; штатная синхронизация master → рабочая Local SQLite дала 143/143 пронумерованных Tools, 60 точных и 83 приблизительные даты. Проверки Local пройдены.",
-          "В коде CSP узко разрешены обычный и версионный URL Cloudflare beacon; same-origin telemetry разрешена через connect-src 'self'. Production не менялась."
+          "Production выпущена на cf4ac9a: 143 Tools имеют номера 1–143, 60 точных и 83 приблизительные даты; Models 321 без изменений.",
+          "CSP узко разрешает Cloudflare beacon: реальный browser network показал beacon HTTP 200 и /cdn-cgi/rum HTTP 204."
         ],
         "capabilities_en": [
           "Master, Local, read-only Production and public-table audit: 143 public Tools, previously 116 numbered and 27 undated; no newly proven duplicate.",
           "The owner approved the diff; standard master → working Local SQLite sync produced 143/143 numbered Tools, 60 exact and 83 approximate dates. Local QA passed.",
-          "Code CSP narrowly permits the plain and versioned Cloudflare beacon URLs; connect-src 'self' allows same-origin telemetry. Production is unchanged."
+          "Production runs cf4ac9a: all 143 Tools are numbered 1–143, with 60 exact and 83 approximate dates; 321 Models unchanged.",
+          "The narrow CSP permits Cloudflare Analytics: browser network observed beacon HTTP 200 and /cdn-cgi/rum HTTP 204."
         ],
-        "revision": null,
-        "source": "2026-09-27-tools-count-cloudflare-csp-local",
-        "open": true,
-        "progress": "review"
+        "revision": "cf4ac9a33f8d4467510d6b76ebe115ce7e1803d3",
+        "source": "2026-09-27-tools-chronology-csp-release",
+        "open": false,
+        "progress": "done"
       }
     ],
     "additional_tasks": [
@@ -1296,23 +1301,23 @@
       }
     ],
     "current_production": {
-      "release_tag": "release-2026-09-27-adaptive-ui",
-      "revision": "aa48e11bad7326340463654e33ba5e89769042b9",
-      "release_id": "aa48e11bad7326340463654e33ba5e89769042b9",
-      "confirmed_at": "2026-09-27 16:30",
-      "evidence": "Live /healthz, final_check 207/207, gsd_production_qa 1657/1657, responsive public QA 89 scenarios",
-      "status_ru": "Опубликовано и проверено: /healthz подтвердил aa48e11; 207/207 и 1657/1657 публичных проверок; адаптивный интерфейс на 89 экранах без горизонтального overflow.",
-      "status_en": "Published and verified: /healthz confirmed aa48e11; 207/207 and 1657/1657 public checks; adaptive interface on 89 screens without horizontal overflow.",
-      "source": "2026-09-27-adaptive-ui-release",
+      "release_tag": "release-2026-09-27-tools-chronology-csp",
+      "revision": "cf4ac9a33f8d4467510d6b76ebe115ce7e1803d3",
+      "release_id": "cf4ac9a33f8d4467510d6b76ebe115ce7e1803d3",
+      "confirmed_at": "2026-09-27 19:22",
+      "evidence": "Live /healthz, server database compare, catalog_master qa --production, gsd_production_qa 1657/1657, browser beacon 200 and RUM 204",
+      "status_ru": "Опубликовано и проверено: /healthz подтвердил cf4ac9a; Tools 143/143 с номерами 1–143 и датами 60 exact / 83 approximate; Cloudflare beacon 200, RUM 204.",
+      "status_en": "Published and verified: /healthz confirmed cf4ac9a; Tools 143/143 numbered 1–143, with 60 exact and 83 approximate dates; Cloudflare beacon 200, RUM 204.",
+      "source": "2026-09-27-tools-chronology-csp-release",
       "capabilities_ru": [
-        "321 модель и 143 инструмента; данные каталога, номера, цены, оценки и переводы не изменились.",
-        "Адаптивный интерфейс: телефон — карточки и панель под шапкой; планшет — drawer; desktop — таблица и панель; ultrawide ограничен.",
-        "Фильтр и Сортировка на touch-экранах; подгрузка на телефоне до полного списка; /history/ на Production — 404."
+        "321 модель без изменений; 143 опубликованных инструмента имеют номера 1–143.",
+        "60 точных и 83 приблизительных даты; другие фактические данные каталога сохранены.",
+        "CSP разрешает Cloudflare Analytics; beacon 200 и same-origin RUM 204; /history/ на Production — 404."
       ],
       "capabilities_en": [
-        "321 models and 143 tools; catalog data, numbers, prices, evaluations and translations unchanged.",
-        "Adaptive interface: phone — cards and a panel below the header; tablet — drawer; desktop — table and panel; ultrawide capped.",
-        "Filter and Sort on touch screens; phone infinite loading reaches the full list; /history/ on Production is 404."
+        "321 models unchanged; all 143 published tools are numbered 1–143.",
+        "60 exact and 83 approximate dates; other factual catalog data is preserved.",
+        "CSP permits Cloudflare Analytics; beacon 200 and same-origin RUM 204; /history/ remains 404 on Production."
       ]
     }
   }
