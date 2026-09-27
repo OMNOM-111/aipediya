@@ -3,8 +3,24 @@
 if (window.lucide) window.lucide.createIcons();
 
 const filters = document.querySelector("#catalog-filters") || document.querySelector("#filters");
+let filterSheetDirty = false;
 if (filters) {
-  const submitFilters = () => filters.requestSubmit();
+  // Some filters appear under two column headers (status). Keep every copy in
+  // step so the submitted value is the one just chosen. Inside the Filter
+  // sheet choices are collected and applied together (Apply or closing).
+  const submitFilters = (event) => {
+    const control = event && event.target;
+    if (control && control.name && control.tagName === "SELECT") {
+      document.querySelectorAll(`select[form='catalog-filters'][name='${CSS.escape(control.name)}']`).forEach((other) => {
+        if (other !== control) other.value = control.value;
+      });
+    }
+    if (control && control.closest && control.closest("dialog.sheet[open]")) {
+      filterSheetDirty = true;
+      return;
+    }
+    filters.requestSubmit();
+  };
   document.querySelectorAll("select[form='catalog-filters'], #catalog-filters select, input[type=checkbox][form='catalog-filters']").forEach((control) => {
     control.addEventListener("change", submitFilters);
   });
@@ -58,6 +74,90 @@ function placeFilterPopover(details) {
   }
 }
 
+// Filter and Sort sheets (tablet / phone / narrow catalog). The Filter sheet
+// shows the same controls as the column-header popovers: they are moved into
+// the sheet while it is open and put back when it closes, so there is one set
+// of form fields and the desktop header filters keep working.
+const sheetRestore = [];
+function fillFilterSheet(sheet) {
+  const slot = sheet.querySelector("[data-filter-slot]");
+  if (!slot) return;
+  const seen = new Set();
+  document.querySelectorAll(".model-table thead details.col-filter .filter-popover").forEach((popover) => {
+    const heading = popover.closest("th")?.querySelector("a[data-sort]")?.textContent.trim() || "";
+    const group = document.createElement("fieldset");
+    group.className = "sheet-group";
+    const legend = document.createElement("legend");
+    legend.textContent = heading;
+    group.append(legend);
+    [...popover.children].forEach((node) => {
+      const field = node.querySelector("select, input");
+      const name = field ? field.name : "";
+      if (name && seen.has(name)) return;
+      if (name) seen.add(name);
+      sheetRestore.push([node, popover, node.nextSibling]);
+      group.append(node);
+    });
+    if (group.children.length > 1) slot.append(group);
+  });
+}
+function emptyFilterSheet(sheet) {
+  while (sheetRestore.length) {
+    const [node, parent, next] = sheetRestore.pop();
+    parent.insertBefore(node, next && next.parentNode === parent ? next : null);
+  }
+  const slot = sheet.querySelector("[data-filter-slot]");
+  if (slot) slot.replaceChildren();
+}
+let sheetTrigger = null;
+document.querySelectorAll("[data-sheet-open]").forEach((button) => {
+  const sheet = document.querySelector(`dialog[data-sheet="${button.dataset.sheetOpen}"]`);
+  if (!sheet || typeof sheet.showModal !== "function") {
+    button.hidden = true;
+    return;
+  }
+  button.addEventListener("click", () => {
+    document.querySelectorAll("details.col-filter[open]").forEach((item) => { item.open = false; });
+    sheetTrigger = button;
+    if (sheet.dataset.sheet === "filters") {
+      filterSheetDirty = false;
+      fillFilterSheet(sheet);
+    }
+    sheet.showModal();
+    const current = sheet.querySelector("[aria-current]");
+    if (current) current.scrollIntoView({ block: "nearest" });
+  });
+});
+document.querySelectorAll("dialog.sheet").forEach((sheet) => {
+  // Typing in a text filter inside the sheet counts as a pending change too.
+  sheet.addEventListener("input", (event) => {
+    if (event.target.matches("input[form='catalog-filters']:not([type=checkbox])")) filterSheetDirty = true;
+  });
+  sheet.querySelectorAll("[data-sheet-close]").forEach((button) => {
+    button.addEventListener("click", () => sheet.close());
+  });
+  // A tap on the dimmed backdrop (outside the sheet box) closes it.
+  sheet.addEventListener("click", (event) => {
+    if (event.target !== sheet) return;
+    const box = sheet.getBoundingClientRect();
+    const inside = event.clientX >= box.left && event.clientX <= box.right && event.clientY >= box.top && event.clientY <= box.bottom;
+    if (!inside) sheet.close();
+  });
+  sheet.addEventListener("close", () => {
+    if (sheet.dataset.sheet === "filters") {
+      const apply = filterSheetDirty;
+      filterSheetDirty = false;
+      emptyFilterSheet(sheet);
+      // Closing never throws away a choice: pending changes are applied.
+      if (apply && filters) {
+        filters.requestSubmit();
+        return;
+      }
+    }
+    if (sheetTrigger && typeof sheetTrigger.focus === "function") sheetTrigger.focus();
+  });
+});
+
 const themeButton = document.querySelector("#theme");
 function setTheme(dark) {
   document.documentElement.dataset.theme = dark ? "dark" : "light";
@@ -102,9 +202,37 @@ const copiedText = I18N.copied || "Link copied";
 const copyManual = I18N.copyManual || "Copy the link manually";
 const panelError = I18N.panelError || "Could not open the card. Refresh the page.";
 
+// The panel changes the address without a reload, so the language menu is
+// re-pointed at the page now shown (same rule as the server's switch_url:
+// locale prefix + neutral path + query without lang/kind/partial).
+const langLinks = [...document.querySelectorAll("a[data-set-lang]")];
+function syncLanguageLinks() {
+  if (!langLinks.length) return;
+  const own = document.documentElement.lang || "en";
+  const ownPrefix = own === "en" ? "" : `/${own.toLowerCase()}`;
+  let neutral = location.pathname;
+  if (ownPrefix && (neutral === ownPrefix || neutral.startsWith(`${ownPrefix}/`))) {
+    neutral = neutral.slice(ownPrefix.length) || "/";
+  }
+  const params = new URLSearchParams(location.search);
+  ["lang", "kind", "partial"].forEach((key) => params.delete(key));
+  const query = params.toString();
+  langLinks.forEach((link) => {
+    const code = link.dataset.setLang;
+    const prefix = code === "en" ? "" : `/${code.toLowerCase()}`;
+    link.setAttribute("href", prefix + neutral + (query ? `?${query}` : ""));
+  });
+}
+
 function refreshIcons() {
   if (window.lucide) window.lucide.createIcons();
 }
+
+// Phones scroll the page itself (no app shell). The detail view sits under
+// the header there, so the header is brought into view while it is open and
+// the list position is restored when it closes.
+const APP_SHELL = "(min-width: 721px) and (min-height: 540px), (min-width: 1280px)";
+let listScroll = null;
 
 function setPanelOpen(open) {
   if (!panel || !catalogPage) return;
@@ -116,6 +244,16 @@ function setPanelOpen(open) {
   } else {
     panel.setAttribute("hidden", "hidden");
   }
+  const pageScrolls = !window.matchMedia(APP_SHELL).matches;
+  if (open && pageScrolls && listScroll === null && window.scrollY > 0) {
+    listScroll = window.scrollY;
+    window.scrollTo(0, 0);
+  } else if (!open && listScroll !== null) {
+    const y = listScroll;
+    listScroll = null;
+    window.scrollTo(0, y);
+  }
+  syncHeaderHeight();
 }
 
 function highlightRow(slug) {
@@ -146,13 +284,13 @@ function bindPanel(root) {
   refreshIcons();
 }
 
-function panelUrlFromLink(link) {
-  const url = new URL(link.href, location.origin);
+function panelUrlFromLink(link, href) {
+  const url = new URL(href || link.href, location.origin);
   url.searchParams.set("partial", "panel");
   return url;
 }
 
-async function openPanelFromLink(link, push) {
+async function openPanelFromLink(link, push, href) {
   if (!panel) return;
   lastTrigger = link;
   const slug = link.dataset.slug;
@@ -161,7 +299,7 @@ async function openPanelFromLink(link, push) {
   highlightRow(slug);
   panel.setAttribute("aria-busy", "true");
   try {
-    const response = await fetch(panelUrlFromLink(link).toString(), { headers: { "X-Requested-With": "AIpedia" } });
+    const response = await fetch(panelUrlFromLink(link, href).toString(), { headers: { "X-Requested-With": "AIpedia" } });
     if (!response.ok) throw new Error("panel");
     const html = await response.text();
     if (requestId !== panelRequest) return;
@@ -175,6 +313,7 @@ async function openPanelFromLink(link, push) {
       const listingUrl = history.state?.listingUrl ||
         (ENTITY_PATH.test(location.pathname) ? null : location.pathname + location.search);
       history.pushState({ panel: slug, listingUrl }, "", link.href);
+      syncLanguageLinks();
     }
   } catch (_) {
     if (requestId !== panelRequest) return;
@@ -211,6 +350,7 @@ function closePanel(push) {
   const listingTitle = document.querySelector("#main[data-listing-title]");
   if (listingTitle && listingTitle.dataset.listingTitle) document.title = listingTitle.dataset.listingTitle;
   if (push !== false) history.pushState({ panel: null }, "", closeUrl.pathname + closeUrl.search);
+  syncLanguageLinks();
   if (lastTrigger && typeof lastTrigger.focus === "function") lastTrigger.focus();
 }
 
@@ -236,6 +376,7 @@ function onTabClick(event) {
   if (name === "overview") url.searchParams.delete("tab");
   else url.searchParams.set("tab", name);
   history.replaceState(history.state, "", url.pathname + url.search);
+  syncLanguageLinks();
 }
 
 async function onShare() {
@@ -319,9 +460,11 @@ if (panel) {
     if (target.closest("a.model-name")) return;
     if (target.closest(".site-header")) return;
     if (target.closest("details.col-filter")) return;
+    if (target.closest("dialog")) return;
     closePanel(true);
   });
   window.addEventListener("popstate", () => {
+    syncLanguageLinks();
     const match = location.pathname.match(ENTITY_PATH);
     if (match) {
       const slug = match[3];
@@ -331,7 +474,8 @@ if (panel) {
         link.href = location.href;
         link.dataset.slug = slug;
       }
-      openPanelFromLink(link, false);
+      // Back/forward restores exactly the address in history (including ?tab=).
+      openPanelFromLink(link, false, location.href);
     } else {
       closePanel(false);
     }
@@ -357,14 +501,14 @@ if (infiniteScroll && modelRows && "IntersectionObserver" in window) {
   };
   const loadNext = async () => {
     const nextUrl = infiniteScroll.dataset.nextUrl;
-    if (!nextUrl || loading) return;
+    if (!nextUrl || loading) return false;
     loading = true;
     try {
       const response = await fetch(nextUrl, { headers: { "X-Requested-With": "AIpedia" } });
       if (!response.ok) throw new Error("Catalog page failed to load");
       // A reply for an older listing (the sort/filter changed meanwhile, or the
       // page came back from the history cache) must never add rows here.
-      if (infiniteScroll.dataset.nextUrl !== nextUrl) return;
+      if (infiniteScroll.dataset.nextUrl !== nextUrl) return false;
       const wrapper = document.createElement("tbody");
       wrapper.innerHTML = await response.text();
       modelRows.append(...wrapper.children);
@@ -372,21 +516,39 @@ if (infiniteScroll && modelRows && "IntersectionObserver" in window) {
       if (shown) shown.textContent = String(modelRows.querySelectorAll(".model-name").length);
       infiniteScroll.dataset.nextUrl = response.headers.get("X-Aipedia-Next") || "";
       if (window.lucide) window.lucide.createIcons();
+      return true;
     } catch (_) {
       showRetry();
     } finally {
       loading = false;
     }
   };
-  const observerOptions = { rootMargin: "240px 0px" };
-  if (tableScroll) observerOptions.root = tableScroll;
-  new IntersectionObserver((entries) => {
-    if (entries.some((entry) => entry.isIntersecting)) loadNext();
-  }, observerOptions).observe(infiniteScroll);
+  // The table scrolls inside its card when the catalog is an app shell
+  // (tablet and desktop) and the page itself scrolls on phones. Watch both:
+  // the viewport always (ancestor clipping is respected), the table scroller
+  // for early prefetch only while it really scrolls. After each chunk the
+  // sentinel is re-checked, so a chunk that leaves it visible loads on.
+  const observers = [];
+  const recheck = () => {
+    observers.forEach((observer) => {
+      observer.unobserve(infiniteScroll);
+      observer.observe(infiniteScroll);
+    });
+  };
+  const onIntersect = (entries, observer) => {
+    const scroller = observer.root;
+    if (scroller && scroller.scrollHeight <= scroller.clientHeight + 1) return;
+    if (entries.some((entry) => entry.isIntersecting)) loadNext().then((loaded) => { if (loaded) recheck(); });
+  };
+  observers.push(new IntersectionObserver(onIntersect, { rootMargin: "240px 0px" }));
+  if (tableScroll) observers.push(new IntersectionObserver(onIntersect, { root: tableScroll, rootMargin: "240px 0px" }));
+  observers.forEach((observer) => observer.observe(infiniteScroll));
 }
 
 document.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") return;
+  // An open Filter/Sort sheet handles Escape itself (native dialog cancel).
+  if (document.querySelector("dialog.sheet[open]")) return;
   const openFilter = document.querySelector("details.col-filter[open]");
   if (openFilter) {
     openFilter.open = false;

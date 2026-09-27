@@ -30,7 +30,13 @@
   --pad-x: 16px;
   --pad-r: 15px;
   --col-gap: 18px;
-  --panel-w: 512px;
+  /* Detail panel grows with the screen: ~485px on a 1280 laptop, ~510px at 1440,
+     ~550px at the 1672px reference, up to 720px on large and ultrawide monitors. */
+  --panel-w: clamp(440px, calc(16vw + 280px), 720px);
+  /* The catalog shell stops growing on ultrawide screens so rows stay
+     readable, but still takes most of the screen instead of a narrow column. */
+  --shell-max: max(2400px, 60vw);
+  --touch: 44px;
   --head-inset: 10px;
   --footer-h: 36px;
   /* Height of the header, measured in JS, so the mobile panel starts below it. */
@@ -40,6 +46,7 @@
   --z-panel: 30;
   --z-header: 40;
   --z-popover: 50;
+  --z-sheet: 60;
   font-family: "Segoe UI", Inter, system-ui, -apple-system, "Noto Sans", "Noto Sans Arabic",
     "Noto Sans CJK SC", "Noto Sans CJK TC", "Noto Sans JP", "Noto Sans KR", "Noto Sans Devanagari",
     "Noto Sans Thai", "Noto Sans Bengali", "Nirmala UI", "Leelawadee UI", "Yu Gothic", "Malgun Gothic",
@@ -142,17 +149,32 @@ textarea { width: 100%; resize: vertical; }
   padding: 0 var(--pad-r) 0 var(--pad-x);
   min-width: 0;
 }
-.catalog-page.is-panel-open .workspace,
-.catalog-page:has(.model-panel.is-open) .workspace {
-  grid-template-columns: minmax(0, 1fr) var(--panel-w);
+.catalog-page > .workspace,
+.catalog-page > .site-footer {
+  width: 100%; max-width: var(--shell-max); margin-inline: auto;
 }
 .catalog-column { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
-.catalog-column > main { display: flex; flex-direction: column; flex: 1; min-height: 0; min-width: 0; }
+/* The catalog area is a size container: columns, row layout and the
+   compact Filter/Sort toolbar follow the space the catalog really has
+   (viewport minus an open detail panel), not the device name. */
+.catalog-column > main {
+  display: flex; flex-direction: column; flex: 1; min-height: 0; min-width: 0;
+  container: catalog / inline-size;
+}
 
-@media (min-width: 900px) {
+/* App shell: header and toolbar stay put, the table scrolls inside its card.
+   Used when there is room for it; short landscape phones scroll the page. */
+@media (min-width: 721px) and (min-height: 540px), (min-width: 1280px) {
   html, body.catalog-page { height: 100%; }
   body.catalog-page { overflow: hidden; }
   .workspace { flex: 1; min-height: 0; }
+}
+/* Desktop: catalog and detail panel side by side. */
+@media (min-width: 1280px) {
+  .catalog-page.is-panel-open .workspace,
+  .catalog-page:has(.model-panel.is-open) .workspace {
+    grid-template-columns: minmax(0, 1fr) var(--panel-w);
+  }
 }
 
 /* --------------------------------------------------------------- header */
@@ -268,11 +290,15 @@ textarea { width: 100%; resize: vertical; }
 /* -------------------------------------------------------------- toolbar */
 
 .catalog-toolbar {
-  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px 14px;
+  flex-wrap: wrap;
   margin: 29px var(--head-inset) 20px;
   min-height: 34px;
 }
-.toolbar-end { display: flex; align-items: center; gap: 14px; }
+.toolbar-end {
+  display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px 14px;
+  min-width: 0; margin-inline-start: auto;
+}
 .type-tabs { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .type-tab {
   display: inline-flex; align-items: center; justify-content: center;
@@ -287,7 +313,84 @@ textarea { width: 100%; resize: vertical; }
   background: var(--mint); color: var(--on-mint); border-color: var(--mint); font-weight: 600;
   box-shadow: none;
 }
-.catalog-counts { color: var(--muted); font-size: 13px; white-space: nowrap; }
+.catalog-counts { color: var(--muted); font-size: 13px; min-width: 0; text-align: end; }
+.catalog-counts > #result-count { white-space: nowrap; }
+
+/* Compact Filter / Sort entry points. Hidden while the full desktop table
+   shows every column with its own header filters; shown on touch screens and
+   whenever the catalog is narrow enough for columns to fold away. */
+.catalog-actions { display: none; align-items: center; gap: 8px; }
+.toolbar-button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  height: 36px; padding: 0 13px; border-radius: var(--r-ctl);
+  border: 1px solid var(--line); background: rgba(255, 255, 255, .02);
+  color: var(--text); font-size: 13px; white-space: nowrap;
+}
+.toolbar-button:hover { background: rgba(255, 255, 255, .05); }
+.toolbar-button svg.lucide { width: 15px; height: 15px; color: var(--mint-text); }
+.toolbar-badge {
+  min-width: 19px; height: 19px; padding: 0 5px; border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--mint); color: var(--on-mint); font-size: 11px; font-weight: 650;
+}
+@container catalog (max-width: 1299px) {
+  .catalog-actions { display: flex; }
+}
+@media (hover: none) {
+  .catalog-actions { display: flex; }
+}
+
+/* ------------------------------------------------------ filter/sort sheet */
+
+.sheet {
+  padding: 0; border: 1px solid var(--line-strong); border-radius: var(--r-panel);
+  background: var(--panel); color: var(--text); box-shadow: var(--shadow);
+  width: min(460px, calc(100% - 32px)); max-width: none;
+  max-height: min(78dvh, 720px);
+  overflow: hidden;
+}
+.sheet[open] { display: flex; flex-direction: column; }
+.sheet::backdrop { background: rgba(3, 8, 11, .62); }
+:root[data-theme="light"] .sheet::backdrop { background: rgba(14, 27, 34, .35); }
+.sheet-inner { display: flex; flex-direction: column; min-height: 0; max-height: inherit; }
+.sheet-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 10px 10px 18px; padding-inline: 18px 10px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.sheet-head h2 { font-size: 16px; font-weight: 550; }
+.sheet-close { border: 0; width: var(--touch); height: var(--touch); }
+.sheet-body {
+  flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+  padding: 14px 18px 18px; margin: 0; display: grid; gap: 14px; align-content: start;
+}
+.sheet-group { border: 0; margin: 0; padding: 0; display: grid; gap: 10px; min-width: 0; }
+.sheet-group > legend {
+  padding: 0; margin-bottom: 8px; font-size: 11.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .04em; color: var(--muted);
+}
+.sheet-group label { display: grid; gap: 6px; font-size: 13px; color: var(--text-soft); min-width: 0; }
+.sheet-group label.evaluated-only { display: flex; align-items: center; gap: 10px; min-height: var(--touch); }
+.sheet-group select, .sheet-group input:not([type=checkbox]) { width: 100%; min-height: var(--touch); }
+.sheet-group input[type=checkbox] { width: 20px; height: 20px; min-height: 0; }
+.sheet-group button[type=submit] { display: none; }
+.sheet-foot {
+  display: flex; justify-content: flex-end; gap: 10px;
+  padding: 12px 18px calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line-soft); background: var(--panel-2);
+}
+.sheet .sheet-foot > * { height: var(--touch); min-height: var(--touch); padding: 0 18px; }
+.sort-options { list-style: none; gap: 2px; padding: 8px 10px 14px; }
+.sort-options a {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  min-height: var(--touch); padding: 0 12px; border-radius: var(--r-ctl);
+  color: var(--text-soft); font-size: 14px;
+}
+.sort-options a:hover { text-decoration: none; background: var(--mint-dim); color: var(--text); }
+.sort-options a svg.lucide { visibility: hidden; color: var(--mint-text); flex: 0 0 auto; }
+.sort-options a[aria-current] { color: var(--text); font-weight: 550; background: var(--mint-dim); }
+.sort-options a[aria-current] svg.lucide { visibility: visible; }
+html:has(dialog.sheet[open]) { overflow: hidden; }
 
 .filter-chips {
   display: flex; flex-wrap: wrap; gap: 6px; list-style: none;
@@ -314,7 +417,10 @@ textarea { width: 100%; resize: vertical; }
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .015);
   overflow: hidden;
 }
-.table-scroll { flex: 1; min-height: 0; overflow: auto; max-width: 100%; }
+/* position: relative keeps visually hidden, absolutely positioned helpers in
+   the rows (price conditions) inside the scroller; otherwise they extend the
+   document and keyboard focus could scroll the whole app shell away. */
+.table-scroll { flex: 1; min-height: 0; overflow: auto; max-width: 100%; position: relative; }
 .model-table thead th:first-child, .model-table tbody td:first-child, .model-table tbody th:first-child { padding-inline-start: 14px; }
 .model-table thead th:last-child, .model-table tbody td:last-child { padding-inline-end: 12px; }
 
@@ -334,7 +440,7 @@ thead th {
   white-space: nowrap;
 }
 thead th.checks-col, thead th.rating-col { white-space: normal; line-height: 1.2; }
-tbody th { font-weight: 400; }
+tbody th { font-weight: 400; text-align: start; }
 /* The reference rhythm is a uniform 55px row; long values clamp instead of
    pushing the row taller, otherwise the page no longer fits 12 rows. */
 .model-table tbody tr > * { height: 55px; max-height: 55px; overflow: hidden; }
@@ -534,9 +640,9 @@ a.model-name:hover .model-title { color: var(--mint-text); }
 /* --------------------------------------------------------------- footer */
 
 .site-footer {
-  display: flex; gap: 18px; flex-wrap: wrap; align-items: center;
-  height: var(--footer-h); flex: 0 0 auto;
-  padding: 0 var(--pad-r) 0 var(--pad-x);
+  display: flex; gap: 6px 18px; flex-wrap: wrap; align-items: center;
+  min-height: var(--footer-h); flex: 0 0 auto;
+  padding: 4px var(--pad-r) 4px var(--pad-x);
   border-top: 1px solid rgba(139, 169, 181, .07);
   font-size: 12px; color: var(--muted);
 }
@@ -704,6 +810,23 @@ a.model-name:hover .model-title { color: var(--mint-text); }
 .panel-scroll .table-scroll {
   border: 1px solid var(--line); border-radius: var(--r-card); overflow: auto; flex: none;
 }
+/* The panel body is its own size container: in a narrow panel (phone sheet,
+   small drawer) each price row becomes a small card instead of a table that
+   needs sideways scrolling. */
+.panel-scroll { container: panel / inline-size; }
+@container panel (max-width: 479px) {
+  .panel-scroll .table-scroll:has(> .detail-prices) { overflow: visible; border: 0; border-radius: 0; }
+  .detail-prices { min-width: 0; display: block; }
+  .detail-prices thead { display: none; }
+  .detail-prices tbody { display: grid; gap: 8px; }
+  .detail-prices tr {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px;
+    padding: 11px 12px; border: 1px solid var(--line); border-radius: var(--r-card);
+  }
+  .detail-prices td { display: block; width: auto !important; padding: 0; border: 0; min-width: 0; }
+  .detail-prices td:nth-child(2) { text-align: end; }
+  .detail-prices td:nth-child(3) { grid-column: 1 / -1; font-size: 12px; color: var(--muted); }
+}
 .evaluation { padding: 13px 0; border-bottom: 1px solid var(--line-soft); font-size: 13px; }
 .evaluation-heading { display: flex; gap: 18px; align-items: baseline; }
 .evaluation p { margin: 5px 0; }
@@ -716,59 +839,159 @@ details summary { font-size: 12px; padding: 7px 0; color: var(--link); cursor: p
 
 /* ----------------------------------------------------------- responsive */
 
-@media (max-width: 1400px) {
-  :root { --panel-w: clamp(420px, 34vw, 512px); }
-}
-
 @media (max-width: 1180px) {
   .orbit { display: none; }
   .header-end { gap: 12px; }
 }
 
-@media (max-width: 1100px) {
-  .catalog-page.is-panel-open .workspace,
-  .catalog-page:has(.model-panel.is-open) .workspace { grid-template-columns: minmax(0, 1fr); }
+/* Detail panel below the desktop split. Tablets and small laptops get a
+   drawer over the catalog (the header stays usable above it, so the language
+   menu is never covered); phones and short landscape screens get a
+   full-screen sheet. Clicking the dimmed catalog closes the drawer. */
+@media (max-width: 1279px) {
   body.catalog-page.is-panel-open,
   body.catalog-page:has(.model-panel.is-open) { overflow: hidden; }
   .model-panel.is-open, .model-panel:not([hidden]) {
-    position: fixed; inset: var(--aip-header-h, 0) 0 0 0; z-index: var(--z-panel); width: 100%; max-width: none;
-    margin: 0; border: 0; border-radius: 0; box-shadow: var(--shadow);
-    background: var(--bg);
+    position: fixed; z-index: var(--z-panel);
+    inset-block: var(--aip-header-h, 0) 0; inset-inline-end: 0;
+    width: min(680px, calc(100% - 40px)); max-width: none;
+    margin: 0; border-block: 0; border-inline-end: 0;
+    border-radius: 0; border-start-start-radius: var(--r-panel);
+    box-shadow: var(--shadow);
+    background: var(--panel);
+  }
+  .catalog-page.is-panel-open .workspace::after,
+  .catalog-page:has(.model-panel.is-open) .workspace::after {
+    content: ""; position: fixed; inset: var(--aip-header-h, 0) 0 0 0;
+    z-index: var(--z-panel-backdrop);
+    background: rgba(3, 8, 11, .55);
+  }
+  :root[data-theme="light"] .catalog-page.is-panel-open .workspace::after,
+  :root[data-theme="light"] .catalog-page:has(.model-panel.is-open) .workspace::after {
+    background: rgba(14, 27, 34, .28);
+  }
+  .panel-close { width: 40px; height: 40px; min-height: 40px; }
+  .panel-actions .ghost-button, .panel-actions .quiet-button { height: 40px; min-height: 40px; }
+}
+
+@media (max-width: 720px), (max-width: 1279px) and (max-height: 539px) {
+  /* Full-screen detail sheet: the whole card scrolls as one page, with room
+     for notches and the home indicator. */
+  .model-panel.is-open, .model-panel:not([hidden]) {
+    z-index: var(--z-sheet);
+    inset: 0; width: 100%; height: 100%; height: 100dvh;
+    border: 0; border-radius: 0;
+    overflow-y: auto; overscroll-behavior: contain;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);
+  }
+  .catalog-page.is-panel-open .workspace::after,
+  .catalog-page:has(.model-panel.is-open) .workspace::after { content: none; }
+  .model-panel .panel-inner { height: auto; min-height: 100%; }
+  .model-panel .panel-top {
+    position: sticky; top: 0; z-index: 3; background: var(--panel);
+    padding-block: 6px; border-bottom: 1px solid var(--line-soft);
+  }
+  .model-panel .panel-scroll {
+    overflow: visible; flex: none;
+    padding-bottom: calc(28px + env(safe-area-inset-bottom));
+  }
+  .model-panel .panel-tabs { position: static; }
+  .panel-close { width: var(--touch); height: var(--touch); min-height: var(--touch); }
+  .panel-actions .ghost-button, .panel-actions .quiet-button { height: 40px; min-height: 40px; }
+}
+
+/* Phones in portrait: the detail view fills the screen below the header, so
+   language, search and theme stay available above it (the list position is
+   kept and restored on close by site.js). Short landscape screens keep the
+   full-screen sheet above. */
+@media (max-width: 720px) and (min-height: 540px) {
+  .model-panel.is-open, .model-panel:not([hidden]) {
+    z-index: var(--z-panel);
+    inset: var(--aip-header-h, 0) 0 0 0; height: auto;
+    padding-top: 0;
+    border-top: 1px solid var(--line-strong);
+    border-radius: var(--r-panel) var(--r-panel) 0 0;
+    box-shadow: 0 -12px 32px rgba(0, 0, 0, .35);
   }
 }
 
 @media (max-width: 900px) {
   .catalog-card { min-height: 60vh; }
 }
+@media (min-width: 721px) and (min-height: 540px), (min-width: 1280px) {
+  .catalog-card { min-height: 0; }
+}
 
 @media (max-width: 720px) {
-  :root { --pad-x: 10px; --pad-r: 10px; --head-inset: 0px; --footer-h: auto; }
+  :root { --pad-x: 12px; --pad-r: 12px; --head-inset: 0px; --footer-h: auto; --col-gap: 0px; }
+  /* Phone header as one grid: brand | language | theme, then search, then
+     optional extras (remembered-language offer, Local/Production switch) on
+     their own line so nothing overlaps the brand at 320px. */
   .site-header {
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-rows: auto auto;
-    gap: 8px; padding: 10px 0 0;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-auto-rows: auto;
+    gap: 10px 8px; padding: calc(10px + env(safe-area-inset-top)) 0 0;
   }
-  .brand { grid-column: 1; grid-row: 1; font-size: 19px; gap: 9px; height: 38px; }
+  .header-end, .header-controls { display: contents; }
+  .brand { grid-column: 1; grid-row: 1; font-size: 19px; gap: 9px; height: var(--touch); }
   .brand img { width: 32px; height: 32px; flex-basis: 32px; }
-  .header-end { grid-column: 2; grid-row: 1; align-self: center; gap: 8px; }
+  .languages { grid-column: 2; grid-row: 1; align-self: center; }
+  #theme { grid-column: 3; grid-row: 1; align-self: center; }
   .search { max-width: none; grid-column: 1 / -1; grid-row: 2; }
-  .search input { height: 40px; }
-  .env-nav, .icon-button { height: 38px; }
-  .lang-menu > summary { height: 38px; padding: 0 10px; }
+  .env-nav { grid-column: 1; grid-row: 3; justify-self: start; }
+  .lang-offer { grid-column: 2 / -1; grid-row: 3; justify-self: end; align-self: center; padding: 6px 0; }
+  .search input { height: var(--touch); font-size: 16px; }
+  .env-nav { height: 38px; }
+  .icon-button { width: var(--touch); height: var(--touch); }
+  .lang-menu > summary { height: var(--touch); padding: 0 11px; }
   .lang-toggle .lang-current { max-width: 92px; }
-  .icon-button { width: 38px; }
-  .catalog-toolbar { margin: 14px 0 12px; flex-wrap: wrap; gap: 10px; }
-  .type-tab { min-width: 0; padding: 0 16px; }
+  .lang-popover { max-height: min(70dvh, 460px); }
+  .lang-popover a { padding-block: 11px; }
+  .catalog-toolbar {
+    display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px;
+    margin: 14px 0 12px;
+  }
+  .type-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .type-tab { min-width: 0; height: var(--touch); padding: 0 12px; }
+  .toolbar-end { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
+  .catalog-actions { display: flex; }
+  .toolbar-button { height: var(--touch); padding: 0 14px; }
+  .catalog-counts { white-space: normal; font-size: 12.5px; text-align: end; min-width: 0; }
+  .count-note { display: block; font-size: 11.5px; white-space: normal; overflow-wrap: anywhere; }
   .filter-chips, .comparison-basis { margin-left: 0; margin-right: 0; }
-  .site-footer { padding: 10px; height: auto; }
-  .footer-end { margin-left: 0; flex-wrap: wrap; gap: 12px; }
+  .chip { height: 34px; }
+  .site-footer { padding: 12px var(--pad-r) calc(12px + env(safe-area-inset-bottom)) var(--pad-x); height: auto; }
+  .footer-end { margin-inline-start: 0; flex-wrap: wrap; gap: 12px; }
   .panel-top, .panel-heading, .description { padding-left: 14px; padding-right: 14px; }
   .panel-scroll { padding-left: 14px; padding-right: 14px; }
+  .panel-heading h1 { font-size: 21px; }
   .stat-grid { grid-template-columns: 1fr; gap: 10px; }
   .stat-card { min-height: 0; }
+  .panel-inner > .breadcrumbs { margin-inline: 14px; }
   .essentials { grid-template-columns: 1fr; gap: 2px; }
   .essentials dd { margin-bottom: 8px; }
-  body { overflow-x: hidden; }
+  .panel-tabs { gap: 20px; overflow-x: auto; scrollbar-width: none; }
+  .panel-tab { white-space: nowrap; padding-block: 14px 12px; }
+  /* Bottom sheet for Filter / Sort on phones. */
+  .sheet {
+    width: 100%; max-width: 100%; max-height: 88dvh;
+    margin: auto 0 0; border-radius: 16px 16px 0 0; border-bottom: 0;
+  }
+}
+
+/* Touch screens: no hover, so header filters and search hints must not rely
+   on it, and tap targets get a comfortable size. */
+@media (hover: none) {
+  .search-kbd { display: none; }
+  .search input { padding-inline-end: 14px; }
+  .header-control, .col-filter summary { opacity: 1; pointer-events: auto; width: 32px; height: 32px; }
+  .column-actions > a[data-sort] { min-height: 40px; }
+  .panel-inner > .breadcrumbs a { display: inline-block; padding-block: 12px; }
+  .panel-inner > .breadcrumbs ol { margin-bottom: 0; }
+  .column-actions > .header-control,
+  .column-actions > .col-filter { inset-inline-end: -8px; }
+  .type-tab { height: 40px; }
+  .toolbar-button { height: 40px; }
 }
 
 /* Right-to-left refinements for Arabic and Persian. Logical properties above
@@ -799,9 +1022,9 @@ details summary { font-size: 12px; padding: 7px 0; color: var(--link); cursor: p
 .policy th, .policy td { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: start; vertical-align: top; }
 .policy code { overflow-wrap: anywhere; }
 .policy .table-scroll { overflow-x: auto; }
-.breadcrumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; padding: 0; font-size: 12px; color: var(--muted); }
+.breadcrumbs ol { list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: 0 6px; margin: 0 0 8px; padding: 0; font-size: 12px; color: var(--muted); }
 .breadcrumbs li + li::before { content: "›"; margin-inline-end: 6px; opacity: .6; }
 [dir="rtl"] .breadcrumbs li + li::before { content: "‹"; }
 .breadcrumbs a { color: var(--muted); }
 .breadcrumbs a:hover { color: var(--text); }
-.panel-inner > .breadcrumbs { margin: 4px 0 6px; }
+.panel-inner > .breadcrumbs { margin: 4px 20px 6px; }

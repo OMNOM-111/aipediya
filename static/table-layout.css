@@ -59,19 +59,122 @@ html body .tool-table .local-col { width: 78px; }
 .filters-reset { align-self: center; font-size: 12px; white-space: nowrap; }
 .evaluated-only { font-size: 12px; display: flex; align-items: center; gap: 6px; color: var(--text); }
 
-/* Do not let the flexible name column collapse to the logo at laptop widths.
-   The table already has its own horizontal scroller, so preserving readable
-   names is more useful than squeezing every column into the viewport. */
-@media (max-width: 1180px) {
-  html body .model-table { min-width: 1110px; }
-  html body .tool-table { min-width: 1120px; }
+/* ---------------------------------------------------------------------------
+   Adaptive catalog. Everything below follows the width of the catalog area
+   (the `catalog` container on <main>), so the same rules apply whether space
+   is short because of the screen or because the detail panel is open.
+
+   1. Wide: every column.
+   2. Narrower: secondary columns fold away one by one (they stay in the
+      detail panel), the name column takes the remaining width, and the page
+      never needs a sideways scroll.
+   3. Phone-sized: each row becomes a compact card with the essentials.
+   ------------------------------------------------------------------------- */
+
+@container catalog (max-width: 1299px) {
+  html body .model-table .rating-col { display: none; }
   html body .model-table col.model-col,
-  html body .model-table .model-col { width: 188px; min-width: 188px; }
+  html body .model-table .model-col,
+  html body .tool-table col.model-col,
+  html body .tool-table .model-col { width: auto; }
+}
+@container catalog (max-width: 1199px) {
+  html body .model-table:not(.tool-table) .status-col { display: none; }
+  html body .tool-table .local-col { display: none; }
+}
+@container catalog (max-width: 1099px) {
+  html body .model-table .context-col { display: none; }
+  html body .tool-table .ecosystem-col { display: none; }
+  /* Fewer, wider columns: long single words (German, Russian) may break
+     instead of being clipped at the cell edge. */
+  .model-table tbody td { overflow-wrap: break-word; hyphens: auto; }
+  html body .model-table col.release-col,
+  html body .model-table .release-col { width: 116px; }
+}
+@container catalog (max-width: 979px) {
+  html body .model-table .checks-col { display: none; }
+  html body .tool-table .platform-col { display: none; }
+}
+@container catalog (max-width: 879px) {
+  html body .model-table .access-col { display: none; }
+  html body .tool-table .category-col { display: none; }
+  html body .model-table col.developer-col,
+  html body .model-table .developer-col { width: 124px; }
+  html body .model-table col.purpose-col,
+  html body .model-table .purpose-col { width: 132px; }
 }
 
-@media (max-width: 720px) {
-  html body .model-table { min-width: 1110px; }
-  html body .tool-table { min-width: 1120px; }
-  html body .model-table col.model-col,
-  html body .model-table .model-col { width: 188px; min-width: 188px; }
+/* Row cards: phones, and any catalog area narrower than a compact table. */
+@container catalog (max-width: 719px) {
+  .catalog-card { border-radius: var(--r-card); background: transparent; border: 0; box-shadow: none; overflow: visible; }
+  .catalog-card > .table-scroll { overflow: visible; }
+  html body .model-table, .model-table tbody { display: block; width: 100%; min-width: 0; }
+  .model-table colgroup, .model-table thead { display: none; }
+  .model-table tbody { display: grid; gap: 8px; }
+  .model-table tbody tr[data-slug] {
+    display: grid; position: relative;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "name    number"
+      "dev     release"
+      "purpose purpose"
+      "price   access"
+      "checks  checks";
+    align-items: center; column-gap: 12px; row-gap: 5px;
+    padding: 12px 14px 13px;
+    border: 1px solid var(--line); border-radius: var(--r-card);
+    background: var(--surface);
+  }
+  .model-table tbody tr[data-slug] > * {
+    display: block; height: auto; max-height: none; min-width: 0;
+    padding: 0; border: 0; background: transparent; position: static;
+    overflow: visible; width: auto;
+  }
+  .model-table tbody tr[data-slug]:hover > * { background: transparent; }
+  .model-table tbody tr[data-slug] > .model-col { grid-area: name; }
+  .model-table tbody tr[data-slug] > .number-col {
+    grid-area: number; justify-self: end; align-self: start;
+    font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums;
+  }
+  .model-table tbody tr[data-slug] > .number-col:not(:empty)::before { content: "№ "; opacity: .7; }
+  .model-table tbody tr[data-slug] > .developer-col { grid-area: dev; font-size: 12.5px; }
+  .model-table tbody tr[data-slug] > .release-col { grid-area: release; justify-self: end; font-size: 12px; }
+  .model-table tbody tr[data-slug] > .release-col .release-date { font-size: 12px; color: var(--muted); }
+  .model-table tbody tr[data-slug] > .purpose-col { grid-area: purpose; }
+  .model-table tbody tr[data-slug] > .purpose-col .cell-lines { -webkit-line-clamp: 2; }
+  .model-table tbody tr[data-slug] > .purpose-col .task { font-size: 12.5px; }
+  .model-table tbody tr[data-slug] > .price-col { grid-area: price; align-self: start; }
+  .model-table tbody tr[data-slug] > .price-col .cell-lines { -webkit-line-clamp: 2; }
+  .model-table tbody tr[data-slug] > .access-col,
+  .model-table tbody tr[data-slug] > .local-col {
+    display: block; grid-area: access; justify-self: end; align-self: start;
+    max-width: 46vw; text-align: end; font-size: 12px;
+  }
+  .model-table tbody tr[data-slug] > .checks-col { display: block; grid-area: checks; }
+  .model-table tbody tr[data-slug] > .checks-col:empty,
+  .model-table tbody tr[data-slug] > .price-col:not(:has(.price-line, .missing)) { display: none; }
+  .model-table tbody tr[data-slug] > :is(.rating-col, .context-col, .status-col, .ecosystem-col, .platform-col, .category-col) { display: none; }
+  .model-table tbody tr[data-slug] .model-title { font-size: 15px; }
+  .model-table tbody tr[data-slug] a.model-name { gap: 10px; min-height: 36px; }
+  .model-table tbody tr[data-slug] .model-copy.cell-lines { -webkit-line-clamp: 3; }
+  .model-table tbody tr[data-slug] .secondary { overflow-wrap: anywhere; }
+  /* Tools: the category chip joins the developer line; the local-run chip
+     takes the access slot. */
+  .tool-table tbody tr[data-slug] {
+    grid-template-areas:
+      "name    number"
+      "dev     release"
+      "purpose purpose"
+      "price   access";
+  }
+  .tool-table tbody tr[data-slug] > .category-col { display: none; }
+  .model-table tbody tr.is-selected { border-color: var(--mint-line); box-shadow: 0 0 0 1px var(--mint-line); }
+  .model-table tbody tr.is-selected > * { border: 0; border-radius: 0; background: transparent; }
+  .model-table tbody tr > td.empty { display: block; height: auto; max-height: none; padding: 32px 12px; }
+  .model-table tbody tr:not([data-slug]) { display: block; }
+  .pagination {
+    height: auto; min-height: 44px; margin-top: 10px;
+    border: 1px solid var(--line-soft); border-radius: var(--r-card);
+  }
+  .pagination .icon-button { width: 40px; height: 40px; min-height: 40px; }
 }

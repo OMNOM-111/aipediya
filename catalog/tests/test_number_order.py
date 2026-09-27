@@ -138,6 +138,6 @@ class NumberOrderTests(TestCase):
     def test_stale_chunk_reply_is_ignored_by_the_client(self):
         from pathlib import Path
         script = (Path(__file__).resolve().parents[2] / "static" / "site.js").read_text(encoding="utf-8")
-        loader = script[script.index("const loadNext = async"):script.index("const observerOptions")]
+        loader = script[script.index("const loadNext = async"):script.index("const observers = []")]
         self.assertLess(loader.index("await fetch(nextUrl"), loader.index("dataset.nextUrl !== nextUrl) return"))
         self.assertLess(loader.index("dataset.nextUrl !== nextUrl) return"), loader.index("modelRows.append"))
