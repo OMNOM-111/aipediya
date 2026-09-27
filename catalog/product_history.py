@@ -213,8 +213,10 @@ def _history_context(language):
                     else f"{labels['change']} {index + 1:02d}",
                     "summary": description,
                     "status": "PLANNED" if milestone["progress"] == "planned" else
+                    (("Ready for owner review" if english else "Ожидает подтверждения владельца")
+                     if milestone["progress"] == "review" else
                     (labels["change_local_done"] if milestone["progress"] == "done" and milestone["open"] else
-                     (labels["change_local"] if milestone["open"] else labels["change_published"])),
+                     (labels["change_local"] if milestone["open"] else labels["change_published"]))),
                     "criteria": [],
                 }
                 for index, description in enumerate(milestone["capabilities"])

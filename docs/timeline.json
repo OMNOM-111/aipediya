@@ -752,6 +752,22 @@
       "planned_after": "2026-09-30",
       "monthly_budget_usd_max": 15,
       "history": "docs/EXECUTION_STATE.md"
+    },
+    {
+      "release_id": "ADAPTIVE-UI-2026-09-26",
+      "title": "Adaptive Interface / Mobile & Tablet UX",
+      "environment": "local",
+      "stage": "local",
+      "status": "COMPLETED_LOCAL",
+      "started": "2026-09-26",
+      "owner_visual_review": "PASS 2026-09-27 (owner approved Local http://127.0.0.1:18811/)",
+      "revision": null,
+      "history": "docs/EXECUTION_STATE.md",
+      "branch": "feature/adaptive-ui",
+      "worktree": "C:/Users/dimon/.claude/worktrees/aipedia-adaptive-ui",
+      "evidence": "artifacts/adaptive-ui/ (before/, after/, after-pages/, report.json, interactions.json)",
+      "owner_decision": "D-2026-09-27-owner-acceptance-adaptive-ui",
+      "merged_to_main": true
     }
   ],
   "product_history": {
@@ -1087,6 +1103,45 @@
         "source": "execution-state",
         "open": true,
         "progress": "planned"
+      },
+      {
+        "release_id": "ADAPTIVE-UI-2026-09-26",
+        "date": "2026-09-27",
+        "title_ru": "Адаптивный интерфейс / Mobile & Tablet UX",
+        "title_en": "Adaptive Interface / Mobile & Tablet UX",
+        "icon": "monitor-smartphone",
+        "tags_ru": [
+          "Телефон",
+          "Планшет и desktop",
+          "Ultrawide",
+          "Исправления",
+          "Утверждено владельцем"
+        ],
+        "tags_en": [
+          "Phone",
+          "Tablet and desktop",
+          "Ultrawide",
+          "Fixes",
+          "Owner approved"
+        ],
+        "capabilities_ru": [
+          "Телефон: строки Models и Tools стали карточками, панель записи — экран под шапкой; Фильтр и Сортировка — в нижних sheet-окнах; горизонтальной прокрутки страницы нет с 320 px.",
+          "Планшет и небольшой ноутбук: второстепенные колонки сворачиваются по ширине каталога, панель — drawer под шапкой с затемнением каталога; desktop от 1280 px — полная таблица и боковая панель.",
+          "Ultrawide: оболочка ограничена ≈60% ширины (не менее 2400 px), чтобы строки оставались читаемыми; панель растёт до 720 px.",
+          "Исправлено попутно: бесконечная подгрузка на телефоне (была 200 из 321), меню языка после открытия другой записи, вкладка при «назад», вытягивание документа скрытыми подписями цены.",
+          "Владелец 27.09.2026 визуально проверил Local и утвердил этап (PASS); код объединён с main. Данные каталога, master XLSX и Production не менялись; выпуск Production — отдельной командой по docs/RELEASE.md."
+        ],
+        "capabilities_en": [
+          "Phone: Models and Tools rows became cards, the record panel is a screen below the header; Filter and Sort open as bottom sheets; no page-level sideways scroll from 320 px.",
+          "Tablet and small laptop: secondary columns fold by catalog width, the panel is a drawer below the header over a dimmed catalog; desktop from 1280 px keeps the full table and side panel.",
+          "Ultrawide: the shell is capped at ≈60% width (at least 2400 px) so rows stay readable; the panel grows to 720 px.",
+          "Also fixed: phone infinite loading (stopped at 200 of 321), language menu after opening another record, tab on Back, document stretched by hidden price labels.",
+          "On Sep 27, 2026 the owner visually checked Local and approved the stage (PASS); the code is merged into main. Catalog data, the master XLSX and Production were not changed; a Production release needs a separate command per docs/RELEASE.md."
+        ],
+        "revision": null,
+        "source": "execution-state",
+        "open": true,
+        "progress": "done"
       }
     ],
     "additional_tasks": [
@@ -1186,6 +1241,22 @@
         "owner_en": "Owner requested an open PLANNED card; this does not confirm a campaign launch.",
         "next_ru": "После контрольного замера 30.09.2026 собрать многоязычный master через Google Keyword Planner (volume, competition, CPC по выбранным странам), кластеризовать и предложить небольшой Exact/Phrase стартовый набор; после реального запуска записать настройки и paid-результаты отдельно от органических метрик GSC.",
         "next_en": "After the September 30, 2026 control measurement, collect a multilingual Keyword Planner master (volume, competition and CPC by selected country), cluster it and propose a small Exact/Phrase starter set; after a real launch, record settings and paid results separately from organic GSC metrics.",
+        "source": "execution-state"
+      },
+      {
+        "id": "ADAPTIVE-UI-2026-09-26",
+        "title_ru": "Адаптивный интерфейс / Mobile & Tablet UX",
+        "title_en": "Adaptive Interface / Mobile & Tablet UX",
+        "goal_ru": "Сделать каталог Models и Tools удобным на каждом устройстве от 320 px до ultrawide без page-level горизонтальной прокрутки: mobile rows/cards, tablet drawer/sheet, desktop-таблица с разумной шириной.",
+        "goal_en": "Make the Models and Tools catalog usable on every device from 320 px to ultrawide without page-level horizontal scrolling: mobile rows/cards, tablet drawer/sheet, desktop table with sensible width.",
+        "done_ru": "ВЫПОЛНЕНО: адаптивная вёрстка каталога, Filter/Sort sheets, режимы панели (split / drawer / экран под шапкой), исправления подгрузки и языковых ссылок; объединено с main.",
+        "done_en": "DONE: adaptive catalog layout, Filter/Sort sheets, panel modes (split / drawer / screen below header), loading and language-link fixes; merged into main.",
+        "qa_ru": "После merge на main: 302 теста — 301 OK + 1 skip (fcntl); manage.py check чист; JS OK; матрица 89 сценариев 320×568…5120×1440 — горизонтальный overflow 0, вертикальный overflow app-shell 0, ошибки консоли 0; smoke 16/16 (Models 321/321, Tools 143/143, панель, Filter, Sort, поиск, back/forward); 89/89 снимков main совпадают с утверждённым Local 18811.",
+        "qa_en": "After merge on main: 302 tests — 301 OK + 1 skip (fcntl); manage.py check clean; JS OK; matrix 89 scenarios 320×568…5120×1440 — horizontal overflow 0, app-shell vertical overflow 0, console errors 0; smoke 16/16 (Models 321/321, Tools 143/143, panel, Filter, Sort, search, back/forward); 89/89 main screenshots match the approved Local 18811.",
+        "owner_ru": "Владелец 27.09.2026: визуальная приёмка Local PASS, этап утверждён (D-2026-09-27-owner-acceptance-adaptive-ui). Это не разрешение на выпуск Production.",
+        "owner_en": "Owner on Sep 27, 2026: Local visual acceptance PASS, stage approved (D-2026-09-27-owner-acceptance-adaptive-ui). This is not a Production release authorization.",
+        "next_ru": "Выпуск Production — только по отдельной команде владельца на конкретный commit по docs/RELEASE.md.",
+        "next_en": "Production release only after a separate owner command for a specific commit per docs/RELEASE.md.",
         "source": "execution-state"
       }
     ],

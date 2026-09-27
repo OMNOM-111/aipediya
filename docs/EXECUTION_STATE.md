@@ -5,6 +5,60 @@
 Пакет для нового чата собирается командой `\.\.venv\Scripts\python.exe tools/pack_ai_context.py` и **не** редактируется как независимый источник.
 
 
+## Adaptive Interface / Mobile & Tablet UX — утверждено владельцем, объединено с main, 2026-09-27
+
+- Итог: владелец 27.09.2026 проверил Local `http://127.0.0.1:18811/` — «Adaptive Interface /
+  Mobile & Tablet UX утверждаю. Визуальная приёмка владельца PASS»
+  (`D-2026-09-27-owner-acceptance-adaptive-ui`). Карточка Timeline `ADAPTIVE-UI-2026-09-26` —
+  `progress: done` («Готово в Local», Production «—»); решения `D-2026-09-26-adaptive-layout` и
+  `D-2026-09-26-timeline-owner-review-state` — подтверждено владельцем. Это не разрешение на
+  выпуск Production.
+- Git: код этапа — commit `e08112c` в ветке `feature/adaptive-ui`, `main` переведён на него
+  fast-forward (ветки не расходились: база `4f0c26f` = `origin/main`, файлы ветки и
+  незакоммиченные документы `main` не пересекались); документы/история этапа — следующий
+  документный commit в `main`. Не включены: `artifacts/` (git-ignored: скриншоты, отчёты QA,
+  харнесс), Local SQLite, секреты, `.env`, `timeline.html`, `.claude/`, давние untracked-файлы
+  (`%SystemDrive%/`, xlsx, ярлык, `AIpediya_GSD_1_0_Claude_Task.md`, `data/release/v013/`,
+  `data/research/`) — не трогались.
+- Сверка итогового `main` с утверждённым Local: 6 файлов кода и тестов идентичны утверждённой
+  ветке (sha256 без учёта CRLF, `artifacts/adaptive-ui/approved-branch-files.sha256`); код `main`
+  запущен отдельным Local 18812 на копии Local SQLite — 89/89 снимков матрицы совпадают с
+  утверждённым 18811 (единственное расхождение в первом прогоне 768×1024 — растеризация; повтор на
+  обоих серверах побайтно одинаков).
+- Проверено на итоговом `main`: `manage.py test catalog` — 302 теста, 301 OK + 1 skip (`fcntl`);
+  `manage.py check` чист; `node --check` для `site.js` и `product-history.js`; `git diff --check`;
+  матрица 89 сценариев 320×568…5120×1440 — page overflow 0, вертикальный overflow app-shell 0,
+  ошибок консоли 0 (`artifacts/adaptive-ui/final-main/`); smoke 16/16
+  (`final-main/interactions.json`): Models 321/321 (телефон, планшет RU, desktop, ultrawide DE),
+  Tools 143/143, панель (телефон / drawer / desktop: строка, X, Escape, клик вне, меню языка над
+  панелью, back/forward, прямые URL EN/AR/JA), Filter-sheet, Sort-sheet, поиск.
+- Изменения этапа (итог): `templates/catalog.html`, `static/site.css`, `static/table-layout.css`,
+  `static/site.js`, `catalog/tests/test_responsive_layout.py` (12 тестов),
+  `catalog/tests/test_number_order.py`; история: `catalog/product_history.py`,
+  `templates/product_history*.html`, `static/product-history*.css` (состояние `review`, иконка),
+  `catalog/tests/test_product_history.py`, `docs/timeline.json`, `docs/DECISIONS.md`,
+  `docs/PRODUCT_HISTORY.md`, этот статус. Данные каталога, master XLSX, номера, цены, даты,
+  оценки и publication state не менялись.
+- Исправлены попутно (существовали до этапа): подгрузка на телефоне останавливалась на 200 из 321;
+  меню языка после открытия другой записи вело на первую; «назад» к `?tab=` открывал Overview;
+  скрытые подписи цены растягивали документ app-shell; центрирование названия в строке; крошки
+  панели у края; одноимённые фильтры `status` могли отправить устаревшее значение.
+- Известные ограничения (не блокируют): на touch-планшете иконки фильтров заголовка 32 px и ссылка
+  «№» 24×40 (основной путь — кнопки Фильтр/Сортировка 40–44 px); Tools 143 ≤ первой порции 150 —
+  догрузка Tools проверена как полная выдача; проверка — эмуляция в Chrome, не физические
+  устройства, Safari/iOS не проверялись. Вне этапа, существовали раньше: CSP-ошибки inline-стиля на
+  Local `/history/` и в отладочной 404 Django (DEBUG); `form-action ''none'` в `timeline.html`.
+- Local / GitHub / Production: `main` содержит утверждённый код; рабочий Local 18810 запущен до
+  этапа и держит в памяти старые шаблоны — для просмотра итогового `main` перезапустить его
+  ярлыками «AIpedia — Stop Local» / «AIpedia — Local» (исполнитель 18810 не перезапускал);
+  изолированные 18811 (ветка) и 18812 (проверка `main`) — временные. GitHub — push `main` (см.
+  итоговый commit в сообщении выпуска документации). Production не затрагивался: `/healthz` по
+  `docs/RELEASE.md` — `a51c0a1`.
+- Не завершено: ничего по этапу. Следующим выполнить: выпуск Production только по отдельной команде
+  владельца на конкретный commit по `docs/RELEASE.md`. Worktree
+  `C:/Users/dimon/.claude/worktrees/aipedia-adaptive-ui` и ветку `feature/adaptive-ui` можно удалить
+  после этого (ветка полностью в `main`).
+
 ## catalog-master-v015 final — опубликовано и проверено, 2026-09-27 03:23 UTC
 
 - Итог этапа (Local): «116 Tools» — это № первой строки (116 инструментов с датой, 27 без

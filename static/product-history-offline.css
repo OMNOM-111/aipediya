@@ -55,6 +55,7 @@ button:focus-visible,a:focus-visible,.ph-timeline-scroll:focus-visible{outline:3
 .ph-legend-dot{display:grid;place-items:center;width:15px;height:15px;border:2px solid var(--accent);border-radius:50%;background:var(--accent);color:var(--bg);font-size:10px;font-style:normal;font-weight:800;line-height:1}
 .ph-legend-dot.is-progress{border-color:var(--wait);background:var(--wait)}
 .ph-legend-dot.is-planned{border:2px dashed var(--wait);background:transparent;color:var(--wait)}
+.ph-legend-dot.is-review{border-color:var(--wait);background:transparent;color:var(--wait)}
 .ph-timeline-scroll{overflow-x:auto;overflow-y:hidden;overscroll-behavior-inline:contain;border:1px solid var(--line);border-radius:17px;background:var(--card);scrollbar-color:var(--line) transparent;scrollbar-width:thin;box-shadow:var(--shadow)}
 .ph-track{--track-gap:clamp(8px,.55vw,14px);position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(202px,1fr);gap:var(--track-gap);width:max(100%,calc(var(--milestone-count,6)*210px + 64px));padding:15px clamp(16px,1.2vw,32px) 20px}
 .ph-milestone{position:relative;display:flex;min-width:0;flex-direction:column;scroll-snap-align:start}
@@ -64,6 +65,10 @@ button:focus-visible,a:focus-visible,.ph-timeline-scroll:focus-visible{outline:3
 .ph-dot::after{content:"✓"}
 .ph-in_progress .ph-dot{border-color:var(--wait);background:var(--wait)}
 .ph-in_progress .ph-dot::after{content:"…"}
+.ph-review .ph-dot{border-color:var(--wait);background:var(--card);color:var(--wait)}
+.ph-review .ph-dot::after{content:"!"}
+.ph-review .ph-release-card{border-color:var(--wait)}
+.ph-review .ph-milestone-icon{color:var(--wait)}
 .ph-planned .ph-dot{border:2px dashed var(--wait);background:var(--card);color:var(--wait)}
 .ph-planned .ph-dot::after{content:""}
 .ph-release-card{display:flex;min-height:180px;flex:1;flex-direction:column;margin-top:17px;padding:13px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);text-align:left;transition:border-color .15s ease,box-shadow .15s ease,transform .15s ease;cursor:pointer}
