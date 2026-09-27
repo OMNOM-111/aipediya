@@ -8,9 +8,18 @@
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный выпуск — **catalog-master-v015-final**, 2026-09-27 03:23 UTC: commit
-`a51c0a1aed2f63047b0203b208eccf8def458ae7`, tag `release-2026-09-27-catalog-master-v015-final`
-(`main` = опубликованная линия). По коду публичный сайт работает на commit `a51c0a1aed2f63047b0203b208eccf8def458ae7`.
+Текущий публичный выпуск — **adaptive-ui**, 2026-09-27 16:16 UTC: commit
+`aa48e11bad7326340463654e33ba5e89769042b9`, tag `release-2026-09-27-adaptive-ui`
+(`main` = опубликованная линия). По коду публичный сайт работает на commit `aa48e11bad7326340463654e33ba5e89769042b9`.
+Архив `aipedia-code-aa48e11bad73.zip`, SHA-256
+`51d7a45239b26c5400f3c0187960c2227ae7a2f04864d47fb6311c0eb524b453`; `/healthz` подтвердил
+commit и production; 321 Models / 143 Tools. Отчёт — `docs/history/2026-09-27-adaptive-ui-release.md`.
+
+### Предыдущий публичный выпуск — catalog-master-v015-final
+
+catalog-master-v015-final, 2026-09-27 03:23 UTC: commit
+`a51c0a1aed2f63047b0203b208eccf8def458ae7`, tag `release-2026-09-27-catalog-master-v015-final`.
+На дату этого выпуска код публичного сайта — commit `a51c0a1aed2f63047b0203b208eccf8def458ae7`.
 Архив `aipedia-code-a51c0a1aed2f.zip`, SHA-256
 `e2f5485db53988bd7d66fd9fa5542665d2e232d157aa12071b1ae2446b3a92e1`; `/healthz` подтвердил
 commit и production; 321 Models / 143 Tools. Отчёт — `docs/history/2026-09-27-catalog-master-v015-final.md`.
@@ -96,6 +105,19 @@ changelog.
   `docs/history/`.
 
 ## Changelog
+
+### release-2026-09-27-adaptive-ui — адаптивный интерфейс
+
+- Телефон: строки Models и Tools — карточки; панель записи — экран под шапкой (меню языка,
+  поиск и тема доступны); Фильтр и Сортировка — нижние sheet-окна; без горизонтальной
+  прокрутки страницы с 320 px.
+- Планшет и небольшой ноутбук: второстепенные колонки сворачиваются по ширине каталога,
+  панель — drawer под шапкой; desktop от 1280 px — таблица и панель; ultrawide ограничен
+  `max(2400px, 60vw)`.
+- Исправлено: подгрузка на телефоне доходит до полного списка (была 200 из 321), меню языка
+  следует за открытой записью, «назад» сохраняет вкладку, документ app-shell больше не
+  растягивается скрытыми подписями цены.
+- Code-only: миграций и изменений данных нет; публикация 321 Models / 143 Tools без изменений.
 
 ### release-2026-09-27-catalog-master-v015-final — финальная синхронизация v015
 
@@ -184,6 +206,34 @@ changelog.
 
 ## Общая серверная машина и SSH
 
+### Executor preflight (обязательно перед первой серверной командой)
+
+1. Определить исполнителя серверной фазы.
+2. Исполнитель Claude Code:
+   - Local/release preparation (тесты, tag, архив, SHA-256, `--dry-run`, публичная
+     базовая линия) может выполняться в `Auto`;
+   - перед первым SSH владелец переводит сессию в Manual / Default / Ask (режим с
+     подтверждением команд); затем повторить read-only preflight и выполнять
+     серверные команды только через подтверждение интерфейса;
+   - если режим изменить нельзя или владелец не хочет — **STOP SERVER PHASE** и
+     подготовить handoff для Codex (ниже).
+3. Исполнитель Codex — обычный порядок этого документа.
+
+Блокировку SSH в Claude Code `Auto` не считать доказательством отсутствия
+доступа или неправильного сервера. Не искать альтернативные credentials, не
+читать private key, не расширять permissions исполнителем, не повторять SSH
+многократно (`D-2026-09-27-claude-server-permission-mode`, `AGENTS.md`).
+
+Handoff серверной фазы для Codex (Codex не повторяет завершённую и проверенную
+Local-работу, а продолжает с этого состояния): project AIpediya; release commit;
+previous Production commit; release tag; путь/имя готового архива и SHA-256;
+результаты Local tests и тестов распакованного архива; результат `--dry-run`;
+Production baseline (`/healthz`, штатные публичные проверки); требуемые server
+preflight checks; ограничения выпуска; ожидаемые counts Models/Tools и манифест
+публикации; post-deploy QA; точный следующий шаг.
+
+### Граница и способ подключения
+
 AIpediya и StratForge размещены на одной серверной машине. Исполнителям
 AIpediya разрешено использовать существующий настроенный SSH-доступ к этой
 общей машине для работ исключительно в контуре AIpediya. Запрет «не трогать
@@ -206,7 +256,7 @@ SSH-ключи; разрешено использовать уже настро�
 `sudo -n python3 …/tools/deploy_code_release.py`. Граница: `/srv/aipedia`, программа
 `aipedia` в `/srv/aipedia/supervisord.conf`, `/tmp/aipedia-*` для архивов и preflight.
 Разрешение среды (подтверждение команд в Claude Code) — отдельно от разрешения
-владельца на выпуск.
+владельца на выпуск; порядок — «Executor preflight» выше.
 
 Серверный preflight (перед боевым запуском, живую БД не меняет): онлайн-копия
 `/srv/aipedia/data/aipedia.sqlite3` в `/srv/aipedia/backups/aipedia-preflight-*.sqlite3`
@@ -247,6 +297,19 @@ commit/tag выпуска обычной сборкой (`tools/build_code_relea
 
 Предыдущий кандидат catalog-master-v013 (`954db5a4586b`) заменён этим выпуском и
 отдельно не публикуется.
+
+## Выпуск adaptive-ui
+
+Состав и проверки — `docs/history/2026-09-27-adaptive-ui-release.md`. Code-only: без
+`--catalog-plan`/`--translations`; `data/release_state.json` — контроль (0 изменений). Порядок:
+Executor preflight (Claude Code — режим с подтверждением команд), read-only, preflight на
+онлайн-копии (migrate, integrity/foreign keys, `sync_publication_state apply` dry-run), серверный
+`--dry-run`, `deploy_code_release.py <archive> --sha256 <digest> --publication-state
+data/release_state.json`; после — `final_check.py`, `gsd_production_qa --commit`,
+`gsd_public_check`, `catalog_master qa --production` и публичная responsive-проверка
+(`artifacts/adaptive-ui/qa-harness.mjs`, `qa-interactions.mjs`, обычный браузер).
+`tools/verify_isolated_release.py` — исторический инструмент выпуска 22.09, для текущих
+выпусков не применяется и пересобирает архив по тому же пути.
 
 ## Выпуск catalog-master-v015-final
 

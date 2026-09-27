@@ -756,24 +756,26 @@
     {
       "release_id": "ADAPTIVE-UI-2026-09-26",
       "title": "Adaptive Interface / Mobile & Tablet UX",
-      "environment": "local",
-      "stage": "local",
-      "status": "COMPLETED_LOCAL",
+      "environment": "production",
+      "stage": "released",
+      "status": "RELEASED",
       "started": "2026-09-26",
       "owner_visual_review": "PASS 2026-09-27 (owner approved Local http://127.0.0.1:18811/)",
-      "revision": null,
-      "history": "docs/EXECUTION_STATE.md",
+      "revision": "aa48e11bad7326340463654e33ba5e89769042b9",
+      "history": "docs/history/2026-09-27-adaptive-ui-release.md",
       "branch": "feature/adaptive-ui",
       "worktree": "C:/Users/dimon/.claude/worktrees/aipedia-adaptive-ui",
       "evidence": "artifacts/adaptive-ui/ (before/, after/, after-pages/, report.json, interactions.json)",
       "owner_decision": "D-2026-09-27-owner-acceptance-adaptive-ui",
-      "merged_to_main": true
+      "merged_to_main": true,
+      "release_tag": "release-2026-09-27-adaptive-ui",
+      "production_verified_at": "2026-09-27T16:30:00Z"
     }
   ],
   "product_history": {
     "visibility": "Local only; no owner authentication exists for this page on Production",
-    "production_evidence": "docs/history/2026-09-27-catalog-master-v015-final.md",
-    "production_verified_at": "2026-09-27T03:30:00Z",
+    "production_evidence": "docs/history/2026-09-27-adaptive-ui-release.md",
+    "production_verified_at": "2026-09-27T16:30:00Z",
     "milestones": [
       {
         "release_id": "release-2026-09-20-chronology",
@@ -1115,32 +1117,32 @@
           "Планшет и desktop",
           "Ultrawide",
           "Исправления",
-          "Утверждено владельцем"
+          "Production"
         ],
         "tags_en": [
           "Phone",
           "Tablet and desktop",
           "Ultrawide",
           "Fixes",
-          "Owner approved"
+          "Production"
         ],
         "capabilities_ru": [
           "Телефон: строки Models и Tools стали карточками, панель записи — экран под шапкой; Фильтр и Сортировка — в нижних sheet-окнах; горизонтальной прокрутки страницы нет с 320 px.",
           "Планшет и небольшой ноутбук: второстепенные колонки сворачиваются по ширине каталога, панель — drawer под шапкой с затемнением каталога; desktop от 1280 px — полная таблица и боковая панель.",
           "Ultrawide: оболочка ограничена ≈60% ширины (не менее 2400 px), чтобы строки оставались читаемыми; панель растёт до 720 px.",
           "Исправлено попутно: бесконечная подгрузка на телефоне (была 200 из 321), меню языка после открытия другой записи, вкладка при «назад», вытягивание документа скрытыми подписями цены.",
-          "Владелец 27.09.2026 визуально проверил Local и утвердил этап (PASS); код объединён с main. Данные каталога, master XLSX и Production не менялись; выпуск Production — отдельной командой по docs/RELEASE.md."
+          "Утверждено владельцем 27.09.2026 и опубликовано: Production aa48e11 (backup, без копирования SQLite, данные не изменились); публичная проверка 207/207, 1657/1657, 89 экранов без горизонтального overflow."
         ],
         "capabilities_en": [
           "Phone: Models and Tools rows became cards, the record panel is a screen below the header; Filter and Sort open as bottom sheets; no page-level sideways scroll from 320 px.",
           "Tablet and small laptop: secondary columns fold by catalog width, the panel is a drawer below the header over a dimmed catalog; desktop from 1280 px keeps the full table and side panel.",
           "Ultrawide: the shell is capped at ≈60% width (at least 2400 px) so rows stay readable; the panel grows to 720 px.",
           "Also fixed: phone infinite loading (stopped at 200 of 321), language menu after opening another record, tab on Back, document stretched by hidden price labels.",
-          "On Sep 27, 2026 the owner visually checked Local and approved the stage (PASS); the code is merged into main. Catalog data, the master XLSX and Production were not changed; a Production release needs a separate command per docs/RELEASE.md."
+          "Owner-approved on Sep 27, 2026 and published: Production aa48e11 (backup, no SQLite copy, data unchanged); public checks 207/207, 1657/1657, 89 screens without horizontal overflow."
         ],
-        "revision": null,
-        "source": "execution-state",
-        "open": true,
+        "revision": "aa48e11bad7326340463654e33ba5e89769042b9",
+        "source": "2026-09-27-adaptive-ui-release",
+        "open": false,
         "progress": "done"
       }
     ],
@@ -1253,31 +1255,31 @@
         "done_en": "DONE: adaptive catalog layout, Filter/Sort sheets, panel modes (split / drawer / screen below header), loading and language-link fixes; merged into main.",
         "qa_ru": "После merge на main: 302 теста — 301 OK + 1 skip (fcntl); manage.py check чист; JS OK; матрица 89 сценариев 320×568…5120×1440 — горизонтальный overflow 0, вертикальный overflow app-shell 0, ошибки консоли 0; smoke 16/16 (Models 321/321, Tools 143/143, панель, Filter, Sort, поиск, back/forward); 89/89 снимков main совпадают с утверждённым Local 18811.",
         "qa_en": "After merge on main: 302 tests — 301 OK + 1 skip (fcntl); manage.py check clean; JS OK; matrix 89 scenarios 320×568…5120×1440 — horizontal overflow 0, app-shell vertical overflow 0, console errors 0; smoke 16/16 (Models 321/321, Tools 143/143, panel, Filter, Sort, search, back/forward); 89/89 main screenshots match the approved Local 18811.",
-        "owner_ru": "Владелец 27.09.2026: визуальная приёмка Local PASS, этап утверждён (D-2026-09-27-owner-acceptance-adaptive-ui). Это не разрешение на выпуск Production.",
-        "owner_en": "Owner on Sep 27, 2026: Local visual acceptance PASS, stage approved (D-2026-09-27-owner-acceptance-adaptive-ui). This is not a Production release authorization.",
-        "next_ru": "Выпуск Production — только по отдельной команде владельца на конкретный commit по docs/RELEASE.md.",
-        "next_en": "Production release only after a separate owner command for a specific commit per docs/RELEASE.md.",
+        "owner_ru": "Владелец 27.09.2026: приёмка Local PASS (D-2026-09-27-owner-acceptance-adaptive-ui) и отдельное разрешение на выпуск commit aa48e11 по docs/RELEASE.md.",
+        "owner_en": "Owner on Sep 27, 2026: Local acceptance PASS (D-2026-09-27-owner-acceptance-adaptive-ui) and a separate authorization to release commit aa48e11 per docs/RELEASE.md.",
+        "next_ru": "Опубликовано и проверено (tag release-2026-09-27-adaptive-ui). Новых действий по этапу нет.",
+        "next_en": "Published and verified (tag release-2026-09-27-adaptive-ui). No further action for this stage.",
         "source": "execution-state"
       }
     ],
     "current_production": {
-      "release_tag": "release-2026-09-27-catalog-master-v015-final",
-      "revision": "a51c0a1aed2f63047b0203b208eccf8def458ae7",
-      "release_id": "a51c0a1aed2f63047b0203b208eccf8def458ae7",
-      "confirmed_at": "2026-09-27 03:30",
-      "evidence": "Live /healthz, final_check 207/207, catalog_master qa --production",
-      "status_ru": "Опубликовано и проверено: /healthz подтвердил a51c0a1; 207/207 публичных проверок, QA master = Local = Production.",
-      "status_en": "Published and verified: /healthz confirmed a51c0a1; 207/207 public checks, QA master = Local = Production.",
-      "source": "2026-09-27-catalog-master-v015-final",
+      "release_tag": "release-2026-09-27-adaptive-ui",
+      "revision": "aa48e11bad7326340463654e33ba5e89769042b9",
+      "release_id": "aa48e11bad7326340463654e33ba5e89769042b9",
+      "confirmed_at": "2026-09-27 16:30",
+      "evidence": "Live /healthz, final_check 207/207, gsd_production_qa 1657/1657, responsive public QA 89 scenarios",
+      "status_ru": "Опубликовано и проверено: /healthz подтвердил aa48e11; 207/207 и 1657/1657 публичных проверок; адаптивный интерфейс на 89 экранах без горизонтального overflow.",
+      "status_en": "Published and verified: /healthz confirmed aa48e11; 207/207 and 1657/1657 public checks; adaptive interface on 89 screens without horizontal overflow.",
+      "source": "2026-09-27-adaptive-ui-release",
       "capabilities_ru": [
-        "321 модель и 143 инструмента; у счётчика пояснено: 116 инструментов с №, 27 без подтверждённой даты.",
-        "Страны и флаги с источниками, официальные цены в своей валюте, независимые оценки Epoch AI с точной версией.",
-        "Автономный timeline.html остаётся локальным файлом; /history/ на Production — 404."
+        "321 модель и 143 инструмента; данные каталога, номера, цены, оценки и переводы не изменились.",
+        "Адаптивный интерфейс: телефон — карточки и панель под шапкой; планшет — drawer; desktop — таблица и панель; ultrawide ограничен.",
+        "Фильтр и Сортировка на touch-экранах; подгрузка на телефоне до полного списка; /history/ на Production — 404."
       ],
       "capabilities_en": [
-        "321 models and 143 tools; the counter explains 116 numbered tools and 27 without a confirmed date.",
-        "Sourced countries and flags, official prices in their currency, Epoch AI independent results mapped to exact versions.",
-        "Standalone timeline.html remains a local file; /history/ on Production is 404."
+        "321 models and 143 tools; catalog data, numbers, prices, evaluations and translations unchanged.",
+        "Adaptive interface: phone — cards and a panel below the header; tablet — drawer; desktop — table and panel; ultrawide capped.",
+        "Filter and Sort on touch screens; phone infinite loading reaches the full list; /history/ on Production is 404."
       ]
     }
   }

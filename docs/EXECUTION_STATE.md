@@ -5,6 +5,39 @@
 Пакет для нового чата собирается командой `\.\.venv\Scripts\python.exe tools/pack_ai_context.py` и **не** редактируется как независимый источник.
 
 
+## Выпуск aa48e11 (Adaptive UI) — опубликовано и проверено, 2026-09-27 16:30 UTC
+
+- Итог: Local PASS → Owner PASS → Production PASS → Public PASS. Production = `aa48e11`
+  (tag `release-2026-09-27-adaptive-ui`), предыдущий — `a51c0a1`. Отчёт —
+  `docs/history/2026-09-27-adaptive-ui-release.md`; `docs/RELEASE.md` и Timeline (Production ✓
+  у `ADAPTIVE-UI-2026-09-26`, `current_production`) обновлены после публичной проверки.
+- Серверная фаза — Claude Code в Manual по `D-2026-09-27-claude-server-permission-mode`
+  (первая попытка в `Auto` ожидаемо заблокирована; сервер тогда не затрагивался).
+- Сервер (только контур AIpedia): read-only PASS (`/healthz` и `BUILD.json` = `a51c0a1`,
+  `aipedia` RUNNING); архив SHA-256 `51d7a452…b453` совпал; preflight на онлайн-копии
+  `/srv/aipedia/backups/aipedia-preflight-adaptive-ui-20260927T161617Z.sqlite3` — integrity ok,
+  FK 0, 321/143, миграций нет, манифест 0 изменений; серверный `--dry-run` PASS; deploy
+  16:16:46Z — backup `/srv/aipedia/backups/aipedia-before-code-20260927T161646Z.sqlite3`,
+  `deployed-origin-verified`, `copied_sqlite=false`, предыдущий код
+  `/srv/aipedia/releases/before-code-20260927T161646Z`; после — integrity ok, FK 0, отпечаток
+  данных (номера, цены, оценки, переводы) идентичен backup до выпуска.
+- Публично: `/healthz` = `aa48e11`; `final_check.py` 207/207; `gsd_production_qa` 1657/1657;
+  `gsd_public_check` 34/34; `catalog_master qa --production` PASS; responsive 89 сценариев
+  320×568…5120×1440 (EN/RU/DE/AR/FA/JA/ZH, тёмная/светлая) — page overflow 0; взаимодействия
+  15/15 функциональных PASS (подгрузка 321/321 и 143/143, панель, X, Escape, клик вне,
+  back/forward, прямые URL, Filter, Sort, поиск); обычный браузер — RU телефон, Sort, светлая
+  тема, панель — PASS. Доказательства: `artifacts/adaptive-ui/release/`, `…/production/`.
+- Известное, не связано с выпуском: Cloudflare на краю вставляет Web Analytics
+  `beacon.min.js`, CSP приложения (`script-src 'self'`, не менялась с `a51c0a1`) его блокирует —
+  одно сообщение в консоли на каждой странице; остальные известные ограничения — в блоке этапа
+  ниже.
+- Local / GitHub / Production: `main` содержит выпуск и документы; tag и документный commit
+  отправлены в GitHub после Public PASS; Production = `aa48e11`. Рабочий Local 18810 владелец
+  перезапускает ярлыками, чтобы увидеть итоговый код.
+- Не завершено: ничего по выпуску. Следующим выполнить: новая задача только по поручению
+  владельца; при желании — решение о Cloudflare Web Analytics (выключить вставку beacon или
+  явно разрешить её в CSP — отдельная задача и отдельный выпуск).
+
 ## Adaptive Interface / Mobile & Tablet UX — утверждено владельцем, объединено с main, 2026-09-27
 
 - Итог: владелец 27.09.2026 проверил Local `http://127.0.0.1:18811/` — «Adaptive Interface /
