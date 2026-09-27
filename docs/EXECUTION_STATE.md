@@ -5,7 +5,7 @@
 Пакет для нового чата собирается командой `\.\.venv\Scripts\python.exe tools/pack_ai_context.py` и **не** редактируется как независимый источник.
 
 
-## catalog-master-v015 final — Local PASS, Timeline PASS, 2026-09-27
+## catalog-master-v015 final — опубликовано и проверено, 2026-09-27 03:23 UTC
 
 - Итог этапа (Local): «116 Tools» — это № первой строки (116 инструментов с датой, 27 без
   даты), а не количество: вкладка = счётчик = строки после полной загрузки = база = 143;
@@ -24,8 +24,19 @@
   кода — в пользу проверенного на Production. Local 18810 перезапущен на текущем коде.
 - Проверено: 290 тестов (289 OK, 1 skip); `catalog_master qa` PASS; HTTP 207/207;
   сохранность дат/номеров/ID PASS; браузер: счётчик Tools, флаги, цены ₹.
-- Не завершено: commit/push, выпуск на Production, публичная проверка. Следующим
-  выполнить: `docs/RELEASE.md`, раздел «Выпуск catalog-master-v015-final».
+- Local / GitHub / Production: Local 18810 и `main` на `a51c0a1` (+ документный
+  commit результатов); GitHub `main` синхронизирован; Production `/healthz` =
+  `a51c0a1aed2f…` (tag `release-2026-09-27-catalog-master-v015-final`), 321/143,
+  backup до/после, `copied_sqlite=false`.
+- Public PASS: `final_check` 207/207, `catalog_master qa --production` PASS,
+  GSD 34/34, 45/45 старых URL; `/history/` на Production — 404.
+- Итог: Local PASS → Timeline PASS → GitHub synced → Production PASS → Public PASS.
+- Не завершено (очередь качества данных, не блокирует): страны Aider, llama.cpp,
+  Roo Code; 20 проверенных пробелов цен (в т.ч. MiniMax — валюта не подтверждена;
+  SourceCraft — активировать тарифы 2026-10-01); 9 пробелов независимых оценок;
+  17 старых моделей с датой без ссылки на доказательство. Следующим выполнить:
+  2026-10-01 проверить и активировать цены SourceCraft через master; при новых
+  снимках Epoch повторить сопоставление точных версий.
 
 ## catalog-master-v015 — опубликовано и проверено, 2026-09-27 01:35 UTC
 

@@ -18,13 +18,13 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertContains(page, '61adedd6ea5e6a0955d51d87374fa2fa9bcc7799')
         self.assertContains(page, 'PLANNED')
         self.assertContains(page, 'кампания не создана и не запущена.')
-        self.assertContains(page, 'class="ph-milestone ph-done ph-open"', count=2)
+        self.assertContains(page, 'class="ph-milestone ph-done ph-open"', count=1)
         self.assertContains(page, 'class="ph-milestone ph-planned ph-open"', count=1)
         self.assertContains(page, 'ГОТОВО В LOCAL')
         self.assertContains(page, 'class="ph-environment ph-local"', count=1)
         self.assertContains(page, 'class="ph-environment ph-production"', count=1)
         self.assertNotContains(page, 'class="ph-environment ph-git"')
-        self.assertContains(page, 'class="ph-git-detail"', count=2)
+        self.assertContains(page, 'class="ph-git-detail"', count=1)
         self.assertEqual(page["Cache-Control"], "private, no-store")
         self.assertEqual(self.client.get("/ru/history/source/release").status_code, 200)
         self.assertEqual(self.client.get("/history/source/GSD-1.0-release-scope").status_code, 200)
@@ -49,7 +49,7 @@ class ProductHistoryTests(SimpleTestCase):
         organic_id = "release-2026-09-26-search-visibility-optimization-v2"
         self.assertEqual(entries[organic_id]["stage"], "released")
         self.assertEqual(registry["product_history"]["current_production"]["release_tag"],
-                         "release-2026-09-26-catalog-master-v015")
+                         "release-2026-09-27-catalog-master-v015-final")
         paid_card = next(row for row in registry["product_history"]["milestones"] if row["release_id"] == paid_id)
         self.assertTrue(paid_card["open"])
         self.assertEqual(paid_card["progress"], "planned")
@@ -68,7 +68,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn("Проверено владельцем", card["tags_ru"])
         self.assertNotIn("Визуальная проверка ожидается", card["tags_ru"])
         self.assertIn("Визуальная проверка", task["owner_ru"])
-        self.assertEqual(registry["product_history"]["current_production"]["release_tag"], "release-2026-09-26-catalog-master-v015")
+        self.assertEqual(registry["product_history"]["current_production"]["release_tag"], "release-2026-09-27-catalog-master-v015-final")
 
     @override_settings(AIPEDIA_ENV="production", SECURE_SSL_REDIRECT=False)
     def test_history_is_private_in_production(self):
@@ -84,7 +84,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn('id="edition-en"', page)
         self.assertEqual(page.count('data-history-open='), 20)
         self.assertEqual(page.count('class="ph-status-legend"'), 2)
-        self.assertEqual(page.count('class="ph-milestone ph-done ph-open"'), 4)
+        self.assertEqual(page.count('class="ph-milestone ph-done ph-open"'), 2)
         self.assertEqual(page.count('class="ph-milestone ph-planned ph-open"'), 2)
         self.assertIn('ГОТОВО В LOCAL', page)
         self.assertIn('.ph-in_progress .ph-dot', page)

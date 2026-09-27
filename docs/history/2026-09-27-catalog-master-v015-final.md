@@ -103,6 +103,38 @@ Nemotron 3 Diarization, Sarvam Vision 2.1, GLiNER2.5-Decide, FLUX 3 Action DROID
 Production поискового кода. Local 18810 перезапущен штатными скриптами на
 актуальном коде.
 
-## 8. Production
+## 8. GitHub и Production
 
-Ожидает выпуска.
+- GitHub: `main` = `a51c0a1aed2f63047b0203b208eccf8def458ae7` (push), ветка
+  `release/catalog-master-v015` и tag `release-2026-09-26-catalog-master-v015`
+  опубликованы; tag этого выпуска — `release-2026-09-27-catalog-master-v015-final`.
+- Архив `aipedia-code-a51c0a1aed2f.zip`, SHA-256
+  `e2f5485db53988bd7d66fd9fa5542665d2e232d157aa12071b1ae2446b3a92e1`, 327 файлов (без
+  SQLite, секретов и XLSX); распакованный архив — 290 тестов (289 OK, 1 skip).
+- Пробный перенос плана на исходный снимок Local совпал с рабочим Local по моделям,
+  инструментам, организациям, ценам, доступу, оценкам и странам; QA на пробной базе PASS.
+- Preflight на онлайн-копии боевой БД
+  `/srv/aipedia/backups/aipedia-preflight-v015-final-20260927T032300Z.sqlite3`
+  (integrity ok, 321/143, 590 цен): pending -> 144 записи, итог = план; манифест 0
+  изменений; повтор «already applied»; стало 660 цен, 906 оценок, 844 страны, номера 1–321.
+- `deploy_code_release.py` (2026-09-27 03:23:13Z): backup
+  `/srv/aipedia/backups/aipedia-before-code-20260927T032313Z.sqlite3`; миграций нет;
+  `apply-plan` 144 записи, итог = план; `sync_publication_state --apply` 0 изменений;
+  `deployed-origin-verified`, `copied_sqlite=false`; предыдущий код —
+  `/srv/aipedia/releases/before-code-20260927T032313Z`; после —
+  `aipedia-after-code-20260927T032313Z.sqlite3`. StratForge и другие программы не
+  затрагивались.
+
+## 9. Публичная проверка https://aipediya.com
+
+- `/healthz`: release `a51c0a1aed2f…`, production.
+- `final_check.py` — 207/207 (`artifacts/catalog-master-v015-final/public_final_check.json`):
+  все проверки v015 (144) + счётчики EN/RU после загрузки всех страниц (321 / 143),
+  пояснение № Tools 116 / 27, флаги 21 карточки, цены (USD, INR, RUB), независимые
+  оценки Opus 5.5 / GPT-6 Sol / Qwen3.8-Max / DeepSeek V4 Flash 0731, пробелы оценок.
+- `catalog_master qa --production` — PASS: публичные наборы master = Local = Production.
+- Поиск: `gsd_public_check` 34/34, `search_visibility_qa` 45/45 старых URL (25 × 301,
+  19 × 404, 1 × 200 noindex); `/history/` на Production — 404 (только Local).
+- Браузер: Tools 143 = счётчик = 143 строки, пояснение и флаги; оценки Claude Opus 5.5.
+
+**Статус: Local PASS → Timeline PASS → GitHub synced → Production PASS → Public PASS. Этап закрыт.**

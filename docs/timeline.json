@@ -734,12 +734,14 @@
     {
       "release_id": "release-2026-09-27-catalog-master-v015-final",
       "title": "Catalog master v015 final: counters, countries and flags, prices, independent evaluations, release QA",
-      "environment": "local",
-      "stage": "local",
-      "status": "COMPLETED_LOCAL",
-      "revision": null,
+      "environment": "production",
+      "stage": "released",
+      "status": "RELEASED",
+      "revision": "a51c0a1aed2f63047b0203b208eccf8def458ae7",
       "history": "docs/history/2026-09-27-catalog-master-v015-final.md",
-      "note": "This stage changes no model release date; each v015 model keeps its confirmed date in release-2026-09-26-catalog-master-v015."
+      "note": "This stage changes no model release date; each v015 model keeps its confirmed date in release-2026-09-26-catalog-master-v015.",
+      "release_tag": "release-2026-09-27-catalog-master-v015-final",
+      "production_verified_at": "2026-09-27T03:30:00Z"
     },
     {
       "release_id": "PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26",
@@ -754,8 +756,8 @@
   ],
   "product_history": {
     "visibility": "Local only; no owner authentication exists for this page on Production",
-    "production_evidence": "docs/history/2026-09-26-catalog-master-v015.md",
-    "production_verified_at": "2026-09-27T01:38:00Z",
+    "production_evidence": "docs/history/2026-09-27-catalog-master-v015-final.md",
+    "production_verified_at": "2026-09-27T03:30:00Z",
     "milestones": [
       {
         "release_id": "release-2026-09-20-chronology",
@@ -1021,16 +1023,16 @@
         "title_en": "v015 final sync",
         "icon": "shield-check",
         "tags_ru": [
+          "Production",
           "Счётчики",
           "Страны и флаги",
-          "Цены и оценки",
-          "Готово в Local"
+          "Цены и оценки"
         ],
         "tags_en": [
+          "Production",
           "Counters",
           "Countries and flags",
-          "Prices and evaluations",
-          "Complete in Local"
+          "Prices and evaluations"
         ],
         "capabilities_ru": [
           "Tools: 143 опубликовано; 116 с датой выпуска имеют №, 27 без подтверждённой даты — пояснение у счётчика",
@@ -1038,7 +1040,7 @@
           "Цены: +70 официальных строк (валюта, единица, контекст, источник); 20 проверенных пробелов вместо «$0»",
           "Независимые оценки Epoch AI: +25 для 5 точных версий; 9 новых моделей — честный пробел",
           "Постоянная release-QA: счётчики, флаги, цены, независимость оценок, источники, дубли, master ↔ Local ↔ Production",
-          "Даты выпуска моделей не менялись; Production — ожидает выпуска"
+          "Local PASS → Timeline PASS → GitHub synced → Production PASS (a51c0a1, backup, без копирования SQLite) → Public PASS 207/207; даты выпуска моделей не менялись"
         ],
         "capabilities_en": [
           "Tools: 143 published; the 116 with a release date carry №, 27 undated — explained next to the counter",
@@ -1046,12 +1048,12 @@
           "Prices: +70 official rows (currency, unit, context, source); 20 verified gaps instead of \"$0\"",
           "Epoch AI independent results: +25 for 5 exact versions; 9 new models are verified gaps",
           "Permanent release QA: counters, flags, prices, evaluation independence, sources, duplicates, master ↔ Local ↔ Production",
-          "No model release date changed; Production — awaiting release"
+          "Local PASS → Timeline PASS → GitHub synced → Production PASS (a51c0a1, backup, no SQLite copy) → Public PASS 207/207; no model release date changed"
         ],
-        "revision": null,
+        "revision": "a51c0a1aed2f63047b0203b208eccf8def458ae7",
         "source": "2026-09-27-catalog-master-v015-final",
-        "open": true,
-        "progress": "done"
+        "open": false,
+        "owner_decision": "Owner task 2026-09-27: finish v015 through Production"
       },
       {
         "release_id": "PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26",
@@ -1188,23 +1190,23 @@
       }
     ],
     "current_production": {
-      "release_tag": "release-2026-09-26-catalog-master-v015",
-      "revision": "e36acfa351b28f441ec7ad91587b67201cb8aa85",
-      "release_id": "e36acfa351b28f441ec7ad91587b67201cb8aa85",
-      "confirmed_at": "2026-09-27 01:38",
-      "evidence": "Live /healthz and public v015 check",
-      "status_ru": "Опубликовано и проверено: /healthz подтвердил commit e36acfa; 144/144 публичных проверок v015, GSD 34/34, 45/45 старых URL.",
-      "status_en": "Published and verified: /healthz confirmed commit e36acfa; 144/144 public v015 checks, GSD 34/34, 45/45 legacy URLs.",
-      "source": "2026-09-26-catalog-master-v015",
+      "release_tag": "release-2026-09-27-catalog-master-v015-final",
+      "revision": "a51c0a1aed2f63047b0203b208eccf8def458ae7",
+      "release_id": "a51c0a1aed2f63047b0203b208eccf8def458ae7",
+      "confirmed_at": "2026-09-27 03:30",
+      "evidence": "Live /healthz, final_check 207/207, catalog_master qa --production",
+      "status_ru": "Опубликовано и проверено: /healthz подтвердил a51c0a1; 207/207 публичных проверок, QA master = Local = Production.",
+      "status_en": "Published and verified: /healthz confirmed a51c0a1; 207/207 public checks, QA master = Local = Production.",
+      "source": "2026-09-27-catalog-master-v015-final",
       "capabilities_ru": [
-        "321 модель и 143 инструмента; 11 новых моделей 22–24.09 под номерами 311–321.",
-        "Поисковые улучшения Search Visibility Optimization и 22 локали сохранены.",
-        "Автономный timeline.html остаётся локальным файлом и на сервер не выпускается."
+        "321 модель и 143 инструмента; у счётчика пояснено: 116 инструментов с №, 27 без подтверждённой даты.",
+        "Страны и флаги с источниками, официальные цены в своей валюте, независимые оценки Epoch AI с точной версией.",
+        "Автономный timeline.html остаётся локальным файлом; /history/ на Production — 404."
       ],
       "capabilities_en": [
-        "321 models and 143 tools; 11 new models of Sep 22–24 numbered 311–321.",
-        "Search Visibility Optimization improvements and 22 locales remain.",
-        "Standalone timeline.html remains a local file and is not released to the server."
+        "321 models and 143 tools; the counter explains 116 numbered tools and 27 without a confirmed date.",
+        "Sourced countries and flags, official prices in their currency, Epoch AI independent results mapped to exact versions.",
+        "Standalone timeline.html remains a local file; /history/ on Production is 404."
       ]
     }
   }

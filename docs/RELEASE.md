@@ -8,9 +8,18 @@
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный выпуск — **catalog-master-v015**, 2026-09-27 01:35 UTC: commit
+Текущий публичный выпуск — **catalog-master-v015-final**, 2026-09-27 03:23 UTC: commit
+`a51c0a1aed2f63047b0203b208eccf8def458ae7`, tag `release-2026-09-27-catalog-master-v015-final`
+(`main` = опубликованная линия). По коду публичный сайт работает на commit `a51c0a1aed2f63047b0203b208eccf8def458ae7`.
+Архив `aipedia-code-a51c0a1aed2f.zip`, SHA-256
+`e2f5485db53988bd7d66fd9fa5542665d2e232d157aa12071b1ae2446b3a92e1`; `/healthz` подтвердил
+commit и production; 321 Models / 143 Tools. Отчёт — `docs/history/2026-09-27-catalog-master-v015-final.md`.
+
+### Предыдущий публичный выпуск — catalog-master-v015
+
+catalog-master-v015, 2026-09-27 01:35 UTC: commit
 `e36acfa351b28f441ec7ad91587b67201cb8aa85`, tag `release-2026-09-26-catalog-master-v015`.
-По коду публичный сайт работает на commit `e36acfa351b28f441ec7ad91587b67201cb8aa85`.
+На дату этого выпуска код публичного сайта — commit `e36acfa351b28f441ec7ad91587b67201cb8aa85`.
 Архив `aipedia-code-e36acfa351b2.zip`, SHA-256
 `d5225a113f5c48193bef5df508afac3282901983117292e6cb7d44a012488b09`; `/healthz` подтвердил
 commit и `environment=production`; 321 Models / 143 Tools. Отчёт —
