@@ -3,11 +3,11 @@
 ## Версии и обязательный выпускной шлюз
 
 **No Timeline → No Release.** Подтверждённые Production-вехи получили
-Release #001–#011; текущий baseline — Release #011 · AIpediya v0.11.0,
-`release-2026-09-27-catalog-325-147`, commit `9ddba83`.
+Release #001–#012; текущий baseline — Release #012 · AIpediya v0.12.0,
+`release-2026-09-28-eval-evidence`, deployed id `d349d6de42cb`.
 `release_sequence` — неизменяемый номер выпуска, `app_version` — SemVer.
 До 1.0 новый пользовательский пакет увеличивает minor (`v0.12.0`), исправление
-опубликованного пакета — patch (`v0.11.1`). `v1.0.0` требует отдельного
+опубликованного пакета — patch (`v0.12.1`). `v1.0.0` требует отдельного
 решения владельца. Отменённый номер остаётся в карточке с `cancelled` или
 `superseded` и причиной; следующий пакет получает следующий номер.
 
@@ -83,8 +83,8 @@ Release # / SemVer; система версий принята владельц�
 AIpediya с опубликованным Tools/CSP пакетом `cf4ac9a` и его публичной проверкой
 beacon 200 / RUM 204. Последующий обзор трафика не был новым deploy. Его
 замечание о StratForge относится к другому приложению и не меняет статус
-AIpediya. Текущий Production baseline остаётся Release #011 · v0.11.0
-(`9ddba83`, 325 Models / 147 Tools).
+AIpediya. После выпуска Evaluation Evidence текущий Production baseline —
+Release #012 · v0.12.0 (`d349d6de42cb`, 325 Models / 147 Tools).
 Заголовок и theme/language controls принадлежат автономной странице, общая
 оболочка публичного каталога в файл не включается. Тема начинается тёмной;
 ручной выбор запоминается при поддержке `localStorage` для `file://`. Карточки

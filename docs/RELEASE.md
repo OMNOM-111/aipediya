@@ -8,7 +8,22 @@
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный выпуск — **Catalog 325 Models / 147 Tools**, 2026-09-27
+Текущий публичный выпуск — **Evaluation Evidence, Release #012 · v0.12.0**, 2026-09-28
+16:37 UTC: deployed candidate/release id `d349d6de42cbe49dd55134a7ca792f6bce85ab7e`,
+архив `aipedia-code-d349d6de42cb.zip`, SHA-256
+`faf755db0497b0e3c718ab3b655edb46d51499936a7f247d8e93a280ed0b3127`.
+Git commit проверенного кандидата `655fb90185b76a8597b53a5829db4e8e8c63dc97`,
+tag `release-2026-09-28-eval-evidence`: 356 архивных файлов совпали с tag после
+штатной нормализации Git (0 несовпадений). `/healthz` подтвердил release id;
+server preflight/trial/deploy/verify-release PASS, `catalog_master qa --production`
+PASS, GSD Production QA 1657/1657, публичный браузер RU/EN/ar/fa/de/zh-hans PASS.
+325 Models / 147 Tools сохранены; Evaluation 906 → 5 010. Rollback backup:
+`/srv/aipedia/backups/aipedia-before-code-20260928T163724Z.sqlite3`.
+Отчёт — `docs/history/2026-09-28-eval-evidence-release.md`.
+
+### Предыдущий публичный выпуск — Catalog 325 Models / 147 Tools
+
+Catalog 325 Models / 147 Tools, 2026-09-27
 22:00 UTC: commit `9ddba83c176aa3f6793362d6345b797c76ddf987`, tag
 `release-2026-09-27-catalog-325-147`. Архив `aipedia-code-9ddba83c176a.zip`,
 SHA-256 `7b8fa47b7c4da09f746b6ab17f4baa92efebab05bcebb140cefac94fb40020d7`.
@@ -126,6 +141,18 @@ changelog.
   `docs/history/`.
 
 ## Changelog
+
+### release-2026-09-28-eval-evidence — Evaluation Evidence #012
+
+- 325/325 опубликованных Models получили статус оценок; публичные независимые
+  проверки есть у 159, любые проверенные численные результаты — у 280.
+- Во вкладке «Проверки» результаты разработчика явно отделены от независимых;
+  research-only баллы не раскрываются, MTEB свёрнут до трёх строк с раскрытием.
+- Production-план добавил 4 104 Evaluation, изменил видимость 16 существующих;
+  связанные Source +563, Benchmark +947. Models, Tools, Offers, Access,
+  номера, даты, цены и публикационное состояние не менялись.
+- Local и распакованный архив: 315 тестов OK (1 skip); серверный trial и
+  `verify-release` PASS; полный Public QA 1657/1657 и 34/34 PASS.
 
 ### release-2026-09-27-tools-chronology-csp — Tools chronology и Cloudflare CSP
 

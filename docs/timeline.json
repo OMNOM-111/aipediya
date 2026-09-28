@@ -848,14 +848,15 @@
       "release_sequence": 12,
       "app_version": "v0.12.0",
       "title": "Independent model evaluation audit and AIpediya Rating evidence base",
-      "environment": "local",
-      "stage": "approved",
-      "status": "PRODUCTION_IN_PROGRESS",
+      "environment": "production",
+      "stage": "released",
+      "status": "DONE",
       "started": "2026-09-27",
-      "history": "docs/EXECUTION_STATE.md",
-      "revision": "2fd442cb487c2c9ff2ea2acc00070a0c17164f47",
+      "history": "docs/history/2026-09-28-eval-evidence-release.md",
+      "revision": "d349d6de42cbe49dd55134a7ca792f6bce85ab7e",
       "owner_decision": "Owner approved the exact current Local state and authorized this Production release in the Codex handoff, 2026-09-28",
-      "note": "Codex handoff after Claude limit. Release #012 reserved for this existing card. Local gate PASS: 325/325 classified, 159 public independent, 280 numerical, 315 tests (1 skip), master QA PASS, trial on live Production snapshot PASS. Production unchanged while release candidate is prepared."
+      "note": "Owner-approved Local published by Codex after Claude limit. Server preflight/trial/deploy/verify-release PASS; 325 Models, 147 Tools; 159 public independent, 280 numerical; GSD Production QA 1657/1657 PASS and public browser PASS.",
+      "production_verified_at": "2026-09-28T16:48:26+00:00"
     }
   ],
   "product_history": {
@@ -871,8 +872,12 @@
         "local_verified": true,
         "production_released": true,
         "production_verified": true,
-        "qa": {"production": "Confirmed in historical release report"},
-        "changes": ["See the preserved capabilities and release report"],
+        "qa": {
+          "production": "Confirmed in historical release report"
+        },
+        "changes": [
+          "See the preserved capabilities and release report"
+        ],
         "date": "2026-09-20",
         "title_ru": "Хронология моделей",
         "title_en": "Model chronology",
@@ -905,8 +910,12 @@
         "local_verified": true,
         "production_released": true,
         "production_verified": true,
-        "qa": {"production": "Confirmed in historical release report"},
-        "changes": ["See the preserved capabilities and release report"],
+        "qa": {
+          "production": "Confirmed in historical release report"
+        },
+        "changes": [
+          "See the preserved capabilities and release report"
+        ],
         "date": "2026-09-22",
         "title_ru": "Модели и инструменты",
         "title_en": "Models and tools",
@@ -939,8 +948,12 @@
         "local_verified": true,
         "production_released": true,
         "production_verified": true,
-        "qa": {"production": "Confirmed in historical release report"},
-        "changes": ["See the preserved capabilities and release report"],
+        "qa": {
+          "production": "Confirmed in historical release report"
+        },
+        "changes": [
+          "See the preserved capabilities and release report"
+        ],
         "date": "2026-09-25",
         "title_ru": "Языковые версии сайта",
         "title_en": "Site languages",
@@ -976,8 +989,12 @@
         "local_verified": true,
         "production_released": true,
         "production_verified": true,
-        "qa": {"production": "Confirmed in historical release report"},
-        "changes": ["See the preserved capabilities and release report"],
+        "qa": {
+          "production": "Confirmed in historical release report"
+        },
+        "changes": [
+          "See the preserved capabilities and release report"
+        ],
         "date": "2026-09-25",
         "title_ru": "Глобальная поисковая доступность",
         "title_en": "Global Search & Discovery",
@@ -1016,8 +1033,12 @@
         "local_verified": true,
         "production_released": true,
         "production_verified": true,
-        "qa": {"production": "Confirmed in historical release report"},
-        "changes": ["See the preserved capabilities and release report"],
+        "qa": {
+          "production": "Confirmed in historical release report"
+        },
+        "changes": [
+          "See the preserved capabilities and release report"
+        ],
         "date": "2026-09-25",
         "title_ru": "Активация поисковых каналов",
         "title_en": "Search activation",
@@ -1056,8 +1077,12 @@
         "local_verified": true,
         "production_released": true,
         "production_verified": true,
-        "qa": {"production": "Confirmed in historical release report"},
-        "changes": ["See the preserved capabilities and release report"],
+        "qa": {
+          "production": "Confirmed in historical release report"
+        },
+        "changes": [
+          "See the preserved capabilities and release report"
+        ],
         "date": "2026-09-26",
         "title_ru": "Оптимизация поисковой видимости",
         "title_en": "Search Visibility Optimization",
@@ -1133,8 +1158,12 @@
         "local_verified": true,
         "production_released": true,
         "production_verified": true,
-        "qa": {"production": "Confirmed in historical release report"},
-        "changes": ["See the preserved capabilities and release report"],
+        "qa": {
+          "production": "Confirmed in historical release report"
+        },
+        "changes": [
+          "See the preserved capabilities and release report"
+        ],
         "date": "2026-09-26",
         "title_ru": "Новые модели 22–24 сентября",
         "title_en": "New models of Sep 22–24",
@@ -1195,8 +1224,12 @@
         "local_verified": true,
         "production_released": true,
         "production_verified": true,
-        "qa": {"production": "Confirmed in historical release report"},
-        "changes": ["See the preserved capabilities and release report"],
+        "qa": {
+          "production": "Confirmed in historical release report"
+        },
+        "changes": [
+          "See the preserved capabilities and release report"
+        ],
         "date": "2026-09-27",
         "title_ru": "Финальная синхронизация v015",
         "title_en": "v015 final sync",
@@ -1280,8 +1313,12 @@
         "local_verified": true,
         "production_released": true,
         "production_verified": true,
-        "qa": {"production": "Confirmed in historical release report"},
-        "changes": ["See the preserved capabilities and release report"],
+        "qa": {
+          "production": "Confirmed in historical release report"
+        },
+        "changes": [
+          "See the preserved capabilities and release report"
+        ],
         "date": "2026-09-27",
         "title_ru": "Адаптивный интерфейс / Mobile & Tablet UX",
         "title_en": "Adaptive Interface / Mobile & Tablet UX",
@@ -1327,14 +1364,28 @@
         "local_verified": true,
         "production_released": true,
         "production_verified": true,
-        "qa": {"production": "Confirmed in historical release report"},
-        "changes": ["See the preserved capabilities and release report"],
+        "qa": {
+          "production": "Confirmed in historical release report"
+        },
+        "changes": [
+          "See the preserved capabilities and release report"
+        ],
         "date": "2026-09-27",
         "title_ru": "Согласованность Tools и CSP Cloudflare Analytics",
         "title_en": "Tools consistency and Cloudflare Analytics CSP",
         "icon": "shield-check",
-        "tags_ru": ["Tools", "Даты выпуска", "CSP", "Production"],
-        "tags_en": ["Tools", "Release dates", "CSP", "Production"],
+        "tags_ru": [
+          "Tools",
+          "Даты выпуска",
+          "CSP",
+          "Production"
+        ],
+        "tags_en": [
+          "Tools",
+          "Release dates",
+          "CSP",
+          "Production"
+        ],
         "capabilities_ru": [
           "Аудит master, Local, Production read-only и публичной таблицы: 143 опубликованных Tools, 116 с № до исследования, 27 без даты; доказанных новых дублей нет.",
           "Владелец утвердил diff; штатная синхронизация master → рабочая Local SQLite дала 143/143 пронумерованных Tools, 60 точных и 83 приблизительные даты. Проверки Local пройдены.",
@@ -1361,12 +1412,36 @@
         "title_ru": "Каталог 325 моделей / 147 инструментов",
         "title_en": "Catalog 325 Models / 147 Tools",
         "icon": "library-big",
-        "tags_ru": ["4 модели", "4 инструмента", "Номера", "Production QA"],
-        "tags_en": ["4 models", "4 tools", "Numbers", "Production QA"],
-        "capabilities_ru": ["Добавлены четыре модели и четыре инструмента; обновлены семь записей.", "Проверены номера 325/325 Models и 147/147 Tools.", "Production QA 1657/1657 и /healthz подтвердили выпуск."],
-        "capabilities_en": ["Four models and four tools added; seven records updated.", "Numbers verified for 325/325 Models and 147/147 Tools.", "Production QA 1657/1657 and /healthz confirmed release."],
-        "changes": ["Four models and four tools added; seven records updated", "Catalog numbers recomputed; 325 Models and 147 Tools published"],
-        "qa": {"local": "325/325 Models and 147/147 Tools; catalog tests passed", "production": "GSD Production QA 1657/1657; /healthz and database integrity passed"},
+        "tags_ru": [
+          "4 модели",
+          "4 инструмента",
+          "Номера",
+          "Production QA"
+        ],
+        "tags_en": [
+          "4 models",
+          "4 tools",
+          "Numbers",
+          "Production QA"
+        ],
+        "capabilities_ru": [
+          "Добавлены четыре модели и четыре инструмента; обновлены семь записей.",
+          "Проверены номера 325/325 Models и 147/147 Tools.",
+          "Production QA 1657/1657 и /healthz подтвердили выпуск."
+        ],
+        "capabilities_en": [
+          "Four models and four tools added; seven records updated.",
+          "Numbers verified for 325/325 Models and 147/147 Tools.",
+          "Production QA 1657/1657 and /healthz confirmed release."
+        ],
+        "changes": [
+          "Four models and four tools added; seven records updated",
+          "Catalog numbers recomputed; 325 Models and 147 Tools published"
+        ],
+        "qa": {
+          "local": "325/325 Models and 147/147 Tools; catalog tests passed",
+          "production": "GSD Production QA 1657/1657; /healthz and database integrity passed"
+        },
         "owner_approved": true,
         "local_verified": true,
         "production_released": true,
@@ -1386,10 +1461,26 @@
         "title_ru": "Версии AIpediya и обязательная история выпуска",
         "title_en": "AIpediya versions and mandatory release history",
         "icon": "calendar-days",
-        "tags_ru": ["Release #001–#011", "v0.11.0", "Release gate"],
-        "tags_en": ["Release #001–#011", "v0.11.0", "Release gate"],
-        "capabilities_ru": ["Подтверждённые Production-вехи пронумерованы без изменения их дат и содержания.", "Local и Production показывают независимые указатели на Release #011 · v0.11.0.", "Сборка и серверный preflight отклоняют пакет без готовой истории, версии, Local QA и решения владельца."],
-        "capabilities_en": ["Confirmed Production milestones numbered without changing their dates or meaning.", "Local and Production show independent pointers to Release #011 · v0.11.0.", "Build and server preflight reject a package without versioned history, Local QA and owner approval."],
+        "tags_ru": [
+          "Release #001–#011",
+          "v0.11.0",
+          "Release gate"
+        ],
+        "tags_en": [
+          "Release #001–#011",
+          "v0.11.0",
+          "Release gate"
+        ],
+        "capabilities_ru": [
+          "Подтверждённые Production-вехи пронумерованы без изменения их дат и содержания.",
+          "Local и Production показывают независимые указатели на Release #011 · v0.11.0.",
+          "Сборка и серверный preflight отклоняют пакет без готовой истории, версии, Local QA и решения владельца."
+        ],
+        "capabilities_en": [
+          "Confirmed Production milestones numbered without changing their dates or meaning.",
+          "Local and Production show independent pointers to Release #011 · v0.11.0.",
+          "Build and server preflight reject a package without versioned history, Local QA and owner approval."
+        ],
         "revision": null,
         "source": "execution-state",
         "open": true,
@@ -1406,8 +1497,16 @@
         "title_ru": "Cloudflare Web Analytics AIpediya",
         "title_en": "AIpediya Cloudflare Web Analytics",
         "icon": "activity",
-        "tags_ru": ["Production", "Beacon 200", "RUM 204"],
-        "tags_en": ["Production", "Beacon 200", "RUM 204"],
+        "tags_ru": [
+          "Production",
+          "Beacon 200",
+          "RUM 204"
+        ],
+        "tags_en": [
+          "Production",
+          "Beacon 200",
+          "RUM 204"
+        ],
         "capabilities_ru": [
           "AIpediya: узкая CSP-правка опубликована в выпуске Tools chronology + Cloudflare CSP, commit cf4ac9a.",
           "Публичный браузер получил Cloudflare beacon HTTP 200 и /cdn-cgi/rum HTTP 204 без CSP load failure.",
@@ -1418,7 +1517,10 @@
           "The public browser received Cloudflare beacon HTTP 200 and /cdn-cgi/rum HTTP 204 with no CSP load failure.",
           "The later audit confirmed Web Analytics data; the StratForge finding belongs to a separate application and is not this release's status."
         ],
-        "qa": {"local": "Catalog suite 308 OK, 1 skip; Django check PASS", "production": "Public browser beacon HTTP 200, /cdn-cgi/rum HTTP 204, no CSP load failure; GSD QA 1657/1657"},
+        "qa": {
+          "local": "Catalog suite 308 OK, 1 skip; Django check PASS",
+          "production": "Public browser beacon HTTP 200, /cdn-cgi/rum HTTP 204, no CSP load failure; GSD QA 1657/1657"
+        },
         "revision": "cf4ac9a33f8d4467510d6b76ebe115ce7e1803d3",
         "release_tag": "release-2026-09-27-tools-chronology-csp",
         "source": "2026-09-27-tools-chronology-csp-release",
@@ -1433,23 +1535,23 @@
         "release_tag": "release-2026-09-28-eval-evidence",
         "local_verified": true,
         "owner_approved": true,
-        "production_released": false,
-        "production_verified": false,
+        "production_released": true,
+        "production_verified": true,
         "date": "2026-09-28",
         "title_ru": "Независимые оценки моделей и evidence-база AIpediya Rating",
         "title_en": "Independent model evaluations and AIpediya Rating evidence base",
         "icon": "activity",
         "tags_ru": [
-          "REVIEW",
-          "Local окончательный",
+          "Production",
+          "325 моделей",
           "22 языка",
-          "Production без изменений"
+          "Public QA"
         ],
         "tags_en": [
-          "REVIEW",
-          "Final Local",
+          "Production",
+          "325 models",
           "22 languages",
-          "Production unchanged"
+          "Public QA"
         ],
         "capabilities_ru": [
           "Этап 1 (выполнен): Выполнено: все 799 моделей master получили доказательный independent_evaluation_status; 325/325 PUBLISHED исследованы. Добавлено 4 125 наблюдений (Evaluations 906 → 5 031) из Epoch AI (own + 60 внешних лидербордов), LMArena CC BY 4.0, Aider, ForecastBench, MTEB CC0, Open ASR и TTS Arena; каждая строка с source_score, лицензией и rating_eligible.",
@@ -1459,7 +1561,7 @@
           "Итог 325 PUBLISHED: independent_public 126; independent + developer 50; research-only 17; только разработчик 91; без опубликованных численных тестов 23; точная версия не найдена 8; идентичность неоднозначна 9; конфигурация 1. Публичная независимая 159/325 (48,9%); любая проверенная численная оценка 280/325 (86,2%).",
           "По категориям (independent → any): text 54,3% → 89,1%; image 67,7% → 91,9%; video 47,2% → 72,2%; audio 0% → 79,5%; other 0% → 62,5%.",
           "UI «Проверки»: «Независимая проверка», «Результаты разработчика» с пояснением «Результаты опубликованы разработчиком модели», research-only и замеры конкурентов без баллов, «Статус оценок» по final_class; компактные группы (3 + «Показать все»); все новые подписи на 22 языках.",
-          "Local: штатный sync-local (сначала копия) — qa PASS, check OK, integrity ok, FK 0, повторный план 0, Django check 0 issues; 315 тестов; браузер ru/en/ar/fa/zh-Hans/de, RTL, тёмная/светлая, 375 px без переполнения. Нерешённые: Nova 2 Pro PDF, GPT Transcribe (цифра только в посте X), Apertus 70B (отчёт не вышел). Production без изменений; ждёт визуальной приёмки владельца."
+          "Local: штатный sync-local (сначала копия) — qa PASS, check OK, integrity ok, FK 0, повторный план 0, Django check 0 issues; 315 тестов; браузер ru/en/ar/fa/zh-Hans/de, RTL, тёмная/светлая, 375 px без переполнения. Нерешённые: Nova 2 Pro PDF, GPT Transcribe (цифра только в посте X), Apertus 70B (отчёт не вышел). Production: 325 Models / 147 Tools; публичный QA 1657/1657 PASS."
         ],
         "capabilities_en": [
           "Stage 1 (done): Done: every one of 799 master models has an evidenced independent_evaluation_status; 325/325 PUBLISHED researched. 4,125 observations added (Evaluations 906 → 5,031) from Epoch AI (own + 60 external leaderboards), LMArena CC BY 4.0, Aider, ForecastBench, MTEB CC0, Open ASR and TTS Arena; each row keeps source_score, licence and rating_eligible.",
@@ -1469,17 +1571,24 @@
           "Outcome for 325 PUBLISHED: independent_public 126; independent + developer 50; research-only 17; developer only 91; no published numerical tests 23; exact version not found 8; identity ambiguous 9; configuration 1. Public independent 159/325 (48.9%); any verified numerical evaluation 280/325 (86.2%).",
           "By category (independent → any): text 54.3% → 89.1%; image 67.7% → 91.9%; video 47.2% → 72.2%; audio 0% → 79.5%; other 0% → 62.5%.",
           "Checks UI: “Independent evaluation”, “Developer-reported results” with the note “Results published by the model developer”, research-only and competitor lines without scores, “Evaluation status” by final_class; compact groups (3 + “Show all”); all new labels in 22 languages.",
-          "Local: standard sync-local (copy first) — qa PASS, check OK, integrity ok, FK 0, repeat plan 0, Django check 0 issues; 315 tests; browser ru/en/ar/fa/zh-Hans/de, RTL, dark/light, 375 px without overflow. Unresolved: Nova 2 Pro PDF, GPT Transcribe (figure only in an X post), Apertus 70B (report not out). Production unchanged; awaiting owner visual acceptance."
+          "Local: standard sync-local (copy first) — qa PASS, check OK, integrity ok, FK 0, repeat plan 0, Django check 0 issues; 315 tests; browser ru/en/ar/fa/zh-Hans/de, RTL, dark/light, 375 px without overflow. Unresolved: Nova 2 Pro PDF, GPT Transcribe (figure only in an X post), Apertus 70B (report not out). Production: 325 Models / 147 Tools; public QA 1657/1657 PASS."
         ],
         "qa": {
-          "local": "Final Local: master refresh/check OK; sync-local on a copy, then the working Local; qa PASS (0 errors) on both; integrity ok, FK 0; repeat plan 0; Django check 0 issues; 315 tests; browser RU/EN + ar/fa (RTL), zh-Hans, de, themes, mobile 375 px. Production: unchanged."
+          "local": "Final Local: master refresh/check OK; sync-local on a copy, then the working Local; qa PASS (0 errors) on both; integrity ok, FK 0; repeat plan 0; Django check 0 issues; 315 tests; browser RU/EN + ar/fa (RTL), zh-Hans, de, themes, mobile 375 px. Owner approved the exact Local state on 2026-09-28.",
+          "production": "1657/1657 PASS; artifacts/catalog-release-20260927/gsd-production-qa.json"
         },
-        "changes": ["4104 evaluation rows added and 16 visibility flags changed against the live Production baseline", "Checks UI separates independent evidence from developer results and localizes new labels in 22 languages"],
-        "revision": "2fd442cb487c2c9ff2ea2acc00070a0c17164f47",
-        "source": "execution-state",
-        "open": true,
+        "changes": [
+          "4104 evaluation rows added and 16 visibility flags changed against the live Production baseline",
+          "Checks UI separates independent evidence from developer results and localizes new labels in 22 languages"
+        ],
+        "revision": "d349d6de42cbe49dd55134a7ca792f6bce85ab7e",
+        "source": "2026-09-28-eval-evidence-release",
+        "open": false,
         "owner_decision": "Owner approved the exact current Local state and authorized this Production release in the 2026-09-28 Codex handoff after Claude limit",
-        "progress": "review"
+        "progress": "done",
+        "production_verified_at": "2026-09-28T16:48:26+00:00",
+        "release_report": "docs/history/2026-09-28-eval-evidence-release.md",
+        "backup": "aipedia-before-code-20260928T163724Z.sqlite3"
       }
     ],
     "additional_tasks": [
@@ -1643,40 +1752,28 @@
         "qa_en": "check OK; qa PASS (copy and working Local); integrity ok, FK 0; repeat plan 0; Django check; 315 tests; browser 6 locales, RTL, themes, 375 px.",
         "owner_ru": "Владелец в handoff 28.09.2026 явно принял последнее Local-состояние и разрешил выпуск Production; исполнитель — Codex после лимита Claude.",
         "owner_en": "The owner explicitly approved the latest Local state and authorized Production in the 2026-09-28 handoff; Codex continues after Claude's limit.",
-        "next_ru": "Завершить preflight, выпуск и публичный QA; Production пока не отмечать опубликованным.",
-        "next_en": "Complete preflight, release and public QA; do not mark Production released yet.",
-        "source": "execution-state",
-        "progress": "review"
+        "next_ru": "Выпуск #012 опубликован и проверен; известные пробелы evidence остаются отдельной очередью.",
+        "next_en": "Release #012 is published and verified; known evidence gaps remain a separate queue.",
+        "source": "2026-09-28-eval-evidence-release",
+        "progress": "done"
       }
     ],
     "current_local": {
       "release_id": "EVAL-EVIDENCE-AUDIT-2026-09-27",
       "release_sequence": 12,
       "app_version": "v0.12.0",
-      "revision": "2fd442cb487c2c9ff2ea2acc00070a0c17164f47",
+      "revision": "d349d6de42cbe49dd55134a7ca792f6bce85ab7e",
       "release_tag": "release-2026-09-28-eval-evidence"
     },
     "current_production": {
-      "release_tag": "release-2026-09-27-catalog-325-147",
-      "revision": "9ddba83c176aa3f6793362d6345b797c76ddf987",
-      "release_id": "release-2026-09-27-catalog-325-147",
-      "release_sequence": 11,
-      "app_version": "v0.11.0",
-      "confirmed_at": "2026-09-27 22:05",
-      "evidence": "Live /healthz, server database compare, catalog_master qa --production, gsd_production_qa 1657/1657, RU/EN public browser",
-      "status_ru": "Опубликовано и проверено: /healthz подтвердил 9ddba83; 325/325 Models и 147/147 Tools пронумерованы; Production QA 1657/1657.",
-      "status_en": "Published and verified: /healthz confirmed 9ddba83; all 325 Models and 147 Tools numbered; Production QA 1657/1657.",
-      "source": "2026-09-27-catalog-325-147-release",
-      "capabilities_ru": [
-        "325 опубликованных моделей и 147 инструментов; номера непрерывны.",
-        "Новые LongCat, Qwen3Guard-Stream, GPT Researcher, KoboldCpp, Darkbloom и vMLX.",
-        "Состояние публикации соответствует утверждённому Local; /history/ на Production — 404."
-      ],
-      "capabilities_en": [
-        "325 published models and 147 tools, all numbered without gaps.",
-        "New LongCat, Qwen3Guard-Stream, GPT Researcher, KoboldCpp, Darkbloom and vMLX records.",
-        "Publication state matches approved Local; /history/ remains 404 on Production."
-      ]
+      "release_id": "EVAL-EVIDENCE-AUDIT-2026-09-27",
+      "release_sequence": 12,
+      "app_version": "v0.12.0",
+      "release_tag": "release-2026-09-28-eval-evidence",
+      "revision": "d349d6de42cbe49dd55134a7ca792f6bce85ab7e",
+      "confirmed_at": "2026-09-28T16:48:26+00:00",
+      "evidence": "1657/1657 PASS; artifacts/catalog-release-20260927/gsd-production-qa.json",
+      "source": "docs/history/2026-09-28-eval-evidence-release.md"
     }
   }
 }

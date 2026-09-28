@@ -62,7 +62,11 @@ if __name__ == "__main__":
     if not (qa_report.get("passed", 0) > 0 and qa_report.get("passed") == qa_report.get("total")
             and not qa_report.get("failures") and args.commit in json.dumps(qa_report.get("health", {}))):
         raise SystemExit("Production QA report must pass fully for the deployed commit")
-    with urllib.request.urlopen("https://aipediya.com/healthz", timeout=15) as response:
+    health_request = urllib.request.Request(
+        "https://aipediya.com/healthz",
+        headers={"User-Agent": "AIpediya-GSD-production-QA/1.0 (+owner read-only check)"},
+    )
+    with urllib.request.urlopen(health_request, timeout=15) as response:
         health = response.read().decode("utf-8")
     registry = json.loads(source.read_text(encoding="utf-8"))
     finalized = finalize(registry, args.release_id, args.commit, args.release_report,
