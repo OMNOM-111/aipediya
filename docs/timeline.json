@@ -871,9 +871,11 @@
       "app_version": "v0.13.0",
       "title": "Catalog reconciliation and project cleanup",
       "environment": "local",
-      "stage": "in_progress",
+      "stage": "review",
       "history": "docs/history/2026-09-28-reconciliation-cleanup.md",
-      "summary": "Resolve 1,067 unsupported diagnostics, verify useful data, reconcile Local and Production, and close project hygiene. Baseline: 954 SQL key false comparisons, 113 substantive differences, 13 potentially useful, 93 master-only/research, 1 hidden duplicate, 6 unclear."
+      "summary": "Resolve 1,067 unsupported diagnostics, verify useful data, reconcile Local and Production, and close project hygiene. Baseline: 954 SQL key false comparisons, 113 substantive differences, 13 potentially useful, 93 master-only/research, 1 hidden duplicate, 6 unclear.",
+      "revision": "4647869d0b4d19b5dd4b0f547edac73784c33923",
+      "release_tag": "release-2026-09-28-reconciliation-cleanup"
     }
   ],
   "product_history": {
@@ -1649,8 +1651,8 @@
         "release_id": "release-2026-09-28-reconciliation-cleanup",
         "release_sequence": 13,
         "app_version": "v0.13.0",
-        "local_verified": false,
-        "owner_approved": false,
+        "local_verified": true,
+        "owner_approved": true,
         "production_released": false,
         "production_verified": false,
         "date": "2026-09-28",
@@ -1660,26 +1662,37 @@
         "tags_ru": [
           "Release #013",
           "v0.13.0",
-          "Local"
+          "Local QA ✓"
         ],
         "tags_en": [
           "Release #013",
           "v0.13.0",
-          "Local"
+          "Local QA ✓"
         ],
         "capabilities_ru": [
-          "Исходный baseline: 1 067 unsupported; 954 ложных сравнения SQL-ключей; 113 содержательных различий.",
-          "Проверяются 13 потенциально полезных, 93 master-only/research, 1 скрытый дубль и 6 неясных значений.",
-          "Далее — безопасное согласование Local, Master и Production и закрытие рабочего дерева после полного QA."
+          "1 067 исходных предупреждений: 954 ложных сравнения PK устранены; 513 намеренных master-only/представлений объяснены; после Local sync — 0 unsupported и 0 writes.",
+          "В Local применены 11 точных URL доступа, провайдер Moonshot AI и категория image для Furniture Assembly; шесть исходных ячеек Master исправлены с Changelog.",
+          "Local QA: 327 тестов OK (1 skip), check/qa PASS, integrity/FK PASS, браузер RU/EN/ar RTL, 375/1440 px, светлая/тёмная тема; Production ожидает выпуск."
         ],
         "capabilities_en": [
-          "Baseline: 1,067 unsupported warnings; 954 false SQL-key comparisons; 113 substantive differences.",
-          "Reviewing 13 potentially useful values, 93 master-only/research values, one hidden duplicate and six unclear values.",
-          "Then reconcile Local, Master and Production and close the working tree after full QA."
+          "Of 1,067 original warnings, 954 false PK comparisons are fixed; 513 intentional master-only/representation differences are documented; Local repeat plan has 0 unsupported and 0 writes.",
+          "Local received 11 precise Access URLs, the Moonshot AI provider and image category for Furniture Assembly; six canonical Master cells were corrected with Changelog.",
+          "Local QA: 327 tests OK (one skip), check/qa PASS, integrity/FK PASS, RU/EN/ar RTL browser, 375/1440 px, dark/light; Production release pending."
         ],
-        "source": "execution-state",
+        "source": "2026-09-28-reconciliation-cleanup",
         "open": true,
-        "progress": "in_progress"
+        "progress": "review",
+        "revision": "4647869d0b4d19b5dd4b0f547edac73784c33923",
+        "release_tag": "release-2026-09-28-reconciliation-cleanup",
+        "owner_decision": "Owner explicitly authorized this exact cleanup/reconciliation release after full Local QA in the 2026-09-28 mandate",
+        "qa": {
+          "local": "327 catalog tests OK (1 Windows skip); master check OK; catalog QA PASS; 13 writes on Local and exact Production trial; repeat plan 0 writes/0 unsupported; integrity ok, FK 0; browser RU/EN/ar RTL, desktop/mobile, dark/light, 11 affected links, console errors 0"
+        },
+        "changes": [
+          "954 false PK comparisons eliminated by natural keys; 513 intentional master-only/representation differences classified",
+          "11 exact Access URLs, one Kimi API provider and one Furniture Assembly category reconciled; 6 canonical Master cells corrected with Changelog",
+          "Historical candidate data preserved; working-tree files classified and Definition of Done established"
+        ]
       }
     ],
     "additional_tasks": [
@@ -1850,11 +1863,11 @@
       }
     ],
     "current_local": {
-      "release_id": "EVAL-EVIDENCE-AUDIT-2026-09-27",
-      "release_sequence": 12,
-      "app_version": "v0.12.0",
-      "revision": "d349d6de42cbe49dd55134a7ca792f6bce85ab7e",
-      "release_tag": "release-2026-09-28-eval-evidence"
+      "release_id": "release-2026-09-28-reconciliation-cleanup",
+      "release_sequence": 13,
+      "app_version": "v0.13.0",
+      "revision": "4647869d0b4d19b5dd4b0f547edac73784c33923",
+      "release_tag": "release-2026-09-28-reconciliation-cleanup"
     },
     "current_production": {
       "release_id": "EVAL-EVIDENCE-AUDIT-2026-09-27",

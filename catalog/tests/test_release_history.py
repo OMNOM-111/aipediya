@@ -12,7 +12,7 @@ class ReleaseHistoryTests(SimpleTestCase):
         cards = [row for row in registry["product_history"]["milestones"] if row.get("release_sequence")]
         self.assertEqual([row["release_sequence"] for row in cards], list(range(1, 14)))
         self.assertEqual(cards[-1]["app_version"], "v0.13.0")
-        self.assertEqual(registry["product_history"]["current_local"]["release_sequence"], 12)
+        self.assertEqual(registry["product_history"]["current_local"]["release_sequence"], 13)
         self.assertEqual(registry["product_history"]["current_production"]["release_sequence"], 12)
 
     def test_gate_rejects_missing_review_qa_owner_and_stale_html(self):

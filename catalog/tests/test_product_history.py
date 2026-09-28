@@ -18,7 +18,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertEqual(product["current_production"]["app_version"], "v0.12.0")
         self.assertEqual(product["current_production"]["revision"],
                          "d349d6de42cbe49dd55134a7ca792f6bce85ab7e")
-        self.assertEqual(product["current_local"]["release_sequence"], 12)
+        self.assertEqual(product["current_local"]["release_sequence"], 13)
         versions = by_id["VERSION-HISTORY-2026-09-27"]
         self.assertEqual((versions["progress"], versions["local_verified"],
                           versions["owner_approved"], versions["production_verified"]),
@@ -46,7 +46,7 @@ class ProductHistoryTests(SimpleTestCase):
         # The catalog/CSP stage was owner-approved and published.
         self.assertContains(page, 'class="ph-legend-dot is-review"', count=1)
         self.assertContains(page, 'Ожидает подтверждения владельца')
-        self.assertContains(page, 'class="ph-milestone ph-review ph-open"', count=1)
+        self.assertContains(page, 'class="ph-milestone ph-review ph-open"', count=2)
         self.assertContains(page, '61adedd6ea5e6a0955d51d87374fa2fa9bcc7799')
         self.assertContains(page, 'PLANNED')
         self.assertContains(page, 'кампания не создана и не запущена.')
