@@ -64,16 +64,14 @@
     <p>Local {% if milestone.local_verified %}✓{% elif milestone.progress == 'review' %}!{% else %}—{% endif %} · Owner {% if milestone.owner_approved %}✓{% elif milestone.progress == 'review' %}!{% else %}—{% endif %} · Production {% if milestone.production_verified %}✓{% else %}—{% endif %}</p>
     <h3>{% if milestone.stage == 'planned' %}{% if edition == 'ru' %}План{% else %}Plan{% endif %}{% else %}{{ labels.done_heading }}{% endif %}</h3><div class="ph-change-list">{% for change in milestone.change_cards %}<article class="ph-change-card" data-change-card>
       <header class="ph-change-head"><span class="ph-change-number">{{ change.number }}</span><h4>{{ change.title }}</h4><span class="ph-change-status{% if milestone.progress == 'planned' %} is-planned{% elif milestone.progress == 'review' %} is-local{% elif milestone.open and milestone.progress == 'done' %} is-local-done{% elif milestone.open %} is-local{% else %} is-published{% endif %}">{{ change.status }}</span></header>
-      {% if change.summary %}<p>{{ change.summary }}</p>{% endif %}
-      {% if change.criteria %}<details class="ph-change-evidence"><summary>{{ labels.criteria }}</summary><ul>{% for criterion in change.criteria %}<li>{{ criterion }}</li>{% endfor %}</ul></details>{% endif %}
+{% if change.summary %}<p>{{ change.summary }}</p>{% endif %}
+{% if change.criteria %}<details class="ph-change-evidence"><summary>{{ labels.criteria }}</summary><ul>{% for criterion in change.criteria %}<li>{{ criterion }}</li>{% endfor %}</ul></details>{% endif %}
     </article>{% empty %}<p>{{ labels.confirmed_milestone }}</p>{% endfor %}</div>
-    <h3>{{ labels.checked_heading }}</h3><p>{% if milestone.task %}{{ milestone.task.qa }}{% else %}{{ labels.proof_in_report }}{% endif %}</p>
-    {% if milestone.qa.local %}<p>Local QA: {{ milestone.qa.local }}</p>{% endif %}{% if milestone.qa.production %}<p>Production QA: {{ milestone.qa.production }}</p>{% endif %}
+    <h3>{{ labels.checked_heading }}</h3><p>{% if milestone.task %}{{ milestone.task.qa }}{% else %}{{ labels.proof_in_report }}{% endif %}</p>{% if milestone.qa.local %}<p>Local QA: {{ milestone.qa.local }}</p>{% endif %}{% if milestone.qa.production %}<p>Production QA: {{ milestone.qa.production }}</p>{% endif %}
     <h3>{{ labels.owner_heading }}</h3><p>{% if milestone.owner_decision %}{{ labels.release_owner_approval }} {{ milestone.owner_decision }}.{% elif milestone.task %}{{ milestone.task.owner }}{% else %}{{ labels.no_owner_decision }}{% endif %}</p>
     <h3>{{ labels.remaining_heading }}</h3><p>{% if milestone.task %}{{ milestone.task.next }}{% elif milestone.open %}{{ labels.local_work_next }}{% else %}{{ labels.closed_next }}{% endif %}</p>
     <h3>{{ labels.publication_heading }}</h3><p>{% if milestone.progress == 'planned' %}{% if edition == 'ru' %}Кампания не создана и не запущена.{% else %}Campaign not created or launched.{% endif %}{% elif milestone.progress == 'review' %}{% if edition == 'ru' %}Реализовано и проверено в Local; ожидает визуальной приёмки владельца. На Production не публиковалось.{% else %}Implemented and checked in Local; awaiting the owner's visual acceptance. Not published to Production.{% endif %}{% elif milestone.open and milestone.progress == 'done' %}{% if edition == 'ru' %}Готово в Local; на Production не публиковалось.{% else %}Complete in Local; not published to Production.{% endif %}{% elif milestone.open %}{{ labels.local_not_published }}{% else %}{{ labels.released }}{% endif %}</p>
-    {% if milestone.release_tag %}<p>Tag: <code>{{ milestone.release_tag }}</code></p>{% endif %}
-    {% if milestone.revision %}<p class="ph-technical-reference"><code>{{ milestone.id }}</code> · <code>{{ milestone.revision }}</code></p>{% endif %}
+{% if milestone.release_tag %}<p>Tag: <code>{{ milestone.release_tag }}</code></p>{% endif %}{% if milestone.revision %}<p class="ph-technical-reference"><code>{{ milestone.id }}</code> · <code>{{ milestone.revision }}</code></p>{% endif %}
     <p class="ph-source-links"><a href="/history/source/{{ milestone.source }}">{{ labels.source_report }} ↗</a></p>
   </div></template>{% endfor %}
 </main>

@@ -236,6 +236,43 @@ class MasterSyncTests(TestCase):
             self.command("sync-local", apply=True)
         self.assertFalse(Tool.objects.exists())
 
+    def test_unsupported_uses_natural_keys_across_database_primary_keys(self):
+        self.model("a")
+        self.model("b")
+        snapshot, aux = cm.local_snapshot()
+        rows = {sheet: [] for sheet in (*cm.MAIN, *cm.AUX)}
+        rows["Models"] = [snapshot["Models"][slug][0] for slug in ("a", "b")]
+        rows["Offers"] = [{"Key": "offer-1", "Record Type": "model", "Record ID": "a",
+                           "Research Key": "a:input", "Provider": "Lab", "Service": "A API"}]
+        aux["Offers"] = {
+            "offer-1": {"Record Type": "model", "Record ID": "b", "Research Key": "b:input",
+                        "Provider": "Other", "Service": "B API"},
+            "offer-2": {"Record Type": "model", "Record ID": "a", "Research Key": "a:input",
+                        "Provider": "Lab", "Service": "A API"},
+        }
+        rows["Origins"] = [{"Key": "origin-1", "Record Type": "model", "Record ID": "a",
+                            "Country": "US", "Position": "0", "Source URL": "https://example.com/a"}]
+        aux["Origins"] = {
+            "origin-1": {"Record Type": "model", "Record ID": "b", "Country": "FR",
+                         "Position": "0", "Source URL": "https://example.com/b"},
+            "origin-2": {"Record Type": "model", "Record ID": "a", "Country": "US",
+                         "Position": "0", "Source URL": "https://example.com/a"},
+        }
+        rows["Tool Platforms"] = [{"Key": "platform-1", "Record Type": "tool", "Record ID": "t",
+                                    "Platform": "web", "Source URL": "https://example.com/t"}]
+        aux["Tool Platforms"] = {
+            "platform-1": {"Record Type": "tool", "Record ID": "other", "Platform": "cli",
+                           "Source URL": "https://example.com/other"},
+            "platform-2": {"Record Type": "tool", "Record ID": "t", "Platform": "web",
+                           "Source URL": "https://example.com/t"},
+        }
+        changes = master_sync._unsupported(rows, snapshot, aux, {"Models": {"a", "b"}, "Tools": {"t"}})
+        self.assertEqual(changes, [])
+
+    def test_score_storage_rounding_is_intentional(self):
+        self.assertTrue(master_sync._same_stored_score("0.77757", "0.778"))
+        self.assertFalse(master_sync._same_stored_score("0.77757", "0.777"))
+
 
 @unittest.skipUnless(HAS_OPENPYXL, "openpyxl is not installed")
 class MasterSyncNumbersAndRelationsTests(MasterSyncTests):
@@ -276,7 +313,7 @@ class MasterSyncNumbersAndRelationsTests(MasterSyncTests):
             by["early"]["Source Title"] = "Renamed source"
         self.edit(change)
         out = self.command("sync-local", apply=True, max_changes=50)
-        self.assertIn("NOT transferred", out)
+        self.assertIn("intentional_master_only", out)
         numbers = {m.slug: m.public_number for m in ModelVersion.objects.all()}
         self.assertEqual((numbers["early"], numbers["late"], numbers["hidden"]), (1, 2, None))
         self.assertEqual(Tool.objects.get(pk=dated_tool.pk).public_number, 1)

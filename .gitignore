@@ -22,3 +22,7 @@ secret.key
 AI_CONTEXT/AI_CONTEXT.md
 AI_CONTEXT/AI_CONTEXT.zip
 AI_CONTEXT/MANIFEST.json
+# Local-only user launch settings, shortcut, and historical research imports.
+.claude/launch.json
+AI_CONTEXT/AIpedia — История сайта.lnk
+data/research/

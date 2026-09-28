@@ -1,0 +1,29 @@
+# Release candidate catalog-master-v013: HEAD + exactly these working-tree files.
+# Built with: .venv\Scripts\python.exe tools\build_code_release.py --candidate data\release\v013\CANDIDATE_FILES.txt
+# Not included on purpose: parallel uncommitted work on the site history
+# (catalog/product_history.py, templates/product_history*.html, static/product-history*,
+# tools/build_product_history.py, tools/pack_ai_context.py, their tests, docs/timeline.json)
+# and shared docs edited by several executors (AGENTS.md, docs/DECISIONS.md,
+# docs/EXECUTION_STATE.md, AI_CONTEXT/README.md) — they stay at HEAD in the archive.
+catalog/catalog_master.py
+catalog/master_sync.py
+catalog/chronology.py
+catalog/models.py
+catalog/views.py
+catalog/migrations/0019_catalog_master_aliases.py
+catalog/management/commands/catalog_master.py
+catalog/tests/test_catalog_master.py
+catalog/tests/test_catalog_master_sync.py
+catalog/tests/test_chronology.py
+catalog/tests/test_permanent_numbers.py
+catalog/tests/test_import_research.py
+tools/build_code_release.py
+tools/deploy_code_release.py
+tools/master_editorial_2026_09_26.py
+data/release_state.json
+data/release/v013/catalog_plan.json
+data/release/v013/translations.json
+data/release/v013/CANDIDATE_FILES.txt
+docs/CATALOG_MASTER.md
+docs/history/2026-09-26-catalog-master-v013.md
+docs/RELEASE.md

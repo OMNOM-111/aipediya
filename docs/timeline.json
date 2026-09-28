@@ -857,6 +857,23 @@
       "owner_decision": "Owner approved the exact current Local state and authorized this Production release in the Codex handoff, 2026-09-28",
       "note": "Owner-approved Local published by Codex after Claude limit. Server preflight/trial/deploy/verify-release PASS; 325 Models, 147 Tools; 159 public independent, 280 numerical; GSD Production QA 1657/1657 PASS and public browser PASS.",
       "production_verified_at": "2026-09-28T16:48:26+00:00"
+    },
+    {
+      "release_id": "UNSUPPORTED-MASTER-PROD-AUDIT-2026-09-28",
+      "title": "Audit 1,067 unsupported master / Production differences",
+      "environment": "local",
+      "stage": "review",
+      "history": "docs/history/2026-09-28-unsupported-master-production-audit.md"
+    },
+    {
+      "release_id": "release-2026-09-28-reconciliation-cleanup",
+      "release_sequence": 13,
+      "app_version": "v0.13.0",
+      "title": "Catalog reconciliation and project cleanup",
+      "environment": "local",
+      "stage": "in_progress",
+      "history": "docs/history/2026-09-28-reconciliation-cleanup.md",
+      "summary": "Resolve 1,067 unsupported diagnostics, verify useful data, reconcile Local and Production, and close project hygiene. Baseline: 954 SQL key false comparisons, 113 substantive differences, 13 potentially useful, 93 master-only/research, 1 hidden duplicate, 6 unclear."
     }
   ],
   "product_history": {
@@ -1589,6 +1606,80 @@
         "production_verified_at": "2026-09-28T16:48:26+00:00",
         "release_report": "docs/history/2026-09-28-eval-evidence-release.md",
         "backup": "aipedia-before-code-20260928T163724Z.sqlite3"
+      },
+      {
+        "release_id": "UNSUPPORTED-MASTER-PROD-AUDIT-2026-09-28",
+        "local_verified": true,
+        "owner_approved": false,
+        "production_released": false,
+        "production_verified": false,
+        "date": "2026-09-28",
+        "title_ru": "Аудит 1 067 unsupported расхождений master ↔ Production",
+        "title_en": "Audit of 1,067 unsupported master / Production differences",
+        "icon": "clipboard-list",
+        "tags_ru": [
+          "Аудит",
+          "Read-only",
+          "1 067 расхождений"
+        ],
+        "tags_en": [
+          "Audit",
+          "Read-only",
+          "1,067 differences"
+        ],
+        "capabilities_ru": [
+          "1 067 предупреждений разложены по 20 полям: 954 вызваны расхождением технических PK при совпадении данных по содержательному ключу; остаются 113 содержательных различий.",
+          "Вероятно полезные: 13; master-only/research: 93; ложные сравнения и скрытый дубль: 955; требуют проверки: 6.",
+          "Master, Local SQLite и Production не менялись; подробный отчёт — docs/history/2026-09-28-unsupported-master-production-audit.md."
+        ],
+        "capabilities_en": [
+          "1,067 warnings grouped by 20 fields; 954 are surrogate-key comparison artifacts and 113 are substantive differences.",
+          "Potentially useful: 13; master-only/research: 93; false comparisons and hidden duplicate: 955; pending review: 6.",
+          "Master, Local SQLite and Production data were unchanged; see the audit report."
+        ],
+        "source": "2026-09-28-unsupported-master-production-audit",
+        "open": true,
+        "progress": "review",
+        "qa": {
+          "local": "Read-only Production snapshot; sync-local dry-run 0 writes; 1,067 warnings checked against master Changelog, natural keys, Git/history",
+          "production": "Read-only preflight and snapshot; Production data unchanged"
+        }
+      },
+      {
+        "release_id": "release-2026-09-28-reconciliation-cleanup",
+        "release_sequence": 13,
+        "app_version": "v0.13.0",
+        "local_verified": false,
+        "owner_approved": false,
+        "production_released": false,
+        "production_verified": false,
+        "date": "2026-09-28",
+        "title_ru": "Согласование каталога и закрытие хвостов",
+        "title_en": "Catalog reconciliation and project cleanup",
+        "icon": "clipboard-list",
+        "tags_ru": [
+          "Release #013",
+          "v0.13.0",
+          "Local"
+        ],
+        "tags_en": [
+          "Release #013",
+          "v0.13.0",
+          "Local"
+        ],
+        "capabilities_ru": [
+          "Исходный baseline: 1 067 unsupported; 954 ложных сравнения SQL-ключей; 113 содержательных различий.",
+          "Проверяются 13 потенциально полезных, 93 master-only/research, 1 скрытый дубль и 6 неясных значений.",
+          "Далее — безопасное согласование Local, Master и Production и закрытие рабочего дерева после полного QA."
+        ],
+        "capabilities_en": [
+          "Baseline: 1,067 unsupported warnings; 954 false SQL-key comparisons; 113 substantive differences.",
+          "Reviewing 13 potentially useful values, 93 master-only/research values, one hidden duplicate and six unclear values.",
+          "Then reconcile Local, Master and Production and close the working tree after full QA."
+        ],
+        "source": "execution-state",
+        "open": true,
+        "progress": "in_progress"
       }
     ],
     "additional_tasks": [

@@ -427,6 +427,20 @@ data/release/v015/catalog_plan.json --translations data/release/v015/translation
 --publication-state data/release_state.json`; публичная проверка —
 `artifacts/catalog-master-v015/v015_check.py https://aipediya.com`.
 
+## Reconciliation / cleanup #013 (`v0.13.0`)
+
+Владелец 28.09.2026 в поручении `закрыть все текущие хвосты` разрешил выпуск
+проверенного Local-состояния этого этапа без повторного запроса. Точный состав и
+решения: `docs/history/2026-09-28-reconciliation-cleanup.md`. План каталога —
+`data/release/reconciliation-20260928/catalog_plan.json` (11 Access URL, один Service provider,
+одна Benchmark category); публикационное состояние — `data/release_state.json`
+без изменения числа записей (325 Models / 147 Tools). После Local gate: read-only
+`python tools/server.py preflight`, live baseline, `release-preflight` на online
+backup, затем `deploy --dry-run`, `deploy` с этим планом и манифестом. После
+выпуска: `/healthz`, `catalog`, `verify-release`, `catalog_master qa --production`,
+public Checks и затронутые карточки, полный Public QA; только затем
+`finalize_release_history.py` и закрытие карточки. Local SQLite не передаётся.
+
 ## Обязательный gate истории и версии
 
 **No Timeline → No Release.** Перед каждым новым пакетом зарезервировать

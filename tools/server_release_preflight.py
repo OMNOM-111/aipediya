@@ -77,11 +77,12 @@ def main():
                 raise RuntimeError("Release entry digest mismatch: " + name)
         if "app/" + plan not in manifest["files"] or "app/" + publication not in manifest["files"]:
             raise RuntimeError("Approved catalog plan/publication manifest absent")
+        plan_data = json.loads(z.read("app/" + plan))
     before = snapshot(DB)
     if before["integrity"] != "ok" or before["foreign_keys"]:
         raise RuntimeError("Production SQLite baseline failed integrity checks")
     stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
-    backup = BACKUPS / f"aipedia-preflight-eval-evidence-{stamp}.sqlite3"
+    backup = BACKUPS / f"aipedia-preflight-{manifest['release_sequence']:03d}-{stamp}.sqlite3"
     if backup.exists():
         raise RuntimeError("Preflight backup path exists")
     with sqlite3.connect(f"file:{DB}?mode=ro", uri=True) as src, sqlite3.connect(backup) as dst:
@@ -115,8 +116,26 @@ def main():
     after = snapshot(backup)
     if not set(before["tools"]).issubset(after["tools"]) or not set(before["model_rows"]).issubset(after["model_rows"]):
         raise RuntimeError("Trial removed an existing catalog record")
-    if any(before[k] != after[k] for k in ("tools", "model_rows", "offers", "accesses")):
-        raise RuntimeError("Trial changed model/tool identity, publication, price, or access outside the approved plan")
+    sequence = manifest["release_sequence"]
+    if sequence == 13 and {kind: plan_data["counts"].get(kind, 0) for kind in
+                           ("access_service", "service_provider", "benchmark_category")} != {
+                               "access_service": 11, "service_provider": 1, "benchmark_category": 1}:
+        raise RuntimeError("Release #013 plan counts differ from the approved scope")
+    unchanged = ("tools", "model_rows", "offers") if sequence == 13 else (
+        "tools", "model_rows", "offers", "accesses")
+    if any(before[k] != after[k] for k in unchanged):
+        raise RuntimeError("Trial changed model/tool identity, publication or price outside the approved plan")
+    if sequence == 13:
+        expected_access_ids = {int(change["id"].split("-", 1)[1]) for change in
+                               plan_data["changes"]
+                               if change["kind"] == "access_service"}
+        changed_access_ids = {key for key in before["accesses"] if before["accesses"][key] != after["accesses"].get(key)}
+        if before["accesses"].keys() != after["accesses"].keys() or changed_access_ids != expected_access_ids:
+            raise RuntimeError("Trial Access changes differ from the approved plan")
+        for key in changed_access_ids:
+            if {k: v for k, v in before["accesses"][key].items() if k != "service_id"} != {
+                    k: v for k, v in after["accesses"][key].items() if k != "service_id"}:
+                raise RuntimeError("Trial changed an Access field other than service_id")
     if (before["published_models"], before["published_tools"]) != (325, 147):
         raise RuntimeError("Production baseline differs from the approved release predecessor")
     if (after["published_models"], after["numbered_models"],
@@ -124,11 +143,13 @@ def main():
         raise RuntimeError("Trial catalog counts differ from approved Local: " +
                            repr({k: after[k] for k in ("published_tools", "numbered_tools",
                                "published_models", "numbered_models")}))
-    if (before["evaluation_rows"], before["evaluation_public"],
-            after["evaluation_rows"], after["evaluation_public"]) != (906, 851, 5010, 2741):
+    expected_evaluations = (906, 851, 5010, 2741) if sequence == 12 else (5010, 2741, 5010, 2741)
+    expected_dependencies = (436, 35, 999, 982) if sequence == 12 else (999, 982, 999, 982)
+    if sequence not in (12, 13) or (before["evaluation_rows"], before["evaluation_public"],
+            after["evaluation_rows"], after["evaluation_public"]) != expected_evaluations:
         raise RuntimeError("Trial evaluation totals differ from the approved Production delta")
     if (before["source_rows"], before["benchmark_rows"],
-            after["source_rows"], after["benchmark_rows"]) != (436, 35, 999, 982):
+            after["source_rows"], after["benchmark_rows"]) != expected_dependencies:
         raise RuntimeError("Trial evidence dependencies differ from the approved Production delta")
     if after["integrity"] != "ok" or after["foreign_keys"] or not after["numbers_continuous"] or not after["model_numbers_continuous"]:
         raise RuntimeError("Trial SQLite integrity or numbering failed")

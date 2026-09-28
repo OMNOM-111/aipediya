@@ -127,6 +127,8 @@ class Command(BaseCommand):
             key = change["kind"]
             if key == "update":
                 key += ":" + ",".join(sorted(change["after"]))
+            elif key == "intentional_master_only":
+                key += ":%s:%s" % (change["sheet"], ",".join(change["columns"]))
             elif key == "unsupported":
                 key += ":%s:%s:%s" % (change.get("category", "public"), change["sheet"], ",".join(change["columns"]))
             kinds[key] = kinds.get(key, 0) + 1

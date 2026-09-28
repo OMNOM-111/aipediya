@@ -1070,7 +1070,7 @@ def write_workbook(workbook_rows, meta, path=WORKBOOK_PATH, extra=None):
         sheet = workbook.create_sheet(name)
         headers = columns + [h for h in extra.get(name, []) if h not in columns]
         sheet.append(headers)
-        for row in rows:
+        for row_index, row in enumerate(rows, start=2):
             values = []
             for header in headers:
                 value = row.get(header, "")
@@ -1078,9 +1078,9 @@ def write_workbook(workbook_rows, meta, path=WORKBOOK_PATH, extra=None):
                     value = ILLEGAL_CHARACTERS_RE.sub("", value)
                 values.append(value or None)
             sheet.append(values)
-            for cell in sheet[sheet.max_row]:
-                if isinstance(cell.value, str) and cell.value.startswith("="):
-                    cell.data_type = "s"
+            for column_index, value in enumerate(values, start=1):
+                if isinstance(value, str) and value.startswith("="):
+                    sheet.cell(row=row_index, column=column_index).data_type = "s"
         for index, header in enumerate(headers, start=1):
             cell = sheet.cell(row=1, column=index)
             group = (groups or {}).get(header, "service")

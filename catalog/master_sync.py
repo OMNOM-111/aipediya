@@ -304,9 +304,11 @@ def plan(workbook_rows, snapshot=None, aux=None):
         if access is None or row.get("Record ID") not in published_ids.get(owner, ()):
             continue
         diff = _service_diff(access, row)
-        if diff and _exclusive_service(access):
-            changes.append({"sheet": "Access", "id": row["Key"], "kind": "access_service",
+        exclusive = _exclusive_service(access)
+        if diff and (exclusive or set(diff) == {"url"}):
+            changes.append({"sheet": "Access", "id": "access-%d" % access.pk, "kind": "access_service",
                             "before": {k: getattr(access.service, k) for k in diff}, "after": diff,
+                            "clone": not exclusive,
                             "identity": {"model": access.model.slug, "service": access.service.name},
                             "locator": _locator(access, service_after=diff)})
     evaluations = {"evaluation-%d" % e.pk: e for e in Evaluation.objects.select_related("model")}
@@ -323,9 +325,60 @@ def plan(workbook_rows, snapshot=None, aux=None):
     created = {(c["sheet"], c["id"]) for c in changes if c["kind"] == "create"}
     changes.extend(_new_rows(workbook_rows, published_ids, created))
     changes.extend(_developer_countries(workbook_rows, published_ids))
+    changes.extend(_service_providers(workbook_rows, published_ids))
+    changes.extend(_benchmark_categories(workbook_rows, published_ids))
     if snapshot is not None:
-        changes.extend(_unsupported(workbook_rows, snapshot, aux or {}, published_ids))
+        changes.extend(_unsupported(workbook_rows, snapshot, aux or {}, published_ids, changes))
     return changes
+
+
+def _service_providers(workbook_rows, published_ids):
+    """Change one shared service only when all its master offers agree."""
+    from .models import Offer, Organization
+
+    by_key = {offer.research_key: offer for offer in Offer.objects.select_related("service__provider")
+              if offer.research_key}
+    desired = {}
+    for row in workbook_rows.get("Offers", []):
+        owner = cm.RECORD_TYPE_SHEET.get(row.get("Record Type"))
+        if row.get("Record ID") not in published_ids.get(owner, ()) or not row.get("Provider"):
+            continue
+        offer = by_key.get(row.get("Research Key"))
+        if offer is not None:
+            desired.setdefault(offer.service_id, set()).add(row["Provider"])
+    out = []
+    for service_id, names in desired.items():
+        if len(names) != 1:
+            continue
+        service = next(offer.service for offer in by_key.values() if offer.service_id == service_id)
+        target = next(iter(names))
+        if target != service.provider.name and Organization.objects.filter(name=target).count() == 1:
+            out.append({"sheet": "Offers", "id": service.name, "kind": "service_provider",
+                        "identity": {"name": service.name, "url": service.url},
+                        "before": {"provider": service.provider.name}, "after": {"provider": target}})
+    return out
+
+
+def _benchmark_categories(workbook_rows, published_ids):
+    """Update a shared benchmark category only with one unambiguous master value."""
+    from .models import Benchmark
+
+    desired = {}
+    for row in workbook_rows.get("Evaluations", []):
+        if row.get("Record ID") in published_ids.get("Models", ()) and row.get("Benchmark Category"):
+            key = (row.get("Benchmark"), row.get("Protocol"))
+            desired.setdefault(key, set()).add(row["Benchmark Category"])
+    out = []
+    for (name, protocol), values in desired.items():
+        if len(values) != 1:
+            continue
+        benchmark = Benchmark.objects.filter(name=name, protocol=protocol).first()
+        target = next(iter(values))
+        if benchmark is not None and benchmark.category != target:
+            out.append({"sheet": "Evaluations", "id": name, "kind": "benchmark_category",
+                        "identity": {"name": name, "protocol": protocol},
+                        "before": {"category": benchmark.category}, "after": {"category": target}})
+    return out
 
 
 def _linked_rows(workbook_rows, sheet, record_id):
@@ -510,9 +563,14 @@ def _offer_identity(offer):
 SERVICE_ONLY = {"Source Title", "Source Publisher"}
 
 
-def _unsupported(workbook_rows, snapshot, aux, published_ids):
-    """Differences of PUBLISHED records that sync-local does not write."""
+def _unsupported(workbook_rows, snapshot, aux, published_ids, planned=()):
+    """Unwritten differences, matched by content identity before local SQL key."""
     items = []
+    planned_access = {c["id"] for c in planned if c["kind"] == "access_service"}
+    planned_providers = {(c["identity"]["name"], c["identity"]["url"])
+                         for c in planned if c["kind"] == "service_provider"}
+    planned_benchmarks = {(c["identity"]["name"], c["identity"]["protocol"])
+                          for c in planned if c["kind"] == "benchmark_category"}
     for sheet in cm.MAIN:
         for row in workbook_rows[sheet]:
             rid = row["Record ID"]
@@ -530,8 +588,12 @@ def _unsupported(workbook_rows, snapshot, aux, published_ids):
             if "Developer Country" in columns and local_row.get("Developer Country", "").strip().casefold() in NOT_A_COUNTRY:
                 columns.remove("Developer Country")  # filled by org_country
             for column in columns:
-                items.append({"sheet": sheet, "id": rid, "kind": "unsupported", "columns": [column],
-                              "category": "service" if column in SERVICE_ONLY else "public"})
+                intentional = column in SERVICE_ONLY or (sheet == "Tools" and column == "Supported Models")
+                items.append({"sheet": sheet, "id": rid,
+                              "kind": "intentional_master_only" if intentional else "unsupported",
+                              "columns": [column], "category": "service" if intentional else "public",
+                              **({"reason": "shared source bibliography" if column in SERVICE_ONLY
+                                            else "free-text model scope; no exact model Record IDs"} if intentional else {})})
     from .models import Access, Country
     exclusive = {"access-%d" % a.pk for a in Access.objects.all() if _exclusive_service(a)}
     created = {(sheet, row["Record ID"]): row for sheet in cm.MAIN for row in workbook_rows[sheet]
@@ -539,17 +601,27 @@ def _unsupported(workbook_rows, snapshot, aux, published_ids):
     countries = set(Country.objects.values_list("code", flat=True))
     for sheet in cm.AUX:
         local_rows = aux.get(sheet, {})
-        local_natural = {cm.natural_key(sheet, v) for v in local_rows.values()} - {None}
+        local_natural = {}
+        for local_key, local_row in local_rows.items():
+            identity = cm.natural_key(sheet, local_row)
+            if identity is not None:
+                local_natural.setdefault(identity, (local_key, local_row))
         for row in workbook_rows.get(sheet, []):
             owner = cm.RECORD_TYPE_SHEET.get(row.get("Record Type"))
             if row.get("Record ID") not in published_ids.get(owner, ()):
                 continue
             if sheet == "Facts" and row.get("Fact") not in LOCAL_FACT_KEYS:
                 continue  # internal verification facts never go to the site
-            local = local_rows.get(row.get("Key"))
+            identity = cm.natural_key(sheet, row)
+            matched = local_natural.get(identity) if identity is not None else None
+            local_key, local = matched if matched is not None else (row.get("Key"), local_rows.get(row.get("Key")))
+            # Integer PKs are local to a database. A same-numbered row owned by
+            # another record is never evidence of a difference in this row.
+            if matched is None and local is not None and (
+                    local.get("Record Type") != row.get("Record Type")
+                    or local.get("Record ID") != row.get("Record ID")):
+                local = None
             if local is None:
-                if cm.natural_key(sheet, row) in local_natural:
-                    continue  # same row already in Local under its own key
                 new_record = created.get((owner, row.get("Record ID")))
                 if new_record is not None and (sheet in ("Offers", "Access") or (
                         sheet == "Origins" and row.get("Country") in _split(new_record.get("Origin Countries", "")))):
@@ -560,28 +632,64 @@ def _unsupported(workbook_rows, snapshot, aux, published_ids):
                         or (sheet == "Origins" and owner == "Models" and row.get("Country") in countries and row.get("Source URL"))
                         or (sheet == "Evaluations" and owner == "Models" and row.get("Observation Key"))):
                     continue  # new row of an existing record: offer_new / access_new / origin_new / evaluation_new
-                items.append({"sheet": sheet, "id": row.get("Key"), "kind": "unsupported",
-                              "record": row.get("Record ID"), "columns": ["new row"], "category": "public"})
+                research_pending = sheet == "Offers" and not row.get("Research Key") and (
+                    '"verification_pending"' in row.get("Conditions Extra (JSON)", ""))
+                items.append({"sheet": sheet, "id": row.get("Key"),
+                              "kind": "intentional_master_only" if research_pending else "unsupported",
+                              "record": row.get("Record ID"), "columns": ["new row"],
+                              "category": "research" if research_pending else "public",
+                              **({"reason": "verification_pending; missing stable Research Key"} if research_pending else {})})
                 continue
             supported = set(OFFER_FIELDS) if sheet == "Offers" else ({"Public"} if sheet == "Evaluations" else set())
             if sheet == "Offers":
                 supported.add("Source URL")
                 if row.get("Unit") != "other":
                     supported.discard("Billing Unit")
-            if sheet == "Access" and row.get("Key") in exclusive:
+            if sheet == "Access" and (local_key in exclusive or local_key in planned_access):
                 supported |= set(SERVICE_COLUMNS)
             if sheet in ("Offers", "Access"):
                 supported |= {"Record Type", "Record ID"}
             columns = [c for c, v in local.items() if c not in supported and row.get(c, "") != v
                        and row.get(c, "") and c not in ("Conditions Extra (JSON)", "Checked")]
             for column in columns:
+                if sheet == "Offers" and column == "Provider" and (
+                        local.get("Service"), local.get("Service URL")) in planned_providers:
+                    continue
+                if sheet == "Evaluations" and column == "Benchmark Category" and (
+                        local.get("Benchmark"), local.get("Protocol")) in planned_benchmarks:
+                    continue
+                intentional = ((sheet == "Offers" and column == "Billing Unit" and row.get("Unit") != "other")
+                               or (sheet == "Access" and column == "Source URL")
+                               or (sheet == "Tool Platforms" and column == "Source URL")
+                               or (sheet == "Origins" and column == "Position"
+                                   and row.get(column) == "1" and local.get(column) == "0")
+                               or (sheet == "Evaluations" and column == "Score"
+                                   and _same_stored_score(row.get(column), local.get(column)))
+                               or (sheet == "Evaluations" and column == "Source Model"
+                                   and row.get("Public") == "NO" and local.get("Public") == "NO"
+                                   and '"superseded_duplicate_of"' in row.get("Conditions Extra (JSON)", "")))
                 service = ((sheet == "Offers" and column == "Billing Unit")
                            or (sheet == "Access" and column == "Source URL")
                            or (sheet == "Access" and column == "Service"))
-                items.append({"sheet": sheet, "id": row.get("Key"), "kind": "unsupported",
+                items.append({"sheet": sheet, "id": row.get("Key"),
+                              "kind": "intentional_master_only" if intentional else "unsupported",
                               "record": row.get("Record ID"), "columns": [column],
-                              "category": "service" if service else "public"})
+                              "category": "service" if service else "public",
+                              **({"reason": ("stored score rounded to 3 decimals" if sheet == "Evaluations"
+                                              else "1-based master / 0-based database position" if sheet == "Origins"
+                                              else "hidden superseded duplicate" if sheet == "Evaluations"
+                                              else "link evidence URL" if sheet in ("Access", "Tool Platforms")
+                                              else "standard unit label")}
+                                 if intentional else {})})
     return items
+
+
+def _same_stored_score(master_value, database_value):
+    """Evaluation.score is DecimalField(decimal_places=3)."""
+    try:
+        return Decimal(master_value).quantize(Decimal("0.001")) == Decimal(database_value)
+    except (InvalidOperation, TypeError):
+        return False
 
 
 def _json_ready(values):
@@ -829,7 +937,7 @@ def _renumber(targets):
 
 NEW_ROW_KINDS = ("offer_new", "access_new", "origin_new", "evaluation_new")
 WRITE_KINDS = ("create", "update", "reassign", "offer", "evaluation", "number", "platforms", "access_service",
-               "org_country", *NEW_ROW_KINDS)
+               "service_provider", "benchmark_category", "org_country", *NEW_ROW_KINDS)
 
 
 def _source(value):
@@ -910,11 +1018,44 @@ def apply(changes, workbook_rows, max_changes=200, today=None, targets=None):
             if kind == "access_service":
                 access = resolve_row(change)
                 service = access.service
-                for attr, value in change["after"].items():
-                    setattr(service, attr, value)
-                service.save(update_fields=list(change["after"]))
+                if change.get("clone"):
+                    from .models import Service
+                    attributes = {"name": service.name, "provider": service.provider,
+                                  "kind": service.kind, "url": service.url,
+                                  "compute_location": service.compute_location}
+                    attributes.update(change["after"])
+                    replacement, _ = Service.objects.get_or_create(**attributes)
+                    access.service = replacement
+                    access.save(update_fields=["service"])
+                else:
+                    for attr, value in change["after"].items():
+                        setattr(service, attr, value)
+                    service.save(update_fields=list(change["after"]))
                 Revision.objects.create(model=access.model, entity="access:%s" % access.pk, action="sync",
                                         snapshot={"before": change["before"], "after": change["after"]})
+                continue
+            if kind == "service_provider":
+                from .models import Organization, Service
+                spec = change["identity"]
+                service = Service.objects.get(name=spec["name"], url=spec["url"])
+                service.provider = Organization.objects.get(name=change["after"]["provider"])
+                service.save(update_fields=["provider"])
+                for model_id in set(service.offer_set.values_list("model_id", flat=True)) | set(
+                        service.access_set.values_list("model_id", flat=True)):
+                    Revision.objects.create(model_id=model_id, entity="service:%s" % service.pk,
+                                            action="sync", snapshot={"before": change["before"],
+                                                                     "after": change["after"]})
+                continue
+            if kind == "benchmark_category":
+                from .models import Benchmark
+                spec = change["identity"]
+                benchmark = Benchmark.objects.get(name=spec["name"], protocol=spec["protocol"])
+                benchmark.category = change["after"]["category"]
+                benchmark.save(update_fields=["category"])
+                for model_id in benchmark.evaluation_set.values_list("model_id", flat=True).distinct():
+                    Revision.objects.create(model_id=model_id, entity="benchmark:%s" % benchmark.pk,
+                                            action="sync", snapshot={"before": change["before"],
+                                                                     "after": change["after"]})
                 continue
             if kind in ("offer", "evaluation"):
                 obj = resolve_row(change)
@@ -1034,6 +1175,20 @@ def _current(change):
         if obj is None or obj.model.slug != change["identity"]["model"]:
             return None, "access %s identity differs" % key
         return {k: getattr(obj.service, k) for k in change["after"]}, ""
+    if kind == "service_provider":
+        from .models import Service
+        spec = change["identity"]
+        found = list(Service.objects.filter(name=spec["name"], url=spec["url"]).select_related("provider")[:2])
+        if len(found) != 1:
+            return None, "service %s identity is absent or ambiguous" % key
+        return {"provider": found[0].provider.name}, ""
+    if kind == "benchmark_category":
+        from .models import Benchmark
+        spec = change["identity"]
+        benchmark = Benchmark.objects.filter(name=spec["name"], protocol=spec["protocol"]).first()
+        if benchmark is None:
+            return None, "benchmark %s missing" % key
+        return {"category": benchmark.category}, ""
     if kind in NEW_ROW_KINDS:
         return _new_row_state(change)
     if kind == "org_country":
