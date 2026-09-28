@@ -100,6 +100,11 @@ def build() -> Path:
  activate(safeGet('aipedia-history-edition','ru'));
 }})();
 </script></body></html>'''
+    if OUTPUT.is_file():
+        previous = OUTPUT.read_text(encoding="utf-8")
+        stamp = re.search(r'name="aipediya-history-generated-utc" content="([^"]+)"', previous)
+        if stamp and previous.replace(stamp.group(1), "<generated>") == document.replace(generated_at, "<generated>"):
+            return OUTPUT
     OUTPUT.write_text(document, encoding="utf-8", newline="\n")
     return OUTPUT
 

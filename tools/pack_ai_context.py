@@ -72,6 +72,8 @@ PRODUCTION_COMMIT_RE = re.compile(
     r"публичный сайт работает на commit `([0-9a-f]{7,40})`",
     re.IGNORECASE,
 )
+CURRENT_PRODUCTION_GIT_RE = re.compile(r"Git commit проверенного кандидата `([0-9a-f]{40})`")
+CURRENT_PRODUCTION_RELEASE_RE = re.compile(r"deployed candidate/release id `([0-9a-f]{40})`")
 EVIDENCE_RE = re.compile(
     r"## Доказательства для архива\n(.*?)(?:\n## |\Z)",
     re.S,
@@ -146,8 +148,13 @@ def parse_state_updated(text: str) -> str:
 
 
 def parse_production_commit(text: str) -> str:
-    match = PRODUCTION_COMMIT_RE.search(text)
+    match = CURRENT_PRODUCTION_GIT_RE.search(text) or PRODUCTION_COMMIT_RE.search(text)
     return match.group(1) if match else ""
+
+
+def parse_production_release(text: str) -> str:
+    match = CURRENT_PRODUCTION_RELEASE_RE.search(text)
+    return match.group(1) if match else parse_production_commit(text)
 
 
 def parse_evidence_paths(text: str) -> list[str]:
@@ -290,7 +297,7 @@ def freshness_warnings(state: str, facts: dict) -> list[str]:
     if facts["ahead_of_origin"] not in (None, "0"):
         warnings.append(f"HEAD впереди origin/main на {facts['ahead_of_origin']} commit.")
     warnings.append(
-        "Production в этой сборке не запрашивался. Указан последний подтверждённый commit из `docs/RELEASE.md`, не живая проверка сайта."
+        "Production в этой сборке не запрашивался. Указан последний подтверждённый release id из `docs/RELEASE.md`, не живая проверка сайта."
     )
     return warnings
 
@@ -305,7 +312,7 @@ def assemble_markdown(assembled_at: str, facts: dict, health: dict, warnings: li
     decisions = read_text("docs/DECISIONS.md")
     project_map = read_text("docs/PROJECT_MAP.md")
     release = read_text("docs/RELEASE.md")
-    production = parse_production_commit(release)
+    production = parse_production_release(release)
     sources_mtime = []
     for rel in SOURCE_FILES:
         path = ROOT / rel
@@ -347,7 +354,7 @@ def assemble_markdown(assembled_at: str, facts: dict, health: dict, warnings: li
 {table_row(["Local грязное дерево", dirty_label, "git status --porcelain"])}
 {table_row(["GitHub origin/main", f"`{facts['origin_main_short']}` (`{facts['origin_main']}`)", "git rev-parse origin/main"])}
 {table_row(["HEAD vs origin", f"ahead {facts['ahead_of_origin']}, behind {facts['behind_origin']}", "git rev-list --left-right --count"])}
-{table_row(["Production (последний подтверждённый)", f"`{production or 'не найден в docs/RELEASE.md'}`", "текст docs/RELEASE.md; сайт при сборке не вызывался"])}
+{table_row(["Production release id (последний подтверждённый)", f"`{production or 'не найден в docs/RELEASE.md'}`", "текст docs/RELEASE.md; сайт при сборке не вызывался"])}
 
 Local `/healthz`: `{health.get("url", "")}` → {health_line}
 
@@ -505,7 +512,9 @@ def pack() -> dict:
     md_path = OUT_DIR / "AI_CONTEXT.md"
     zip_path = OUT_DIR / "AI_CONTEXT.zip"
     manifest_path = OUT_DIR / "MANIFEST.json"
-    production = parse_production_commit(read_text("docs/RELEASE.md"))
+    release_text = read_text("docs/RELEASE.md")
+    production = parse_production_commit(release_text)
+    production_release = parse_production_release(release_text)
     manifest = {
         "assembled_at_utc": assembled_at,
         "state_updated_utc": parse_state_updated(state),
@@ -514,6 +523,7 @@ def pack() -> dict:
         "origin_main": facts["origin_main"],
         "dirty": facts["dirty"],
         "production_commit_from_docs": production,
+        "production_release_from_docs": production_release,
         "production_live_checked": False,
         "warnings": warnings,
         "script": "tools/pack_ai_context.py",
