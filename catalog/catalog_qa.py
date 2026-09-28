@@ -37,7 +37,10 @@ GAP = {
     "origin_status": {"not_established"},
     "pricing_status": {"no_official_hosted_price", "custom_enterprise_pricing", "superseded_in_api", "open_weights_no_hosted_api",
                        "subscription_price_not_published", "usage_based_per_model", "scheduled_price", "verification_pending"},
-    "independent_evaluation_status": {"gap"},
+    # stage-2 vocabulary (D-2026-09-27-independent-evaluation-evidence-policy): every status without a
+    # publishable independent result stays in the data-quality queue; "gap" remains for NEEDS_REVIEW records
+    "independent_evaluation_status": {"gap", "independent_nonpublic", "developer_reported", "no_published_numerical_evaluation",
+                                      "exact_version_not_found", "identity_ambiguous"},
 }
 
 

@@ -400,12 +400,48 @@ data/release/v015/catalog_plan.json --translations data/release/v015/translation
 --publication-state data/release_state.json`; публичная проверка —
 `artifacts/catalog-master-v015/v015_check.py https://aipediya.com`.
 
+## Обязательный gate истории и версии
+
+**No Timeline → No Release.** Перед каждым новым пакетом зарезервировать
+следующий `Release #` и SemVer в `docs/timeline.json` без создания второй
+карточки при переходе Local → Production. Состав изменений, итоговые счётчики,
+Local QA, commit/build кандидата и source должны быть в карточке. Сначала
+перевести её в `review`, `local_verified=true`, показать владельцу
+пересобранный `timeline.html`; после отдельного решения владельца записать
+`owner_approved=true`. `current_local` указывает на кандидата,
+`current_production` остаётся на предыдущем подтверждённом выпуске.
+
+```powershell
+.\.venv\Scripts\python.exe tools/build_product_history.py
+.\.venv\Scripts\python.exe tools/release_history.py --release-id <release-id> --html
+.\.venv\Scripts\python.exe tools/build_code_release.py --release-id <release-id>
+```
+
+Build gate и archive preflight проверяют версии и готовность карточки,
+отпечаток автономной истории, Local QA, approval и версию карточки.
+У сборки нет режима обхода этого gate. Старые пакеты без метаданных версии
+новым серверным preflight отклоняются. Отменённые/superseded номера сохраняются
+в Timeline, следующий пакет получает следующий номер.
+
+После deploy и **успешных** `/healthz`, Production QA, сравнения БД и
+release report выполнить:
+
+```powershell
+.\.venv\Scripts\python.exe tools/finalize_release_history.py --release-id <release-id> --commit <healthz-commit> --release-report docs/history/<report>.md --backup <aipedia-before-code-...sqlite3> --production-qa <gsd-production-qa-report.json>
+```
+
+Команда сверяет публичный `/healthz`, помечает ту же карточку Production ✓,
+обновляет `current_production` и повторно собирает `timeline.html`. Пока это
+не выполнено и не проверено, выпуск не закрыт. Production HTML и SQLite
+историей не заменяются; после закрытия фиксируются commit, tag и changelog
+по обычному порядку этого документа.
+
 ## Собрать архив кода
 
 Из корня проекта, на проверенном commit/tag:
 
 ```powershell
-.\.venv\Scripts\python.exe tools/build_code_release.py
+.\.venv\Scripts\python.exe tools/build_code_release.py --release-id <release-id>
 ```
 
 Архив содержит только tracked Git-файлы. SQLite, `.env`, секреты, backups,

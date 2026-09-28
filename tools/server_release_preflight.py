@@ -38,8 +38,16 @@ def snapshot(path):
         model_rows = {row["slug"]: dict(row) for row in db.execute("SELECT * FROM catalog_modelversion")}
         models = [row for row in model_rows.values() if row["published"] and row["entry_type"] == "model"]
         model_numbers = sorted(row["public_number"] for row in models if row["public_number"] is not None)
+        offers = {row["id"]: dict(row) for row in db.execute("SELECT * FROM catalog_offer")}
+        accesses = {row["id"]: dict(row) for row in db.execute("SELECT * FROM catalog_access")}
+        evaluations = db.execute("SELECT COUNT(*), COALESCE(SUM(public), 0) FROM catalog_evaluation").fetchone()
+        sources = db.execute("SELECT COUNT(*) FROM catalog_source").fetchone()[0]
+        benchmarks = db.execute("SELECT COUNT(*) FROM catalog_benchmark").fetchone()[0]
         return {
             "integrity": integrity, "foreign_keys": fk, "tools": tools, "model_rows": model_rows,
+            "offers": offers, "accesses": accesses,
+            "evaluation_rows": evaluations[0], "evaluation_public": evaluations[1],
+            "source_rows": sources, "benchmark_rows": benchmarks,
             "published_tools": len(published), "numbered_tools": len(numbers),
             "numbers_continuous": numbers == list(range(1, len(published) + 1)),
             "exact_dates": sum(bool(row["released"]) for row in published),
@@ -60,7 +68,7 @@ def main():
         raise RuntimeError("Uploaded archive SHA-256 mismatch")
     with zipfile.ZipFile(archive) as z:
         manifest = json.loads(z.read("MANIFEST.json"))
-        if manifest["commit"] != commit or manifest.get("kind") != "code":
+        if manifest["commit"] != commit or manifest.get("kind") not in {"code", "code-candidate"}:
             raise RuntimeError("Archive manifest does not match approved release")
         for name, expected in manifest["files"].items():
             if name.startswith("/") or ".." in Path(name).parts or name.lower().endswith((".sqlite3", ".env")):
@@ -73,7 +81,7 @@ def main():
     if before["integrity"] != "ok" or before["foreign_keys"]:
         raise RuntimeError("Production SQLite baseline failed integrity checks")
     stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
-    backup = BACKUPS / f"aipedia-preflight-catalog-325-147-{stamp}.sqlite3"
+    backup = BACKUPS / f"aipedia-preflight-eval-evidence-{stamp}.sqlite3"
     if backup.exists():
         raise RuntimeError("Preflight backup path exists")
     with sqlite3.connect(f"file:{DB}?mode=ro", uri=True) as src, sqlite3.connect(backup) as dst:
@@ -82,7 +90,9 @@ def main():
     account = pwd.getpwnam("aipedia")
     os.chown(backup, account.pw_uid, account.pw_gid)
     copied = snapshot(backup)
-    if any(before[k] != copied[k] for k in ("tools", "model_rows", "published_models", "published_tools")):
+    if any(before[k] != copied[k] for k in ("tools", "model_rows", "offers", "accesses",
+                                              "published_models", "published_tools", "evaluation_rows", "evaluation_public",
+                                              "source_rows", "benchmark_rows")):
         raise RuntimeError("Online backup does not match Production baseline")
     with tempfile.TemporaryDirectory(prefix="aipedia-preflight-", dir="/tmp") as temp:
         stage = Path(temp)
@@ -105,13 +115,21 @@ def main():
     after = snapshot(backup)
     if not set(before["tools"]).issubset(after["tools"]) or not set(before["model_rows"]).issubset(after["model_rows"]):
         raise RuntimeError("Trial removed an existing catalog record")
-    if (before["published_models"], before["published_tools"]) != (321, 143):
+    if any(before[k] != after[k] for k in ("tools", "model_rows", "offers", "accesses")):
+        raise RuntimeError("Trial changed model/tool identity, publication, price, or access outside the approved plan")
+    if (before["published_models"], before["published_tools"]) != (325, 147):
         raise RuntimeError("Production baseline differs from the approved release predecessor")
     if (after["published_models"], after["numbered_models"],
             after["published_tools"], after["numbered_tools"]) != (325, 325, 147, 147):
         raise RuntimeError("Trial catalog counts differ from approved Local: " +
                            repr({k: after[k] for k in ("published_tools", "numbered_tools",
                                "published_models", "numbered_models")}))
+    if (before["evaluation_rows"], before["evaluation_public"],
+            after["evaluation_rows"], after["evaluation_public"]) != (906, 851, 5010, 2741):
+        raise RuntimeError("Trial evaluation totals differ from the approved Production delta")
+    if (before["source_rows"], before["benchmark_rows"],
+            after["source_rows"], after["benchmark_rows"]) != (436, 35, 999, 982):
+        raise RuntimeError("Trial evidence dependencies differ from the approved Production delta")
     if after["integrity"] != "ok" or after["foreign_keys"] or not after["numbers_continuous"] or not after["model_numbers_continuous"]:
         raise RuntimeError("Trial SQLite integrity or numbering failed")
     if "models changed=0" not in dry_state or "tools changed=0" not in dry_state:
@@ -120,8 +138,8 @@ def main():
         "status": "PASS", "commit": commit, "sha256": digest, "backup": str(backup),
         "catalog_plan": plan, "publication_state": publication,
         "production_database_untouched": True,
-        "before": {k: v for k, v in before.items() if k not in ("tools", "model_rows")},
-        "trial": {k: v for k, v in after.items() if k not in ("tools", "model_rows")},
+        "before": {k: v for k, v in before.items() if k not in ("tools", "model_rows", "offers", "accesses")},
+        "trial": {k: v for k, v in after.items() if k not in ("tools", "model_rows", "offers", "accesses")},
         "created_models": len(after["model_rows"]) - len(before["model_rows"]),
         "created_tools": len(after["tools"]) - len(before["tools"]),
         "plan_dry_run": dry_plan[-600:], "plan_apply": applied[-600:],

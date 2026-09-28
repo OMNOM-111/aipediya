@@ -24,7 +24,7 @@ class CatalogTests(TestCase):
         for model in ModelVersion.objects.all():
             response = self.client.get("/models/" + model.slug, {"lang": "ru"}, follow=True)
             self.assertContains(response, model.version)
-            self.assertContains(response, "Платформа и оценка")
+            self.assertContains(response, "Независимая проверка")
             self.assertContains(response, f"#{model.public_number}")
         self.assertEqual(self.client.get("/models/not-real").status_code, 404)
         self.assertEqual(self.client.get("/healthz").json()["service"], "aipedia")

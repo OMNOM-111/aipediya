@@ -1,0 +1,6 @@
+{% load catalog_tags %}<div class="evaluation-group">
+<div class="evaluation-group-heading"><a href="{{ group.source.url }}" target="_blank" rel="noopener noreferrer">{{ group.evaluator }}</a><span class="secondary">{{ group.count }} {{ ui.results_count }}</span></div>
+<ul class="evaluation-rows">{% for e in group.top %}{% include 'includes/evaluation_row.html' %}{% endfor %}</ul>
+{% if group.rest %}<details class="evaluation-more"><summary>{{ ui.show_all_results }} (+{{ group.rest|length }})</summary>
+<ul class="evaluation-rows">{% for e in group.rest %}{% include 'includes/evaluation_row.html' %}{% endfor %}</ul></details>{% endif %}
+</div>

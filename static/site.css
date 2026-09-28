@@ -830,6 +830,21 @@ a.model-name:hover .model-title { color: var(--mint-text); }
 .evaluation { padding: 13px 0; border-bottom: 1px solid var(--line-soft); font-size: 13px; }
 .evaluation-heading { display: flex; gap: 18px; align-items: baseline; }
 .evaluation p { margin: 5px 0; }
+.evaluation-layer { margin-bottom: 18px; }
+.evaluation-layer + .evaluation-layer { padding-top: 14px; border-top: 1px solid var(--line); }
+.evaluation-group { padding: 10px 0 6px; border-bottom: 1px solid var(--line-soft); font-size: 13px; }
+.evaluation-group-heading { display: flex; gap: 12px; align-items: baseline; justify-content: space-between; font-weight: 600; }
+.evaluation-rows { list-style: none; margin: 4px 0 0; padding: 0; }
+.evaluation-row { padding: 6px 0 2px; border-top: 1px dashed var(--line-soft); }
+.evaluation-row:first-child { border-top: 0; }
+.evaluation-row .evaluation-heading { justify-content: space-between; min-width: 0; }
+.evaluation-row .evaluation-heading a { min-width: 0; overflow-wrap: anywhere; }
+.evaluation-row .evaluation-heading b { white-space: nowrap; }
+.evaluation-row p, .evaluation-row details p { margin: 3px 0; }
+.evaluation-row details summary { padding: 2px 0; }
+.evaluation-more > summary { padding: 6px 0 2px; }
+.evaluation-research-only { margin: 10px 0 0; padding: 8px 10px; border: 1px solid var(--line); border-radius: var(--r-card); color: var(--muted); font-size: 12px; }
+.evaluation-gap { margin-top: 14px; }
 details summary { font-size: 12px; padding: 7px 0; color: var(--link); cursor: pointer; }
 .detail-source { display: flex; gap: 18px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 16px; }
 .record-number { color: var(--muted); font-size: .55em; font-weight: 400; white-space: nowrap; opacity: .7; }

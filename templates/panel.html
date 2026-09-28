@@ -68,21 +68,33 @@
 {% else %}<p class="missing empty-cell">{% if model.local_execution %}{{ ui.local_cost }}{% endif %}</p>{% endif %}
 </section>
 <section class="tab-panel" id="tab-checks" role="tabpanel" {% if panel_tab != 'checks' %}hidden{% endif %}>
-<h2>{{ ui.evaluator_score }}</h2>
-{% for e in model.public_evaluations %}
+<section class="evaluation-layer" data-layer="independent">
+<h2>{{ ui.independent }}</h2>
+{% for e in model.composite_evaluations %}
 <div class="evaluation">
 <div class="evaluation-heading"><a href="{{ e.source.url }}" target="_blank" rel="noopener noreferrer">{{ e.evaluator }} · {{ e.benchmark.name }}</a><b>{{ e.score|money }} {{ e.benchmark.unit }}</b></div>
-<p class="secondary">{% if e.result_kind == "composite" %}{{ ui.composite }}{% elif e.independent %}{{ ui.independent_run }}{% else %}{{ ui.developer_eval }}{% endif %} · {{ e.configuration|eval_label:lang|default:ui.unspecified_mode }} · {{ e.checked|date:'d.m.Y' }} · {% if e.benchmark.higher_is_better %}{{ ui.higher }}{% else %}{{ ui.lower }}{% endif %}</p>
-<p class="secondary">{{ ui.snapshot }}: {{ e.snapshot|default:ui.legacy_snapshot }}{% if e.confidence_low != None %} · 90% CI [{{ e.confidence_low|money }}, {{ e.confidence_high|money }}]{% endif %}</p>
-{% if e.result_kind == "composite" %}<p>{{ ui.eci_note }}</p>{% endif %}
-<details><summary>{{ ui.conditions }}</summary><p>{{ e.benchmark.protocol|eval_label:lang }}</p><p>{{ e.conditions|local:lang }}</p>{% if e.measured %}<p>{{ ui.measurement }}: {{ e.measured|date:'d.m.Y' }}</p>{% endif %}</details>
+<p class="secondary">{{ ui.composite }} · {{ e.configuration|eval_label:lang|default:ui.unspecified_mode }} · {{ e.checked|date:'d.m.Y' }}{% if e.confidence_low != None %} · 90% CI [{{ e.confidence_low|money }}, {{ e.confidence_high|money }}]{% endif %}</p>
+<p>{{ ui.eci_note }}</p>
 </div>
 {% endfor %}
+{% if model.independent_groups %}<p class="secondary">{{ ui.independent_checks_note }}</p>{% endif %}
+{% for group in model.independent_groups %}{% include 'includes/evaluation_group.html' %}{% endfor %}
+{% if not model.independent_groups and not model.composite_evaluations %}<p class="missing">{{ ui.no_independent_checks }}</p>{% endif %}
+{% if model.research_only_evaluators %}<p class="evaluation-research-only">{{ ui.research_only }}: {{ model.research_only_evaluators|join:", " }}.</p>{% endif %}
+{% if model.competitor_evaluators %}<p class="evaluation-research-only">{{ ui.competitor_measurements }}: {{ model.competitor_evaluators|join:", " }}.</p>{% endif %}
+</section>
+{% if model.developer_groups %}
+<section class="evaluation-layer" data-layer="developer">
+<h2>{{ ui.developer_results }}</h2>
+<p class="secondary">{{ ui.developer_results_note }}</p>
+{% for group in model.developer_groups %}{% include 'includes/evaluation_group.html' %}{% endfor %}
+</section>
+{% endif %}
 {% for audit in model.audits.all %}
 <div class="evaluation"><h3>{{ ui.audit }} · {{ audit.auditor }}</h3><p>{{ audit.scope|local:lang }} · {{ audit.version }} · {{ audit.period }}</p><p>{{ audit.method|local:lang }}</p><p>{{ audit.conclusions|local:lang }}</p><a href="{{ audit.source.url }}" target="_blank" rel="noopener noreferrer">{{ ui.source }} · {{ audit.checked|date:'d.m.Y' }}</a></div>
 {% endfor %}
 {% if model.evaluation_gap %}
-<section class="evaluation-gap"><h2>{{ ui.coverage_note }}</h2><p{{ model.evaluation_gap.reason|fallback_attr:lang }}>{{ model.evaluation_gap.reason|local:lang }}</p><p class="secondary">{{ ui.checked }} {{ model.evaluation_gap.checked }}</p>{% for link in model.evaluation_gap.links %}<p><a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{% if lang == 'ru' %}{{ link.label_ru }}{% else %}{{ link.label_en }}{% endif %}</a></p>{% endfor %}</section>
+<section class="evaluation-gap" data-status="{{ model.evaluation_gap.reason_code }}"><h2>{{ ui.evaluation_status }}</h2>{% if model.evaluation_status_label %}<p><b>{{ model.evaluation_status_label }}</b></p>{% endif %}<p{{ model.evaluation_gap.reason|fallback_attr:lang }}>{{ model.evaluation_gap.reason|local:lang }}</p><p class="secondary">{{ ui.checked }} {{ model.evaluation_gap.checked }}</p>{% for link in model.evaluation_gap.links %}<p><a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{% if lang == 'ru' %}{{ link.label_ru }}{% else %}{{ link.label_en }}{% endif %}</a></p>{% endfor %}</section>
 {% endif %}
 <section class="detail-source"><a href="{{ model.source.url }}" target="_blank" rel="noopener noreferrer">{{ ui.source }}</a><span>{{ ui.checked }} {{ model.checked|date:'d.m.Y' }}</span></section>
 </section>

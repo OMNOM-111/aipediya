@@ -12,12 +12,7 @@ ROOT = Path("/srv/aipedia")
 SKIP = {"catalog_publicationrevision", "catalog_toolpublicationrevision",
         "catalog_revision", "catalog_researchrevision", "catalog_discoveryevent",
         "catalog_auditreport", "catalog_errorreport"}
-EXPECTED_TABLES = [
-    "catalog_access", "catalog_contenttranslation", "catalog_modelfamily",
-    "catalog_modelorigincountry", "catalog_modelversion", "catalog_offer",
-    "catalog_organization", "catalog_service", "catalog_source",
-    "catalog_tool", "catalog_toolplatform",
-]
+EXPECTED_TABLES = ["catalog_benchmark", "catalog_evaluation", "catalog_source"]
 
 
 def rows(db, table):
@@ -63,17 +58,30 @@ def main():
                     "tools_numbered": None not in tools and sorted(tools) == list(range(1, len(tools) + 1))}
 
         before_counts, after_counts = published_counts(old), published_counts(new)
+        def evidence_counts(db):
+            return {
+                "sources": db.execute("SELECT COUNT(*) FROM catalog_source").fetchone()[0],
+                "benchmarks": db.execute("SELECT COUNT(*) FROM catalog_benchmark").fetchone()[0],
+                "evaluations": db.execute("SELECT COUNT(*) FROM catalog_evaluation").fetchone()[0],
+                "public_evaluations": db.execute("SELECT COALESCE(SUM(public), 0) FROM catalog_evaluation").fetchone()[0],
+            }
+        before_evidence, after_evidence = evidence_counts(old), evidence_counts(new)
         report = {
             "before_database": str(old_path), "current_database": str(new_path),
             "changed_factual_tables": changed_tables,
             "tool_column_changes": dict(tool_columns),
             "before": before_counts, "after": after_counts,
+            "before_evidence": before_evidence, "after_evidence": after_evidence,
             "integrity": new.execute("PRAGMA integrity_check").fetchone()[0],
             "foreign_keys": len(new.execute("PRAGMA foreign_key_check").fetchall()),
         }
         report["ok"] = (changed_tables == EXPECTED_TABLES and
-                        (before_counts["models"], before_counts["tools"]) == (321, 143) and
+                        (before_counts["models"], before_counts["tools"]) == (325, 147) and
                         (after_counts["models"], after_counts["tools"]) == (325, 147) and
+                        before_evidence == {"sources": 436, "benchmarks": 35,
+                                            "evaluations": 906, "public_evaluations": 851} and
+                        after_evidence == {"sources": 999, "benchmarks": 982,
+                                           "evaluations": 5010, "public_evaluations": 2741} and
                         after_counts["models_numbered"] and after_counts["tools_numbered"] and
                         report["integrity"] == "ok" and report["foreign_keys"] == 0)
         print(json.dumps(report, sort_keys=True))

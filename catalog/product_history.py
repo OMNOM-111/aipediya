@@ -30,6 +30,7 @@ SOURCES = {
     "2026-09-27-adaptive-ui-release": ("Адаптивный интерфейс / Adaptive UI release", "docs/history/2026-09-27-adaptive-ui-release.md"),
     "2026-09-27-tools-count-cloudflare-csp-local": ("Tools и Cloudflare CSP / Tools and Cloudflare CSP", "docs/history/2026-09-27-tools-count-cloudflare-csp-local.md"),
     "2026-09-27-tools-chronology-csp-release": ("Выпуск Tools и Cloudflare CSP / Tools and Cloudflare CSP release", "docs/history/2026-09-27-tools-chronology-csp-release.md"),
+    "2026-09-27-catalog-325-147-release": ("Каталог 325/147 / Catalog 325/147", "docs/history/2026-09-27-catalog-325-147-release.md"),
 }
 
 
@@ -133,6 +134,10 @@ def _history_context(language):
                       f"{en_months[event_date.month - 1]} {event_date.day}, {event_date.year}")
         milestones.append({
             "id": item["release_id"], "date": item["date"], "date_label": date_label,
+            "release_sequence": item.get("release_sequence"), "app_version": item.get("app_version"),
+            "release_tag": item.get("release_tag"), "qa": item.get("qa", {}),
+            "local_verified": item.get("local_verified"), "owner_approved": item.get("owner_approved"),
+            "production_verified": item.get("production_verified"), "changes": item.get("changes", []),
             "title": item[f"title_{suffix}"],
             "tags": item[f"tags_{suffix}"], "capabilities": item.get(f"capabilities_{suffix}", []),
             "icon": item["icon"], "revision": item.get("revision"),
@@ -182,7 +187,8 @@ def _history_context(language):
     local_head, local_dirty = _git_state()
     context = {
         "labels": labels, "milestones": milestones, "tasks": tasks,
-        "production": production, "local_head": local_head, "local_dirty": local_dirty, "gsd": gsd,
+        "production": production, "current_local": product.get("current_local"),
+        "local_head": local_head, "local_dirty": local_dirty, "gsd": gsd,
         "features": features,
         "generated_at": product.get("generated_at", ""),
         "local_only_summary": labels["local_history_summary"],

@@ -1,8 +1,243 @@
 # Текущее состояние AIpedia
 
+## Evaluation Evidence — Release #012 / v0.12.0, Production preparation (Codex, 2026-09-28)
+
+- Владелец в переданном Codex handoff явно принял последнее проверенное Local-состояние и разрешил именно его выпуск в Production. Handoff вызван лимитом Claude. Карточка `EVAL-EVIDENCE-AUDIT-2026-09-27` продолжена без дублирования; Local ✓, Owner Approved ✓, Production —, Public QA —.
+- Baseline: `main` HEAD `2fd442cb487c2c9ff2ea2acc00070a0c17164f47` плюс перечисленные ниже незакоммиченные файлы; Local `127.0.0.1:18810/healthz` OK. Master после штатного refresh SHA-256 `014c9f23b60a6182664f7d4cddc1841d6b7dc2f2c0f1a867cbec5f23035f5110`. Рабочая Local SQLite не переносится на сервер.
+- Local gate повторён: `catalog_master refresh`, `check` OK, `qa` PASS, `manage.py check` 0 issues, 315 тестов OK (1 skip), SQLite integrity ok, FK 0, повторный `sync-local` dry plan 0 записываемых изменений (113 прежних unsupported). Browser smoke: девять указанных карточек, RU/EN/ar, desktop/375 px, dark/light; Checks открыт, page overflow 0, console errors 0. MTEB показан компактно (3 + раскрытие).
+- Production baseline read-only через `python tools/server.py preflight/status/catalog/snapshot`: `/healthz` release `9ddba83c176aa3f6793362d6345b797c76ddf987`, service `aipedia` RUNNING, 325 Models / 147 Tools, integrity ok, FK 0. Online snapshot: `artifacts/catalog-release-20260927/production-baseline-20260928T161029Z.sqlite3`, SHA-256 `896ccef92ffa70c02f30069a138ffece7d1e3981d83ce4076c12c6f0e4b2d642` (ignored Local artifact).
+- Точный release-plan от этого снимка: `data/release/eval-evidence-20260928/catalog_plan.json`, SHA-256 `6673697d432f80ffbfe9a4b45145a2566e6373604e4bd2358ad22dcdd92e17a3`; 4 104 новых Evaluation, 16 изменений visibility, 0 изменений Models/Tools/Offers/Access/номеров. Зависимости новых строк: +563 Source, +947 Benchmark. Trial на отдельной копии Production: 4 120 writes, QA PASS, повторный plan 0, integrity ok, FK 0, Evaluations 906 → 5 010, public evaluations 851 → 2 741. Production не менялась.
+- Документационная проверка «7 против 6»: в текущем `stage2/REPORT.md` и этом статусе уже записаны шесть перечисленных моделей; правка master не нужна.
+- Изменено на этапе выпуска: `docs/timeline.json` (существующая карточка #012, owner approval), `tools/server.py`, `tools/server_release_preflight.py`, `tools/server_compare.py` (preflight для текущего baseline и candidate), этот статус, точный release-plan. Ранее незакоммиченные UI, master, локализации, Timeline и тесты сохраняются как принятый Local baseline; посторонние untracked и runtime-файлы не включаются.
+- Не завершено: candidate archive, server trial/preflight/dry-run, Production apply/deploy, Public QA, commit/tag/push и финальная запись истории. Следующим выполнить точную упаковку кандидата, серверный trial и только после его PASS развёртывание по `docs/RELEASE.md`.
+
 Живой паспорт локальной разработки. Не дублирует `AGENTS.md`.
 Отчёты законченных выпусков — `docs/history/`.
 Пакет для нового чата собирается командой `\.\.venv\Scripts\python.exe tools/pack_ai_context.py` и **не** редактируется как независимый источник.
+
+## Evaluation Evidence — окончательный Local готов, REVIEW (ждёт визуальной приёмки), 2026-09-28
+
+- Владелец принял направление этапа 2 и подтвердил политику «Результаты разработчика»
+  (публично, с явной маркировкой, не как независимая проверка, вне Independent Rating;
+  `DECISIONS.md` обновлён). Карточка: `in_progress` → `review` после полного Local QA.
+- **Расхождение 280 против 277 объяснено:** 159 + 33 + 88 = 280 считали по статусам; из 33
+  research-only у 5 был только статус без чисел (Jurassic-1 Jumbo, Jurassic-2 Ultra/Mid/Light —
+  HELM; Gemini 3.8 Live), а 2 карточки имели числа только в составном индексе вне трёх
+  классов (Kimi K3 (max) — ECI 158; Qwen3.8 2.4T — индекс Artificial Analysis, Public=NO):
+  280 − 5 + 2 = 277. Исправлено по существу: ECI у Kimi K3 (max) — округлённый дубль ECI
+  родительской Kimi K3 (`evaluation-807`, 157.63) на карточке конфигурации → Public=NO и
+  пометка `superseded_duplicate_of` (все 15 дублей ECI помечены и исключены из счёта);
+  индекс AA у Qwen3.8 2.4T учтён как research-only. Метрики считаются из одного поля
+  `final_class` / `has_numeric_evidence` факта.
+- **Последний адресный проход по моделям без чисел** (официальные отчёты, карточки, статьи,
+  таблицы, GitHub/HF, посты): найдены и добавлены (+95 наблюдений, Evaluations 5 751 → 5 846) —
+  GPT-4o Transcribe и GPT-4o Mini Transcribe (FLEURS, 33 языка, значения из aria-label
+  графика OpenAI), GPT-Live 1 и GPT Realtime 2.1 (Tau3/Tau Banking/Full Duplex Bench из
+  SVG-графиков OpenAI; график Artificial Analysis исключён), Jurassic-1 Jumbo (white paper
+  AI21, таблица 6), PLaMo 2 8B (технический отчёт PLaMo 2) — всего **6 моделей**; из них 4 ранее
+  не имели чисел (GPT-Live 1, GPT Realtime 2.1, Jurassic-1 Jumbo, PLaMo 2 8B), у обеих GPT-4o
+  Transcribe уже были замеры конкурентов: 277 + 4 − 1 (дубль ECI у Kimi K3 (max)) = 280. Проверены без результата:
+  Apertus v1.5 70B (отчёт ещё не вышел), MagenticBrain (блог MagenticLite — только схемы),
+  LongCat-2.5-Preview, Hunyuan3D-2mini, Wan2.2 TI2V-5B, Nova 2 Pro (PDF недоступен),
+  GPT Transcribe / Live Transcribe (цифра только в посте на X), прочие — статусы с источниками.
+- **Итог (325 PUBLISHED, взаимоисключающие классы):** independent_public 126;
+  independent_and_developer 50; independent_research_only 17 (из них 4 — только статус);
+  developer_reported 91; no_published_numerical_evaluation 23; exact_version_not_found 8;
+  identity_ambiguous 9; not_applicable 1. Публичная независимая (любая) 159/325 (48,9%).
+  **Любая проверенная численная оценка 280/325 (86,2%)**; без чисел 45 = 23 + 8 + 9 + 1 + 4.
+  По категориям (independent → any): text 54,3% → 89,1%; image 67,7% → 91,9%;
+  video 47,2% → 72,2%; audio 0% → 79,5%; other 0% → 62,5%.
+- **UI:** блоки «Независимая проверка» / «Результаты разработчика» (пояснение «Результаты
+  опубликованы разработчиком модели. Это не сторонняя независимая проверка.») / строки
+  research-only и замеров конкурентов без баллов / «Статус оценок» с локализованной строкой
+  статуса по `final_class` (в т.ч. «Есть результаты разработчика и независимые исследования
+  без права публикации баллов» — вместо противоречивого «только…»). Все новые подписи
+  переведены на 20 языков + RU/EN (`catalog/ui_translations.py`, тест
+  `test_evaluation_evidence_labels_are_localized_everywhere`). Технические названия не переводятся;
+  текст причины статуса — данные evidence (RU/EN).
+- **Local:** backup `backups/catalog-master-eval-audit-20260927/final-20260928/`; refresh/check OK;
+  план 96 (95 evaluation_new + 1 видимости); копия: apply, check OK, qa PASS, integrity ok, FK 0;
+  рабочий Local — штатный `sync-local --apply` (96), check OK, qa PASS (0 ошибок), integrity ok,
+  FK 0, повторный план 0 записываемых изменений (113 прежних unsupported), `manage.py check` —
+  0 issues, оценок 5 010; Local перезапущен (`stop-local`/`start-local`), `/healthz` ok.
+- **Тесты:** 315 (история — после перевода карточки в review). **Браузер:** 18 карточек × ru/en/
+  ar/fa/zh-Hans/de без проблем (нет пустых секций, у developer-блока есть пояснение, у статуса
+  есть подпись, нет противоречивых «только»), RTL ar/fa, тёмная/светлая тема, 375 px без
+  горизонтального переполнения, MTEB — 3 + «Показать все (+123)».
+- **Production:** не менялась. Выпуск — только после сообщения владельца «принимаю / публикуем».
+- Local URL для приёмки: http://127.0.0.1:18810/ru/
+
+## Evaluation Evidence — этап 2 выполнен в Local, REVIEW (ждёт приёмки владельца), 2026-09-28
+
+- Карточка `EVAL-EVIDENCE-AUDIT-2026-09-27`: `in_progress` (27.09) → `review` (28.09),
+  Local ✓, Owner —, Production —. Release # не резервировался.
+- **Изменено (master):** `AI_CONTEXT/AIpediya_Model_Verification_Master.xlsx`, backup до этапа 2 —
+  `backups/catalog-master-eval-audit-20260927/stage2-20260928/` (master `a6765737…`,
+  рабочая SQLite `fb8ea943…`). Импорт — `tools/master_eval_audit_2026_09_27_stage2.py`
+  (идемпотентен, всё в Changelog), данные — `tools/eval_audit_2026_09_27_stage2_data.py`
+  (720 наблюдений, 50 явных статусов; страницы/изображения с SHA-256 в
+  `artifacts/eval-audit-2026-09-27/stage2/`), статистика —
+  `tools/eval_audit_2026_09_27_stage2_report.py` → `stage2/STAGE2_STATS.md`, отчёт — `stage2/REPORT.md`.
+  - Evaluations 5 031 → 5 751 (+720: developer-reported из model/system cards, тех. отчётов,
+    статей, официальных таблиц/графиков; независимые research-only и замеры конкурентов — Public=NO).
+  - 268 строк самоотчётов разработчиков этапа 1 → Public=YES как «Результаты разработчика»
+    (`rating_eligible=false`); строки из сабмитов в лидерборды — без изменений.
+  - Факт `independent_evaluation_status` у всех 799 — новый словарь (independent_public,
+    independent_nonpublic, developer_reported, no_published_numerical_evaluation,
+    exact_version_not_found, identity_ambiguous, not_applicable; `gap` — только NEEDS_REVIEW вне scope).
+  - Спорные: 2 строки Epoch `promax` у GPT-5.6 Sol = отдельный продукт GPT-5.6 Sol Pro → Public=NO,
+    вне рейтинга; `evaluation-867`: значение ECI 155 верно для DeepSeek V4 Pro 0813 (Epoch 155.39),
+    Source Model исправлен, строка — округлённый дубль `evaluation-816` → скрыта вместе с 13
+    такими же дублями ECI (конфигурация «Модель», 21.09); LMArena: README
+    `lmarena-ai/leaderboard-dataset@a4e245e5` — `license: cc-by-4.0` (сохранён, SHA `1ab86c5c…`).
+- **Изменено (код Local):** `catalog/comparison.py` (слои: independent / composite / developer,
+  группы по оценщику, research-only и конкуренты из master), `catalog/views.py` (выбор теста и
+  сортировка — только independent/composite), `templates/panel.html`,
+  `templates/includes/evaluation_group.html`, `evaluation_row.html`, `static/site.css`,
+  `catalog/context.py` (подписи RU/EN, прочие языки — английский fallback), `catalog/catalog_qa.py`
+  (очередь качества понимает новые статусы), `data/evaluation_gap_notes.json` (генерируется
+  скриптом этапа 2), тесты `test_catalog.py`, `test_redesign.py`, `test_product_history.py`.
+- **BEFORE → AFTER (PUBLISHED 325):** публичная независимая ≥1 159 (48.9%) → 159 (48.9%) —
+  новых публичных независимых источников нет (у найденных нет открытой лицензии);
+  ≥2 102, ≥3 60, ≥4 29 — без изменений. Любые проверенные численные оценки 177 (54.5%) →
+  **277/325 (85.2%)**. Классы после: independent public 159; только independent research-only 33
+  (28 с баллами Public=NO + 5 только статус); только developer 88; developer + independent 47
+  (пересечение); без опубликованных численных тестов 23; точная версия не найдена 12;
+  идентичность неоднозначна 9; конфигурация 1; gap 0. По категориям (independent → any):
+  text 54.3% → 87.7%, image 67.7% → 92.9%, video 47.2% → 72.2%, audio 0% → 75.0%, other 0% → 62.5%.
+- **Проверки:** refresh/check OK; sync-local план 4 024 (4 009 evaluation_new + 15 видимости);
+  копия Local: apply, check OK, qa PASS, integrity ok, FK 0, повторный план 0; рабочий Local:
+  тот же штатный `sync-local --apply` (4 024), check OK, qa PASS (0 ошибок, 17 предупреждений,
+  очередь 191), integrity ok, FK 0, повторный план 0 изменений (113 прежних unsupported, в т.ч.
+  Source Model `evaluation-867`), оценок 4 915; `manage.py test catalog` 314 OK / 1 skip;
+  release history PASS; браузер (отдельный порт 18813, та же БД): RU/EN, карточки text/image/
+  video/audio/other, MTEB — 3 результата + «Показать все (+123)», светлая/тёмная тема, 375 px без
+  горизонтальной прокрутки, селектор теста без developer-бенчмарков, ошибок сервера нет.
+- **Local / GitHub / Production:** рабочий Local синхронизирован и перезапущен с новым кодом;
+  GitHub — без commit/push; Production не менялась (#011 / v0.11.0, `9ddba83`).
+- **Что смотреть владельцу (вкладка «Проверки»):** Qwen3-Embedding-8B (MTEB сгруппирован),
+  GPT-5.6 Sol (независимые + ECI), GigaChat 3.5 Reasoning / EXAONE 4.5 (только разработчик),
+  Scribe v2 (research-only + конкурент + разработчик), AlphaFold 3 (research-only без баллов),
+  Lyria 3.5 («Опубликованных тестов точной версии не найдено»), Kimi K3 (max) (конфигурация).
+- **Не завершено:** приёмка владельцем (`done` только после неё); решение по предложению
+  `D-2026-09-27-independent-evaluation-evidence-policy` (дополнено этапом 2); вручную: PDF
+  технического отчёта Nova 2 (404 для автоматической загрузки) и значения графиков OpenAI audio
+  (в тексте только относительные улучшения); подписи новых строк на 20 других языках интерфейса — пока
+  английский fallback.
+- **Следующим выполнить:** владелец смотрит Local; при приёмке — карточка `done`; затем, по
+  отдельной команде, выпуск по `docs/RELEASE.md` (новый Release #, карточка) или правки по замечаниям.
+
+## Независимые оценки моделей и evidence-база AIpediya Rating — этап 1 выполнен (Local, master), 2026-09-27
+
+- Карточка Timeline `EVAL-EVIDENCE-AUDIT-2026-09-27` создана первым действием
+  (`in_progress`), по завершении переведена в `review` (Local ✓, Owner —,
+  Production —). Новый Release # не резервировался: изменён только master.
+- Изменено: master `AI_CONTEXT/AIpediya_Model_Verification_Master.xlsx` (backup
+  `backups/catalog-master-eval-audit-20260927/`, SHA до `9e0c7659…`, после
+  `a6765737…`): Evaluations 906 → 5 031 (+4 125 наблюдений этого прогона),
+  `independent_evaluation_status` у всех 799 моделей (11 прежних фактов обновлены,
+  788 добавлены), 889 прежним строкам добавлены только поля готовности к рейтингу
+  в `Conditions Extra (JSON)`; всё — в Changelog. Источники: Epoch AI hub 2026-09-27
+  (own + внешние лидерборды), `lmarena-ai/leaderboard-dataset` (CC BY 4.0), Aider
+  (Apache-2.0), ForecastBench (CC BY-SA), MTEB results (CC0), Open ASR и TTS Arena
+  (без лицензии → Public=NO). Точные версии — ручная карта
+  `tools/eval_audit_2026_09_27_map.py`; импорт — `tools/master_eval_audit_2026_09_27.py`
+  (идемпотентен); отчёт — `tools/eval_audit_2026_09_27_report.py`.
+- Baseline (пересчитан из XLSX; поручение называло 795/321): Models 799, PUBLISHED 325,
+  NEEDS_REVIEW 474; публичная независимая оценка у 69/325; evaluator'ов 1.
+- BEFORE → AFTER (PUBLISHED): исследовано 11 → 325 (100%); ≥1 публичная независимая
+  оценка 69 (21.2%) → 159 (48.9%); ≥2 публичных evaluator'а 0 → 102 (31.4%), ≥3 0 → 60,
+  ≥4 0 → 29; с независимыми данными вкл. Public=NO 77 → 175. Публичных независимых
+  evaluator-организаций 1 → 7, всех независимых 2 → 61 (41 нейтральная); публичных
+  семейств бенчмарков 11 → 26; публичных наблюдений 777 → 2 096; Public=NO 50 → 2 495;
+  developer-reported 0 → 361. По категориям: text 31.2% → 54.3%, image 19.2% → 67.7%,
+  video 19.4% → 47.2%, audio 0 → 0, other 0 → 0. NEEDS_REVIEW: 59 моделей получили
+  публичные независимые оценки. Подробно — `artifacts/eval-audit-2026-09-27/REPORT.md`
+  и `BEFORE_AFTER.md` (пробел по каждой оставшейся модели).
+- Проверки: `catalog_master refresh` renumbered=0; `check: OK` (дрейф Models/Tools/
+  Offers/Access совпадает с исходной книгой); `qa` на изолированной копии Local после
+  пробного `sync-local --apply` (3 289 evaluation_new) + `import` — PASS, повторный план
+  0; повторный прогон скрипта — 0 изменений; 1 812 строк Epoch перечитаны из CSV —
+  0 расхождений; `manage.py test catalog` 313 OK / 1 skip; release validator PASS.
+- Local / GitHub / Production: рабочий Local SQLite **не** синхронизировался, поэтому
+  `catalog_master qa` на рабочем Local блокирует только «master → Local: 3289 changes
+  not synced (evaluation_new)» — это ожидаемый gate до решения владельца, данные ради
+  PASS не удалялись. GitHub без commit/push; Production не менялась
+  (#011 / v0.11.0, `9ddba83`). Изменены также `docs/timeline.json`, тесты истории,
+  `docs/DECISIONS.md` (предложение), этот статус, `timeline.html`, AI_CONTEXT.
+- Не завершено: приёмка владельцем; решение о синхронизации Local (до неё — решить
+  отображение 402 task-level строк MTEB и Arena-строк на карточке); предложение
+  `D-2026-09-27-independent-evaluation-evidence-policy` (в т.ч. LMArena CC BY 4.0
+  вместо прежнего «Arena запрещает») ждёт подтверждения; audio 0/44 и other 0/8
+  публичных — нет открытых лицензий на результаты; `catalog_qa.GAP` учитывает только
+  статус `gap` (предложено расширить); 2 прежние строки `promax` и ECI `evaluation-867`
+  отмечены для проверки владельцем.
+- Следующим выполнить: владелец просматривает отчёт и принимает/отклоняет политику;
+  затем `sync-local` на копии → diff владельцу → рабочий Local по
+  `docs/CATALOG_MASTER.md`; параллельно запросить лицензии ARC Prize, METR, Scale,
+  Terminal-Bench, HF Open ASR, TTS Arena. Production — только по `docs/RELEASE.md`.
+
+## Полный аудит автономной истории и social preview — Local, 2026-09-27
+
+- Изменено: сверены все 15 карточек с release reports, `RELEASE.md`, решениями,
+  статусом и публичным `/healthz`. Карточка версий переведена из `review` в
+  `done` с Local ✓ / Owner ✓ / Production — по явной приёмке владельца.
+  Существующая карточка AIpediya Cloudflare Web Analytics теперь связывается
+  с выпуском Tools/CSP `cf4ac9a` и публичным beacon 200 / RUM 204:
+  Local ✓ / Owner ✓ / Production ✓. Новый deploy не выполнялся. Исправлены
+  устаревшие пояснения Adaptive UI, истории и master; даты, номера Release
+  #001–#011 и текущий Production baseline не менялись. Подробная матрица —
+  `docs/history/2026-09-27-timeline-status-audit.md`.
+- Social preview: сырой HTML всех 22 языковых корней для
+  `facebookexternalhit/1.1` имеет валидные OG-поля и Twitter Card;
+  `/` и `/ru/` HTTP 200, `cf-cache-status: DYNAMIC`. Share-card PNG 1200×630
+  HTTP 200 для Facebook, Twitter и LinkedIn crawler User-Agent, SHA-256
+  одинаковый. `/healthz` подтвердил `9ddba83c176aa3f6793362d6345b797c76ddf987`.
+  Дефекта сайта или устаревшего ответа Cloudflare не найдено; cache purge
+  не выполнялся. Если конкретная сеть всё ещё показывает старый preview,
+  возможен её URL-specific cache, но её сбой здесь не воспроизведён.
+- Local / GitHub / Production: изменены только Local реестр, шаблоны,
+  тесты, документы и производные `timeline.html`/AI_CONTEXT. GitHub и
+  Production не менялись; текущие указатели — Release #011 · v0.11.0.
+  Файлы этого аудита: `docs/timeline.json`, `catalog/tests/test_product_history.py`,
+  `templates/product_history.html`, `templates/product_history_standalone.html`,
+  `docs/PRODUCT_HISTORY.md`, `docs/DECISIONS.md`, этот статус,
+  `docs/history/2026-09-27-timeline-status-audit.md`, `timeline.html` и
+  производный пакет `AI_CONTEXT`.
+- Проверки: 15/15 карточек имеют уникальные ID; `review=0`, `in_progress=0`,
+  `planned=1`; release validator PASS, 11/11 прицельных тестов истории и версий,
+  полный catalog suite 313 OK / 1 skip, Django check и `git diff --check`
+  PASS. Ярлык направляет на существующий `timeline.html`; локальный и
+  публичный share-card имеют одинаковый SHA-256. Не завершено: только
+  внешний визуальный просмотр вновь собранного автономного файла и будущая
+  конкретная карточка #012. Следующим выполнить: владелец открывает ярлык
+  истории и проверяет обновлённые статусы; отдельный Production выпуск
+  возможен лишь по `docs/RELEASE.md`.
+
+## Система версий и обязательная история выпуска — Local DONE / Owner PASS, 2026-09-27
+
+- Изменено: 11 подтверждённых Production-вех получили Release #001–#011 и
+  SemVer; существующая карточка каталога 325/147 стала Release #011 · v0.11.0.
+  В `docs/timeline.json` появились независимые `current_local` и
+  `current_production`. Автономный `timeline.html` показывает оба указателя,
+  версии карточек и состояние Local / Owner / Production. Добавлены
+  `tools/release_history.py` и post-production closure для той же карточки.
+- Local / GitHub / Production: изменения только в Local working tree;
+  GitHub не отправлен, Production не менялась. Последний подтверждённый
+  Production commit `9ddba83`; 325 Models / 147 Tools. Текущая версия в
+  обоих указателях #011 / v0.11.0. Открытые Local-задачи не получили номер #012.
+- Проверки: release history validator PASS; 312 catalog tests OK, 1 skipped;
+  `manage.py check` PASS; `git diff --check` PASS; сборка старого архива без
+  новой карточки заблокирована release gate. Ярлык истории проверен: target
+  `C:\Users\dimon\Documents\AIpedia\timeline.html`. Автономный HTML
+  пересобран. Edge заблокировал открытие `file://` политикой браузера;
+  владелец в поручении на аудит 27.09.2026 явно сообщил, что визуально
+  проверил результат и подтвердил завершение этапа.
+- Не завершено: будущий реальный Release #012 ещё не проходил полный
+  release workflow; отдельного deploy самой системы версий не было.
+  Следующим выполнить: для конкретного следующего пакета зарезервировать
+  #012 с точным составом и провести Local QA до отдельного разрешения на
+  Production. Указатели Local и Production остаются #011 / v0.11.0.
 
 ## Каталог 325 Models / 147 Tools — Production VERIFIED, 2026-09-27
 
@@ -14,12 +249,13 @@
 - Проверки: серверные preflight, dry-run, deploy, health, catalog,
   verify-release и `catalog_master qa --production` — PASS. Production SQLite:
   325/325 Models и 147/147 Tools пронумерованы, integrity OK, FK 0.
-  Публичный GSD check 34/34, полный Production QA 1657/1657. Браузер RU/EN:
+  Публичный GSD check 34/34, полный Production QA 1657/1657. Тесты
+  истории после обновления текущего release tag: 7/7. Браузер RU/EN:
   счётчики 325/147, LongCat #325 и новые инструменты видны.
   Backup до и после выпуска, SHA архива и детали —
   `docs/history/2026-09-27-catalog-325-147-release.md`.
 - Local / GitHub / Production: Local PASS и утверждён владельцем; release
-  commit `9ddba83`, docs commit `c4c9422` и tag
+  commit `9ddba83`, docs/test commits `c4c9422`, `b3abb24`, `2fd442c`, tag
   `release-2026-09-27-catalog-325-147` отправлены в `origin/main`;
   Production опубликована и проверена. Исходные посторонние dirty/untracked
   файлы сохранены.
@@ -27,6 +263,83 @@
   качества; прямой тариф LongCat 2.5 API не подтверждён, показанная цена —
   Vercel AI Gateway. Следующим выполнить исследование этих фактов сначала
   в master и Local; новый Production выпуск — только по отдельной команде.
+
+## Каталог 25–27 сентября — Local до выпуска, снимок 2026-09-27
+
+- Изменено: canonical master пополнен 4 моделями (LongCat-2.5-Preview,
+  Qwen3Guard-Stream 0.6B/4B/8B) и 4 инструментами (GPT Researcher,
+  KoboldCpp, Darkbloom, vMLX). Обновлены существующие Codex, llama.cpp,
+  GPT-6 Sol/Luna, Replit Agent, Qwen Code и Cline. Qwen Code Version =
+  0.24.6; Codex stable 0.157.1 сохранён. Записей ARCHIVE и отдельных
+  карточек для Luna Fast, сборок llama.cpp или alpha Codex нет. Временные
+  цены LongCat отмечены акционными и исключены из сравнения стандартных
+  тарифов. В master записаны лицензии, факты, источники, доступ к весам
+  Qwen3Guard и code update KV-cache только для 0.6B/4B. Номера пересчитаны
+  штатным refresh и синхронизированы, старые Record ID/URL сохранены.
+- Проверки: пробная SQLite-копия и рабочий Local прошли `catalog_master
+  check: OK` и `qa: PASS`; 325/325 Models и 147/147 Tools пронумерованы.
+  Полный `manage.py test catalog` — 309 тестов, OK, 1 skip. Браузер Local:
+  RU/EN LongCat (цены, ограничения, источники), EN Qwen3Guard (лицензия,
+  открытые веса, ссылка Download), EN GPT Researcher и RU Tools/Qwen Code;
+  даты, номера, списки и панели проверены. `sync-local` после применения
+  не планирует поддерживаемых изменений.
+- Local / GitHub / Production: master XLSX, Local SQLite, код распознавания
+  временной цены и синхронизации строк Offers изменены; GitHub без commit/push.
+  Production не изменялась и не проверялась как выпуск этого пакета.
+  Исходные посторонние dirty/untracked файлы, включая traffic audit,
+  `catalog/tests/test_product_history.py`, `data/release/v013/`,
+  `data/research/`, `.claude/`, `%SystemDrive%/`, ярлык и `timeline.html`,
+  сохранены.
+- Не завершено: визуальная приёмка владельца и отдельное разрешение на
+  конкретный Production выпуск. В очереди качества `qa` — 35 известных
+  неполных фактов (включая неподтверждённые страны GPT Researcher,
+  KoboldCpp и vMLX и официальную hosted-цену Darkbloom); проверки проходят
+  за счёт явных `*_status`. У прямого LongCat API тариф для 2.5 отдельно
+  не подтверждён: опубликованные в Local цены относятся к Vercel AI Gateway.
+  `sync-local` сообщает о 112 неподдерживаемых расхождениях опубликованных
+  записей (16 публичных, 96 служебных), они не входят в применённый план;
+  до публикации каталога нужен отдельный разбор этих расхождений.
+  Следующим выполнить визуальную приёмку Local владельцем, разобрать
+  расхождения, затем при отдельной команде на конкретный выпуск следовать
+  `docs/RELEASE.md`.
+
+## Аудит пассивного трафика двух проектов — 2026-09-27
+
+- Уточнение состояния Timeline: карточка Cloudflare Web Analytics AIpediya
+  завершена и имеет Production ✓ **по ранее выполненному выпуску**
+  `release-2026-09-27-tools-chronology-csp` (`cf4ac9a`): публичный браузер
+  получил beacon 200 и `/cdn-cgi/rum` 204 без CSP load failure. Аудит ниже
+  не был новым deploy. Отдельная проблема StratForge остаётся за пределами
+  этой карточки и этого проекта.
+
+- Изменено: выполнен Production browser/Cloudflare аудит AIpediya и
+  StratForge; факты и точное место блокировки —
+  `docs/history/2026-09-27-traffic-analytics-audit.md`. На AIpediya
+  Automatic Web Analytics уже работает: beacon 200, RUM POST 204,
+  15 page views / 11 visits в панели. На StratForge пробное Automatic
+  Setup обнаружило CSP-отказ, поэтому Cloudflare RUM возвращён в OFF.
+- Проверки: браузер desktop и Network на обоих Production UI; HTTP Traffic,
+  Security Analytics, AI Crawl Control, GSC/Bing просмотрены. У StratForge
+  ≈27,17 тыс. `/api/` и ≈1,4 тыс. `/ws/` из ≈29,65 тыс. запросов
+  `app.stratforges.com` за 24 часа — не число посетителей. Local код и
+  Production приложения не менялись; повторный browser reload после
+  отката RUM без CSP-ошибок. Финальный Local `manage.py test catalog` —
+  308 OK, 1 skip; targeted `catalog.tests.test_product_history` — 7 OK;
+  `git diff --check` PASS; история и AI_CONTEXT собраны. Прямое
+  browser-открытие `file://` автономной истории отклонено политикой
+  браузера; её визуальная Local-проверка не подтверждена.
+- Local / GitHub / Production: Local — отчёт, статус, реестр истории и
+  ожидаемые счётчики её тестов;
+  GitHub — без commit/push; Production код и БД — без изменений. Cloudflare
+  AIpediya — без изменений, StratForge — исходное Disable восстановлено.
+  Существующие untracked файлы сохранены.
+- Не завершено: реальный RUM StratForge и проверка soft navigations
+  заблокированы CSP. Следующим выполнить узкую правку `script-src` в
+  `app/server.py` и `app/static/aurora/*.html` в StratForge, провести
+  Local/Canary QA и получить отдельное разрешение на конкретный
+  Production выпуск; затем включить Automatic Setup и подтвердить
+  beacon 200, RUM 204 и данные в панели. Никакого такого выпуска
+  текущий аудит не санкционирует.
 
 ## Tools chronology + Cloudflare CSP — Production VERIFIED, 2026-09-27
 

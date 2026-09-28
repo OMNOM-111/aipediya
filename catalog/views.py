@@ -579,7 +579,10 @@ def _catalog_context(request, selected_slug=None, hub=None):
         price_unit = "input"
     if price_unit not in price_units:
         price_unit = "input" if sort.startswith("price_") else ""
-    benchmarks = list(Benchmark.objects.filter(evaluation__public=True).distinct().order_by("name", "protocol", "pk"))
+    # Comparable layer only: public independent runs and composite indexes. Developer self-reports
+    # are shown on the model card but never offered as a comparison/sorting basis.
+    comparable = Evaluation.objects.filter(public=True, result_kind__in=("independent", "composite")).exclude(result_kind="independent", independent=False)
+    benchmarks = list(Benchmark.objects.filter(evaluation__in=comparable).distinct().order_by("name", "protocol", "pk"))
     try:
         benchmark_id = int(request.GET.get("benchmark", ""))
     except (TypeError, ValueError):
@@ -587,11 +590,11 @@ def _catalog_context(request, selected_slug=None, hub=None):
     benchmark = next((item for item in benchmarks if item.pk == benchmark_id), None)
     if not benchmark and sort.startswith("check_"):
         benchmark = next((item for item in benchmarks if item.name == "ECI"), benchmarks[0] if benchmarks else None)
-    configurations = sorted(set(Evaluation.objects.filter(public=True, benchmark=benchmark).values_list("configuration", flat=True))) if benchmark else []
+    configurations = sorted(set(comparable.filter(benchmark=benchmark).values_list("configuration", flat=True))) if benchmark else []
     configuration = request.GET.get("configuration", "")
     if configuration not in configurations:
         configuration = configurations[0] if configurations else ""
-    snapshots = sorted(set(Evaluation.objects.filter(public=True, benchmark=benchmark, configuration=configuration).values_list("snapshot", flat=True)), reverse=True) if benchmark else []
+    snapshots = sorted(set(comparable.filter(benchmark=benchmark, configuration=configuration).values_list("snapshot", flat=True)), reverse=True) if benchmark else []
     snapshot = request.GET.get("snapshot", "")
     if snapshot not in snapshots:
         snapshot = snapshots[0] if snapshots else ""

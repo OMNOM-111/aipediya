@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import html
+import hashlib
 import json
 import os
 import re
@@ -65,10 +66,16 @@ def build() -> Path:
     history_js = (ROOT / "static/product-history.js").read_text(encoding="utf-8")
     sources = json.dumps(_source_templates(), ensure_ascii=False).replace("</", "<\\/")
     # The HTML is the only runtime artifact: no external assets, fetches, or server dependencies.
+    registry = json.loads((ROOT / "docs/timeline.json").read_text(encoding="utf-8"))
+    from tools.release_history import validate
+    issues = validate(registry)
+    if issues:
+        raise ValueError("Invalid timeline: " + "; ".join(issues))
+    timeline_sha256 = hashlib.sha256(json.dumps(registry, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
     document = f'''<!doctype html>
 <html lang="ru" dir="ltr" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; font-src data:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none">
-<meta name="aipediya-history-generated-utc" content="{generated_at}"><title>История AIpediya</title><style>{css}</style></head>
+<meta name="aipediya-history-generated-utc" content="{generated_at}"><meta name="aipediya-timeline-sha256" content="{timeline_sha256}"><title>История AIpediya</title><style>{css}</style></head>
 <body><div id="edition-root"></div><template id="edition-ru">{ru}</template><template id="edition-en">{en}</template>
 <script>{history_js}</script><script>
 (() => {{

@@ -16,6 +16,7 @@ import json
 import subprocess
 import zipfile
 from pathlib import Path
+from release_history import validate
 
 ROOT = Path(__file__).resolve().parent.parent
 DENIED_PARTS = {".venv", "backups", "artifacts", "data/local", "__pycache__"}
@@ -51,6 +52,7 @@ def candidate_files(list_path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--candidate", help="File listing the working-tree paths of a release candidate.")
+    parser.add_argument("--release-id", required=True, help="Approved timeline release candidate ID.")
     args = parser.parse_args()
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     files = {}
@@ -74,6 +76,18 @@ if __name__ == "__main__":
         digest = hashlib.sha256(json.dumps({"base": head, "files": hashes}, sort_keys=True).encode()).hexdigest()
         build = {"commit": digest[:40], "kind": "code-candidate", "base_commit": head,
                  "candidate_files": hashes}
+    registry = json.loads(files["app/docs/timeline.json"].decode("utf-8"))
+    # The standalone history is an ignored Local artifact: validate the current
+    # rendering against the exact registry that will be inside this package.
+    html = (ROOT / "timeline.html").read_text(encoding="utf-8")
+    issues = validate(registry, args.release_id, html=html)
+    if issues:
+        raise SystemExit("RELEASE HISTORY FAIL: " + "; ".join(issues))
+    card = next(row for row in registry["product_history"]["milestones"]
+                if row["release_id"] == args.release_id)
+    build.update({"release_id": args.release_id, "release_sequence": card["release_sequence"],
+                  "app_version": card["app_version"], "release_tag": card["release_tag"]})
+    files["app/timeline.html"] = html.encode("utf-8")
     files["app/BUILD.json"] = json.dumps(build, sort_keys=True).encode()
     if any(deny(name[4:]) or name.endswith(".sqlite3") for name in files):
         raise SystemExit("Refusing to pack a database or secret")

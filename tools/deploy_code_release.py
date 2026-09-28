@@ -9,6 +9,9 @@ import time
 import urllib.request
 import zipfile
 from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from release_history import validate
 
 DENIED_SUFFIXES = (".sqlite3", ".sqlite3-wal", ".sqlite3-shm", ".env")
 # Shared with /srv/aipedia/bin/indexnow-dispatch-loop (flock -n): while a deploy
@@ -59,6 +62,19 @@ def inspect_archive(archive, expected_sha256):
         if manifest.get("kind") not in {None, "code", "code-candidate"}:
             raise SystemExit("This command only accepts code-only archives")
         names = list(manifest["files"])
+        for required in ("app/docs/timeline.json", "app/timeline.html"):
+            if required not in names:
+                raise SystemExit("Release history missing from archive: " + required)
+        registry = json.loads(z.read("app/docs/timeline.json"))
+        card_id = manifest.get("release_id")
+        card = next((row for row in registry.get("product_history", {}).get("milestones", [])
+                     if row.get("release_id") == card_id), None)
+        if not card or any(manifest.get(key) != card.get(key) for key in
+                           ("release_sequence", "app_version", "release_tag")):
+            raise SystemExit("Archive version does not match the timeline card")
+        issues = validate(registry, card_id, html=z.read("app/timeline.html").decode("utf-8"))
+        if issues:
+            raise SystemExit("RELEASE HISTORY FAIL: " + "; ".join(issues))
         for name in names:
             lower = name.lower().replace("\\", "/")
             if lower.endswith(DENIED_SUFFIXES) or Path(lower).name in DENIED_NAMES:

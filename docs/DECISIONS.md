@@ -1,5 +1,19 @@
 # Решения AIpedia
 
+## D-2026-09-27-versioned-release-history
+
+- Статус: подтверждено владельцем (2026-09-27, задача о постоянной системе версий).
+- Решение: **No Timeline → No Release.** Каждому пакету заранее выделяются
+  неизменяемый Release # и SemVer, карточка существующей истории и точный состав.
+  До Production обязательны Local QA, автономная история для визуальной приёмки,
+  явное решение владельца и автоматический release gate. После публичного QA
+  та же карточка получает Production ✓; отменённые номера не используются снова.
+- Baseline: Release #011 · v0.11.0 · `release-2026-09-27-catalog-325-147`.
+- Приёмка Local: владелец в поручении по полному аудиту автономной истории
+  27.09.2026 явно подтвердил визуальный результат и завершённость системы
+  версий. Карточка `VERSION-HISTORY-2026-09-27` — Local ✓ / Owner ✓ /
+  Production —; отдельного deploy этой реализации не было.
+
 Канонический журнал решений. Идея в обсуждении **не** является требованием.
 Статусы: `предложено`, `подтверждено владельцем`, `отклонено`, `заменено новым решением`.
 Подробности сравнения — `docs/COMPARISON_RULES.md`. Выпуски — `docs/history/`.
@@ -724,3 +738,60 @@
   остаётся запасным вариантом.
 - Источник: прямое поручение владельца стандартизировать Production server
   access перед продолжением утверждённого выпуска `cf4ac9a33f8d`.
+
+## D-2026-09-27-independent-evaluation-evidence-policy
+
+- Статус: подтверждено владельцем 2026-09-28 в части направления и политики «Результаты разработчика» (аудит `EVAL-EVIDENCE-AUDIT-2026-09-27`); выпуск на Production — только после визуальной приёмки Local
+- Дата: 2026-09-27
+- Решение (evidence-слой master для будущего AIpediya Rating):
+  `Independent=YES` — только если прогон сделан не разработчиком модели;
+  `Public=YES` — только при доказанной открытой лицензии на **сами результаты**
+  (лицензия кода репозитория не считается). Неясная лицензия → `Public=NO`.
+  Результаты разработчиков — `Result Kind=developer`, `Independent=NO`.
+  Таблицы конкурирующих разработчиков, бенчмарки, которые ведёт компания-разработчик
+  (GDPval/OpenAI, CRI с Anthropic, CL-bench/Tencent, CursorBench, FrontierCode,
+  ALE-Bench/Sakana), сохраняются с `rating_eligible=false`.
+- Точная версия: Record ID ↔ имя в источнике сопоставляется вручную
+  (`tools/eval_audit_2026_09_27_map.py`); другие API-снапшоты, base/instruct,
+  preview/GA, квантизации (FP8/NVFP4/GGUF) и сторонние хостеры open weights
+  не переносятся. Режимы effort/thinking/harness — это `Configuration`.
+- Нормализация: исходный score и шкала всегда в `Conditions Extra (JSON)`;
+  процент — только из ограниченной шкалы 0–1/0–100; Elo/Arena, WER, $, минуты,
+  speedup и корреляции не превращаются в %.
+- `independent_evaluation_status` есть у каждой модели master: available /
+  found_but_not_republishable / only_developer_reported / exact_version_not_found /
+  identity_ambiguous / not_applicable / gap, с проверенными источниками и следующим шагом.
+- Пересмотр прежнего ограничения: официальный датасет
+  `lmarena-ai/leaderboard-dataset` опубликован под CC BY 4.0 — это основание
+  показывать Arena-оценки **из этого датасета** (не с сайта arena.ai) с атрибуцией.
+  Artificial Analysis, LiveBench и SWE-bench остаются `Public=NO`. Epoch AI:
+  CC BY 4.0 только для собственных прогонов; внешние данные хаба сохраняют
+  исходные лицензии (страница use-this-data).
+- Источник: отчёт `artifacts/eval-audit-2026-09-27/REPORT.md`.
+- Дополнение этапа 2 (2026-09-28; политика результатов разработчика **подтверждена владельцем** 2026-09-28):
+  - Формулировка владельца: результаты разработчика разрешено публично показывать во вкладке «Проверки» с явной
+    маркировкой «Результаты разработчика» / `Developer-reported`; их нельзя выдавать за стороннюю независимую
+    оценку и нельзя смешивать с Independent Rating без отдельной будущей формулы AIpediya Rating.
+  - Итоговая классификация карточки (`final_class` в факте): independent_public / independent_and_developer /
+    independent_research_only / developer_reported / no_published_numerical_evaluation / exact_version_not_found /
+    identity_ambiguous / not_applicable. «Любая проверенная численная оценка» = карточка имеет хотя бы одну строку
+    независимого, research-only, developer или составного слоя, кроме строк-дублей и строк другой версии.
+  - **Слои не смешиваются:** Independent Evidence / Developer Evidence / AIpedia Rating /
+    Value Rating. Собственные цифры разработчика о своей точной версии (model/system card,
+    технический отчёт, статья, официальная таблица или подписанный график) показываются на
+    карточке с атрибуцией как «Результаты разработчика»: `Result Kind=developer`,
+    `Independent=NO`, `Public=YES`, `rating_eligible=false`; в сравнение и сортировку
+    каталога не входят. Значения с графиков переносятся только при подписанных числах;
+    неподписанные графики и относительные утверждения («+15%») не переносятся.
+  - **Замеры конкурентов** (разработчик A измерил модель B в своём материале) —
+    `Result Kind=independent`, `Public=NO`, `rating_eligible=false`, на карточке — только
+    имя без баллов в отдельной строке «замеры конкурентов».
+  - **Research-only:** независимые результаты без открытой лицензии показываются нейтральным
+    статусом с именами оценщиков, без баллов.
+  - **Статусы:** independent_public / independent_nonpublic / developer_reported /
+    no_published_numerical_evaluation / exact_version_not_found / identity_ambiguous /
+    not_applicable (список `statuses` в факте; `gap` — только у NEEDS_REVIEW вне проверки).
+  - **Разные продукты под одним именем группы:** «pro»-режимы с параллельными вычислениями
+    (например, GPT-5.6 Sol Pro) не прикрепляются к базовой модели; округлённые повторы
+    одного и того же наблюдения скрываются в пользу точного.
+  - Источник: `artifacts/eval-audit-2026-09-27/stage2/REPORT.md`.

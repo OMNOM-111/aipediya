@@ -65,7 +65,7 @@ class RedesignCatalogTests(TestCase):
         model = ModelVersion.objects.get(slug="qwen3-8b")
         response = self.client.get("/models/" + model.slug, {"lang": "ru"}, follow=True)
         self.assertContains(response, model.version)
-        self.assertContains(response, "Платформа и оценка")
+        self.assertContains(response, "Независимая проверка")
         self.assertContains(response, f"#{model.public_number}")
         self.assertContains(response, 'class="model-table"')
         self.assertContains(response, 'id="model-panel"')
@@ -124,10 +124,33 @@ class RedesignCatalogTests(TestCase):
         evaluation.independent = False
         evaluation.save(update_fields=["result_kind", "independent"])
         response = self.client.get("/models/" + evaluation.model.slug, {"lang": "ru"}, follow=True)
-        self.assertContains(response, "Данные разработчика")
+        # Developer self-reports get their own block and never appear as an independent check.
+        self.assertContains(response, "Результаты разработчика")
+        self.assertContains(response, 'data-layer="developer"')
+        shown = response.context["selected_model"]
+        self.assertIn(evaluation.pk, [item.pk for item in shown.developer_evaluations])
+        self.assertNotIn(evaluation.pk, [item.pk for item in shown.independent_evaluations])
         table = self.client.get("/")
         listed = next(item for item in table.context["page"] if item.slug == evaluation.model.slug)
         self.assertFalse(any(item.pk == evaluation.pk for item in listed.table_evaluations))
+        # The developer block is labelled in every locale and never called an independent evaluation.
+        for lang, label in (("es", "Resultados del desarrollador"), ("ar", "نتائج المطوّر"), ("ja", "開発者による結果")):
+            localized = self.client.get("/models/" + evaluation.model.slug, {"lang": lang}, follow=True)
+            self.assertContains(localized, label)
+        # ... and are never offered as a comparison basis.
+        benchmarks = table.context["benchmarks"]
+        if not type(evaluation).objects.filter(public=True, benchmark=evaluation.benchmark).exclude(result_kind="developer").exists():
+            self.assertNotIn(evaluation.benchmark, benchmarks)
+
+    def test_research_only_results_show_status_without_scores(self):
+        evaluation = Evaluation.objects.filter(public=True, independent=True, result_kind="independent").first()
+        evaluation.public = False
+        evaluation.evaluator = "Research Lab X"
+        evaluation.save(update_fields=["public", "evaluator"])
+        response = self.client.get("/models/" + evaluation.model.slug, {"lang": "en"}, follow=True)
+        self.assertContains(response, "Independent studies exist without the right to publish their scores")
+        self.assertContains(response, "Research Lab X")
+        self.assertNotIn(evaluation.pk, [item.pk for item in response.context["selected_model"].public_evaluations])
 
     def test_panel_partial_keeps_close_control(self):
         model = ModelVersion.objects.get(slug="qwen3-8b")

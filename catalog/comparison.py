@@ -6,7 +6,7 @@ from functools import lru_cache
 from pathlib import Path
 from types import SimpleNamespace
 from urllib.parse import urlparse
-from .context import TEXT
+from .context import TEXT, t
 from .marks import mark_for
 from .public_text import public_text
 
@@ -83,9 +83,36 @@ def task_label(task, taxonomy_labels, lang):
 
 
 @lru_cache(maxsize=1)
-def gap_notes():
+def _evaluation_notes():
     path = Path(__file__).resolve().parent.parent / 'data' / 'evaluation_gap_notes.json'
-    return json.loads(path.read_text(encoding='utf-8-sig')).get('by_slug', {}) if path.exists() else {}
+    return json.loads(path.read_text(encoding='utf-8-sig')) if path.exists() else {}
+
+
+def gap_notes():
+    return _evaluation_notes().get('by_slug', {})
+
+
+def nonpublic_evidence():
+    """Master-derived names of research-only evaluators and competitor measurements (never scores)."""
+    return _evaluation_notes().get('nonpublic_evidence_by_slug', {})
+
+
+EVALUATION_GROUP_TOP = 3
+
+
+def evaluation_groups(evaluations):
+    """Compact panel groups: one per evaluator, a few main results first, the rest behind a toggle.
+
+    Order inside a group is the stored order (benchmark name, configuration); groups follow the
+    number of results, then the evaluator name, so large suites (MTEB, arenas) stay one block.
+    """
+    by_evaluator = {}
+    for item in evaluations:
+        by_evaluator.setdefault(item.evaluator, []).append(item)
+    groups = [{'evaluator': name, 'items': items, 'top': items[:EVALUATION_GROUP_TOP], 'rest': items[EVALUATION_GROUP_TOP:],
+               'source': items[0].source, 'count': len(items)}
+              for name, items in by_evaluator.items()]
+    return sorted(groups, key=lambda g: (-g['count'], alphabet(g['evaluator'])))
 
 
 def offer_condition_text(offer):
@@ -151,14 +178,33 @@ def decorate(model, taxonomy_labels=None, price_unit='', benchmark=None, price_s
     model.local_execution = any(a.service.compute_location == 'local' for a in model.sorted_accesses)
     candidates = [o for o in model.current_offers if price_matches(o, price_unit, price_scope, price_variant, price_condition, price_modality)]
     model.comparison_offer = min(candidates, key=lambda o: (o.amount, o.pk)) if candidates else None
-    candidates = [e for e in model.public_evaluations if benchmark and e.benchmark_id == benchmark.pk
+    # Evidence layers stay separate: independent (and composite index) results are comparable and
+    # sortable; developer self-reports are shown in their own panel block and never enter comparisons.
+    model.independent_evaluations = [e for e in model.public_evaluations if e.independent and e.result_kind == 'independent']
+    model.composite_evaluations = [e for e in model.public_evaluations if e.result_kind == 'composite']
+    model.developer_evaluations = [e for e in model.public_evaluations if e.result_kind == 'developer']
+    model.independent_groups = evaluation_groups(model.independent_evaluations)
+    model.developer_groups = evaluation_groups(model.developer_evaluations)
+    noted = nonpublic_evidence().get(model.slug)
+    if noted is not None:
+        model.research_only_evaluators = noted.get('research_only', [])
+        model.competitor_evaluators = noted.get('competitor', [])
+    else:
+        model.research_only_evaluators = sorted({e.evaluator for e in model.evaluations.all()
+                                                 if not e.public and e.independent and e.result_kind == 'independent'}, key=alphabet)
+        model.competitor_evaluators = []
+    candidates = [e for e in model.independent_evaluations + model.composite_evaluations if benchmark and e.benchmark_id == benchmark.pk
                   and (configuration is None or e.configuration == configuration)
                   and (snapshot is None or e.snapshot == snapshot)]
     # Never silently pick the best run. Most recent measurement, then stable ID.
     candidates.sort(key=lambda e: (str(e.measured or e.checked), e.pk), reverse=True)
     model.comparison_evaluation = candidates[0] if candidates else None
     model.more_evaluations = max(0, len(model.public_evaluations) - 2)
-    model.evaluation_gap = gap_notes().get(model.slug) if not model.public_evaluations else None
+    model.evaluation_gap = gap_notes().get(model.slug) if not model.independent_evaluations else None
+    # the label follows the card's final class, so a card with developer results never reads 'only research'
+    code = {'independent_research_only': 'independent_nonpublic'}.get((model.evaluation_gap or {}).get('final_class'),
+                                                                   (model.evaluation_gap or {}).get('final_class')) or (model.evaluation_gap or {}).get('reason_code')
+    model.evaluation_status_label = t('status_' + code, lang) if code and ('status_' + code) in TEXT else ''
     model.type_key = alphabet(label(model.entry_type, lang))
     model.status_key = alphabet(label(model.catalog_status, lang))
     model.developer_name = localized(model.family.developer.name, lang)
@@ -166,10 +212,7 @@ def decorate(model, taxonomy_labels=None, price_unit='', benchmark=None, price_s
     model.display_version = "" if model.version.casefold() == model.name.casefold() else model.version
     model.initials = initials_for(model.developer_name or model.name)
     model.mark = mark_for(model.family.developer.name)
-    model.table_evaluations = [
-        item for item in model.public_evaluations
-        if item.independent or item.result_kind == "composite"
-    ]
+    model.table_evaluations = model.composite_evaluations + model.independent_evaluations
     model.table_offers = paired_primary_offers(model)
     model.resource_links = resource_links(model, lang)
     model.facts_by_key = {item.key: item for item in model.facts.all()}

@@ -173,7 +173,7 @@ def release_archive(path, digest):
     if not re.fullmatch(r"[0-9a-f]{64}", digest):
         raise SystemExit("--sha256 must be a lowercase SHA-256 digest")
     manifest, commit, _names = inspect_archive(archive, digest)
-    if manifest.get("kind") != "code" or commit[:12] not in archive.name:
+    if manifest.get("kind") not in {"code", "code-candidate"} or commit[:12] not in archive.name:
         raise SystemExit("Expected an exact committed code release archive")
     remote = f"/tmp/aipedia-code-{commit[:12]}-{digest[:12]}.zip"
     return archive, remote, commit

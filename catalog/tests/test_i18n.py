@@ -17,6 +17,17 @@ class RegistryTests(TestCase):
         ):
             self.assertIn(code, SUPPORTED_CODES)
 
+    def test_evaluation_evidence_labels_are_localized_everywhere(self):
+        # The Checks tab labels must not fall back to English in any supported locale.
+        from catalog.context import TEXT
+        from catalog.ui_translations import EVIDENCE_KEYS
+        for key in EVIDENCE_KEYS + ("independent",):
+            self.assertIn(key, TEXT)
+            for code in SUPPORTED_CODES:
+                if code in ("en", "ru"):
+                    continue
+                self.assertNotEqual(t(key, code), TEXT[key][1], (key, code))
+
     def test_normalize_region_and_script_variants(self):
         self.assertEqual(normalize_lang("en-US"), "en")
         self.assertEqual(normalize_lang("ru-RU"), "ru")
