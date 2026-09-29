@@ -151,3 +151,101 @@ frequency and peak-hour TTFB distribution remain unmeasured.** No bot cause
 is claimed. A safe traffic export or separately reviewed AIpediya-only
 observability mechanism is needed before attributing the earlier CPU spike
 to external traffic or declaring the overall host-load root cause complete.
+
+## Local-only observability and controlled burst — 2026-09-29
+
+The app has no Production access log. A disabled-by-default, opt-in request
+aggregator is now implemented in the isolated #015 candidate. Every completed
+request contributes to a roughly 10-second, per-PID window with UTC start/end,
+process CPU and RSS, process I/O when `/proc/self/io` permits it, fixed route
+and action classes, status, declared User-Agent class/family, counts, wall and
+thread CPU time, SQL count/time, response bytes and coarse latency bins.
+Windows Local cannot supply the Linux `/proc` RSS/I/O fields; these are `null`
+there. Idle periods extend a window until the next completed request; its
+actual `window_ms` is always written, so rates must divide by that duration.
+The output rotates at 5 MiB with two backups. Route slugs, raw paths, query
+values, cookies, IP addresses, headers and raw User-Agent strings are not
+stored. Declared UA family can be spoofed; it is evidence about the header,
+not verified crawler identity. Settings keep this instrumentation **off in
+Production by default**. No server configuration or files were changed.
+
+The instrumented #015 Waitress ran separately on Local port 18811; the
+approved Local on 18810 remained untouched. GETs to Models, Tools, ordinary
+and 163-evaluation Model panels, Tool panel, filter, price sort, search,
+sitemap and health returned 200. A sentinel in the query, cookie and raw UA
+was absent from the JSONL. `gsd_public_check` against 18811: **33/33 PASS**.
+The final full Django catalog suite after observability: **340 tests, 1 skip**;
+the bounded-group regression test also passed in the targeted 6/6 suite.
+`manage.py check` and `git diff --check`: PASS.
+
+Direct wrapper microbenchmark on Local (5 alternating rounds, 5,000 calls per
+round with no SQL and 2,000 with `SELECT 1`):
+
+| Request | Bare wall → instrumented wall | Added wall / CPU |
+| --- | ---: | ---: |
+| Trivial, no SQL | 10.31 → 46.41 µs | 36.10 / 37.50 µs |
+| Trivial, one SQL | 45.94 → 96.33 µs | 50.39 / 39.06 µs |
+
+The wrapper overhead is small compared with the measured 0.2–1.3 s Local
+catalog requests. The microbenchmark is not a Production throughput test.
+Raw ignored evidence: `artifacts/observability-overhead.json` and
+`artifacts/request-metrics.jsonl`.
+
+Fresh matched Local baseline (#014 code) → optimized #015 medians from three
+requests per route, against the same SQLite file, with the metrics flag off.
+Memory is a **separate** traced Python allocation peak, not process RSS:
+
+| Route | Wall ms | CPU ms | SQL ms / queries | Body bytes | Python peak MiB |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `/` | 1,910 → 1,085 | 1,719 → 1,016 | 264 / 23 → 261 / 26 | 398,335 both | 37.89 → 19.81 |
+| `/es/` | 1,336 → 1,038 | 1,297 → 969 | 223 / 23 → 282 / 26 | 402,046 both | 37.81 → 19.69 |
+| `/tools/` | 245 → 281 | 250 → 266 | 28 / 19 → 32 / 19 | 253,592 both | 6.07 → 6.10 |
+| ordinary Model panel | 1,423 → 1,104 | 1,422 → 1,047 | 211 / 25 → 266 / 28 | 439,516 both | 38.09 → 19.96 |
+| 163-evaluation Model panel | 1,496 → 1,213 | 1,469 → 1,172 | 208 / 38 → 262 / 41 | 554,310 both | 39.77 → 21.63 |
+| Tool panel | 302 → 386 | 297 → 344 | 31 / 21 → 44 / 21 | 260,620 both | 6.08 → 6.08 |
+| filtered Models | 632 → 760 | 609 → 688 | 145 / 23 → 206 / 26 | 237,523 both | 15.78 → 15.81 |
+| price-sorted Models | 1,509 → 1,327 | 1,484 → 1,313 | 234 / 23 → 197 / 23 | 403,953 both | 37.89 → 37.99 |
+| sitemap index | 977 → 1,011 | 938 → 1,000 | 148 / 20 → 124 / 20 | 2,246 both | 16.65 → 16.67 |
+
+Only the default chronological Models route uses the optimized query path.
+The unchanged Tools, price-sort and sitemap route differences are test-run
+variation, not claimed improvements. Large Model panels also include the
+faster Models list. Local evidence: ignored
+`artifacts/performance-015-before-memory.json` (copied with matching SHA-256
+from the main-checkout baseline) and `artifacts/performance-015-after-memory.json`
+in this worktree.
+
+A **synthetic** four-client, 16-request burst against 18811 included four
+each of Models root, 163-evaluation Model, Tools root and sitemap. All 16
+returned 200 in 11.33 s. Windows process accounting for the exact 18811 PID
+recorded 135.8% of one CPU over 11.6 s. The telemetry active window recorded
+138.31% of one CPU over 10.56 s, with 4 Models root, 4 heavy Model, 4 sitemap
+and 3 Tools completions inside that window; the final request fell in the
+next window. These 15 completions accumulated 405 SQL executions and about
+6.35 s measured SQL time. The synthetic UA was declared `GPTBot`; this
+**does not** establish that real GPTBot or any crawler caused the historical
+Production peak. It demonstrates a reproducible app-side mechanism by which
+several CPU-heavy requests can exceed the earlier 94.2% sample without a
+restart or IndexNow dispatch.
+
+The historical Production spike remains **unattributed by request source**.
+Its PID accounting proves it was AIpediya process CPU rather than merely
+another process on the shared host; the existing log lacks routes, UA, status
+distribution and durations in that interval. The already deployed #014
+cannot retroactively emit these metrics. To close #015, obtain a safe
+historical Cloudflare HTTP Analytics export with route/status/UA/time buckets,
+or separately authorize an AIpediya-only telemetry rollout and capture a
+future comparable peak, then correlate its PID/window/route/SQL data. Keep
+#015 `in_progress` and do not publish the optimization on Local speed alone.
+The measured PID had already run over 5.5 hours and the four Waitress request
+threads, rather than its main thread, consumed the peak. This argues against
+startup/restart or a separate `aipedia-indexnow` management process being the
+direct CPU source in that sample; it does not identify the real requester.
+
+The future #015 code package is limited to the existing chronological Models
+pagination change in `catalog/views.py`, its regression tests, opt-in request
+aggregates in `catalog/observability.py` and settings/tests, repeatable Local
+profilers, read-only AIpediya process metrics tooling, and Timeline/status
+documentation. It contains no catalog master plan, catalog data sync, Local
+SQLite, or Production telemetry enablement. No release archive or tag has
+been built while the root-cause and owner Local acceptance gates remain open.

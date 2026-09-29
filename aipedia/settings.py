@@ -53,6 +53,17 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware", "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "catalog.middleware.HeadersMiddleware",
 ]
+# Release #015 diagnostic gate. Disabled by default, including Production.
+# The middleware records only fixed route/UA classes and 10-second aggregates;
+# it never persists a request URL, query value, cookie, address or raw UA.
+AIPEDIA_REQUEST_METRICS_ENABLED = os.environ.get("AIPEDIA_REQUEST_METRICS_ENABLED", "0") == "1"
+AIPEDIA_REQUEST_METRICS_WINDOW_SECONDS = 10
+AIPEDIA_REQUEST_METRICS_PATH = (
+    BASE_DIR / "artifacts/request-metrics.jsonl" if AIPEDIA_ENV == "local"
+    else BASE_DIR.parent / "logs/request-metrics.jsonl"
+)
+if AIPEDIA_REQUEST_METRICS_ENABLED:
+    MIDDLEWARE.insert(0, "catalog.observability.RequestMetricsMiddleware")
 ROOT_URLCONF = "aipedia.urls"
 TEMPLATES = [{"BACKEND": "django.template.backends.django.DjangoTemplates", "DIRS": [BASE_DIR / "templates"],
               "APP_DIRS": True, "OPTIONS": {"context_processors": [

@@ -1813,12 +1813,13 @@
         "progress": "in_progress",
         "release_tag": "release-2026-09-28-performance-audit",
         "qa": {
-          "local": "334 catalog tests OK (one skip) after merging released #014; read-only Local profile: Models root 910 ms versus 1634 ms baseline, 26 SQL queries / 234 ms SQL; post-change 88-case browser gate pending",
+          "local": "Local #015: 340 catalog tests OK (one skip), new observability targeted 6/6 PASS, GSD Local 33/33; matched Models root 1910→1085 ms and Python peak 37.89→19.81 MiB; controlled 16-request burst 135.8% PID CPU; post-change 88-case browser gate and historical Production peak attribution pending",
           "production": "Read-only AIpediya-only samples after #014: 4.03% and 3.07% of one CPU, about 191 MiB RSS, 0 queue warnings; route/UA and I/O attribution pending; #015 has no deployment authorization"
         },
         "changes": [
           "Page chronological Models in SQL before prefetch and decoration",
-          "Add read-only AIpediya process metrics and repeatable Local request profiling"
+          "Add read-only AIpediya process metrics and repeatable Local request profiling",
+          "Add optional bounded per-PID route, crawler-class and SQL-cost aggregates, disabled by default"
         ]
       }
     ],

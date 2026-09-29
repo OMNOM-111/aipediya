@@ -6,6 +6,7 @@ The caller must set AIPEDIA_ENV=local and AIPEDIA_DB to the Local SQLite path.
 
 import argparse
 import cProfile
+import gc
 import io
 import json
 import os
@@ -13,6 +14,7 @@ import pstats
 import statistics
 import sys
 import time
+import tracemalloc
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -76,12 +78,28 @@ def profile(path, repeats=3):
     }
 
 
+def memory_profile(path):
+    """Separate Python allocation peak from timing; tracing changes latency."""
+    gc.collect()
+    tracemalloc.start()
+    current_before, _ = tracemalloc.get_traced_memory()
+    tracemalloc.reset_peak()
+    response = Client().get(path)
+    _, peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+    return {"path": path, "status": response.status_code,
+            "python_peak_alloc_bytes": max(0, peak - current_before),
+            "response_bytes": len(response.content)}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output")
     parser.add_argument("--hotspot", help="Also show cumulative CPU hotspots for this Local path")
     parser.add_argument("--hotspot-only", action="store_true")
     parser.add_argument("--path", help="Measure one Local path instead of the standard matrix")
+    parser.add_argument("--memory", action="store_true",
+                        help="Also measure separately traced peak Python allocations per route")
     args = parser.parse_args()
     if args.hotspot_only and not args.hotspot:
         parser.error("--hotspot-only requires --hotspot")
@@ -92,6 +110,8 @@ def main():
         return
     if args.path:
         result = {"environment": "local", "requests": [profile(args.path)]}
+        if args.memory:
+            result["memory"] = [memory_profile(args.path)]
         output = Path(args.output)
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -111,6 +131,8 @@ def main():
         "heavy_model_evaluations": heavy[1],
         "requests": [profile(path) for path in paths],
     }
+    if args.memory:
+        result["memory"] = [memory_profile(path) for path in paths]
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")

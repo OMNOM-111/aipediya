@@ -1,5 +1,9 @@
 from .settings import *  # noqa: F403
 
+# Test behavior is independent of any developer's optional diagnostics flag.
+AIPEDIA_REQUEST_METRICS_ENABLED = False
+MIDDLEWARE = [item for item in MIDDLEWARE if item != "catalog.observability.RequestMetricsMiddleware"]
+
 
 # Tests render templates but must not depend on a locally collected production
 # manifest. Production continues to use hashed WhiteNoise assets.
