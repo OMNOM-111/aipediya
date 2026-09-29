@@ -3,8 +3,13 @@
 ## Версии и обязательный выпускной шлюз
 
 **No Timeline → No Release.** Подтверждённые Production-вехи получили
-Release #001–#012; текущий baseline — Release #012 · AIpediya v0.12.0,
-`release-2026-09-28-eval-evidence`, deployed id `d349d6de42cb`.
+Release #001–#013; текущий baseline — Release #013 · AIpediya v0.13.0,
+`release-2026-09-28-reconciliation-cleanup`, deployed commit `5ba1e566338f`.
+Следующая карточка #014 · v0.13.1 — Local `review`: исправлена устаревавшая
+после History API ссылка сохранённого языка рядом с меню. 22 локали прошли
+88/88 браузерных сценариев Models/Tools на desktop и 375 px; решение владельца
+и Production-выпуск ещё не получены. Отчёт —
+`docs/history/2026-09-28-language-switch-local.md`.
 `release_sequence` — неизменяемый номер выпуска, `app_version` — SemVer.
 До 1.0 новый пользовательский пакет увеличивает minor (`v0.12.0`), исправление
 опубликованного пакета — patch (`v0.12.1`). `v1.0.0` требует отдельного
@@ -83,8 +88,9 @@ Release # / SemVer; система версий принята владельц�
 AIpediya с опубликованным Tools/CSP пакетом `cf4ac9a` и его публичной проверкой
 beacon 200 / RUM 204. Последующий обзор трафика не был новым deploy. Его
 замечание о StratForge относится к другому приложению и не меняет статус
-AIpediya. После выпуска Evaluation Evidence текущий Production baseline —
-Release #012 · v0.12.0 (`d349d6de42cb`, 325 Models / 147 Tools).
+AIpediya. После выпуска Evaluation Evidence Production baseline на тот момент был
+Release #012 · v0.12.0 (`d349d6de42cb`, 325 Models / 147 Tools); текущий #013
+указан выше.
 Заголовок и theme/language controls принадлежат автономной странице, общая
 оболочка публичного каталога в файл не включается. Тема начинается тёмной;
 ручной выбор запоминается при поддержке `localStorage` для `file://`. Карточки

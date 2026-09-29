@@ -877,6 +877,17 @@
       "revision": "5ba1e566338fc17d9b8965d3be180bc1df268e2e",
       "release_tag": "release-2026-09-28-reconciliation-cleanup",
       "production_verified_at": "2026-09-29T00:07:19+00:00"
+    },
+    {
+      "release_id": "LANGUAGE-SWITCH-2026-09-28",
+      "release_sequence": 14,
+      "app_version": "v0.13.1",
+      "title": "Repair interactive language switching across 22 locales",
+      "environment": "local",
+      "stage": "review",
+      "history": "docs/history/2026-09-28-language-switch-local.md",
+      "release_tag": "release-2026-09-28-language-switch",
+      "summary": "Public browser testing found a stale remembered-language shortcut after History API changes; repaired in Local. The standard expanded-menu Espanol path was not reproduced as broken. All 22 locales pass menu-driven Local QA; owner visual review and separate Production authorization remain required."
     }
   ],
   "product_history": {
@@ -1699,6 +1710,41 @@
         "production_verified_at": "2026-09-29T00:07:19+00:00",
         "release_report": "docs/history/2026-09-28-reconciliation-cleanup.md",
         "backup": "aipedia-before-code-20260928T235552Z.sqlite3"
+      },
+      {
+        "release_id": "LANGUAGE-SWITCH-2026-09-28",
+        "release_sequence": 14,
+        "app_version": "v0.13.1",
+        "local_verified": true,
+        "owner_approved": false,
+        "production_released": false,
+        "production_verified": false,
+        "date": "2026-09-28",
+        "title_ru": "Надёжное переключение 22 языков",
+        "title_en": "Reliable switching across 22 languages",
+        "icon": "languages",
+        "tags_ru": ["Release #014", "v0.13.1", "Local QA ✓", "Приёмка владельца ожидается"],
+        "tags_en": ["Release #014", "v0.13.1", "Local QA ✓", "Owner review pending"],
+        "capabilities_ru": [
+          "Проверка пользовательского выбора языка через меню на страницах моделей, инструментов и открытых карточках.",
+          "Ссылка сохранённого языка следует за URL карточки после History API; регрессионные тесты охватывают все 22 локали."
+        ],
+        "capabilities_en": [
+          "Menu-driven language checks on model and tool listings and open detail panels.",
+          "The remembered-language link follows panel URLs after History API changes; regression tests cover all 22 locales."
+        ],
+        "source": "2026-09-28-language-switch",
+        "open": true,
+        "progress": "review",
+        "release_tag": "release-2026-09-28-language-switch",
+        "qa": {
+          "local": "88/88 Local browser cases PASS across 22 locales, Models/Tools, 1440/375 px; 264 menu navigations HTTP 200, 0 redirects/errors/failed requests; 1712 interaction checks; 330 catalog tests OK (one skip); GSD Local 33/33 PASS",
+          "production": "Not authorized; published #013 remains unchanged"
+        },
+        "changes": [
+          "Synchronize the remembered-language link with menu links after History API updates",
+          "Add 22-locale Django routing and browser menu regressions"
+        ]
       }
     ],
     "additional_tasks": [
@@ -1869,11 +1915,10 @@
       }
     ],
     "current_local": {
-      "release_id": "release-2026-09-28-reconciliation-cleanup",
-      "release_sequence": 13,
-      "app_version": "v0.13.0",
-      "revision": "4647869d0b4d19b5dd4b0f547edac73784c33923",
-      "release_tag": "release-2026-09-28-reconciliation-cleanup"
+      "release_id": "LANGUAGE-SWITCH-2026-09-28",
+      "release_sequence": 14,
+      "app_version": "v0.13.1",
+      "release_tag": "release-2026-09-28-language-switch"
     },
     "current_production": {
       "release_id": "release-2026-09-28-reconciliation-cleanup",

@@ -222,6 +222,13 @@ function syncLanguageLinks() {
     const prefix = code === "en" ? "" : `/${code.toLowerCase()}`;
     link.setAttribute("href", prefix + neutral + (query ? `?${query}` : ""));
   });
+  // The remembered-language shortcut sits outside the menu and must follow
+  // History API changes to the listing or open card as well.
+  const offer = document.querySelector("a.lang-offer");
+  if (offer) {
+    const target = langLinks.find((link) => link.dataset.setLang === offer.hreflang);
+    if (target) offer.setAttribute("href", target.getAttribute("href"));
+  }
 }
 
 function refreshIcons() {

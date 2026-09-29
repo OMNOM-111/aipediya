@@ -465,6 +465,13 @@ Local QA, commit/build кандидата и source должны быть в к�
 `owner_approved=true`. `current_local` указывает на кандидата,
 `current_production` остаётся на предыдущем подтверждённом выпуске.
 
+Для каждого следующего code release Local QA включает отдельный browser gate
+языкового меню: `python tools/locale_switch_browser_qa.py --base http://127.0.0.1:18810`.
+Отчёт в `artifacts/locale-switch-browser-qa.json`
+должен иметь 88/88 PASS (22 локали × Models/Tools × desktop/375 px),
+нулевые ошибки консоли и критические failed requests. HTTP-проверка
+`gsd_production_qa` не заменяет этот интерактивный gate.
+
 ```powershell
 .\.venv\Scripts\python.exe tools/build_product_history.py
 .\.venv\Scripts\python.exe tools/release_history.py --release-id <release-id> --html

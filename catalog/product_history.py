@@ -32,6 +32,7 @@ SOURCES = {
     "2026-09-27-tools-chronology-csp-release": ("Выпуск Tools и Cloudflare CSP / Tools and Cloudflare CSP release", "docs/history/2026-09-27-tools-chronology-csp-release.md"),
     "2026-09-27-catalog-325-147-release": ("Каталог 325/147 / Catalog 325/147", "docs/history/2026-09-27-catalog-325-147-release.md"),
     "2026-09-28-unsupported-master-production-audit": ("Аудит unsupported master / Production", "docs/history/2026-09-28-unsupported-master-production-audit.md"),
+    "2026-09-28-language-switch": ("Переключение 22 языков / Language switching", "docs/history/2026-09-28-language-switch-local.md"),
 }
 
 

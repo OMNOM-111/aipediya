@@ -6,28 +6,22 @@ from tools.finalize_release_history import finalize
 
 
 class ReleaseHistoryTests(SimpleTestCase):
-    def test_baseline_has_reserved_thirteen_and_matching_pointers(self):
+    def test_local_fourteen_is_reserved_while_production_remains_thirteen(self):
         registry = load()
         self.assertEqual(validate(registry), [])
         cards = [row for row in registry["product_history"]["milestones"] if row.get("release_sequence")]
-        self.assertEqual([row["release_sequence"] for row in cards], list(range(1, 14)))
-        self.assertEqual(cards[-1]["app_version"], "v0.13.0")
-        self.assertEqual(registry["product_history"]["current_local"]["release_sequence"], 13)
+        self.assertEqual([row["release_sequence"] for row in cards], list(range(1, 15)))
+        self.assertEqual(cards[-1]["app_version"], "v0.13.1")
+        self.assertEqual(registry["product_history"]["current_local"]["release_sequence"], 14)
         self.assertEqual(registry["product_history"]["current_production"]["release_sequence"], 13)
 
     def test_gate_rejects_missing_review_qa_owner_and_stale_html(self):
         registry = load()
-        candidate = copy.deepcopy(registry["product_history"]["milestones"][-2])
-        candidate.update(release_id="release-v014", release_sequence=14, app_version="v0.14.0",
-                         revision="a" * 40, release_tag="release-v014", production_verified=False,
+        candidate = registry["product_history"]["milestones"][-1]
+        candidate.update(revision="a" * 40, production_verified=False,
                          production_released=False, owner_approved=False, local_verified=False,
                          progress="in_progress", changes=[], qa={})
-        registry["product_history"]["milestones"].append(candidate)
-        registry["entries"].append({"release_id": "release-v014", "release_sequence": 14,
-                                    "app_version": "v0.14.0"})
-        registry["product_history"]["current_local"].update(
-            release_id="release-v014", release_sequence=14, app_version="v0.14.0")
-        errors = validate(registry, "release-v014", "a" * 40, "stale")
+        errors = validate(registry, candidate["release_id"], "a" * 40, "stale")
         self.assertTrue(any("owner_approved" in item for item in errors))
         self.assertTrue(any("Local QA" in item for item in errors))
         self.assertTrue(any("stale" in item for item in errors))

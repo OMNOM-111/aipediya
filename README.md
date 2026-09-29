@@ -124,10 +124,14 @@ GPQA взят из отчёта Google. AIME в отчёте атрибутир�
 .\.venv\Scripts\python.exe manage.py test catalog --settings=aipedia.test_settings
 .\.venv\Scripts\python.exe manage.py check
 python tools/browser_check.py
+python tools/locale_switch_browser_qa.py --base http://127.0.0.1:18810
 ```
 
-Последняя команда требует Playwright и Chromium в используемом Python,
-а также работающего сервера на 18810. Изображения сохраняются в `artifacts/`.
+Обе браузерные команды требуют Playwright и Chromium в используемом Python,
+а также работающего сервера на 18810. `locale_switch_browser_qa.py` кликает
+языковое меню для всех 22 локалей на desktop и 375 px и сохраняет JSON-отчёт
+в `artifacts/`. Установите браузер командой `python -m playwright install chromium`.
+Изображения `browser_check.py` сохраняются в `artifacts/`.
 Приёмка владельцем описана в `docs/ACCEPTANCE.md`.
 
 ## Развёртывание
