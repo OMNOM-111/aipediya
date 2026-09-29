@@ -32,6 +32,12 @@ including the new Local-history CSP regression; Local public check passed
 33/33. Production history
 continues to return 404 by the existing Local-only guard.
 
+After fast-forwarding the ordinary Local checkout, the same history browser
+gate passed **4/4 and 60/60 card openings** against its normal
+`127.0.0.1:18810` service. The normal Local public check passed **33/33**;
+the existing SQLite was kept and no migrations applied. The Local-only UI
+source commit is `856d80ce0aa19550c0f7c7afdeba36250ee329bc`.
+
 The previous 2026-09-26 offline-history owner visual acceptance remains an
 historical fact about that version. No new owner visual approval is claimed
 for this Local-only follow-up; its technical and visual checks were performed

@@ -910,7 +910,7 @@
       "environment": "local",
       "stage": "local",
       "status": "COMPLETED_LOCAL",
-      "revision": null,
+      "revision": "856d80ce0aa19550c0f7c7afdeba36250ee329bc",
       "history": "docs/history/2026-09-29-internal-history-local.md"
     }
   ],
@@ -1875,7 +1875,7 @@
           "Keep /ru/history/ and standalone timeline.html aligned to docs/timeline.json",
           "Check every card, keyboard, themes and mobile layout"
         ],
-        "revision": null,
+        "revision": "856d80ce0aa19550c0f7c7afdeba36250ee329bc",
         "source": "2026-09-29-internal-history-local",
         "open": true,
         "progress": "done",
