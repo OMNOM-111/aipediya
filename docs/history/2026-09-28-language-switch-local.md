@@ -2,6 +2,37 @@
 
 Release #014 / v0.13.1. The owner reported that selecting Español on Production did not work correctly. This report separates the reproduced fault from menu paths that currently pass. Production remains at #013 until the owner reviews Local and authorizes this exact release.
 
+## Local availability correction, 2026-09-29
+
+The first handoff failed owner visual acceptance: the advertised
+`http://127.0.0.1:18810/es/` returned `ERR_CONNECTION_REFUSED`. There was no
+listener on port 18810 and the Local PID file named an absent process (`37480`).
+The canonical `start-local.ps1` starts Waitress as a child and waits for it;
+the earlier launch was tied to a temporary command session. That is the
+likely lifecycle mechanism, though the old process's exact exit event was not
+logged. The direct cause of the refusal was the absent Local listener.
+
+The same canonical launcher was started as a detached, hidden Local process.
+After the performance work was isolated to a separate #015 branch, the clean
+`main` code for #014 was restored and only AIpediya Local was restarted. The
+new Waitress PID `32860` listened on **127.0.0.1:18810** after the start
+command returned. `/healthz`, `/`, `/es/`, `/ru/`, `/tools/`, and `/es/tools/`
+all returned HTTP 200. No SQLite copy or production change was made.
+
+The owner confirmed that, after the first recovery, ES/RU pages opened in an
+ordinary browser and the menu switch to Español worked from RU/EN and an open
+Model without losing the panel. A renewed owner check of the final clean #014
+Local is pending. Codex's browser-control tool refused loopback access under
+its security policy and explicitly prohibited an alternate browser route, so
+the original 88/88 browser pass on #014 is preserved as earlier evidence but
+was not rerun after this launcher recovery. The fix code itself did not change.
+
+Production read-only preflight still showed #013. The owner has conditionally
+authorized deployment of exactly #014 after Local is verified; Timeline owner
+approval, release archive, tag, deploy and public QA remain pending. The
+measured performance change lives only on `codex/aipedia-performance-015` and
+is outside this release.
+
 ## Public browser diagnosis before the fix
 
 Chromium navigated by clicking rendered language controls, with JavaScript enabled. The standard expanded menu was opened and the Español item clicked from the English Models root, Tools root, and open Model/Tool panels. The resulting paths were `/es/`, `/es/tools/`, `/es/models/<same slug>` and `/es/tools/<same slug>` respectively. All returned HTTP 200, with no redirects, visible rows/panels, functioning JavaScript, zero console errors and zero critical failed requests. A separate click sweep passed Models and Tools roots for all 22 locales (44/44). The precise owner-observed menu failure has therefore not been reproduced in these states; the original browser URL and symptom are still useful to narrow it further.

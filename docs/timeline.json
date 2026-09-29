@@ -887,7 +887,7 @@
       "stage": "review",
       "history": "docs/history/2026-09-28-language-switch-local.md",
       "release_tag": "release-2026-09-28-language-switch",
-      "summary": "Public browser testing found a stale remembered-language shortcut after History API changes; repaired in Local. The standard expanded-menu Espanol path was not reproduced as broken. All 22 locales pass menu-driven Local QA; owner visual review and separate Production authorization remain required."
+      "summary": "Public browser testing found a stale remembered-language shortcut after History API changes; repaired in Local. The standard expanded-menu Espanol path was not reproduced as broken. All 22 locales passed menu-driven Local QA. First owner handoff failed because Local was no longer listening; the canonical Local launcher has been restored and final owner review is pending. Production permission is conditional on that review."
     }
   ],
   "product_history": {
@@ -1738,8 +1738,8 @@
         "progress": "review",
         "release_tag": "release-2026-09-28-language-switch",
         "qa": {
-          "local": "88/88 Local browser cases PASS across 22 locales, Models/Tools, 1440/375 px; 264 menu navigations HTTP 200, 0 redirects/errors/failed requests; 1712 interaction checks; 330 catalog tests OK (one skip); GSD Local 33/33 PASS",
-          "production": "Not authorized; published #013 remains unchanged"
+          "local": "88/88 Local browser cases PASS across 22 locales, Models/Tools, 1440/375 px before handoff; 264 menu navigations HTTP 200, 0 redirects/errors/failed requests; 1712 interaction checks; 330 catalog tests OK (one skip); GSD Local 33/33 PASS. First owner handoff failed because Local had stopped; restored on 127.0.0.1:18810 with six routes 200; final owner review pending.",
+          "production": "Owner authorization for #014 is conditional on verified Local; published #013 remains unchanged"
         },
         "changes": [
           "Synchronize the remembered-language link with menu links after History API updates",
