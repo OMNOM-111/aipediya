@@ -105,3 +105,49 @@ access-log or Cloudflare analytics route, and compare Production CPU/RSS/TTFB
 before and after a separately authorized #015 release. Sitemap graph rebuilds
 on each request and computed price sorting still process all Models; optimize
 these only after request-frequency evidence shows they matter.
+
+## Continuation after the separate #014 release — 2026-09-29
+
+The #015 branch was merged with the verified #014 `main` in its own worktree
+(`bf79281`); #014 Production and its Git tag were not changed. Full merged
+`manage.py test catalog --settings=aipedia.test_settings` passed 334 tests
+with one expected skip. Timeline now has #014 released and #015 in progress.
+
+Two fresh 30-second, AIpediya-process-only Production samples on the published
+#014 release measured **4.03% and 3.07% of one CPU**, RSS **190,920 and
+191,492 KiB**, five threads, zero Waitress queue warnings and one then zero
+new 404s. The shared host load averages were about 2.9 and 3.0–3.3 during
+those intervals. Therefore that whole-host load was mostly outside the
+AIpediya process in these intervals; the measurements do not identify or
+inspect another application. Earlier #013 samples with 12.8–94.2% of one
+CPU remain evidence that AIpediya itself can spike. Standard `/proc` access
+still did not expose per-process I/O or network-byte deltas. Saved read-only
+metrics: `artifacts/server-access/metrics-20260929T133146Z.json` and
+`metrics-20260929T133347Z.json`.
+
+Six sequential public requests during the second period all returned 200.
+Observed TTFB / total time in seconds: `/` 0.527 / 0.605, `/es/` 0.566 /
+0.662, `/tools/` 0.256 / 0.308, ordinary Model 0.427 / 0.521,
+price-sorted Models 0.633 / 0.725, sitemap 0.313 / 0.313. Response headers
+reported `cf-cache-status: DYNAMIC` for the root. These are a calm #014
+sample, **not** a Production after-measurement of the unshipped #015 change.
+The much slower #013 sample above was under different traffic conditions,
+so it cannot establish a release-level speedup.
+
+The merged #015 Local candidate was profiled read-only against the existing
+Local SQLite. Median Models root: **910 ms wall / 906 ms CPU / 234 ms SQL /
+26 queries**, versus the earlier unchanged-code baseline 1,634 / 1,516 /
+259 ms / 23 queries. Spanish Models: 977 ms wall versus 1,596 ms baseline;
+heavy Model (163 evaluations): 1,177 ms wall versus 2,092 ms baseline.
+Tools, price sorting and sitemap use unchanged code paths and their timing
+variation is not credited to this optimization. Evidence:
+`artifacts/performance-015-after-merge.json`.
+
+Cloudflare Dashboard was checked read-only but requires account sign-in.
+The AIpediya app has no access log or route/UA aggregation. The historical
+404 count is dominated by `/models/`, but the measured current intervals
+had zero or one new 404 and no queue warnings. **Crawler share, actual route
+frequency and peak-hour TTFB distribution remain unmeasured.** No bot cause
+is claimed. A safe traffic export or separately reviewed AIpediya-only
+observability mechanism is needed before attributing the earlier CPU spike
+to external traffic or declaring the overall host-load root cause complete.

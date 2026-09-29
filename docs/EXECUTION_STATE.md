@@ -1,5 +1,12 @@
 # Текущее состояние AIpedia
 
+## 29.09 — #015 Performance Audit продолжается в отдельном worktree
+
+- Worktree/ветка `codex/aipedia-performance-015` объединена с опубликованным #014; `main`, его release tag и Production этим этапом не менялись. Полный merged Django suite: 334 OK (1 skip). Карточка #015 / v0.13.2 остаётся `in_progress`, owner approval и Production release отсутствуют.
+- Два новых read-only замера только процесса `aipedia` после #014: 4,03% и 3,07% одного CPU, RSS 190 920–191 492 KiB, пять потоков, 0 предупреждений очереди, 1 и 0 новых 404 за 30 секунд. Общая load average машины около 2,9–3,3 не принадлежит только AIpediya; другие приложения не исследовались. Прошлые пики AIpediya до 94,2% одного CPU были реальными. Per-process I/O и фактический path/User-Agent mix остаются недоступны по существующей телеметрии.
+- Повторный read-only профиль Local-кандидата #015: Models root median 910 мс wall / 906 мс CPU / 234 мс SQL / 26 queries против исходных 1 634 / 1 516 / 259 мс / 23 queries; другие маршруты не приписываются этой оптимизации. Публичные шесть последовательных запросов к текущему #014 дали TTFB 0,256–0,633 с, 200; это спокойный baseline до #015, не сравнение после выпуска. Cloudflare Dashboard требует входа, access log AIpediya отсутствует; доля crawler traffic не установлена. Отчёт и сырые данные: `docs/history/2026-09-28-performance-audit-local.md`, ignored `artifacts/` в worktree.
+- **Изменено:** только ветка #015: merge #014, Timeline и отчёт аудита. **Не завершено:** независимая атрибуция route/UA/bot трафика и per-process I/O, browser gate 88/88 после Python-оптимизации, Local визуальная приёмка и отдельный выпуск #015. **Следующим выполнить:** получить безопасную read-only traffic analytics выборку либо согласованный AIpediya-only сбор метрик; затем подтвердить root cause на пиковой нагрузке, завершить Local browser QA и представить отдельный #015 на приёмку.
+
 ## 29.09 — Release #014 / v0.13.1 опубликован и проверен
 
 - **Local:** владелец принял рабочий `127.0.0.1:18810` и прежнюю browser-матрицу 88/88; перед выпуском повторно пройдены 44/44 locale roots, 44/44 открытые Model/Tool и 1 936 language links. Исправление общего `syncLanguageLinks()` входит в проверенный baseline `77e7f53cd8aa621b392d52d5b5ae8851ab77456c`.

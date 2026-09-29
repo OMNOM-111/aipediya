@@ -1813,8 +1813,8 @@
         "progress": "in_progress",
         "release_tag": "release-2026-09-28-performance-audit",
         "qa": {
-          "local": "331 catalog tests OK (one skip); check, master check/qa PASS; 44/44 live locale roots and GSD Local 33/33; post-change 88-case browser gate pending",
-          "production": "Read-only baseline only; #013 remains published and #015 has no deployment authorization"
+          "local": "334 catalog tests OK (one skip) after merging released #014; read-only Local profile: Models root 910 ms versus 1634 ms baseline, 26 SQL queries / 234 ms SQL; post-change 88-case browser gate pending",
+          "production": "Read-only AIpediya-only samples after #014: 4.03% and 3.07% of one CPU, about 191 MiB RSS, 0 queue warnings; route/UA and I/O attribution pending; #015 has no deployment authorization"
         },
         "changes": [
           "Page chronological Models in SQL before prefetch and decoration",
