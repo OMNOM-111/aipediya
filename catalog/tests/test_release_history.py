@@ -12,7 +12,7 @@ class ReleaseHistoryTests(SimpleTestCase):
         cards = [row for row in registry["product_history"]["milestones"] if row.get("release_sequence")]
         self.assertEqual([row["release_sequence"] for row in cards], list(range(1, 16)))
         self.assertEqual(cards[-1]["app_version"], "v0.13.2")
-        self.assertEqual(registry["product_history"]["current_local"]["release_sequence"], 14)
+        self.assertEqual(registry["product_history"]["current_local"]["release_sequence"], 15)
         self.assertEqual(registry["product_history"]["current_production"]["release_sequence"], 14)
         self.assertTrue(cards[-2]["production_verified"])
         self.assertFalse(cards[-1]["production_verified"])
@@ -38,6 +38,9 @@ class ReleaseHistoryTests(SimpleTestCase):
             release_tag=prior["release_tag"])
         card = next(row for row in registry["product_history"]["milestones"]
                     if row.get("release_sequence") == 14)
+        registry["product_history"]["current_local"].update(
+            release_id=card["release_id"], release_sequence=14,
+            app_version=card["app_version"], release_tag=card["release_tag"])
         card.update(revision="a" * 40, local_verified=True,
                     owner_approved=True, production_verified=False,
                     production_released=False, progress="review", open=True,

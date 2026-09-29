@@ -3,13 +3,16 @@
 ## Версии и обязательный выпускной шлюз
 
 **No Timeline → No Release.** Подтверждённые Production-вехи получили
-Release #001–#013; текущий baseline — Release #013 · AIpediya v0.13.0,
-`release-2026-09-28-reconciliation-cleanup`, deployed commit `5ba1e566338f`.
-Следующая карточка #014 · v0.13.1 — Local `review`: исправлена устаревавшая
-после History API ссылка сохранённого языка рядом с меню. 22 локали прошли
-88/88 браузерных сценариев Models/Tools на desktop и 375 px; решение владельца
-и Production-выпуск ещё не получены. Отчёт —
-`docs/history/2026-09-28-language-switch-local.md`.
+Release #001–#014; текущий опубликованный baseline — Release #014 · AIpediya
+v0.13.1, `release-2026-09-28-language-switch`, deployed release id
+`1ac95d75b7a6d80eb24301f352a88275c28d4bce`. Его Local-проверка
+и Production-выпуск описаны в
+`docs/history/2026-09-29-language-switch-release.md`. Карточка #015 ·
+v0.13.2 — Local `review`: устранена полная обработка Models до пагинации,
+полный browser gate 88/88 и catalog suite 340 tests PASS; владелец явно
+разрешил отдельный Performance-выпуск после Local QA. До фактического deploy
+Production остаётся #014. Отчёт Local —
+`docs/history/2026-09-28-performance-audit-local.md`.
 `release_sequence` — неизменяемый номер выпуска, `app_version` — SemVer.
 До 1.0 новый пользовательский пакет увеличивает minor (`v0.12.0`), исправление
 опубликованного пакета — patch (`v0.12.1`). `v1.0.0` требует отдельного

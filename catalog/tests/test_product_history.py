@@ -18,7 +18,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertEqual(product["current_production"]["app_version"], "v0.13.1")
         self.assertEqual(by_id["release-2026-09-28-reconciliation-cleanup"]["revision"],
                          "5ba1e566338fc17d9b8965d3be180bc1df268e2e")
-        self.assertEqual(product["current_local"]["release_sequence"], 14)
+        self.assertEqual(product["current_local"]["release_sequence"], 15)
         locale_switch = by_id["LANGUAGE-SWITCH-2026-09-28"]
         self.assertEqual((locale_switch["app_version"], locale_switch["local_verified"],
                           locale_switch["owner_approved"]), ("v0.13.1", True, True))
@@ -28,7 +28,8 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertEqual((performance["release_sequence"], performance["app_version"],
                           performance["progress"], performance["local_verified"],
                           performance["production_released"]),
-                         (15, "v0.13.2", "in_progress", False, False))
+                         (15, "v0.13.2", "review", True, False))
+        self.assertTrue(performance["owner_approved"])
         versions = by_id["VERSION-HISTORY-2026-09-27"]
         self.assertEqual((versions["progress"], versions["local_verified"],
                           versions["owner_approved"], versions["production_verified"]),
@@ -58,7 +59,7 @@ class ProductHistoryTests(SimpleTestCase):
         # The catalog/CSP stage was owner-approved and published.
         self.assertContains(page, 'class="ph-legend-dot is-review"', count=1)
         self.assertContains(page, 'Ожидает подтверждения владельца')
-        self.assertNotContains(page, 'class="ph-milestone ph-review ph-open"')
+        self.assertContains(page, 'class="ph-milestone ph-review ph-open"', count=1)
         self.assertContains(page, '61adedd6ea5e6a0955d51d87374fa2fa9bcc7799')
         self.assertContains(page, 'PLANNED')
         self.assertContains(page, 'кампания не создана и не запущена.')
@@ -149,7 +150,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn('id="edition-ru"', page)
         self.assertIn('id="edition-en"', page)
         self.assertEqual(page.count('data-history-open='), 40)
-        self.assertEqual(page.count('class="ph-milestone ph-review ph-open"'), 0)
+        self.assertEqual(page.count('class="ph-milestone ph-review ph-open"'), 2)
         self.assertGreaterEqual(page.count('class="ph-legend-dot is-review"'), 2)
         self.assertIn('.ph-review .ph-dot', page)
         self.assertIn('Утверждено владельцем', page)

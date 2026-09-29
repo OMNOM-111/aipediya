@@ -249,3 +249,42 @@ profilers, read-only AIpediya process metrics tooling, and Timeline/status
 documentation. It contains no catalog master plan, catalog data sync, Local
 SQLite, or Production telemetry enablement. No release archive or tag has
 been built while the root-cause and owner Local acceptance gates remain open.
+
+## Final Local gate and owner authorization — 2026-09-29
+
+The owner accepted the demonstrated application defect as the #015 root
+cause: all 325 published Models and their related data were hydrated before
+pagination. The inability to classify the historical requesters as humans or
+crawlers is retained as a diagnostic limitation, **not** a blocker to fixing
+that measured CPU and allocation cost. The owner explicitly authorized this
+exact Performance Release #015 / v0.13.2 after complete Local QA.
+
+The final source-code baseline is `5686b1c41bddf0d6729eb299056670dfb26e6d85`.
+The last code change made the server preflight and post-release backup
+comparison accept subsequent code-only releases while still rejecting an
+unspecified catalog plan and checking that every catalog table is unchanged.
+Its contract tests passed. No catalog data, migrations, Local SQLite or
+publication state were changed in Local.
+
+The candidate ran independently on `127.0.0.1:18811`, leaving the normal
+18810 Local server alone. Four Playwright shards covered all 22 locales,
+Models and Tools, desktop 1440 px and mobile 375 px: **88/88 PASS**, 1,712
+checks, 264 actual menu navigations, zero redirects, console errors, failed
+network requests or HTTP errors. The menu clicks exercised root and open
+Model/Tool, X/Escape/outside, Back/Forward, search, filter, sort, query
+preservation, themes, infinite loading and RTL. Combined ignored report:
+`artifacts/locale-switch-015-local-88.json` (source shards `-a` through `-d`).
+After the preflight-tool change: full catalog suite **340 tests, one skip**;
+`manage.py check`, GSD Local **33/33**, `catalog_master check: OK`, and
+`catalog_master qa: PASS`. The master retains its known research-only data
+quality queue and deferred Local sync drift; this code-only release does not
+sync it.
+
+The predeploy #014 public route probe returned 200 for three sequential
+requests each to ten routes. Median TTFB (ms): Models `/` 484, Spanish 472,
+Tools 254, ordinary Model 468, 163-evaluation Model 474, Tool panel 327,
+filter 280, price sort 469, sitemap 376 and `/healthz` 158. Its ignored JSON
+is `artifacts/performance-015-production-before.json`. This is a calm live
+baseline, not yet an after result. The candidate is now `review`, Local ✓,
+Owner ✓, Production —. The release archive, server preflight, deploy and
+public after-measurements follow under `docs/RELEASE.md`.
