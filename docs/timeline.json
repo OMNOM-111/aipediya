@@ -1412,8 +1412,8 @@
         "production_released": false,
         "production_verified": false,
         "date": "2026-09-30",
-        "title_ru": "Organic Search Follow-up / контрольный замер",
-        "title_en": "Organic Search Follow-up / control snapshot",
+        "title_ru": "Контрольный замер органического поиска",
+        "title_en": "Organic search control snapshot",
         "icon": "search-check",
         "tags_ru": [
           "PLANNED",
