@@ -166,7 +166,7 @@ def _history_context(language):
         milestones.append({
             "id": item["release_id"], "date": item["date"], "date_label": date_label,
             "release_sequence": item.get("release_sequence"), "app_version": item.get("app_version"),
-            "release_tag": item.get("release_tag"), "qa": item.get("qa", {}),
+            "release_tag": item.get("release_tag") if item.get("production_verified") else "", "qa": item.get("qa", {}),
             "local_verified": item.get("local_verified"), "owner_approved": item.get("owner_approved"),
             "production_verified": item.get("production_verified"), "changes": item.get("changes", []),
             "title": item[f"title_{suffix}"],
@@ -177,6 +177,12 @@ def _history_context(language):
             "stage": release["stage"], "owner_decision": item.get("owner_decision"),
             "owner_decision_ru": item.get("owner_decision_ru"),
             "owner_decision_en": item.get("owner_decision_en"),
+            "publication_text": (
+                ("Завершено и принято владельцем. Сохранено в Local/GitHub. Отдельный Production deploy не требовался." if not english
+                 else "Complete and accepted by the owner. Saved in Local/GitHub. No separate Production deploy was required.")
+                if item.get("progress") == "done" and item.get("local_verified") and item.get("owner_approved") and not item.get("production_verified")
+                else ""
+            ),
         })
     gsd = entries["GSD-1.0"]
     feature_titles_en = {

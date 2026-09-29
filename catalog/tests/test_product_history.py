@@ -107,6 +107,17 @@ class ProductHistoryTests(SimpleTestCase):
         )
         self.assertEqual(self.client.get("/ru/history/source/secret").status_code, 404)
 
+    def test_local_only_release_done_does_not_claim_production_publication(self):
+        page = build().read_text(encoding="utf-8")
+        details = re.findall(r'<template id="ph-detail-UNIVERSAL-CATALOG-RELEASE-2026-09-29">(.*?)</template>', page, re.S)
+        self.assertEqual(len(details), 2)
+        self.assertTrue(any("Завершено и принято владельцем" in detail for detail in details))
+        self.assertTrue(any("No separate Production deploy was required" in detail for detail in details))
+        for detail in details:
+            self.assertNotIn("Опубликовано и проверено", detail)
+            self.assertNotIn("Published and checked", detail)
+            self.assertNotIn("Tag:", detail)
+
     def test_english_and_rtl_routes(self):
         self.assertContains(self.client.get("/history/"), "AIpediya history")
         arabic = self.client.get("/ar/history/")
