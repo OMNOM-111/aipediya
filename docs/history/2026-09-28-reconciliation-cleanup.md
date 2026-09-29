@@ -1,6 +1,6 @@
 # Reconciliation / cleanup #013 — 28.09.2026
 
-Release `release-2026-09-28-reconciliation-cleanup`, `v0.13.0`. This report records the read-only Production baseline and the Local reconciliation. Production result is recorded separately after release QA.
+Release `release-2026-09-28-reconciliation-cleanup`, `v0.13.0`. This report records the Production baseline, Local reconciliation, deployment and Public QA.
 
 ## Baseline and decisions
 
@@ -39,6 +39,12 @@ The first 19 items requiring individual decision are the eleven Access URLs (APP
 - `.claude/launch.json`, the local History shortcut, and `data/research/` remain at their original paths and are explicitly Git-ignored as local user data. Backup and trial SQLite remain ignored in `backups/` and `artifacts/`.
 - Only identified temporary XLSX rebuild files may be removed; unknown untracked user files are retained and classified.
 
-## Release closure
+## Production release and Public QA
 
-Production baseline, preflight, backup, exact archive/deploy, public QA, release tag, final commit and actual state are appended after the release. Timeline remains `review` until Public QA passes.
+- Release commit `5ba1e566338fc17d9b8965d3be180bc1df268e2e`, tag `release-2026-09-28-reconciliation-cleanup`, archive `artifacts/code-release/aipedia-code-5ba1e566338f.zip` SHA-256 `1ce9f36d3400785dc9c98fb6f8a71ce38c57048ae520bda919619f784bfd290d`. Archive manifest: 369 files, SQLite 0; extracted archive suite 327 OK, 1 Windows skip. `origin/main` and tag were verified before deployment.
+- Live Production baseline matched the audit snapshot byte-for-byte. Server preflight via `tools/server.py` PASS; online trial backup `aipedia-preflight-013-20260928T235524Z.sqlite3`, exact plan 13 writes, publication changes 0, integrity/FK PASS. `deploy --dry-run` PASS. Deployment created online backup `aipedia-before-code-20260928T235552Z.sqlite3`, applied 13 writes, restarted only `aipedia` and confirmed `/healthz` release `5ba1e566…`.
+- `tools/server.py verify-release` PASS: factual tables changed only `catalog_access`, `catalog_benchmark`, `catalog_service`; Models/Tools/Offers/Evaluations and public counts unchanged, 325 Models / 147 Tools; integrity `ok`, FK 0, numbering continuous. Postdeploy snapshot SHA-256 `565085f9818873bde279e783d3b0680a4afc1e5f6f57cf3027ee5172ce25af29`; exact plan state `applied`; repeat sync-plan 0 writes / 0 unsupported, with 513 intentional Master-only differences.
+- Production `catalog_master qa --production` PASS; `gsd_public_check` 34/34 PASS; full `gsd_production_qa` 1657/1657 PASS (697 read-only requests, 472 hidden records checked, 0 failures). Real browser: all 11 Access links, Kimi/Moonshot provider and Checks visible; RU/EN/ar RTL, 375 px mobile and 1440 px desktop, light/dark, no document overflow or console errors.
+- Following Public PASS, the canonical Master `import --production` was first trialed on a copy: exactly four Models and four Tools `On Production` flags changed `NO` → `YES`; Meta updated from stale 321/143 and old release to observed 325/147 and `5ba1e566…`. No rows or catalog values were added or changed. The same canonical command then completed against Master: 0 rows added, `catalog_master check` OK and `qa` PASS. This observation update follows the deployed artifact and is not a new catalog release.
+
+The audit card and #013 release card are closed after the public QA; final status and Git documentation commit are recorded in `EXECUTION_STATE.md`.

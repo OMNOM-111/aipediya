@@ -8,7 +8,20 @@
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный выпуск — **Evaluation Evidence, Release #012 · v0.12.0**, 2026-09-28
+Текущий публичный выпуск — **Reconciliation / cleanup, Release #013 · v0.13.0**,
+2026-09-28: deployed commit `5ba1e566338fc17d9b8965d3be180bc1df268e2e`,
+tag `release-2026-09-28-reconciliation-cleanup`. Архив
+`aipedia-code-5ba1e566338f.zip`, SHA-256
+`1ce9f36d3400785dc9c98fb6f8a71ce38c57048ae520bda919619f784bfd290d`.
+Server preflight, trial, deploy, `verify-release`, `catalog_master qa --production`
+и Public QA 1657/1657 PASS; 325 Models / 147 Tools сохранены, 13 точных
+изменений каталога. Backup:
+`/srv/aipedia/backups/aipedia-before-code-20260928T235552Z.sqlite3`.
+Отчёт — `docs/history/2026-09-28-reconciliation-cleanup.md`.
+
+### Предыдущий публичный выпуск — Evaluation Evidence #012
+
+Evaluation Evidence, Release #012 · v0.12.0, 2026-09-28
 16:37 UTC: deployed candidate/release id `d349d6de42cbe49dd55134a7ca792f6bce85ab7e`,
 архив `aipedia-code-d349d6de42cb.zip`, SHA-256
 `faf755db0497b0e3c718ab3b655edb46d51499936a7f247d8e93a280ed0b3127`.
