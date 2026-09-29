@@ -941,8 +941,9 @@
       "executor": "GitHub Copilot",
       "history": "docs/history/2026-09-29-universal-catalog-release.md",
       "release_tag": "release-2026-09-29-universal-catalog-release",
-      "summary": "Existing daily catalog release tooling now derives baseline, plan scope, expected counts and allowed related-table changes from Production snapshots, Timeline, canonical master outputs and the concrete catalog plan instead of hardcoded Release # and count assumptions. Local regression passed; Production remains Release #016 until separately authorized.",
-      "revision": "b2186634db8a27b891d0748bdd3008cd66da62eb"
+      "summary": "Existing daily catalog release tooling now derives baseline, plan scope, expected counts and allowed related-table changes from Production snapshots, Timeline, canonical master outputs and the concrete catalog plan instead of hardcoded Release # and count assumptions. Local regression passed; GitHub contains the #017 work. Production remains Release #016; no Production tag was created.",
+      "revision": "b6f0178741df7ad5425f0f061c2ed2185aa08dc3",
+      "github_pushed_at": "2026-09-29T22:22:59Z"
     }
   ],
   "product_history": {
@@ -2007,7 +2008,8 @@
         "open": true,
         "progress": "review",
         "release_tag": "release-2026-09-29-universal-catalog-release",
-        "revision": "b2186634db8a27b891d0748bdd3008cd66da62eb",
+        "revision": "b6f0178741df7ad5425f0f061c2ed2185aa08dc3",
+        "github_pushed_at": "2026-09-29T22:22:59Z",
         "executor": "GitHub Copilot",
         "started_utc": "2026-09-29T22:06:15Z",
         "changes": [
@@ -2193,7 +2195,8 @@
       "release_sequence": 17,
       "app_version": "v0.15.0",
       "release_tag": "release-2026-09-29-universal-catalog-release",
-      "revision": "b2186634db8a27b891d0748bdd3008cd66da62eb"
+      "revision": "b6f0178741df7ad5425f0f061c2ed2185aa08dc3",
+      "github_pushed_at": "2026-09-29T22:22:59Z"
     },
     "current_production": {
       "release_id": "DAILY-CATALOG-UPDATE-2026-09-29",
