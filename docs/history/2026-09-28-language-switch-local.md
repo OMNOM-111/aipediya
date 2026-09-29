@@ -33,6 +33,22 @@ approval, release archive, tag, deploy and public QA remain pending. The
 measured performance change lives only on `codex/aipedia-performance-015` and
 is outside this release.
 
+## Code-only release gate after Local recovery
+
+The release-tool review found that `tools/server.py` still defaulted to a
+catalog plan from an earlier release, while server trial preflight accepted
+only release sequences 12 and 13. A code-only #014 archive would have selected
+the wrong data plan or failed before deployment. The wrapper now omits
+`--catalog-plan` unless requested explicitly, and the preflight treats #014 as
+code-only. It runs check/migrate and publication-state dry-run on an online
+Production backup and compares a deterministic SHA-256 of every `catalog_*`
+table before and after the trial. This preparation does not write the live
+Production database. Regression tests reject an implicit catalog plan and a
+changed translation row. `manage.py test catalog` passed 332 tests with one
+Windows skip; Local GSD passed 33/33; Local SQLite integrity/FK and 325/147
+counts were confirmed. The release gate remains closed pending the owner's
+final visual check and the browser-control policy limitation noted above.
+
 ## Public browser diagnosis before the fix
 
 Chromium navigated by clicking rendered language controls, with JavaScript enabled. The standard expanded menu was opened and the Español item clicked from the English Models root, Tools root, and open Model/Tool panels. The resulting paths were `/es/`, `/es/tools/`, `/es/models/<same slug>` and `/es/tools/<same slug>` respectively. All returned HTTP 200, with no redirects, visible rows/panels, functioning JavaScript, zero console errors and zero critical failed requests. A separate click sweep passed Models and Tools roots for all 22 locales (44/44). The precise owner-observed menu failure has therefore not been reproduced in these states; the original browser URL and symptom are still useful to narrow it further.

@@ -1738,12 +1738,13 @@
         "progress": "review",
         "release_tag": "release-2026-09-28-language-switch",
         "qa": {
-          "local": "88/88 Local browser cases PASS across 22 locales, Models/Tools, 1440/375 px before handoff; 264 menu navigations HTTP 200, 0 redirects/errors/failed requests; 1712 interaction checks; 330 catalog tests OK (one skip); GSD Local 33/33 PASS. First owner handoff failed because Local had stopped; restored on 127.0.0.1:18810 with six routes 200; final owner review pending.",
+          "local": "88/88 Local browser cases PASS across 22 locales, Models/Tools, 1440/375 px before handoff; 264 menu navigations HTTP 200, 0 redirects/errors/failed requests; 1712 interaction checks; 332 catalog tests OK (one skip); GSD Local 33/33 PASS. First owner handoff failed because Local had stopped; restored on 127.0.0.1:18810 with six routes 200. Code-only release preflight regression PASS; final owner review pending.",
           "production": "Owner authorization for #014 is conditional on verified Local; published #013 remains unchanged"
         },
         "changes": [
           "Synchronize the remembered-language link with menu links after History API updates",
-          "Add 22-locale Django routing and browser menu regressions"
+          "Add 22-locale Django routing and browser menu regressions",
+          "Make the server release wrapper and trial preflight safe for the code-only #014 archive without a catalog plan"
         ]
       }
     ],

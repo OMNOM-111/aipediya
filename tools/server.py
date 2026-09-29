@@ -21,7 +21,6 @@ ROOT = Path(__file__).resolve().parent.parent
 ALIAS = "aipediya-prod"
 REMOTE_ROOT = "/srv/aipedia"
 SERVICE = "aipedia"
-PLAN = "data/release/tools-chronology-csp-20260927/catalog_plan.json"
 PUBLICATION = "data/release_state.json"
 REPORT_DIR = ROOT / "artifacts" / "server-access"
 
@@ -199,7 +198,7 @@ def release_preflight(remote, digest, commit, plan, publication):
     remote_digest(remote, digest)
     script = (ROOT / "tools" / "server_release_preflight.py").read_text(encoding="utf-8")
     result = run(["ssh", ALIAS, "sudo", "-n", "python3", "-", remote, digest, commit,
-                  plan, publication], input_text=script, timeout=900)
+                  plan or "-", publication], input_text=script, timeout=900)
     if result.returncode:
         raise SystemExit("RELEASE PREFLIGHT = FAIL: " + (result.stderr.strip() or result.stdout.strip()))
     try:
@@ -228,7 +227,9 @@ def deploy(remote, digest, commit, dry_run, plan, publication):
             raise SystemExit("Release-preflight report does not match the archive")
     args = ["ssh", ALIAS, "sudo", "-n", "python3",
             REMOTE_ROOT + "/app/tools/deploy_code_release.py", remote, "--sha256", digest,
-            "--catalog-plan", plan, "--publication-state", publication]
+            "--publication-state", publication]
+    if plan:
+        args.extend(("--catalog-plan", plan))
     if dry_run:
         args.append("--dry-run")
     result = run(args, timeout=1200)
@@ -266,7 +267,7 @@ def main():
         sub.add_argument("archive")
         sub.add_argument("--sha256", required=True)
         if name in ("release-preflight", "deploy"):
-            sub.add_argument("--catalog-plan", default=PLAN)
+            sub.add_argument("--catalog-plan", help="Explicit catalog plan for a data release; omit for code-only")
             sub.add_argument("--publication-state", default=PUBLICATION)
         if name == "deploy":
             sub.add_argument("--dry-run", action="store_true")
@@ -286,12 +287,15 @@ def main():
     else:
         import zipfile
         for value in (args.catalog_plan, args.publication_state):
+            if not value:
+                continue
             path = Path(value)
             if path.is_absolute() or ".." in path.parts or not value.startswith("data/"):
                 raise SystemExit("Release manifests must be safe data/ paths in the archive")
         with zipfile.ZipFile(archive) as release:
             names = set(release.namelist())
-        if any("app/" + value not in names for value in (args.catalog_plan, args.publication_state)):
+        if any("app/" + value not in names for value in
+               (args.catalog_plan, args.publication_state) if value):
             raise SystemExit("Release manifests are absent from the archive")
         if args.command == "release-preflight":
             release_preflight(remote, args.sha256, commit, args.catalog_plan, args.publication_state)
