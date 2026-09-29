@@ -1,6 +1,22 @@
 # Language switching across 22 locales — Local bugfix #014
 
-Release #014 / v0.13.1. The owner reported that selecting Español on Production did not work correctly. This report separates the reproduced fault from menu paths that currently pass. Production remains at #013 until the owner reviews Local and authorizes this exact release.
+Release #014 / v0.13.1. The owner reported that selecting Español on Production did not work correctly. This report separates the reproduced fault from menu paths that currently pass. The authorized #014 Production release subsequently passed Public QA and is recorded in `docs/history/2026-09-29-language-switch-release.md`; the pre-release checkpoints below are retained as historical evidence.
+
+## Owner acceptance and release authorization — 2026-09-29
+
+The owner accepted the running Local at `127.0.0.1:18810`, the fresh 44/44
+locale roots and 44/44 representative panels, 1,936 canonical server-rendered
+language links, the full Django suite, and the earlier 88/88 browser menu matrix.
+The loopback browser-tool policy is explicitly waived as a gate for this exact
+release. The owner authorized Production deployment of #014 / v0.13.1 from
+verified code baseline `77e7f53cd8aa621b392d52d5b5ae8851ab77456c` under
+`docs/RELEASE.md`. Performance work #015 remains separate.
+
+The first isolated archive suite exposed a stale Timeline test that still
+expected `owner_approved=false`. The archived runtime code was unaffected. The
+regression now validates the approved `review` state and the later verified
+`done` state; the candidate is rebuilt from the same base commit and must pass
+the complete isolated suite before any server release trial.
 
 ## Local availability correction, 2026-09-29
 

@@ -2,13 +2,15 @@
 
 import ast
 import importlib.util
+import io
+import json
 import runpy
 import sqlite3
 import sys
 import tempfile
 import types
 import unittest
-from contextlib import closing
+from contextlib import closing, redirect_stdout
 from pathlib import Path
 from unittest import mock
 
@@ -120,3 +122,50 @@ class ServerAccessContractTests(unittest.TestCase):
                 db.execute("ALTER TABLE catalog_contenttranslation ADD COLUMN extra TEXT")
                 db.commit()
             self.assertNotEqual(after["catalog_sha256"], snapshot(path)["catalog_sha256"])
+
+    def test_code_only_release_comparison_requires_unchanged_factual_tables(self):
+        spec = importlib.util.spec_from_file_location("server_compare_test", ROOT / "tools/server_compare.py")
+        compare = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(compare)
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "app").mkdir()
+            (root / "backups").mkdir()
+            (root / "data").mkdir()
+            (root / "app/BUILD.json").write_text('{"release_sequence":14}', encoding="utf-8")
+            backup = root / "backups/aipedia-before-code-20260929T000000Z.sqlite3"
+            current = root / "data/aipedia.sqlite3"
+            with closing(sqlite3.connect(backup)) as db:
+                db.executescript("""
+                    CREATE TABLE catalog_modelversion(id INTEGER PRIMARY KEY, public_number INTEGER,
+                        published INTEGER, entry_type TEXT);
+                    CREATE TABLE catalog_tool(id INTEGER PRIMARY KEY, public_number INTEGER,
+                        published INTEGER);
+                    CREATE TABLE catalog_source(id INTEGER PRIMARY KEY);
+                    CREATE TABLE catalog_benchmark(id INTEGER PRIMARY KEY);
+                    CREATE TABLE catalog_evaluation(id INTEGER PRIMARY KEY, public INTEGER);
+                """)
+                db.executemany("INSERT INTO catalog_modelversion VALUES (?, ?, 1, 'model')",
+                               ((n, n) for n in range(1, 326)))
+                db.executemany("INSERT INTO catalog_tool VALUES (?, ?, 1)",
+                               ((n, n) for n in range(1, 148)))
+                db.executemany("INSERT INTO catalog_source VALUES (?)", ((n,) for n in range(1, 1000)))
+                db.executemany("INSERT INTO catalog_benchmark VALUES (?)", ((n,) for n in range(1, 983)))
+                db.executemany("INSERT INTO catalog_evaluation VALUES (?, ?)",
+                               ((n, int(n <= 2741)) for n in range(1, 5011)))
+                db.commit()
+            current.write_bytes(backup.read_bytes())
+            def report():
+                output = io.StringIO()
+                with mock.patch.object(compare, "ROOT", root), \
+                        mock.patch.object(sys, "argv", ["server_compare", backup.name]), \
+                        redirect_stdout(output):
+                    compare.main()
+                return json.loads(output.getvalue())
+            self.assertTrue(report()["ok"])
+            with closing(sqlite3.connect(current)) as db:
+                db.execute("UPDATE catalog_tool SET public_number=999 WHERE id=1")
+                db.commit()
+            changed = report()
+            self.assertFalse(changed["ok"])
+            self.assertEqual(changed["changed_factual_tables"], ["catalog_tool"])

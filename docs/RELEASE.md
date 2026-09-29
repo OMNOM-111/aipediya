@@ -8,7 +8,24 @@
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный выпуск — **Reconciliation / cleanup, Release #013 · v0.13.0**,
+Текущий публичный выпуск — **Language switching, Release #014 · v0.13.1**,
+2026-09-29: проверенный исходный commit
+`77e7f53cd8aa621b392d52d5b5ae8851ab77456c`, deployed code-candidate id
+`1ac95d75b7a6d80eb24301f352a88275c28d4bce`. Архив
+`aipedia-code-1ac95d75b7a6.zip`, SHA-256
+`2d3859774837a7d9f4a256554b153811c3da8105195bb6afda0240da07e7588a`.
+Isolated suite 332 OK (1 skip), server preflight/trial/dry-run/deploy,
+`verify-release`, `catalog_master qa --production` и Public QA 1657/1657 PASS;
+публичный браузер подтвердил Español через меню, открытые Model/Tool,
+Back/Forward, mobile 375 px и RTL ar/fa без ошибок console/network. Каталог
+325 Models / 147 Tools неизменен. Backup:
+`/srv/aipedia/backups/aipedia-before-code-20260929T130406Z.sqlite3`.
+Отчёт — `docs/history/2026-09-29-language-switch-release.md`; Timeline #014 закрыта.
+Performance #015 ведётся отдельно и в этом архиве отсутствует.
+
+### Предыдущий публичный выпуск — Reconciliation / cleanup #013
+
+Reconciliation / cleanup, Release #013 · v0.13.0,
 2026-09-28: deployed commit `5ba1e566338fc17d9b8965d3be180bc1df268e2e`,
 tag `release-2026-09-28-reconciliation-cleanup`. Архив
 `aipedia-code-5ba1e566338f.zip`, SHA-256

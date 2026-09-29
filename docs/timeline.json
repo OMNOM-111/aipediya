@@ -883,11 +883,13 @@
       "release_sequence": 14,
       "app_version": "v0.13.1",
       "title": "Repair interactive language switching across 22 locales",
-      "environment": "local",
-      "stage": "review",
-      "history": "docs/history/2026-09-28-language-switch-local.md",
+      "environment": "production",
+      "stage": "released",
+      "history": "docs/history/2026-09-29-language-switch-release.md",
       "release_tag": "release-2026-09-28-language-switch",
-      "summary": "Public browser testing found a stale remembered-language shortcut after History API changes; repaired in Local. The standard expanded-menu Espanol path was not reproduced as broken. All 22 locales passed menu-driven Local QA. First owner handoff failed because Local was no longer listening; the canonical Local launcher has been restored and final owner review is pending. Production permission is conditional on that review."
+      "summary": "The remembered-language shortcut stayed stale after History API panel changes; the shared link synchronization was repaired across 22 locales. The owner accepted Local #014 and authorized this exact release. Production code-only deployment preserved all catalog tables; Public QA passed 1657/1657, with menu-driven Espanol, open Model/Tool, Back/Forward, mobile and RTL browser checks.",
+      "revision": "1ac95d75b7a6d80eb24301f352a88275c28d4bce",
+      "production_verified_at": "2026-09-29T13:15:37+00:00"
     }
   ],
   "product_history": {
@@ -1716,36 +1718,54 @@
         "release_sequence": 14,
         "app_version": "v0.13.1",
         "local_verified": true,
-        "owner_approved": false,
-        "production_released": false,
-        "production_verified": false,
+        "owner_approved": true,
+        "production_released": true,
+        "production_verified": true,
         "date": "2026-09-28",
         "title_ru": "Надёжное переключение 22 языков",
         "title_en": "Reliable switching across 22 languages",
         "icon": "languages",
-        "tags_ru": ["Release #014", "v0.13.1", "Local QA ✓", "Приёмка владельца ожидается"],
-        "tags_en": ["Release #014", "v0.13.1", "Local QA ✓", "Owner review pending"],
+        "tags_ru": [
+          "Release #014",
+          "v0.13.1",
+          "Local QA ✓",
+          "Production QA ✓"
+        ],
+        "tags_en": [
+          "Release #014",
+          "v0.13.1",
+          "Local QA ✓",
+          "Production QA ✓"
+        ],
         "capabilities_ru": [
           "Проверка пользовательского выбора языка через меню на страницах моделей, инструментов и открытых карточках.",
-          "Ссылка сохранённого языка следует за URL карточки после History API; регрессионные тесты охватывают все 22 локали."
+          "Ссылка сохранённого языка следует за URL карточки после History API; регрессионные тесты охватывают все 22 локали.",
+          "Production: 1 657/1 657 Public QA PASS; Español через меню, Model/Tool, Back/Forward, mobile и RTL подтверждены."
         ],
         "capabilities_en": [
           "Menu-driven language checks on model and tool listings and open detail panels.",
-          "The remembered-language link follows panel URLs after History API changes; regression tests cover all 22 locales."
+          "The remembered-language link follows panel URLs after History API changes; regression tests cover all 22 locales.",
+          "Production: 1,657/1,657 Public QA PASS; Espanol menu, Model/Tool, Back/Forward, mobile and RTL verified."
         ],
         "source": "2026-09-28-language-switch",
-        "open": true,
-        "progress": "review",
+        "open": false,
+        "progress": "done",
+        "revision": "1ac95d75b7a6d80eb24301f352a88275c28d4bce",
         "release_tag": "release-2026-09-28-language-switch",
+        "owner_decision": "Owner accepted the verified Local #014 evidence and explicitly authorized this exact v0.13.1 release on 2026-09-29; the loopback browser-tool restriction is not a release blocker",
         "qa": {
-          "local": "88/88 Local browser cases PASS across 22 locales, Models/Tools, 1440/375 px before handoff; 264 menu navigations HTTP 200, 0 redirects/errors/failed requests; 1712 interaction checks; 332 catalog tests OK (one skip); GSD Local 33/33 PASS. First owner handoff failed because Local had stopped; restored on 127.0.0.1:18810. Fresh independent HTTP/SSR recheck: 44/44 roots and 44/44 panels 200, 1936 canonical menu hrefs; fresh browser click blocked by browser URL policy. Code-only release preflight regression PASS; final owner review pending.",
-          "production": "Owner authorization for #014 is conditional on verified Local; published #013 remains unchanged"
+          "local": "Owner accepted Local #014 on 2026-09-29. Earlier browser matrix 88/88 PASS across 22 locales, Models/Tools, 1440/375 px: 264 menu navigations HTTP 200, 0 redirects/errors/failed requests, 1712 interaction checks. Full catalog suite 332 OK (one skip), GSD Local 33/33 PASS. Live Local recovery confirmed at 127.0.0.1:18810; fresh independent HTTP/SSR recheck 44/44 roots and 44/44 panels 200, 1936 canonical menu hrefs. Code-only release preflight regression PASS.",
+          "production": "1657/1657 PASS; artifacts/code-release/release-014-production-qa.json"
         },
         "changes": [
           "Synchronize the remembered-language link with menu links after History API updates",
           "Add 22-locale Django routing and browser menu regressions",
-          "Make the server release wrapper and trial preflight safe for the code-only #014 archive without a catalog plan"
-        ]
+          "Make the server release wrapper and trial preflight safe for the code-only #014 archive without a catalog plan",
+          "Keep the Timeline regression valid through owner approval and Production verification"
+        ],
+        "production_verified_at": "2026-09-29T13:15:37+00:00",
+        "release_report": "docs/history/2026-09-29-language-switch-release.md",
+        "backup": "aipedia-before-code-20260929T130406Z.sqlite3"
       }
     ],
     "additional_tasks": [
@@ -1922,14 +1942,14 @@
       "release_tag": "release-2026-09-28-language-switch"
     },
     "current_production": {
-      "release_id": "release-2026-09-28-reconciliation-cleanup",
-      "release_sequence": 13,
-      "app_version": "v0.13.0",
-      "release_tag": "release-2026-09-28-reconciliation-cleanup",
-      "revision": "5ba1e566338fc17d9b8965d3be180bc1df268e2e",
-      "confirmed_at": "2026-09-29T00:07:19+00:00",
-      "evidence": "1657/1657 PASS; artifacts/reconciliation-cleanup-20260928/gsd-production-qa.json",
-      "source": "docs/history/2026-09-28-reconciliation-cleanup.md"
+      "release_id": "LANGUAGE-SWITCH-2026-09-28",
+      "release_sequence": 14,
+      "app_version": "v0.13.1",
+      "release_tag": "release-2026-09-28-language-switch",
+      "revision": "1ac95d75b7a6d80eb24301f352a88275c28d4bce",
+      "confirmed_at": "2026-09-29T13:15:37+00:00",
+      "evidence": "1657/1657 PASS; artifacts/code-release/release-014-production-qa.json",
+      "source": "docs/history/2026-09-29-language-switch-release.md"
     }
   }
 }
