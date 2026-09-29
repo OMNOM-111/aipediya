@@ -86,8 +86,10 @@ class ServerAccessContractTests(unittest.TestCase):
             preflight = runpy.run_path(str(ROOT / "tools/server_release_preflight.py"))
         validate_scope = preflight["validate_release_scope"]
         validate_scope(14, "")
+        validate_scope(15, "")
         validate_scope(13, "data/release/v013/catalog_plan.json")
-        for sequence, plan in ((14, "data/release/old/catalog_plan.json"), (13, ""), (15, "")):
+        for sequence, plan in ((14, "data/release/old/catalog_plan.json"),
+                               (15, "data/release/old/catalog_plan.json"), (13, "")):
             with self.subTest(sequence=sequence, plan=plan), self.assertRaises(RuntimeError):
                 validate_scope(sequence, plan)
 
@@ -162,6 +164,8 @@ class ServerAccessContractTests(unittest.TestCase):
                         redirect_stdout(output):
                     compare.main()
                 return json.loads(output.getvalue())
+            self.assertTrue(report()["ok"])
+            (root / "app/BUILD.json").write_text('{"release_sequence":15}', encoding="utf-8")
             self.assertTrue(report()["ok"])
             with closing(sqlite3.connect(current)) as db:
                 db.execute("UPDATE catalog_tool SET public_number=999 WHERE id=1")

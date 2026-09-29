@@ -99,7 +99,7 @@ def main():
                               all({k: v for k, v in before_access[key].items() if k != "service_id"} ==
                                   {k: v for k, v in after_access[key].items() if k != "service_id"}
                                   for key in changed_ids))
-        elif sequence == 14:
+        elif sequence >= 14:
             expected_tables = []
             expected_before = expected_after = {"sources": 999, "benchmarks": 982,
                                                  "evaluations": 5010, "public_evaluations": 2741}

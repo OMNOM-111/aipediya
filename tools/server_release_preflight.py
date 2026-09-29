@@ -31,7 +31,7 @@ def checked(command, *, cwd=None):
 def validate_release_scope(sequence, plan):
     if sequence in (12, 13) and plan:
         return
-    if sequence == 14 and not plan:
+    if sequence >= 14 and not plan:
         return
     raise RuntimeError("Catalog plan does not match release scope")
 
@@ -163,7 +163,7 @@ def main():
             if {k: v for k, v in before["accesses"][key].items() if k != "service_id"} != {
                     k: v for k, v in after["accesses"][key].items() if k != "service_id"}:
                 raise RuntimeError("Trial changed an Access field other than service_id")
-    if sequence == 14:
+    if sequence >= 14:
         validate_code_only_catalog(copied, after)
     if (before["published_models"], before["published_tools"]) != (325, 147):
         raise RuntimeError("Production baseline differs from the approved release predecessor")
