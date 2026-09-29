@@ -1,12 +1,13 @@
 """Local-only view of the existing product timeline and its checked sources."""
+import hashlib
 import json
+import re
 import subprocess
 from pathlib import Path
 from datetime import date
 
 from django.conf import settings
 from django.http import Http404, HttpResponse
-from django.shortcuts import render
 from django.views.decorators.http import require_safe
 
 
@@ -34,6 +35,7 @@ SOURCES = {
     "2026-09-28-unsupported-master-production-audit": ("Аудит unsupported master / Production", "docs/history/2026-09-28-unsupported-master-production-audit.md"),
     "2026-09-28-language-switch": ("Переключение 22 языков / Language switching", "docs/history/2026-09-28-language-switch-local.md"),
     "2026-09-28-performance-audit": ("Аудит нагрузки / Load audit", "docs/history/2026-09-28-performance-audit-local.md"),
+    "2026-09-29-internal-history-local": ("Внутренняя история / Internal history", "docs/history/2026-09-29-internal-history-local.md"),
 }
 
 
@@ -56,8 +58,30 @@ def _git_state():
 @require_safe
 def history(request):
     _local_only()
-    context = _history_context(request.aipedia_lang)
-    response = render(request, "product_history.html", context)
+    # The Local route serves the same built artifact as the offline shortcut.
+    # Reading the registry hash prevents a stale snapshot from misreporting a
+    # release. The page itself never rebuilds or writes files on open.
+    registry = json.loads((ROOT / "docs/timeline.json").read_text(encoding="utf-8"))
+    expected = hashlib.sha256(json.dumps(registry, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+    document = (ROOT / "timeline.html").read_text(encoding="utf-8")
+    actual = re.search(r'name="aipediya-timeline-sha256" content="([0-9a-f]{64})"', document)
+    if not actual or actual.group(1) != expected:
+        response = HttpResponse("Local history snapshot is stale; rebuild the AI_CONTEXT package.", status=503)
+        response["Cache-Control"] = "private, no-store"
+        return response
+    if request.aipedia_lang != "ru":
+        document = document.replace('<html lang="ru"', '<html lang="en"', 1)
+        document = document.replace("activate(safeGet('aipedia-history-edition','ru'))",
+                                    "activate(safeGet('aipedia-history-edition','en'))", 1)
+    response = HttpResponse(document, content_type="text/html; charset=utf-8")
+    # The Local history is the same self-contained artifact as the offline
+    # shortcut. Its checked inline CSS/JS run under a no-network policy.
+    response["Content-Security-Policy"] = (
+        "default-src 'none'; img-src data:; style-src 'unsafe-inline'; "
+        "script-src 'unsafe-inline'; font-src data:; connect-src 'none'; "
+        "frame-src 'none'; object-src 'none'; base-uri 'none'; "
+        "form-action 'none'; frame-ancestors 'none'"
+    )
     response["Cache-Control"] = "private, no-store"
     return response
 
@@ -94,6 +118,7 @@ def _history_context(language):
         "local_modified": "Updated" if english else "Изменено",
         "production_env": "PRODUCTION · LAST LIVE CHECK" if english else "PRODUCTION · ПОСЛЕДНЯЯ LIVE-ПРОВЕРКА",
         "built": "Built" if english else "Сборка",
+        "local_state_note": "Release state comes from docs/timeline.json." if english else "Состояние выпуска взято из docs/timeline.json.",
         "dirty_tree": "The working tree has uncommitted changes; Local is not a release." if english else "Рабочее дерево содержит незакоммиченные изменения; Local не является выпуском.",
         "clean_tree": "The working tree is clean." if english else "Рабочее дерево чистое.",
         "unknown_tree": "Could not verify the working tree." if english else "Рабочее дерево не удалось проверить.",
@@ -122,7 +147,7 @@ def _history_context(language):
         "local_work_next": "Production was not changed; this Local step does not need deployment." if english else "Production не менялся; этот Local этап не требует deploy.",
         "proof_in_report": "Milestone status and evidence are in the release report." if english else "Статус этапа и доказательства — в исходном отчёте выпуска.",
         "confirmed_milestone": "Confirmed milestone from the project history." if english else "Подтверждённый этап из реестра истории.",
-        "local_history_summary": "offline history viewer · owner visual check complete; no deploy planned" if english else "автономная история · владелец визуально проверил; deploy не требуется",
+        "local_history_summary": "Internal history from docs/timeline.json; this screen stays in Local." if english else "Внутренняя история из docs/timeline.json; этот экран остаётся в Local.",
         "release_owner_approval": "Owner approved the release under decision" if english else "Владелец утвердил выпуск по решению",
     }
     entries = {entry["release_id"]: entry for entry in registry["entries"]}
@@ -147,6 +172,8 @@ def _history_context(language):
             "source": item["source"], "open": item.get("open", False),
             "progress": item.get("progress", "in_progress" if item.get("open", False) else "done"),
             "stage": release["stage"], "owner_decision": item.get("owner_decision"),
+            "owner_decision_ru": item.get("owner_decision_ru"),
+            "owner_decision_en": item.get("owner_decision_en"),
         })
     gsd = entries["GSD-1.0"]
     feature_titles_en = {

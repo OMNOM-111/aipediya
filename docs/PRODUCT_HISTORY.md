@@ -3,16 +3,13 @@
 ## Версии и обязательный выпускной шлюз
 
 **No Timeline → No Release.** Подтверждённые Production-вехи получили
-Release #001–#014; текущий опубликованный baseline — Release #014 · AIpediya
-v0.13.1, `release-2026-09-28-language-switch`, deployed release id
-`1ac95d75b7a6d80eb24301f352a88275c28d4bce`. Его Local-проверка
-и Production-выпуск описаны в
-`docs/history/2026-09-29-language-switch-release.md`. Карточка #015 ·
-v0.13.2 — Local `review`: устранена полная обработка Models до пагинации,
-полный browser gate 88/88 и catalog suite 340 tests PASS; владелец явно
-разрешил отдельный Performance-выпуск после Local QA. До фактического deploy
-Production остаётся #014. Отчёт Local —
-`docs/history/2026-09-28-performance-audit-local.md`.
+Release #001–#015; текущий опубликованный baseline — Release #015 · AIpediya
+v0.13.2, `release-2026-09-28-performance-audit`, deployed commit
+`b8f07026630124f179fd386d60cddbc9beaf2751`. SQL-first pagination и
+безопасная телеметрия прошли Local browser gate 88/88, catalog suite 340
+tests, Production GSD QA 1657/1657 и публичный браузер 88/88. Каталог
+не менялся. Отчёт с PID, TTFB и backup —
+`docs/history/2026-09-29-performance-release.md`.
 `release_sequence` — неизменяемый номер выпуска, `app_version` — SemVer.
 До 1.0 новый пользовательский пакет увеличивает minor (`v0.12.0`), исправление
 опубликованного пакета — patch (`v0.12.1`). `v1.0.0` требует отдельного
@@ -47,6 +44,15 @@ Production и автономный HTML. Исторические Local-only з�
 обновляет HTML перед созданием AI_CONTEXT. При открытии пользователем ничего не
 собирается. CSS, JavaScript, изображения, история и тексты источников встроены в
 один файл; сетевые зависимости отключены CSP.
+
+После выпуска #015 внутренний маршрут `/ru/history/` в Local отдаёт этот же
+собранный автономный документ, сверяя его SHA-256 с `docs/timeline.json`;
+при устаревшем снимке отвечает 503 до штатной сборки, не меняя файлы при
+открытии. Для английского маршрута меняется лишь начальная редакция RU/EN.
+Local-only CSP разрешает встроенные CSS/JS при запрете сетевых соединений;
+Production по-прежнему отвечает 404. На горизонтальной ленте видны только
+пронумерованные Release #001–#015, все по порядку. Ненумерованные Local-only
+и плановые записи сохранены в реестре и документах, но не перемежают выпуски.
 
 Текущая автономная редакция использует отдельный минимальный шаблон
 `templates/product_history_standalone.html` и стиль

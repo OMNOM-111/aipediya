@@ -74,7 +74,7 @@ def build() -> Path:
     timeline_sha256 = hashlib.sha256(json.dumps(registry, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
     document = f'''<!doctype html>
 <html lang="ru" dir="ltr" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; font-src data:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; font-src data:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'">
 <meta name="aipediya-history-generated-utc" content="{generated_at}"><meta name="aipediya-timeline-sha256" content="{timeline_sha256}"><title>История AIpediya</title><style>{css}</style></head>
 <body><div id="edition-root"></div><template id="edition-ru">{ru}</template><template id="edition-en">{en}</template>
 <script>{history_js}</script><script>

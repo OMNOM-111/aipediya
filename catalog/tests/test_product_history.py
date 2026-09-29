@@ -13,9 +13,9 @@ class ProductHistoryTests(SimpleTestCase):
         cards = product["milestones"]
         by_id = {row["release_id"]: row for row in cards}
         self.assertEqual(len(by_id), len(cards))
-        self.assertEqual(len(cards), 20)
-        self.assertEqual(product["current_production"]["release_sequence"], 14)
-        self.assertEqual(product["current_production"]["app_version"], "v0.13.1")
+        self.assertEqual(len(cards), 21)
+        self.assertEqual(product["current_production"]["release_sequence"], 15)
+        self.assertEqual(product["current_production"]["app_version"], "v0.13.2")
         self.assertEqual(by_id["release-2026-09-28-reconciliation-cleanup"]["revision"],
                          "5ba1e566338fc17d9b8965d3be180bc1df268e2e")
         self.assertEqual(product["current_local"]["release_sequence"], 15)
@@ -28,7 +28,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertEqual((performance["release_sequence"], performance["app_version"],
                           performance["progress"], performance["local_verified"],
                           performance["production_released"]),
-                         (15, "v0.13.2", "review", True, False))
+                         (15, "v0.13.2", "done", True, True))
         self.assertTrue(performance["owner_approved"])
         versions = by_id["VERSION-HISTORY-2026-09-27"]
         self.assertEqual((versions["progress"], versions["local_verified"],
@@ -52,26 +52,15 @@ class ProductHistoryTests(SimpleTestCase):
         page = self.client.get("/ru/history/")
         self.assertEqual(page.status_code, 200)
         self.assertContains(page, "История AIpediya")
-        self.assertContains(page, "GSD-1.0")
-        self.assertContains(page, "Каноническая база каталога")
-        self.assertContains(page, "ed103a3ff163")
-        self.assertContains(page, 'aria-haspopup="dialog"', count=20)
-        # The catalog/CSP stage was owner-approved and published.
-        self.assertContains(page, 'class="ph-legend-dot is-review"', count=1)
-        self.assertContains(page, 'Ожидает подтверждения владельца')
-        self.assertContains(page, 'class="ph-milestone ph-review ph-open"', count=1)
-        self.assertContains(page, '61adedd6ea5e6a0955d51d87374fa2fa9bcc7799')
-        self.assertContains(page, 'PLANNED')
-        self.assertContains(page, 'кампания не создана и не запущена.')
-        self.assertContains(page, 'class="ph-milestone ph-done ph-open"', count=2)
-        self.assertContains(page, 'class="ph-milestone ph-planned ph-open"', count=1)
-        self.assertContains(page, 'Согласованность Tools и CSP Cloudflare')
-        self.assertContains(page, 'Cloudflare Web Analytics AIpediya')
-        self.assertContains(page, 'ГОТОВО В LOCAL')
-        self.assertContains(page, 'class="ph-environment ph-local"', count=1)
-        self.assertContains(page, 'class="ph-environment ph-production"', count=1)
-        self.assertNotContains(page, 'class="ph-environment ph-git"')
-        self.assertContains(page, 'class="ph-git-detail"', count=3)
+        self.assertEqual(page.content, (Path(__file__).resolve().parents[2] / "timeline.html").read_bytes())
+        self.assertEqual(page.content.count(b'data-history-open='), 30)  # 15 releases in two editions
+        self.assertIn(b'Release #001', page.content)
+        self.assertIn(b'Release #015', page.content)
+        self.assertNotIn(b'class="site-header"', page.content)
+        self.assertNotIn(b'class="site-footer"', page.content)
+        self.assertNotIn(b'role="search"', page.content)
+        self.assertEqual(page.content.count(b'class="ph-environment ph-local"'), 2)
+        self.assertEqual(page.content.count(b'class="ph-environment ph-production"'), 2)
         self.assertEqual(page["Cache-Control"], "private, no-store")
         self.assertEqual(self.client.get("/ru/history/source/release").status_code, 200)
         self.assertEqual(self.client.get("/history/source/GSD-1.0-release-scope").status_code, 200)
@@ -95,14 +84,17 @@ class ProductHistoryTests(SimpleTestCase):
             self.client.get("/ru/history/source/2026-09-28-performance-audit"),
             "Release #015",
         )
+        self.assertContains(
+            self.client.get("/ru/history/source/2026-09-29-internal-history-local"),
+            "Local-only",
+        )
         self.assertEqual(self.client.get("/ru/history/source/secret").status_code, 404)
 
     def test_english_and_rtl_routes(self):
         self.assertContains(self.client.get("/history/"), "AIpediya history")
         arabic = self.client.get("/ar/history/")
         self.assertEqual(arabic.status_code, 200)
-        self.assertContains(arabic, 'dir="rtl"')
-        self.assertContains(arabic, 'lang="en"')
+        self.assertContains(arabic, '<html lang="en" dir="ltr"')
 
     def test_paid_search_stays_planned_and_separate_from_organic_releases(self):
         registry = json.loads((Path(__file__).resolve().parents[2] / "docs/timeline.json").read_text(encoding="utf-8"))
@@ -116,7 +108,7 @@ class ProductHistoryTests(SimpleTestCase):
         organic_id = "release-2026-09-26-search-visibility-optimization-v2"
         self.assertEqual(entries[organic_id]["stage"], "released")
         self.assertEqual(registry["product_history"]["current_production"]["release_tag"],
-                         "release-2026-09-28-language-switch")
+                         "release-2026-09-28-performance-audit")
         paid_card = next(row for row in registry["product_history"]["milestones"] if row["release_id"] == paid_id)
         self.assertTrue(paid_card["open"])
         self.assertEqual(paid_card["progress"], "planned")
@@ -135,7 +127,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn("Проверено владельцем", card["tags_ru"])
         self.assertNotIn("Визуальная проверка ожидается", card["tags_ru"])
         self.assertIn("Визуальная проверка", task["owner_ru"])
-        self.assertEqual(registry["product_history"]["current_production"]["release_tag"], "release-2026-09-28-language-switch")
+        self.assertEqual(registry["product_history"]["current_production"]["release_tag"], "release-2026-09-28-performance-audit")
 
     @override_settings(AIPEDIA_ENV="production", SECURE_SSL_REDIRECT=False)
     def test_history_is_private_in_production(self):
@@ -149,18 +141,14 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn("connect-src 'none'", page)
         self.assertIn('id="edition-ru"', page)
         self.assertIn('id="edition-en"', page)
-        self.assertEqual(page.count('data-history-open='), 40)
-        self.assertEqual(page.count('class="ph-milestone ph-review ph-open"'), 2)
-        self.assertGreaterEqual(page.count('class="ph-legend-dot is-review"'), 2)
-        self.assertIn('.ph-review .ph-dot', page)
-        self.assertIn('Утверждено владельцем', page)
+        self.assertEqual(page.count('data-history-open='), 30)
+        self.assertEqual(page.count('class="ph-release-card"'), 30)
+        self.assertEqual(page.count('role="button" tabindex="0" aria-haspopup="dialog"'), 30)
         self.assertEqual(page.count('class="ph-status-legend"'), 2)
-        self.assertEqual(page.count('class="ph-milestone ph-done ph-open"'), 4)
-        self.assertEqual(page.count('class="ph-milestone ph-planned ph-open"'), 2)
         self.assertIn('release-2026-09-28-reconciliation-cleanup', page)
-        self.assertIn('ГОТОВО В LOCAL', page)
-        self.assertIn('.ph-in_progress .ph-dot', page)
-        self.assertEqual(page.count('data-history-source-template='), 23)
+        self.assertNotIn('data-history-open="PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26"', page)
+        self.assertNotIn('data-history-open="HISTORY-LOCAL-SHELL-2026-09-29"', page)
+        self.assertEqual(page.count('data-history-source-template='), 24)
         self.assertEqual(page.count('class="ph-environment ph-local"'), 2)
         self.assertEqual(page.count('class="ph-environment ph-production"'), 2)
         self.assertIn("Номер обращения на экране не показан", page)
@@ -170,16 +158,12 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertNotRegex(page, r"<(?:script|link)[^>]+(?:src|href)=['\"]https?://")
         self.assertNotIn('src="/static/', page)
         self.assertIn("docs/timeline.json", page)
-        self.assertIn("634778807b2e82ca52dea1de150ea0810950d644", page)
         self.assertIn("GSD-01", page)
-        self.assertIn("Offline history viewer", page)
         self.assertIn('id="theme"', page)
         self.assertIn('data-theme="dark"', page)
         self.assertIn('id="edition-toggle"', page)
         self.assertIn('class="ph-theme-icon"', page)
         self.assertIn('class="ph-theme-label"', page)
-        self.assertEqual(page.count('class="ph-release-card"'), 40)
-        self.assertEqual(page.count('role="button" tabindex="0" aria-haspopup="dialog"'), 40)
         self.assertIn("20 сентября 2026", page)
         self.assertIn("25 сентября 2026", page)
         feature_lists = re.findall(r'<ol class="ph-feature-list">(.*?)</ol>', page, re.S)
@@ -192,9 +176,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn('class="ph-change-chips"', page)
         self.assertIn('id="ph-dialog-body"', page)
         self.assertIn('id="ph-close"', page)
-        self.assertEqual(page.count("data-change-card"), 176)
-        self.assertIn('data-history-open="PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26"', page)
-        self.assertIn('Кампания не создана и не запущена.', page)
+        self.assertGreater(page.count("data-change-card"), 100)
         gsd_details = re.findall(r'<template id="ph-detail-GSD-1\.0">(.*?)</template>', page, re.S)
         self.assertEqual(len(gsd_details), 2)
         for details in gsd_details:

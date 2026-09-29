@@ -896,18 +896,28 @@
       "release_sequence": 15,
       "app_version": "v0.13.2",
       "title": "Isolated AIpediya load optimization",
-      "environment": "local",
-      "stage": "review",
-      "history": "docs/history/2026-09-28-performance-audit-local.md",
+      "environment": "production",
+      "stage": "released",
+      "history": "docs/history/2026-09-29-performance-release.md",
       "release_tag": "release-2026-09-28-performance-audit",
-      "summary": "Production process baseline and Local profiling identified full-catalog Model hydration before pagination. SQL-first paging reduced Local CPU and allocations. The final Local browser gate passed 88/88; the owner explicitly authorized this exact v0.13.2 performance release after QA.",
-      "revision": "5686b1c41bddf0d6729eb299056670dfb26e6d85"
+      "summary": "SQL-first Models pagination removed full-catalog hydration before the page slice. Owner-approved Local and Production browser gates passed 88/88 each; Public QA passed 1657/1657. The exact code-only archive preserved the catalog and reduced observed Models TTFB.",
+      "revision": "b8f07026630124f179fd386d60cddbc9beaf2751",
+      "production_verified_at": "2026-09-29T19:57:39+00:00"
+    },
+    {
+      "release_id": "HISTORY-LOCAL-SHELL-2026-09-29",
+      "title": "Restore the standalone internal history screen in Local",
+      "environment": "local",
+      "stage": "local",
+      "status": "COMPLETED_LOCAL",
+      "revision": null,
+      "history": "docs/history/2026-09-29-internal-history-local.md"
     }
   ],
   "product_history": {
     "visibility": "Local only; no owner authentication exists for this page on Production",
-    "production_evidence": "docs/history/2026-09-27-catalog-325-147-release.md",
-    "production_verified_at": "2026-09-27T22:05:12Z",
+    "production_evidence": "docs/history/2026-09-29-performance-release.md",
+    "production_verified_at": "2026-09-29T19:57:39+00:00",
     "milestones": [
       {
         "release_id": "release-2026-09-20-chronology",
@@ -1785,8 +1795,8 @@
         "app_version": "v0.13.2",
         "local_verified": true,
         "owner_approved": true,
-        "production_released": false,
-        "production_verified": false,
+        "production_released": true,
+        "production_verified": true,
         "date": "2026-09-28",
         "title_ru": "Аудит нагрузки и быстрые страницы моделей",
         "title_en": "Load audit and faster model pages",
@@ -1810,21 +1820,68 @@
           "Chronological model listings select the current page before prefetch; release-date ordering is preserved."
         ],
         "source": "2026-09-28-performance-audit",
-        "open": true,
-        "progress": "review",
+        "open": false,
+        "progress": "done",
         "release_tag": "release-2026-09-28-performance-audit",
-        "revision": "5686b1c41bddf0d6729eb299056670dfb26e6d85",
+        "revision": "b8f07026630124f179fd386d60cddbc9beaf2751",
         "owner_decision": "Owner explicitly authorized the exact verified Performance Release #015 / v0.13.2 after full Local QA in the 2026-09-29 continuation request",
+        "owner_decision_ru": "Владелец 29.09 разрешил опубликовать точно проверенный Performance Release #015 / v0.13.2 после полного Local QA.",
+        "owner_decision_en": "On Sep 29 the owner authorized publication of the exact verified Performance Release #015 / v0.13.2 after full Local QA.",
         "qa": {
           "local": "Final #015: browser menu gate 88/88 PASS, 1712 checks, 264 menu navigations, 0 redirects/console/network/HTTP errors; 340 catalog tests OK (one skip), GSD Local 33/33, catalog_master check/qa PASS. Matched Models root 1910→1085 ms and Python peak 37.89→19.81 MiB; 16-request synthetic burst confirmed the app CPU mechanism. Source-code baseline 5686b1c; Production release separately authorized by owner.",
-          "production": "Predeploy #014 baseline measured; #015 deploy and Public QA pending"
+          "production": "1657/1657 PASS; artifacts/release-015-production-qa.json",
+          "local_ru": "Браузер 88/88, 1 712 проверок, 264 перехода через меню, 0 ошибок консоли/сети/HTTP. Django 340 тестов (1 skip), GSD 33/33, master check/qa PASS. Models root: 1 910→1 085 мс, пик Python allocations 37,89→19,81 МиБ.",
+          "local_en": "Browser 88/88, 1,712 checks, 264 menu navigations and zero console/network/HTTP errors. Django 340 tests (one skip), GSD 33/33, master check/qa PASS. Models root: 1,910→1,085 ms; Python allocation peak 37.89→19.81 MiB.",
+          "production_ru": "Полный Public QA 1 657/1 657, публичный браузер 88/88, каталог и база без изменений; /healthz подтвердил commit b8f0702.",
+          "production_en": "Full Public QA 1,657/1,657, public browser 88/88, catalog and database unchanged; /healthz confirmed commit b8f0702."
         },
         "changes": [
           "Page chronological Models in SQL before prefetch and decoration",
           "Add read-only AIpediya process metrics and repeatable Local request profiling",
           "Add optional bounded per-PID route, crawler-class and SQL-cost aggregates, disabled by default",
           "Allow future code-only release preflight and backup comparison without a catalog plan"
-        ]
+        ],
+        "production_verified_at": "2026-09-29T19:57:39+00:00",
+        "release_report": "docs/history/2026-09-29-performance-release.md",
+        "backup": "aipedia-before-code-20260929T194250Z.sqlite3"
+      },
+      {
+        "release_id": "HISTORY-LOCAL-SHELL-2026-09-29",
+        "local_verified": true,
+        "owner_approved": false,
+        "production_released": false,
+        "production_verified": false,
+        "date": "2026-09-29",
+        "title_ru": "Внутренняя история Local",
+        "title_en": "Internal Local history",
+        "icon": "history",
+        "tags_ru": [
+          "Local-only",
+          "Release #001–#015",
+          "Единый реестр"
+        ],
+        "tags_en": [
+          "Local-only",
+          "Release #001–#015",
+          "One registry"
+        ],
+        "capabilities_ru": [
+          "Вернуть отдельный внутренний экран без публичной оболочки сайта",
+          "Согласовать /ru/history/ и автономный timeline.html по docs/timeline.json",
+          "Проверить все карточки, клавиатуру, темы и мобильный экран"
+        ],
+        "capabilities_en": [
+          "Restore a separate internal screen without the public site shell",
+          "Keep /ru/history/ and standalone timeline.html aligned to docs/timeline.json",
+          "Check every card, keyboard, themes and mobile layout"
+        ],
+        "revision": null,
+        "source": "2026-09-29-internal-history-local",
+        "open": true,
+        "progress": "done",
+        "qa": {
+          "local": "Chromium live and offline at 1440/375 px: 4/4 PASS, all 15 Release cards opened in every case (60 total), X/Escape/outside/Enter/Space, theme and RU/EN PASS; no console or network errors. Django catalog suite 341 tests PASS (one skip), GSD Local 33/33."
+        }
       }
     ],
     "additional_tasks": [
@@ -1999,17 +2056,19 @@
       "release_sequence": 15,
       "app_version": "v0.13.2",
       "release_tag": "release-2026-09-28-performance-audit",
-      "revision": "5686b1c41bddf0d6729eb299056670dfb26e6d85"
+      "revision": "b8f07026630124f179fd386d60cddbc9beaf2751"
     },
     "current_production": {
-      "release_id": "LANGUAGE-SWITCH-2026-09-28",
-      "release_sequence": 14,
-      "app_version": "v0.13.1",
-      "release_tag": "release-2026-09-28-language-switch",
-      "revision": "1ac95d75b7a6d80eb24301f352a88275c28d4bce",
-      "confirmed_at": "2026-09-29T13:15:37+00:00",
-      "evidence": "1657/1657 PASS; artifacts/code-release/release-014-production-qa.json",
-      "source": "docs/history/2026-09-29-language-switch-release.md"
+      "release_id": "PERFORMANCE-AUDIT-2026-09-28",
+      "release_sequence": 15,
+      "app_version": "v0.13.2",
+      "release_tag": "release-2026-09-28-performance-audit",
+      "revision": "b8f07026630124f179fd386d60cddbc9beaf2751",
+      "confirmed_at": "2026-09-29T19:57:39+00:00",
+      "evidence": "1657/1657 PASS; artifacts/release-015-production-qa.json",
+      "source": "docs/history/2026-09-29-performance-release.md",
+      "status_ru": "Release #015 опубликован; Public QA 1657/1657 и браузер 88/88 PASS.",
+      "status_en": "Release #015 is live; Public QA 1657/1657 and browser 88/88 PASS."
     }
   }
 }

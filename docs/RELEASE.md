@@ -8,7 +8,23 @@
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный выпуск — **Language switching, Release #014 · v0.13.1**,
+Текущий публичный выпуск — **Performance, Release #015 · v0.13.2**,
+2026-09-29: проверенный commit
+`b8f07026630124f179fd386d60cddbc9beaf2751`, tag
+`release-2026-09-28-performance-audit`. Архив
+`aipedia-code-b8f070266301.zip`, SHA-256
+`19436aab5928860c412c9f1ddf4afd2174062d1de6f0e286ee65f88b467527eb`.
+Server preflight, online backup, изолированный trial, dry-run, deploy,
+`/healthz`, `verify-release`, `catalog_master qa --production` PASS;
+Public QA 1657/1657 и Chromium browser 88/88 PASS. Каталог 325 Models /
+147 Tools и фактические таблицы не менялись. Backup:
+`/srv/aipedia/backups/aipedia-before-code-20260929T194250Z.sqlite3`.
+Подробный отчёт и измерения до/после —
+`docs/history/2026-09-29-performance-release.md`; Timeline #015 закрыта.
+
+### Предыдущий публичный выпуск — Language switching #014
+
+Language switching, Release #014 · v0.13.1,
 2026-09-29: проверенный исходный commit
 `77e7f53cd8aa621b392d52d5b5ae8851ab77456c`, deployed code-candidate id
 `1ac95d75b7a6d80eb24301f352a88275c28d4bce`. Архив
@@ -21,7 +37,8 @@ Back/Forward, mobile 375 px и RTL ar/fa без ошибок console/network. К
 325 Models / 147 Tools неизменен. Backup:
 `/srv/aipedia/backups/aipedia-before-code-20260929T130406Z.sqlite3`.
 Отчёт — `docs/history/2026-09-29-language-switch-release.md`; Timeline #014 закрыта.
-Performance #015 ведётся отдельно и в этом архиве отсутствует.
+Performance #015 опубликован следующим самостоятельным пакетом и в архив #014
+не входил.
 
 ### Предыдущий публичный выпуск — Reconciliation / cleanup #013
 

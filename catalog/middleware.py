@@ -124,7 +124,7 @@ class HeadersMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
         response["Referrer-Policy"] = "strict-origin-when-cross-origin"
-        if not request.path.startswith("/admin/"):
+        if not request.path.startswith("/admin/") and "Content-Security-Policy" not in response:
             # Cloudflare automatically injects both the plain beacon URL and
             # versioned URLs under /beacon.min.js/v... on public HTML pages.
             response["Content-Security-Policy"] = (
