@@ -13,12 +13,12 @@ class ProductHistoryTests(SimpleTestCase):
         cards = product["milestones"]
         by_id = {row["release_id"]: row for row in cards}
         self.assertEqual(len(by_id), len(cards))
-        self.assertEqual(len(cards), 21)
-        self.assertEqual(product["current_production"]["release_sequence"], 15)
-        self.assertEqual(product["current_production"]["app_version"], "v0.13.2")
+        self.assertEqual(len(cards), 22)
+        self.assertEqual(product["current_production"]["release_sequence"], 16)
+        self.assertEqual(product["current_production"]["app_version"], "v0.14.0")
         self.assertEqual(by_id["release-2026-09-28-reconciliation-cleanup"]["revision"],
                          "5ba1e566338fc17d9b8965d3be180bc1df268e2e")
-        self.assertEqual(product["current_local"]["release_sequence"], 15)
+        self.assertEqual(product["current_local"]["release_sequence"], 16)
         locale_switch = by_id["LANGUAGE-SWITCH-2026-09-28"]
         self.assertEqual((locale_switch["app_version"], locale_switch["local_verified"],
                           locale_switch["owner_approved"]), ("v0.13.1", True, True))
@@ -45,6 +45,10 @@ class ProductHistoryTests(SimpleTestCase):
         audit = by_id["EVAL-EVIDENCE-AUDIT-2026-09-27"]
         self.assertEqual((audit["progress"], audit["owner_approved"], audit["production_released"], audit["release_sequence"]),
                          ("done", True, True, 12))
+        daily = by_id["DAILY-CATALOG-UPDATE-2026-09-29"]
+        self.assertEqual((daily["release_sequence"], daily["app_version"], daily["progress"], daily["executor"],
+                  daily["production_verified"]),
+                 (16, "v0.14.0", "done", "GitHub Copilot", True))
         self.assertEqual([row["release_id"] for row in cards if row["progress"] == "planned"],
                          ["PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26"])
 
@@ -53,9 +57,10 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertEqual(page.status_code, 200)
         self.assertContains(page, "История AIpediya")
         self.assertEqual(page.content, (Path(__file__).resolve().parents[2] / "timeline.html").read_bytes())
-        self.assertEqual(page.content.count(b'data-history-open='), 30)  # 15 releases in two editions
+        self.assertEqual(page.content.count(b'data-history-open='), 32)  # 16 releases in two editions
         self.assertIn(b'Release #001', page.content)
         self.assertIn(b'Release #015', page.content)
+        self.assertIn(b'Release #016', page.content)
         self.assertNotIn(b'class="site-header"', page.content)
         self.assertNotIn(b'class="site-footer"', page.content)
         self.assertNotIn(b'role="search"', page.content)
@@ -108,7 +113,7 @@ class ProductHistoryTests(SimpleTestCase):
         organic_id = "release-2026-09-26-search-visibility-optimization-v2"
         self.assertEqual(entries[organic_id]["stage"], "released")
         self.assertEqual(registry["product_history"]["current_production"]["release_tag"],
-                         "release-2026-09-28-performance-audit")
+                 "release-2026-09-29-daily-catalog-update")
         paid_card = next(row for row in registry["product_history"]["milestones"] if row["release_id"] == paid_id)
         self.assertTrue(paid_card["open"])
         self.assertEqual(paid_card["progress"], "planned")
@@ -127,7 +132,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn("Проверено владельцем", card["tags_ru"])
         self.assertNotIn("Визуальная проверка ожидается", card["tags_ru"])
         self.assertIn("Визуальная проверка", task["owner_ru"])
-        self.assertEqual(registry["product_history"]["current_production"]["release_tag"], "release-2026-09-28-performance-audit")
+        self.assertEqual(registry["product_history"]["current_production"]["release_tag"], "release-2026-09-29-daily-catalog-update")
 
     @override_settings(AIPEDIA_ENV="production", SECURE_SSL_REDIRECT=False)
     def test_history_is_private_in_production(self):
@@ -141,14 +146,14 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn("connect-src 'none'", page)
         self.assertIn('id="edition-ru"', page)
         self.assertIn('id="edition-en"', page)
-        self.assertEqual(page.count('data-history-open='), 30)
-        self.assertEqual(page.count('class="ph-release-card"'), 30)
-        self.assertEqual(page.count('role="button" tabindex="0" aria-haspopup="dialog"'), 30)
+        self.assertEqual(page.count('data-history-open='), 32)
+        self.assertEqual(page.count('class="ph-release-card"'), 32)
+        self.assertEqual(page.count('role="button" tabindex="0" aria-haspopup="dialog"'), 32)
         self.assertEqual(page.count('class="ph-status-legend"'), 2)
         self.assertIn('release-2026-09-28-reconciliation-cleanup', page)
         self.assertNotIn('data-history-open="PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26"', page)
         self.assertNotIn('data-history-open="HISTORY-LOCAL-SHELL-2026-09-29"', page)
-        self.assertEqual(page.count('data-history-source-template='), 24)
+        self.assertEqual(page.count('data-history-source-template='), 25)
         self.assertEqual(page.count('class="ph-environment ph-local"'), 2)
         self.assertEqual(page.count('class="ph-environment ph-production"'), 2)
         self.assertIn("Номер обращения на экране не показан", page)

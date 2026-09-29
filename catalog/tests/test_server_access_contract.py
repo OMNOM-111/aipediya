@@ -88,8 +88,9 @@ class ServerAccessContractTests(unittest.TestCase):
         validate_scope(14, "")
         validate_scope(15, "")
         validate_scope(13, "data/release/v013/catalog_plan.json")
+        validate_scope(16, "data/release/daily-catalog-20260929/catalog_plan.json")
         for sequence, plan in ((14, "data/release/old/catalog_plan.json"),
-                               (15, "data/release/old/catalog_plan.json"), (13, "")):
+                               (15, "data/release/old/catalog_plan.json"), (13, ""), (16, "")):
             with self.subTest(sequence=sequence, plan=plan), self.assertRaises(RuntimeError):
                 validate_scope(sequence, plan)
 

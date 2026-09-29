@@ -8,8 +8,22 @@
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный выпуск — **Performance, Release #015 · v0.13.2**,
-2026-09-29: проверенный commit
+Текущий публичный выпуск — **Daily Catalog Update, Release #016 · v0.14.0**,
+2026-09-29: проверенный release id
+`7c18e9f078f457d313ef69b8c70de564c050e231`, tag
+`release-2026-09-29-daily-catalog-update`. Архив
+`aipedia-code-7c18e9f078f4.zip`, SHA-256
+`4abb3c4bb76ee248902d0d459787a0bc6106555d952f89f463a73e1c8e145f6a`.
+Server preflight, online backup, isolated trial, dry-run, deploy, `/healthz`,
+`verify-release`, `catalog_master qa --production`, GSD Public 34/34 и
+Production QA 1657/1657 PASS. Каталог: 331 Models / 149 Tools; добавлены
+6 Models и 2 Tools, Evaluation/Benchmark rows не менялись. Backup:
+`/srv/aipedia/backups/aipedia-before-code-20260929T213309Z.sqlite3`.
+Отчёт — `docs/history/2026-09-29-daily-catalog-update.md`; Timeline #016 закрыта.
+
+### Предыдущий публичный выпуск — Performance #015
+
+Performance, Release #015 · v0.13.2, 2026-09-29: проверенный commit
 `b8f07026630124f179fd386d60cddbc9beaf2751`, tag
 `release-2026-09-28-performance-audit`. Архив
 `aipedia-code-b8f070266301.zip`, SHA-256

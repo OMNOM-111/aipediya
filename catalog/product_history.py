@@ -36,6 +36,7 @@ SOURCES = {
     "2026-09-28-language-switch": ("Переключение 22 языков / Language switching", "docs/history/2026-09-28-language-switch-local.md"),
     "2026-09-28-performance-audit": ("Аудит нагрузки / Load audit", "docs/history/2026-09-28-performance-audit-local.md"),
     "2026-09-29-internal-history-local": ("Внутренняя история / Internal history", "docs/history/2026-09-29-internal-history-local.md"),
+    "2026-09-29-daily-catalog-update": ("Ежедневное обновление каталога / Daily catalog update", "docs/history/2026-09-29-daily-catalog-update.md"),
 }
 
 

@@ -912,6 +912,22 @@
       "status": "COMPLETED_LOCAL",
       "revision": "856d80ce0aa19550c0f7c7afdeba36250ee329bc",
       "history": "docs/history/2026-09-29-internal-history-local.md"
+    },
+    {
+      "release_id": "DAILY-CATALOG-UPDATE-2026-09-29",
+      "release_sequence": 16,
+      "app_version": "v0.14.0",
+      "title": "Daily catalog update",
+      "environment": "production",
+      "stage": "released",
+      "status": "LOCAL_QA_PASS",
+      "started_utc": "2026-09-29T20:42:02Z",
+      "executor": "GitHub Copilot",
+      "history": "docs/history/2026-09-29-daily-catalog-update.md",
+      "release_tag": "release-2026-09-29-daily-catalog-update",
+      "summary": "Daily catalog package: 6 new Models, Cue and Manus 2.0 were added to Catalog Master and synced to Local. Local QA passed with 331 Models / 149 Tools and browser checks for the touched cards. Owner authorization for Production #016 is recorded in the 2026-09-29 task message.",
+      "revision": "7c18e9f078f457d313ef69b8c70de564c050e231",
+      "production_verified_at": "2026-09-29T21:39:59+00:00"
     }
   ],
   "product_history": {
@@ -1882,6 +1898,63 @@
         "qa": {
           "local": "Chromium live and offline at 1440/375 px: 4/4 PASS, all 15 Release cards opened in every case (60 total), X/Escape/outside/Enter/Space, theme and RU/EN PASS; no console or network errors. Django catalog suite 341 tests PASS (one skip), GSD Local 33/33."
         }
+      },
+      {
+        "release_id": "DAILY-CATALOG-UPDATE-2026-09-29",
+        "release_sequence": 16,
+        "app_version": "v0.14.0",
+        "local_verified": true,
+        "owner_approved": true,
+        "production_released": true,
+        "production_verified": true,
+        "date": "2026-09-29",
+        "title_ru": "Ежедневное обновление каталога",
+        "title_en": "Daily catalog update",
+        "icon": "library-big",
+        "tags_ru": [
+          "Release #016",
+          "v0.14.0",
+          "Local QA PASS"
+        ],
+        "tags_en": [
+          "Release #016",
+          "v0.14.0",
+          "Local QA PASS"
+        ],
+        "capabilities_ru": [
+          "Добавить 6 новых моделей: Claude Sonnet 5.5, Eleven v4, Eleven v4 Turbo, Holo4-27B, Holo4-35B-A3B и Holotron4-30B-A3B",
+          "Добавить Cue и Manus 2.0 как Tool-карточки, если дублей нет",
+          "Синхронизировать проверенный master diff в Local и подготовить Production manifests"
+        ],
+        "capabilities_en": [
+          "Add 6 new models: Claude Sonnet 5.5, Eleven v4, Eleven v4 Turbo, Holo4-27B, Holo4-35B-A3B and Holotron4-30B-A3B",
+          "Add Cue and Manus 2.0 as Tool cards when no duplicates exist",
+          "Synchronize the verified master diff to Local and prepare Production manifests"
+        ],
+        "source": "2026-09-29-daily-catalog-update",
+        "open": false,
+        "progress": "done",
+        "release_tag": "release-2026-09-29-daily-catalog-update",
+        "revision": "7c18e9f078f457d313ef69b8c70de564c050e231",
+        "executor": "GitHub Copilot",
+        "started_utc": "2026-09-29T20:42:02Z",
+        "changes": [
+          "Add 6 PUBLISHED Models and 2 PUBLISHED Tools to the Catalog Master",
+          "Sync 8 created records to Local, bringing the catalog to 331 Models / 149 Tools",
+          "Prepare catalog_plan.json and release_state.json for Production #016"
+        ],
+        "qa": {
+          "local": "catalog_master refresh/check OK; trial sync on a DB copy PASS; working Local sync-local --apply created 8 records. Post-import catalog_master check OK and qa PASS with 331 Models / 149 Tools, queue 198, warnings 17, errors 0. Browser touched-card QA: 8/8 direct URLs 200, no console/network errors, no overflow.",
+          "local_ru": "catalog_master refresh/check OK; trial sync на копии PASS; рабочий Local sync-local --apply создал 8 записей. После import: check OK, qa PASS, 331 Models / 149 Tools, очередь 198, warnings 17, errors 0. Браузер затронутых карточек: 8/8 URL 200, без console/network errors и overflow.",
+          "local_en": "catalog_master refresh/check OK; trial sync on a copy PASS; working Local sync-local --apply created 8 records. After import: check OK, qa PASS, 331 Models / 149 Tools, queue 198, warnings 17, errors 0. Browser touched-card QA: 8/8 URLs 200, no console/network errors or overflow.",
+          "production": "1657/1657 PASS; artifacts\\daily-catalog-20260929-gsd-production-qa.json"
+        },
+        "owner_decision": "Owner explicitly authorized Production publication of Release #016 in the 2026-09-29 task message after successful Local verification.",
+        "owner_decision_ru": "Владелец в поручении 29.09 явно разрешил публикацию Release #016 после успешной Local-проверки; повторное подтверждение не требуется.",
+        "owner_decision_en": "In the Sep 29 task message the owner explicitly authorized Production publication of Release #016 after successful Local verification; no repeated confirmation is required.",
+        "release_report": "docs/history/2026-09-29-daily-catalog-update.md",
+        "production_verified_at": "2026-09-29T21:39:59+00:00",
+        "backup": "aipedia-before-code-20260929T213309Z.sqlite3"
       }
     ],
     "additional_tasks": [
@@ -2052,23 +2125,21 @@
       }
     ],
     "current_local": {
-      "release_id": "PERFORMANCE-AUDIT-2026-09-28",
-      "release_sequence": 15,
-      "app_version": "v0.13.2",
-      "release_tag": "release-2026-09-28-performance-audit",
-      "revision": "b8f07026630124f179fd386d60cddbc9beaf2751"
+      "release_id": "DAILY-CATALOG-UPDATE-2026-09-29",
+      "release_sequence": 16,
+      "app_version": "v0.14.0",
+      "release_tag": "release-2026-09-29-daily-catalog-update",
+      "revision": "5b9181dc922db3fc2977900988e04fb63ca0bbab"
     },
     "current_production": {
-      "release_id": "PERFORMANCE-AUDIT-2026-09-28",
-      "release_sequence": 15,
-      "app_version": "v0.13.2",
-      "release_tag": "release-2026-09-28-performance-audit",
-      "revision": "b8f07026630124f179fd386d60cddbc9beaf2751",
-      "confirmed_at": "2026-09-29T19:57:39+00:00",
-      "evidence": "1657/1657 PASS; artifacts/release-015-production-qa.json",
-      "source": "docs/history/2026-09-29-performance-release.md",
-      "status_ru": "Release #015 опубликован; Public QA 1657/1657 и браузер 88/88 PASS.",
-      "status_en": "Release #015 is live; Public QA 1657/1657 and browser 88/88 PASS."
+      "release_id": "DAILY-CATALOG-UPDATE-2026-09-29",
+      "release_sequence": 16,
+      "app_version": "v0.14.0",
+      "release_tag": "release-2026-09-29-daily-catalog-update",
+      "revision": "7c18e9f078f457d313ef69b8c70de564c050e231",
+      "confirmed_at": "2026-09-29T21:39:59+00:00",
+      "evidence": "1657/1657 PASS; artifacts\\daily-catalog-20260929-gsd-production-qa.json",
+      "source": "docs/history/2026-09-29-daily-catalog-update.md"
     }
   }
 }

@@ -29,9 +29,9 @@ def checked(command, *, cwd=None):
 
 
 def validate_release_scope(sequence, plan):
-    if sequence in (12, 13) and plan:
+    if sequence in (12, 13, 16) and plan:
         return
-    if sequence >= 14 and not plan:
+    if sequence >= 14 and sequence != 16 and not plan:
         return
     raise RuntimeError("Catalog plan does not match release scope")
 
@@ -148,6 +148,48 @@ def main():
                            ("access_service", "service_provider", "benchmark_category")} != {
                                "access_service": 11, "service_provider": 1, "benchmark_category": 1}:
         raise RuntimeError("Release #013 plan counts differ from the approved scope")
+    if sequence == 16:
+        expected_counts = {"create": 8, "update": 0, "reassign": 0, "offer": 0, "evaluation": 0,
+                           "number": 0, "platforms": 0, "access_service": 0, "service_provider": 0,
+                           "benchmark_category": 0, "org_country": 0, "offer_new": 0,
+                           "access_new": 0, "origin_new": 0, "evaluation_new": 0}
+        if {kind: plan_data["counts"].get(kind, 0) for kind in expected_counts} != expected_counts:
+            raise RuntimeError("Release #016 plan counts differ from the approved scope")
+        for label in ("tools", "model_rows", "offers", "accesses"):
+            changed_existing = [key for key in before[label] if before[label][key] != after[label].get(key)]
+            if changed_existing:
+                raise RuntimeError("Release #016 changed existing %s rows outside creation plan: %s" % (
+                    label, changed_existing[:5]))
+        if (before["published_models"], before["published_tools"]) != (325, 147):
+            raise RuntimeError("Production baseline differs from the approved #016 predecessor")
+        if (after["published_models"], after["numbered_models"],
+                after["published_tools"], after["numbered_tools"]) != (331, 331, 149, 149):
+            raise RuntimeError("Release #016 trial catalog counts differ from approved Local: " +
+                               repr({k: after[k] for k in ("published_tools", "numbered_tools",
+                                   "published_models", "numbered_models")}))
+        if (before["evaluation_rows"], before["evaluation_public"],
+                after["evaluation_rows"], after["evaluation_public"]) != (5010, 2741, 5010, 2741):
+            raise RuntimeError("Release #016 changed evaluation totals")
+        if (before["source_rows"], before["benchmark_rows"],
+                after["source_rows"], after["benchmark_rows"]) != (999, 982, 1003, 982):
+            raise RuntimeError("Release #016 evidence dependency totals differ from approved Local")
+        if after["integrity"] != "ok" or after["foreign_keys"] or not after["numbers_continuous"] or not after["model_numbers_continuous"]:
+            raise RuntimeError("Release #016 SQLite integrity or numbering failed")
+        if "models changed=0" not in dry_state or "tools changed=0" not in dry_state:
+            raise RuntimeError("Publication-state dry-run differs from the approved #016 catalog plan")
+        report = {
+            "status": "PASS", "commit": commit, "sha256": digest, "backup": str(backup),
+            "catalog_plan": plan, "publication_state": publication,
+            "production_database_untouched": True,
+            "before": {k: v for k, v in before.items() if k not in ("tools", "model_rows", "offers", "accesses")},
+            "trial": {k: v for k, v in after.items() if k not in ("tools", "model_rows", "offers", "accesses")},
+            "created_models": len(after["model_rows"]) - len(before["model_rows"]),
+            "created_tools": len(after["tools"]) - len(before["tools"]),
+            "plan_dry_run": dry_plan[-600:], "plan_apply": applied[-600:],
+            "publication_dry_run": dry_state[-600:],
+        }
+        print(json.dumps(report, ensure_ascii=False, sort_keys=True))
+        return
     unchanged = ("tools", "model_rows", "offers") if sequence == 13 else (
         "tools", "model_rows", "offers", "accesses")
     if any(before[k] != after[k] for k in unchanged):
