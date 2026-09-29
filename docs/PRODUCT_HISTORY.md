@@ -3,13 +3,18 @@
 ## Версии и обязательный выпускной шлюз
 
 **No Timeline → No Release.** Подтверждённые Production-вехи получили
-Release #001–#015; текущий опубликованный baseline — Release #015 · AIpediya
-v0.13.2, `release-2026-09-28-performance-audit`, deployed commit
-`b8f07026630124f179fd386d60cddbc9beaf2751`. SQL-first pagination и
-безопасная телеметрия прошли Local browser gate 88/88, catalog suite 340
-tests, Production GSD QA 1657/1657 и публичный браузер 88/88. Каталог
-не менялся. Отчёт с PID, TTFB и backup —
-`docs/history/2026-09-29-performance-release.md`.
+Release #001–#016; текущий опубликованный baseline — Release #016 · AIpediya
+v0.14.0, `release-2026-09-29-daily-catalog-update`, deployed release id
+`7c18e9f078f457d313ef69b8c70de564c050e231`. Daily Catalog Update прошёл
+Local QA, server preflight, Production deploy, `/healthz`, `verify-release`,
+`catalog_master qa --production`, GSD Public 34/34 и Production QA 1657/1657;
+публичный каталог содержит 331 Models / 149 Tools. Отчёт —
+`docs/history/2026-09-29-daily-catalog-update.md`.
+
+Текущий Local-кандидат — Release #017 · v0.15.0,
+`UNIVERSAL-CATALOG-RELEASE-2026-09-29`: release tooling ежедневных catalog
+updates стал универсальным и прошёл Local regression, но Production не
+публиковалась без отдельного разрешения владельца.
 `release_sequence` — неизменяемый номер выпуска, `app_version` — SemVer.
 До 1.0 новый пользовательский пакет увеличивает minor (`v0.12.0`), исправление
 опубликованного пакета — patch (`v0.12.1`). `v1.0.0` требует отдельного
@@ -51,8 +56,9 @@ Production и автономный HTML. Исторические Local-only з�
 открытии. Для английского маршрута меняется лишь начальная редакция RU/EN.
 Local-only CSP разрешает встроенные CSS/JS при запрете сетевых соединений;
 Production по-прежнему отвечает 404. На горизонтальной ленте видны только
-пронумерованные Release #001–#015, все по порядку. Ненумерованные Local-only
-и плановые записи сохранены в реестре и документах, но не перемежают выпуски.
+пронумерованные Release #001–#017, все по порядку; #017 отмечен как Local
+review, а Production-карточка остаётся #016. Ненумерованные Local-only и
+плановые записи сохранены в реестре и документах, но не перемежают выпуски.
 
 Текущая автономная редакция использует отдельный минимальный шаблон
 `templates/product_history_standalone.html` и стиль

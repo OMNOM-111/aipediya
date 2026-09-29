@@ -928,6 +928,21 @@
       "summary": "Daily catalog package: 6 new Models, Cue and Manus 2.0 were added to Catalog Master and synced to Local. Local QA passed with 331 Models / 149 Tools and browser checks for the touched cards. Owner authorization for Production #016 is recorded in the 2026-09-29 task message.",
       "revision": "7c18e9f078f457d313ef69b8c70de564c050e231",
       "production_verified_at": "2026-09-29T21:39:59+00:00"
+    },
+    {
+      "release_id": "UNIVERSAL-CATALOG-RELEASE-2026-09-29",
+      "release_sequence": 17,
+      "app_version": "v0.15.0",
+      "title": "Universal daily catalog release tooling",
+      "environment": "local",
+      "stage": "review",
+      "status": "LOCAL_QA_PASS",
+      "started_utc": "2026-09-29T22:06:15Z",
+      "executor": "GitHub Copilot",
+      "history": "docs/history/2026-09-29-universal-catalog-release.md",
+      "release_tag": "release-2026-09-29-universal-catalog-release",
+      "summary": "Existing daily catalog release tooling now derives baseline, plan scope, expected counts and allowed related-table changes from Production snapshots, Timeline, canonical master outputs and the concrete catalog plan instead of hardcoded Release # and count assumptions. Local regression passed; Production remains Release #016 until separately authorized.",
+      "revision": "b2186634db8a27b891d0748bdd3008cd66da62eb"
     }
   ],
   "product_history": {
@@ -1955,6 +1970,55 @@
         "release_report": "docs/history/2026-09-29-daily-catalog-update.md",
         "production_verified_at": "2026-09-29T21:39:59+00:00",
         "backup": "aipedia-before-code-20260929T213309Z.sqlite3"
+      },
+      {
+        "release_id": "UNIVERSAL-CATALOG-RELEASE-2026-09-29",
+        "release_sequence": 17,
+        "app_version": "v0.15.0",
+        "local_verified": true,
+        "owner_approved": false,
+        "production_released": false,
+        "production_verified": false,
+        "date": "2026-09-29",
+        "title_ru": "Универсальный ежедневный catalog release",
+        "title_en": "Universal daily catalog release",
+        "icon": "workflow",
+        "tags_ru": [
+          "Release #017",
+          "v0.15.0",
+          "Local QA PASS"
+        ],
+        "tags_en": [
+          "Release #017",
+          "v0.15.0",
+          "Local QA PASS"
+        ],
+        "capabilities_ru": [
+          "Сделать существующий server preflight и verify-release динамическими для daily catalog plans без условий по очередному Release #.",
+          "Вычислять baseline, expected-before/after counts, создаваемые и обновляемые записи и связанные изменения из Production snapshot, Timeline и конкретного catalog_plan.",
+          "Сохранить блокировки для посторонних изменений, неверного baseline, нарушения целостности, расхождений publication state и code-only выпусков."
+        ],
+        "capabilities_en": [
+          "Make the existing server preflight and verify-release dynamic for daily catalog plans without adding conditions for each new Release #.",
+          "Derive baseline, expected-before/after counts, created and updated records and related changes from the Production snapshot, Timeline and concrete catalog_plan.",
+          "Keep blockers for out-of-plan changes, wrong baselines, integrity failures, publication-state mismatch and code-only releases."
+        ],
+        "source": "2026-09-29-universal-catalog-release",
+        "open": true,
+        "progress": "review",
+        "release_tag": "release-2026-09-29-universal-catalog-release",
+        "revision": "b2186634db8a27b891d0748bdd3008cd66da62eb",
+        "executor": "GitHub Copilot",
+        "started_utc": "2026-09-29T22:06:15Z",
+        "changes": [
+          "Replace release-number and fixed-count catalog release checks with plan-derived validation",
+          "Add isolated regression trials for create, update, related changes, foreign changes, baseline mismatch, idempotency and code-only behavior"
+        ],
+        "qa": {
+          "local": "Focused release/history regression: 20 tests PASS. Full catalog suite: 344 tests PASS, 1 skip. Dynamic trials cover future catalog plan sequence, create counts, update of an existing record, related service/benchmark/org changes, foreign change blocking, wrong final counts, idempotent already-applied state and code-only comparison.",
+          "local_ru": "Focused release/history regression: 20 tests PASS. Полный catalog suite: 344 tests PASS, 1 skip. Динамические trials покрывают будущий catalog plan sequence, create counts, update существующей записи, связанные изменения service/benchmark/org, блокировку постороннего изменения, неверные итоговые counts, идемпотентное already-applied состояние и code-only compare.",
+          "local_en": "Focused release/history regression: 20 tests PASS. Full catalog suite: 344 tests PASS, 1 skip. Dynamic trials cover a future catalog plan sequence, create counts, existing-record update, related service/benchmark/org changes, foreign-change blocking, wrong final counts, idempotent already-applied state and code-only compare."
+        }
       }
     ],
     "additional_tasks": [
@@ -2125,11 +2189,11 @@
       }
     ],
     "current_local": {
-      "release_id": "DAILY-CATALOG-UPDATE-2026-09-29",
-      "release_sequence": 16,
-      "app_version": "v0.14.0",
-      "release_tag": "release-2026-09-29-daily-catalog-update",
-      "revision": "5b9181dc922db3fc2977900988e04fb63ca0bbab"
+      "release_id": "UNIVERSAL-CATALOG-RELEASE-2026-09-29",
+      "release_sequence": 17,
+      "app_version": "v0.15.0",
+      "release_tag": "release-2026-09-29-universal-catalog-release",
+      "revision": "b2186634db8a27b891d0748bdd3008cd66da62eb"
     },
     "current_production": {
       "release_id": "DAILY-CATALOG-UPDATE-2026-09-29",

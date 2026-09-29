@@ -1,5 +1,16 @@
 # Текущее состояние AIpedia
 
+Обновлено (UTC): 2026-09-29T22:16:47Z
+
+## 29.09 — Release #017 / v0.15.0 Universal Catalog Release, Local QA PASS; Production не менялась (GitHub Copilot)
+
+- Создана Timeline-карточка `UNIVERSAL-CATALOG-RELEASE-2026-09-29`, Release #017 / `v0.15.0`, исполнитель GitHub Copilot, старт `2026-09-29T22:06:15Z`. Карточка переведена в `review` / Local QA PASS; `current_local` указывает на #017, `current_production` остаётся #016. Отдельного разрешения владельца на Production этого технического пакета не было, Production не трогалась.
+- Исправлен существующий release tooling ежедневных catalog updates без новой параллельной системы. `tools/server_release_preflight.py` теперь валидирует catalog plan динамически: final published/numbered counts, изменённые existing rows, created critical rows и allowed factual tables выводятся из конкретного `catalog_plan`. `tools/server_compare.py` ищет deployed `catalog_plan` по release id/tag и сверяет factual DB diff по нему; code-only releases остаются строгими. `tools/server.py catalog` больше не требует фиксированные 331 Models / 149 Tools, а проверяет integrity, FK 0, published==numbered и непрерывные номера.
+- Удалена runtime-привязка к `sequence == 16`, Release #016 expected_counts, predecessor 325/147, итоговым 331/149 и фиксированным evidence totals для последующих выпусков. Поиск по `tools/**` не нашёл оставшихся `sequence == 16`, `331`, `149`, `325, 147`, `expected_counts` в release tooling.
+- Regression: focused release/history suite 20 tests PASS; full `manage.py test catalog --settings=aipedia.test_settings` — 344 tests PASS, 1 skip. Universal catalog-plan trials покрывают future plan sequence без allowlist, create counts, update existing record, связанные service/benchmark/org changes, блокировку посторонних изменений, wrong final counts, idempotent already-applied и code-only behavior. `tools/release_history.py` PASS; `timeline.html` пересобран.
+- Изменено: `tools/server_release_preflight.py`, `tools/server_compare.py`, `tools/server.py`, release/history tests, `catalog/product_history.py`, `docs/timeline.json`, `docs/history/2026-09-29-universal-catalog-release.md`, `docs/PRODUCT_HISTORY.md`, этот статус и производный `timeline.html`. Каталог Models/Tools, master XLSX, Local SQLite и Production SQLite не менялись.
+- **Не завершено:** Production #017 не опубликован, commit/tag/push не выполнялись в этой сессии. **Следующим выполнить:** если владелец хочет выпустить этот технический пакет, дать отдельное разрешение на Release #017 по `docs/RELEASE.md`; следующий daily catalog release не требует изменений release tooling под новый номер или counts.
+
 ## 29.09 — Daily Catalog Update #016 / v0.14.0 опубликован, Production PASS (GitHub Copilot)
 
 - Создана и продолжена та же Timeline-карточка `DAILY-CATALOG-UPDATE-2026-09-29`, Release #016 / `v0.14.0`; новых карточек не создавалось. Исполнитель карточки записан как GitHub Copilot, старт `2026-09-29T20:42:02Z`. Владелец в поручении 29.09 явно разрешил Production #016 после успешной Local-проверки; повторное подтверждение не запрашивалось.

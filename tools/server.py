@@ -104,9 +104,9 @@ result["ok"] = (result.get("service", {"ok": True})["ok"]
 if mode == "catalog":
     catalog = result["catalog"]
     result["ok"] = (catalog.get("integrity") == "ok" and catalog.get("foreign_keys") == 0
-        and catalog.get("published_tools") == 149 and catalog.get("numbered_tools") == 149
+    and catalog.get("published_tools") == catalog.get("numbered_tools")
         and catalog.get("numbers_continuous") and catalog.get("without_date") == 0
-        and catalog.get("published_models") == 331 and catalog.get("numbered_models") == 331
+    and catalog.get("published_models") == catalog.get("numbered_models")
         and catalog.get("model_numbers_continuous"))
 print(json.dumps(result, sort_keys=True))
 '''

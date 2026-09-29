@@ -19,6 +19,9 @@ from pathlib import Path
 ROOT = Path("/srv/aipedia")
 DB = ROOT / "data/aipedia.sqlite3"
 BACKUPS = ROOT / "backups"
+SKIP_FACTUAL_TABLES = {"catalog_publicationrevision", "catalog_toolpublicationrevision",
+                       "catalog_revision", "catalog_researchrevision", "catalog_discoveryevent",
+                       "catalog_auditreport", "catalog_errorreport"}
 
 
 def checked(command, *, cwd=None):
@@ -29,9 +32,9 @@ def checked(command, *, cwd=None):
 
 
 def validate_release_scope(sequence, plan):
-    if sequence in (12, 13, 16) and plan:
+    if plan and (sequence in (12, 13) or sequence >= 16):
         return
-    if sequence >= 14 and sequence != 16 and not plan:
+    if not plan and sequence >= 14 and sequence != 16:
         return
     raise RuntimeError("Catalog plan does not match release scope")
 
@@ -39,6 +42,143 @@ def validate_release_scope(sequence, plan):
 def validate_code_only_catalog(copied, after):
     if copied["catalog_sha256"] != after["catalog_sha256"]:
         raise RuntimeError("Code-only trial changed catalog data")
+
+
+def rows(db, table):
+    found = db.execute(f"SELECT * FROM {table}").fetchall()
+    if found and "id" in found[0].keys():
+        return {row["id"]: dict(row) for row in found}
+    return {index: tuple(row) for index, row in enumerate(sorted(found, key=lambda item: repr(tuple(item))))}
+
+
+def changed_factual_tables(before, after):
+    names = sorted(set(before["factual_tables"]) | set(after["factual_tables"]))
+    return [name for name in names if before["factual_tables"].get(name, {}) != after["factual_tables"].get(name, {})]
+
+
+def expected_tables(plan):
+    tables = set()
+    for change in plan["changes"]:
+        kind = change["kind"]
+        sheet = change.get("sheet")
+        if kind == "create":
+            tables.update({"catalog_modelversion", "catalog_modelfamily", "catalog_organization", "catalog_source"})
+            if sheet == "Tools":
+                tables.update({"catalog_tool", "catalog_toolplatform"})
+            if sheet == "Models" and change.get("row", {}).get("Origin Countries"):
+                tables.add("catalog_modelorigincountry")
+            if change.get("offers"):
+                tables.update({"catalog_offer", "catalog_service", "catalog_source", "catalog_organization"})
+            if change.get("access"):
+                tables.update({"catalog_access", "catalog_service", "catalog_source", "catalog_organization"})
+        elif kind == "update":
+            tables.add("catalog_modelversion" if sheet == "Models" else "catalog_tool")
+            if "source" in change.get("after", {}):
+                tables.add("catalog_source")
+        elif kind == "number":
+            tables.add("catalog_modelversion" if sheet == "Models" else "catalog_tool")
+        elif kind == "platforms":
+            tables.add("catalog_toolplatform")
+        elif kind == "reassign":
+            tables.add("catalog_offer" if sheet == "Offers" else "catalog_access")
+        elif kind == "offer":
+            tables.add("catalog_offer")
+            if "source" in change.get("after", {}):
+                tables.add("catalog_source")
+        elif kind == "evaluation":
+            tables.add("catalog_evaluation")
+        elif kind == "access_service":
+            tables.update({"catalog_access", "catalog_service"})
+        elif kind == "service_provider":
+            tables.add("catalog_service")
+        elif kind == "benchmark_category":
+            tables.add("catalog_benchmark")
+        elif kind == "org_country":
+            tables.add("catalog_organization")
+        elif kind == "offer_new":
+            tables.update({"catalog_offer", "catalog_service", "catalog_source", "catalog_organization"})
+        elif kind == "access_new":
+            tables.update({"catalog_access", "catalog_service", "catalog_source", "catalog_organization"})
+        elif kind == "origin_new":
+            tables.add("catalog_modelorigincountry")
+        elif kind == "evaluation_new":
+            tables.update({"catalog_evaluation", "catalog_benchmark", "catalog_source"})
+        else:
+            raise RuntimeError("Unknown catalog plan kind: " + kind)
+    return tables
+
+
+def planned_existing_ids(plan, sheet, kinds, prefix=None):
+    values = set()
+    for change in plan["changes"]:
+        if change.get("sheet") != sheet or change.get("kind") not in kinds:
+            continue
+        if prefix:
+            if not change["id"].startswith(prefix + "-"):
+                continue
+            try:
+                values.add(int(change["id"].split("-", 1)[1]))
+            except ValueError:
+                continue
+        else:
+            values.add(change["id"])
+    return values
+
+
+def changed_existing(before, after, label):
+    if not set(before[label]).issubset(after[label]):
+        removed = sorted(set(before[label]) - set(after[label]))[:5]
+        raise RuntimeError("Trial removed existing %s rows: %s" % (label, removed))
+    return {key for key in before[label] if before[label][key] != after[label].get(key)}
+
+
+def planned_final_counts(plan):
+    model_numbers = plan["final_numbers"].get("Models", {})
+    tool_numbers = plan["final_numbers"].get("Tools", {})
+    return {
+        "published_models": len(plan["final_published"].get("Models", [])),
+        "published_tools": len(plan["final_published"].get("Tools", [])),
+        "numbered_models": sum(1 for value in model_numbers.values() if value is not None),
+        "numbered_tools": sum(1 for value in tool_numbers.values() if value is not None),
+    }
+
+
+def validate_catalog_plan_trial(plan, before, after, *, already_applied=False):
+    expected = expected_tables(plan)
+    changed = changed_factual_tables(before, after)
+    unexpected = [table for table in changed if table not in expected]
+    if unexpected:
+        raise RuntimeError("Trial changed catalog tables outside the plan: " + repr(unexpected))
+    final_counts = planned_final_counts(plan)
+    for key, expected_value in final_counts.items():
+        if after[key] != expected_value:
+            raise RuntimeError("Trial %s=%s differs from plan %s" % (key, after[key], expected_value))
+    if after["integrity"] != "ok" or after["foreign_keys"]:
+        raise RuntimeError("Trial SQLite integrity failed")
+    if not after["numbers_continuous"] or not after["model_numbers_continuous"]:
+        raise RuntimeError("Trial catalog numbering is not continuous")
+    allowed_models = planned_existing_ids(plan, "Models", {"update", "number"})
+    allowed_tools = planned_existing_ids(plan, "Tools", {"update", "number"})
+    allowed_offers = planned_existing_ids(plan, "Offers", {"offer", "reassign"}, "offer")
+    allowed_accesses = planned_existing_ids(plan, "Access", {"access_service", "reassign"}, "access")
+    for label, allowed in (("model_rows", allowed_models), ("tools", allowed_tools),
+                           ("offers", allowed_offers), ("accesses", allowed_accesses)):
+        extra = sorted(changed_existing(before, after, label) - allowed)
+        if extra:
+            raise RuntimeError("Trial changed existing %s rows outside the plan: %s" % (label, extra[:5]))
+    if already_applied:
+        return
+    creates = [change for change in plan["changes"] if change["kind"] == "create"]
+    expected_created = {
+        "model_rows": len(creates),
+        "tools": sum(1 for change in creates if change["sheet"] == "Tools"),
+        "offers": sum(len(change.get("offers", [])) for change in creates) + plan["counts"].get("offer_new", 0),
+        "accesses": sum(len(change.get("access", [])) for change in creates) + plan["counts"].get("access_new", 0),
+    }
+    for label, expected_count in expected_created.items():
+        actual = len(after[label]) - len(before[label])
+        if actual != expected_count:
+            raise RuntimeError("Trial created %s %s rows, expected %s from plan" % (actual, label, expected_count))
 
 
 def snapshot(path):
@@ -58,8 +198,9 @@ def snapshot(path):
         sources = db.execute("SELECT COUNT(*) FROM catalog_source").fetchone()[0]
         benchmarks = db.execute("SELECT COUNT(*) FROM catalog_benchmark").fetchone()[0]
         catalog_digest = hashlib.sha256()
-        tables = db.execute(
-            "SELECT name, sql FROM sqlite_master WHERE type='table' AND name LIKE 'catalog_%' ORDER BY name")
+        tables = list(db.execute(
+            "SELECT name, sql FROM sqlite_master WHERE type='table' AND name LIKE 'catalog_%' ORDER BY name"))
+        factual_tables = {}
         for table, schema in tables:
             catalog_digest.update(repr((table, schema)).encode("utf-8"))
             catalog_digest.update(b"\n")
@@ -67,9 +208,11 @@ def snapshot(path):
             for row in db.execute(f"SELECT * FROM {quoted} ORDER BY rowid"):
                 catalog_digest.update(repr(tuple(row)).encode("utf-8"))
                 catalog_digest.update(b"\n")
+            if table not in SKIP_FACTUAL_TABLES:
+                factual_tables[table] = rows(db, quoted)
         return {
             "integrity": integrity, "foreign_keys": fk, "tools": tools, "model_rows": model_rows,
-            "offers": offers, "accesses": accesses,
+            "offers": offers, "accesses": accesses, "factual_tables": factual_tables,
             "catalog_sha256": catalog_digest.hexdigest(),
             "evaluation_rows": evaluations[0], "evaluation_public": evaluations[1],
             "source_rows": sources, "benchmark_rows": benchmarks,
@@ -142,86 +285,10 @@ def main():
         applied = checked(prefix + ["catalog_master", "apply-plan", "--plan-out", plan, "--apply"], cwd=app) if plan else ""
         dry_state = checked(prefix + ["sync_publication_state", "apply", publication], cwd=app)
     after = snapshot(backup)
-    if not set(before["tools"]).issubset(after["tools"]) or not set(before["model_rows"]).issubset(after["model_rows"]):
-        raise RuntimeError("Trial removed an existing catalog record")
-    if sequence == 13 and {kind: plan_data["counts"].get(kind, 0) for kind in
-                           ("access_service", "service_provider", "benchmark_category")} != {
-                               "access_service": 11, "service_provider": 1, "benchmark_category": 1}:
-        raise RuntimeError("Release #013 plan counts differ from the approved scope")
-    if sequence == 16:
-        expected_counts = {"create": 8, "update": 0, "reassign": 0, "offer": 0, "evaluation": 0,
-                           "number": 0, "platforms": 0, "access_service": 0, "service_provider": 0,
-                           "benchmark_category": 0, "org_country": 0, "offer_new": 0,
-                           "access_new": 0, "origin_new": 0, "evaluation_new": 0}
-        if {kind: plan_data["counts"].get(kind, 0) for kind in expected_counts} != expected_counts:
-            raise RuntimeError("Release #016 plan counts differ from the approved scope")
-        for label in ("tools", "model_rows", "offers", "accesses"):
-            changed_existing = [key for key in before[label] if before[label][key] != after[label].get(key)]
-            if changed_existing:
-                raise RuntimeError("Release #016 changed existing %s rows outside creation plan: %s" % (
-                    label, changed_existing[:5]))
-        if (before["published_models"], before["published_tools"]) != (325, 147):
-            raise RuntimeError("Production baseline differs from the approved #016 predecessor")
-        if (after["published_models"], after["numbered_models"],
-                after["published_tools"], after["numbered_tools"]) != (331, 331, 149, 149):
-            raise RuntimeError("Release #016 trial catalog counts differ from approved Local: " +
-                               repr({k: after[k] for k in ("published_tools", "numbered_tools",
-                                   "published_models", "numbered_models")}))
-        if (before["evaluation_rows"], before["evaluation_public"],
-                after["evaluation_rows"], after["evaluation_public"]) != (5010, 2741, 5010, 2741):
-            raise RuntimeError("Release #016 changed evaluation totals")
-        if (before["source_rows"], before["benchmark_rows"],
-                after["source_rows"], after["benchmark_rows"]) != (999, 982, 1003, 982):
-            raise RuntimeError("Release #016 evidence dependency totals differ from approved Local")
-        if after["integrity"] != "ok" or after["foreign_keys"] or not after["numbers_continuous"] or not after["model_numbers_continuous"]:
-            raise RuntimeError("Release #016 SQLite integrity or numbering failed")
-        if "models changed=0" not in dry_state or "tools changed=0" not in dry_state:
-            raise RuntimeError("Publication-state dry-run differs from the approved #016 catalog plan")
-        report = {
-            "status": "PASS", "commit": commit, "sha256": digest, "backup": str(backup),
-            "catalog_plan": plan, "publication_state": publication,
-            "production_database_untouched": True,
-            "before": {k: v for k, v in before.items() if k not in ("tools", "model_rows", "offers", "accesses")},
-            "trial": {k: v for k, v in after.items() if k not in ("tools", "model_rows", "offers", "accesses")},
-            "created_models": len(after["model_rows"]) - len(before["model_rows"]),
-            "created_tools": len(after["tools"]) - len(before["tools"]),
-            "plan_dry_run": dry_plan[-600:], "plan_apply": applied[-600:],
-            "publication_dry_run": dry_state[-600:],
-        }
-        print(json.dumps(report, ensure_ascii=False, sort_keys=True))
-        return
-    unchanged = ("tools", "model_rows", "offers") if sequence == 13 else (
-        "tools", "model_rows", "offers", "accesses")
-    if any(before[k] != after[k] for k in unchanged):
-        raise RuntimeError("Trial changed model/tool identity, publication or price outside the approved plan")
-    if sequence == 13:
-        expected_access_ids = {int(change["id"].split("-", 1)[1]) for change in
-                               plan_data["changes"]
-                               if change["kind"] == "access_service"}
-        changed_access_ids = {key for key in before["accesses"] if before["accesses"][key] != after["accesses"].get(key)}
-        if before["accesses"].keys() != after["accesses"].keys() or changed_access_ids != expected_access_ids:
-            raise RuntimeError("Trial Access changes differ from the approved plan")
-        for key in changed_access_ids:
-            if {k: v for k, v in before["accesses"][key].items() if k != "service_id"} != {
-                    k: v for k, v in after["accesses"][key].items() if k != "service_id"}:
-                raise RuntimeError("Trial changed an Access field other than service_id")
-    if sequence >= 14:
+    if plan_data:
+        validate_catalog_plan_trial(plan_data, before, after, already_applied="already applied" in dry_plan.lower())
+    else:
         validate_code_only_catalog(copied, after)
-    if (before["published_models"], before["published_tools"]) != (325, 147):
-        raise RuntimeError("Production baseline differs from the approved release predecessor")
-    if (after["published_models"], after["numbered_models"],
-            after["published_tools"], after["numbered_tools"]) != (325, 325, 147, 147):
-        raise RuntimeError("Trial catalog counts differ from approved Local: " +
-                           repr({k: after[k] for k in ("published_tools", "numbered_tools",
-                               "published_models", "numbered_models")}))
-    expected_evaluations = (906, 851, 5010, 2741) if sequence == 12 else (5010, 2741, 5010, 2741)
-    expected_dependencies = (436, 35, 999, 982) if sequence == 12 else (999, 982, 999, 982)
-    if (before["evaluation_rows"], before["evaluation_public"],
-            after["evaluation_rows"], after["evaluation_public"]) != expected_evaluations:
-        raise RuntimeError("Trial evaluation totals differ from the approved Production delta")
-    if (before["source_rows"], before["benchmark_rows"],
-            after["source_rows"], after["benchmark_rows"]) != expected_dependencies:
-        raise RuntimeError("Trial evidence dependencies differ from the approved Production delta")
     if after["integrity"] != "ok" or after["foreign_keys"] or not after["numbers_continuous"] or not after["model_numbers_continuous"]:
         raise RuntimeError("Trial SQLite integrity or numbering failed")
     if "models changed=0" not in dry_state or "tools changed=0" not in dry_state:
@@ -230,8 +297,9 @@ def main():
         "status": "PASS", "commit": commit, "sha256": digest, "backup": str(backup),
         "catalog_plan": plan or None, "publication_state": publication,
         "production_database_untouched": True,
-        "before": {k: v for k, v in before.items() if k not in ("tools", "model_rows", "offers", "accesses")},
-        "trial": {k: v for k, v in after.items() if k not in ("tools", "model_rows", "offers", "accesses")},
+        "changed_factual_tables": changed_factual_tables(before, after),
+        "before": {k: v for k, v in before.items() if k not in ("tools", "model_rows", "offers", "accesses", "factual_tables")},
+        "trial": {k: v for k, v in after.items() if k not in ("tools", "model_rows", "offers", "accesses", "factual_tables")},
         "created_models": len(after["model_rows"]) - len(before["model_rows"]),
         "created_tools": len(after["tools"]) - len(before["tools"]),
         "plan_dry_run": dry_plan[-600:], "plan_apply": applied[-600:],

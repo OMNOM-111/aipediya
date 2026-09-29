@@ -74,6 +74,8 @@ PRODUCTION_COMMIT_RE = re.compile(
 )
 CURRENT_PRODUCTION_GIT_RE = re.compile(r"Git commit проверенного кандидата `([0-9a-f]{40})`")
 CURRENT_PRODUCTION_RELEASE_RE = re.compile(r"deployed candidate/release id `([0-9a-f]{40})`")
+CURRENT_PUBLIC_BLOCK_RE = re.compile(r"Текущий публичный выпуск.*?(?=\n### |\n## |\Z)", re.S)
+VERIFIED_RELEASE_ID_RE = re.compile(r"проверенный release id\s*`([0-9a-f]{40})`", re.S | re.I)
 EVIDENCE_RE = re.compile(
     r"## Доказательства для архива\n(.*?)(?:\n## |\Z)",
     re.S,
@@ -148,12 +150,16 @@ def parse_state_updated(text: str) -> str:
 
 
 def parse_production_commit(text: str) -> str:
-    match = CURRENT_PRODUCTION_GIT_RE.search(text) or PRODUCTION_COMMIT_RE.search(text)
+    current = CURRENT_PUBLIC_BLOCK_RE.search(text)
+    block = current.group(0) if current else text
+    match = CURRENT_PRODUCTION_GIT_RE.search(block) or VERIFIED_RELEASE_ID_RE.search(block) or PRODUCTION_COMMIT_RE.search(block)
     return match.group(1) if match else ""
 
 
 def parse_production_release(text: str) -> str:
-    match = CURRENT_PRODUCTION_RELEASE_RE.search(text)
+    current = CURRENT_PUBLIC_BLOCK_RE.search(text)
+    block = current.group(0) if current else text
+    match = VERIFIED_RELEASE_ID_RE.search(block) or CURRENT_PRODUCTION_RELEASE_RE.search(block)
     return match.group(1) if match else parse_production_commit(text)
 
 

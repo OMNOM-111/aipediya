@@ -10,23 +10,24 @@ class ReleaseHistoryTests(SimpleTestCase):
         registry = load()
         self.assertEqual(validate(registry), [])
         cards = [row for row in registry["product_history"]["milestones"] if row.get("release_sequence")]
-        self.assertEqual([row["release_sequence"] for row in cards], list(range(1, 17)))
-        self.assertEqual(cards[-1]["app_version"], "v0.14.0")
-        self.assertEqual(registry["product_history"]["current_local"]["release_sequence"], 16)
+        self.assertEqual([row["release_sequence"] for row in cards], list(range(1, 18)))
+        self.assertEqual(cards[-1]["app_version"], "v0.15.0")
+        self.assertEqual(registry["product_history"]["current_local"]["release_sequence"], 17)
         self.assertEqual(registry["product_history"]["current_production"]["release_sequence"], 16)
         self.assertTrue(cards[-2]["production_verified"])
-        self.assertTrue(cards[-1]["production_verified"])
+        self.assertFalse(cards[-1]["production_verified"])
+        self.assertEqual((cards[-1]["progress"], cards[-1]["local_verified"]), ("review", True))
 
     def test_gate_rejects_missing_review_qa_owner_and_stale_html(self):
         registry = load()
         previous = next(row for row in registry["product_history"]["milestones"]
-                        if row.get("release_sequence") == 15)
+                        if row.get("release_sequence") == 16)
         registry["product_history"]["current_production"].update(
-            release_id=previous["release_id"], release_sequence=15,
+            release_id=previous["release_id"], release_sequence=16,
             app_version=previous["app_version"], revision=previous["revision"],
             release_tag=previous["release_tag"])
         candidate = next(row for row in registry["product_history"]["milestones"]
-                         if row.get("release_sequence") == 16)
+                         if row.get("release_sequence") == 17)
         candidate.update(revision="a" * 40, production_verified=False,
                          production_released=False, owner_approved=False, local_verified=False,
                          progress="in_progress", changes=[], qa={})
@@ -38,15 +39,15 @@ class ReleaseHistoryTests(SimpleTestCase):
     def test_finalization_updates_same_card_after_health_and_qa(self):
         registry = load()
         prior = next(row for row in registry["product_history"]["milestones"]
-                     if row.get("release_sequence") == 15)
+                     if row.get("release_sequence") == 16)
         registry["product_history"]["current_production"].update(
-            release_id=prior["release_id"], release_sequence=15,
+            release_id=prior["release_id"], release_sequence=16,
             app_version=prior["app_version"], revision=prior["revision"],
             release_tag=prior["release_tag"])
         card = next(row for row in registry["product_history"]["milestones"]
-                    if row.get("release_sequence") == 16)
+                    if row.get("release_sequence") == 17)
         registry["product_history"]["current_local"].update(
-            release_id=card["release_id"], release_sequence=16,
+            release_id=card["release_id"], release_sequence=17,
             app_version=card["app_version"], release_tag=card["release_tag"])
         card.update(revision="a" * 40, local_verified=True,
                     owner_approved=True, production_verified=False,
@@ -59,6 +60,6 @@ class ReleaseHistoryTests(SimpleTestCase):
                      "docs/history/report.md", "backup.db", "QA PASS", "old release")
         result = finalize(registry, card["release_id"], "b" * 40,
                           "docs/history/report.md", "backup.db", "QA PASS", "b" * 40)
-        self.assertEqual(result["product_history"]["current_production"]["release_sequence"], 16)
+        self.assertEqual(result["product_history"]["current_production"]["release_sequence"], 17)
         self.assertEqual(len([x for x in result["product_history"]["milestones"]
                               if x["release_id"] == card["release_id"]]), 1)
