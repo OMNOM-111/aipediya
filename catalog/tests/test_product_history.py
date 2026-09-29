@@ -14,16 +14,16 @@ class ProductHistoryTests(SimpleTestCase):
         by_id = {row["release_id"]: row for row in cards}
         self.assertEqual(len(by_id), len(cards))
         self.assertEqual(len(cards), 20)
-        self.assertEqual(product["current_production"]["release_sequence"], 13)
-        self.assertEqual(product["current_production"]["app_version"], "v0.13.0")
-        self.assertEqual(product["current_production"]["revision"],
+        self.assertEqual(product["current_production"]["release_sequence"], 14)
+        self.assertEqual(product["current_production"]["app_version"], "v0.13.1")
+        self.assertEqual(by_id["release-2026-09-28-reconciliation-cleanup"]["revision"],
                          "5ba1e566338fc17d9b8965d3be180bc1df268e2e")
         self.assertEqual(product["current_local"]["release_sequence"], 14)
         locale_switch = by_id["LANGUAGE-SWITCH-2026-09-28"]
-        self.assertEqual((locale_switch["app_version"], locale_switch["progress"],
-                          locale_switch["local_verified"], locale_switch["owner_approved"],
-                          locale_switch["production_released"]),
-                         ("v0.13.1", "review", True, False, False))
+        self.assertEqual((locale_switch["app_version"], locale_switch["local_verified"],
+                          locale_switch["owner_approved"]), ("v0.13.1", True, True))
+        self.assertEqual((locale_switch["progress"], locale_switch["production_released"],
+                          locale_switch["production_verified"]), ("done", True, True))
         performance = by_id["PERFORMANCE-AUDIT-2026-09-28"]
         self.assertEqual((performance["release_sequence"], performance["app_version"],
                           performance["progress"], performance["local_verified"],
@@ -58,7 +58,7 @@ class ProductHistoryTests(SimpleTestCase):
         # The catalog/CSP stage was owner-approved and published.
         self.assertContains(page, 'class="ph-legend-dot is-review"', count=1)
         self.assertContains(page, 'Ожидает подтверждения владельца')
-        self.assertContains(page, 'class="ph-milestone ph-review ph-open"', count=1)
+        self.assertNotContains(page, 'class="ph-milestone ph-review ph-open"')
         self.assertContains(page, '61adedd6ea5e6a0955d51d87374fa2fa9bcc7799')
         self.assertContains(page, 'PLANNED')
         self.assertContains(page, 'кампания не создана и не запущена.')
@@ -70,7 +70,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertContains(page, 'class="ph-environment ph-local"', count=1)
         self.assertContains(page, 'class="ph-environment ph-production"', count=1)
         self.assertNotContains(page, 'class="ph-environment ph-git"')
-        self.assertContains(page, 'class="ph-git-detail"', count=4)
+        self.assertContains(page, 'class="ph-git-detail"', count=3)
         self.assertEqual(page["Cache-Control"], "private, no-store")
         self.assertEqual(self.client.get("/ru/history/source/release").status_code, 200)
         self.assertEqual(self.client.get("/history/source/GSD-1.0-release-scope").status_code, 200)
@@ -115,7 +115,7 @@ class ProductHistoryTests(SimpleTestCase):
         organic_id = "release-2026-09-26-search-visibility-optimization-v2"
         self.assertEqual(entries[organic_id]["stage"], "released")
         self.assertEqual(registry["product_history"]["current_production"]["release_tag"],
-                         "release-2026-09-28-reconciliation-cleanup")
+                         "release-2026-09-28-language-switch")
         paid_card = next(row for row in registry["product_history"]["milestones"] if row["release_id"] == paid_id)
         self.assertTrue(paid_card["open"])
         self.assertEqual(paid_card["progress"], "planned")
@@ -134,7 +134,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn("Проверено владельцем", card["tags_ru"])
         self.assertNotIn("Визуальная проверка ожидается", card["tags_ru"])
         self.assertIn("Визуальная проверка", task["owner_ru"])
-        self.assertEqual(registry["product_history"]["current_production"]["release_tag"], "release-2026-09-28-reconciliation-cleanup")
+        self.assertEqual(registry["product_history"]["current_production"]["release_tag"], "release-2026-09-28-language-switch")
 
     @override_settings(AIPEDIA_ENV="production", SECURE_SSL_REDIRECT=False)
     def test_history_is_private_in_production(self):
@@ -149,7 +149,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn('id="edition-ru"', page)
         self.assertIn('id="edition-en"', page)
         self.assertEqual(page.count('data-history-open='), 40)
-        self.assertEqual(page.count('class="ph-milestone ph-review ph-open"'), 2)
+        self.assertEqual(page.count('class="ph-milestone ph-review ph-open"'), 0)
         self.assertGreaterEqual(page.count('class="ph-legend-dot is-review"'), 2)
         self.assertIn('.ph-review .ph-dot', page)
         self.assertIn('Утверждено владельцем', page)
@@ -191,7 +191,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn('class="ph-change-chips"', page)
         self.assertIn('id="ph-dialog-body"', page)
         self.assertIn('id="ph-close"', page)
-        self.assertEqual(page.count("data-change-card"), 174)
+        self.assertEqual(page.count("data-change-card"), 176)
         self.assertIn('data-history-open="PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26"', page)
         self.assertIn('Кампания не создана и не запущена.', page)
         gsd_details = re.findall(r'<template id="ph-detail-GSD-1\.0">(.*?)</template>', page, re.S)

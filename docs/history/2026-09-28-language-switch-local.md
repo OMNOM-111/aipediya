@@ -1,6 +1,85 @@
 # Language switching across 22 locales — Local bugfix #014
 
-Release #014 / v0.13.1. The owner reported that selecting Español on Production did not work correctly. This report separates the reproduced fault from menu paths that currently pass. Production remains at #013 until the owner reviews Local and authorizes this exact release.
+Release #014 / v0.13.1. The owner reported that selecting Español on Production did not work correctly. This report separates the reproduced fault from menu paths that currently pass. The authorized #014 Production release subsequently passed Public QA and is recorded in `docs/history/2026-09-29-language-switch-release.md`; the pre-release checkpoints below are retained as historical evidence.
+
+## Owner acceptance and release authorization — 2026-09-29
+
+The owner accepted the running Local at `127.0.0.1:18810`, the fresh 44/44
+locale roots and 44/44 representative panels, 1,936 canonical server-rendered
+language links, the full Django suite, and the earlier 88/88 browser menu matrix.
+The loopback browser-tool policy is explicitly waived as a gate for this exact
+release. The owner authorized Production deployment of #014 / v0.13.1 from
+verified code baseline `77e7f53cd8aa621b392d52d5b5ae8851ab77456c` under
+`docs/RELEASE.md`. Performance work #015 remains separate.
+
+The first isolated archive suite exposed a stale Timeline test that still
+expected `owner_approved=false`. The archived runtime code was unaffected. The
+regression now validates the approved `review` state and the later verified
+`done` state; the candidate is rebuilt from the same base commit and must pass
+the complete isolated suite before any server release trial.
+
+## Local availability correction, 2026-09-29
+
+The first handoff failed owner visual acceptance: the advertised
+`http://127.0.0.1:18810/es/` returned `ERR_CONNECTION_REFUSED`. There was no
+listener on port 18810 and the Local PID file named an absent process (`37480`).
+The canonical `start-local.ps1` starts Waitress as a child and waits for it;
+the earlier launch was tied to a temporary command session. That is the
+likely lifecycle mechanism, though the old process's exact exit event was not
+logged. The direct cause of the refusal was the absent Local listener.
+
+The same canonical launcher was started as a detached, hidden Local process.
+After the performance work was isolated to a separate #015 branch, the clean
+`main` code for #014 was restored and only AIpediya Local was restarted. The
+new Waitress PID `32860` listened on **127.0.0.1:18810** after the start
+command returned. `/healthz`, `/`, `/es/`, `/ru/`, `/tools/`, and `/es/tools/`
+all returned HTTP 200. No SQLite copy or production change was made.
+
+The owner confirmed that, after the first recovery, ES/RU pages opened in an
+ordinary browser and the menu switch to Español worked from RU/EN and an open
+Model without losing the panel. A renewed owner check of the final clean #014
+Local is pending. Codex's browser-control tool refused loopback access under
+its security policy and explicitly prohibited an alternate browser route, so
+the original 88/88 browser pass on #014 is preserved as earlier evidence but
+was not rerun after this launcher recovery. The fix code itself did not change.
+
+Production read-only preflight still showed #013. The owner has conditionally
+authorized deployment of exactly #014 after Local is verified; Timeline owner
+approval, release archive, tag, deploy and public QA remain pending. The
+measured performance change lives only on `codex/aipedia-performance-015` and
+is outside this release.
+
+## Code-only release gate after Local recovery
+
+### Independent Local recheck after the owner requested self-verification
+
+The browser-control tool rejected the existing Local tab again with its URL
+policy, despite the `http://` URL, and explicitly disallowed alternate browser
+surfaces or indirect browser commands. No fresh browser click is claimed. A
+new, independent read-only check against the running Waitress service passed
+44/44 Models/Tools locale roots and 44/44 representative Model/Tool panel URLs.
+For each response it checked final URL without redirect, HTTP 200, matching
+`<html lang>` and `dir`, visible table rows or an open panel with the same slug,
+and every language-menu link. Across those 88 responses, 1,936 menu `href`s
+matched the canonical locale paths, with zero failures. The dedicated Django
+language-switch tests passed 3/3. Local still listened on `127.0.0.1:18810`
+after the commands. This covers live HTTP/SSR and server-rendered menu links;
+the earlier 88/88 browser report remains the JS and click evidence from before
+the Local launcher outage.
+
+The release-tool review found that `tools/server.py` still defaulted to a
+catalog plan from an earlier release, while server trial preflight accepted
+only release sequences 12 and 13. A code-only #014 archive would have selected
+the wrong data plan or failed before deployment. The wrapper now omits
+`--catalog-plan` unless requested explicitly, and the preflight treats #014 as
+code-only. It runs check/migrate and publication-state dry-run on an online
+Production backup and compares a deterministic SHA-256 of every `catalog_*`
+table before and after the trial. This preparation does not write the live
+Production database. Regression tests reject an implicit catalog plan and a
+changed translation row. `manage.py test catalog` passed 332 tests with one
+Windows skip; Local GSD passed 33/33; Local SQLite integrity/FK and 325/147
+counts were confirmed. The release gate remains closed pending the owner's
+final visual check and the browser-control policy limitation noted above.
 
 ## Public browser diagnosis before the fix
 

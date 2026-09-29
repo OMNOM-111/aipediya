@@ -12,6 +12,7 @@ import tempfile
 import time
 import zipfile
 from collections import Counter
+from contextlib import closing
 from pathlib import Path
 
 
@@ -27,8 +28,21 @@ def checked(command, *, cwd=None):
     return result.stdout.strip()
 
 
+def validate_release_scope(sequence, plan):
+    if sequence in (12, 13) and plan:
+        return
+    if sequence == 14 and not plan:
+        return
+    raise RuntimeError("Catalog plan does not match release scope")
+
+
+def validate_code_only_catalog(copied, after):
+    if copied["catalog_sha256"] != after["catalog_sha256"]:
+        raise RuntimeError("Code-only trial changed catalog data")
+
+
 def snapshot(path):
-    with sqlite3.connect(f"file:{path}?mode=ro", uri=True) as db:
+    with closing(sqlite3.connect(f"file:{path}?mode=ro", uri=True)) as db:
         db.row_factory = sqlite3.Row
         integrity = db.execute("PRAGMA integrity_check").fetchone()[0]
         fk = len(db.execute("PRAGMA foreign_key_check").fetchall())
@@ -43,9 +57,20 @@ def snapshot(path):
         evaluations = db.execute("SELECT COUNT(*), COALESCE(SUM(public), 0) FROM catalog_evaluation").fetchone()
         sources = db.execute("SELECT COUNT(*) FROM catalog_source").fetchone()[0]
         benchmarks = db.execute("SELECT COUNT(*) FROM catalog_benchmark").fetchone()[0]
+        catalog_digest = hashlib.sha256()
+        tables = db.execute(
+            "SELECT name, sql FROM sqlite_master WHERE type='table' AND name LIKE 'catalog_%' ORDER BY name")
+        for table, schema in tables:
+            catalog_digest.update(repr((table, schema)).encode("utf-8"))
+            catalog_digest.update(b"\n")
+            quoted = '"' + table.replace('"', '""') + '"'
+            for row in db.execute(f"SELECT * FROM {quoted} ORDER BY rowid"):
+                catalog_digest.update(repr(tuple(row)).encode("utf-8"))
+                catalog_digest.update(b"\n")
         return {
             "integrity": integrity, "foreign_keys": fk, "tools": tools, "model_rows": model_rows,
             "offers": offers, "accesses": accesses,
+            "catalog_sha256": catalog_digest.hexdigest(),
             "evaluation_rows": evaluations[0], "evaluation_public": evaluations[1],
             "source_rows": sources, "benchmark_rows": benchmarks,
             "published_tools": len(published), "numbered_tools": len(numbers),
@@ -60,6 +85,7 @@ def snapshot(path):
 
 def main():
     archive, digest, commit, plan, publication = sys.argv[1:]
+    plan = "" if plan == "-" else plan
     if not re.fullmatch(r"/tmp/aipedia-code-[0-9a-f]{12}-[0-9a-f]{12}\.zip", archive):
         raise RuntimeError("Archive must be inside the AIpediya temporary namespace")
     if not re.fullmatch(r"[0-9a-f]{64}", digest) or not re.fullmatch(r"[0-9a-f]{40}", commit):
@@ -75,9 +101,11 @@ def main():
                 raise RuntimeError("Unsafe release entry: " + name)
             if hashlib.sha256(z.read(name)).hexdigest() != expected:
                 raise RuntimeError("Release entry digest mismatch: " + name)
-        if "app/" + plan not in manifest["files"] or "app/" + publication not in manifest["files"]:
+        sequence = manifest["release_sequence"]
+        validate_release_scope(sequence, plan)
+        if (plan and "app/" + plan not in manifest["files"]) or "app/" + publication not in manifest["files"]:
             raise RuntimeError("Approved catalog plan/publication manifest absent")
-        plan_data = json.loads(z.read("app/" + plan))
+        plan_data = json.loads(z.read("app/" + plan)) if plan else None
     before = snapshot(DB)
     if before["integrity"] != "ok" or before["foreign_keys"]:
         raise RuntimeError("Production SQLite baseline failed integrity checks")
@@ -110,13 +138,12 @@ def main():
                   f"AIPEDIA_DB={backup}", str(ROOT / "venv/bin/python"), str(app / "manage.py")]
         checked(prefix + ["check"], cwd=app)
         checked(prefix + ["migrate", "--noinput"], cwd=app)
-        dry_plan = checked(prefix + ["catalog_master", "apply-plan", "--plan-out", plan], cwd=app)
-        applied = checked(prefix + ["catalog_master", "apply-plan", "--plan-out", plan, "--apply"], cwd=app)
+        dry_plan = checked(prefix + ["catalog_master", "apply-plan", "--plan-out", plan], cwd=app) if plan else ""
+        applied = checked(prefix + ["catalog_master", "apply-plan", "--plan-out", plan, "--apply"], cwd=app) if plan else ""
         dry_state = checked(prefix + ["sync_publication_state", "apply", publication], cwd=app)
     after = snapshot(backup)
     if not set(before["tools"]).issubset(after["tools"]) or not set(before["model_rows"]).issubset(after["model_rows"]):
         raise RuntimeError("Trial removed an existing catalog record")
-    sequence = manifest["release_sequence"]
     if sequence == 13 and {kind: plan_data["counts"].get(kind, 0) for kind in
                            ("access_service", "service_provider", "benchmark_category")} != {
                                "access_service": 11, "service_provider": 1, "benchmark_category": 1}:
@@ -136,6 +163,8 @@ def main():
             if {k: v for k, v in before["accesses"][key].items() if k != "service_id"} != {
                     k: v for k, v in after["accesses"][key].items() if k != "service_id"}:
                 raise RuntimeError("Trial changed an Access field other than service_id")
+    if sequence == 14:
+        validate_code_only_catalog(copied, after)
     if (before["published_models"], before["published_tools"]) != (325, 147):
         raise RuntimeError("Production baseline differs from the approved release predecessor")
     if (after["published_models"], after["numbered_models"],
@@ -145,7 +174,7 @@ def main():
                                "published_models", "numbered_models")}))
     expected_evaluations = (906, 851, 5010, 2741) if sequence == 12 else (5010, 2741, 5010, 2741)
     expected_dependencies = (436, 35, 999, 982) if sequence == 12 else (999, 982, 999, 982)
-    if sequence not in (12, 13) or (before["evaluation_rows"], before["evaluation_public"],
+    if (before["evaluation_rows"], before["evaluation_public"],
             after["evaluation_rows"], after["evaluation_public"]) != expected_evaluations:
         raise RuntimeError("Trial evaluation totals differ from the approved Production delta")
     if (before["source_rows"], before["benchmark_rows"],
@@ -157,7 +186,7 @@ def main():
         raise RuntimeError("Publication-state dry-run differs from the approved catalog plan")
     report = {
         "status": "PASS", "commit": commit, "sha256": digest, "backup": str(backup),
-        "catalog_plan": plan, "publication_state": publication,
+        "catalog_plan": plan or None, "publication_state": publication,
         "production_database_untouched": True,
         "before": {k: v for k, v in before.items() if k not in ("tools", "model_rows", "offers", "accesses")},
         "trial": {k: v for k, v in after.items() if k not in ("tools", "model_rows", "offers", "accesses")},
