@@ -254,11 +254,31 @@ def verify_release(backup_name):
     print("RELEASE COMPARE = PASS")
 
 
+def metrics(seconds=5):
+    """Read AIpediya-only process, database and log metrics on the shared host."""
+    script = (ROOT / "tools" / "server_metrics.py").read_text(encoding="utf-8")
+    result = run(["ssh", ALIAS, "sudo", "-n", "python3", "-", str(seconds)],
+                 input_text=script, timeout=seconds + 30)
+    if result.returncode:
+        raise SystemExit("SERVER METRICS = FAIL: " + (result.stderr.strip() or result.stdout.strip()))
+    try:
+        report = json.loads(result.stdout)
+    except ValueError as exc:
+        raise SystemExit("SERVER METRICS = FAIL: invalid response: " + result.stdout[:500]) from exc
+    REPORT_DIR.mkdir(parents=True, exist_ok=True)
+    path = REPORT_DIR / ("metrics-" + time.strftime("%Y%m%dT%H%M%SZ", time.gmtime()) + ".json")
+    path.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    print("SERVER METRICS = SAVED: " + str(path))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     for name in ("preflight", "health", "status", "catalog", "snapshot"):
         commands.add_parser(name)
+    metric_command = commands.add_parser("metrics")
+    metric_command.add_argument("--seconds", type=int, choices=(5, 10, 30), default=5)
     comparison = commands.add_parser("verify-release")
     comparison.add_argument("backup_name")
     for name in ("upload", "release-preflight", "deploy"):
@@ -276,6 +296,9 @@ def main():
         return
     if args.command == "snapshot":
         snapshot_baseline()
+        return
+    if args.command == "metrics":
+        metrics(args.seconds)
         return
     if args.command == "verify-release":
         verify_release(args.backup_name)

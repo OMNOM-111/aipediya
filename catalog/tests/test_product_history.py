@@ -13,7 +13,7 @@ class ProductHistoryTests(SimpleTestCase):
         cards = product["milestones"]
         by_id = {row["release_id"]: row for row in cards}
         self.assertEqual(len(by_id), len(cards))
-        self.assertEqual(len(cards), 19)
+        self.assertEqual(len(cards), 20)
         self.assertEqual(product["current_production"]["release_sequence"], 13)
         self.assertEqual(product["current_production"]["app_version"], "v0.13.0")
         self.assertEqual(product["current_production"]["revision"],
@@ -24,6 +24,11 @@ class ProductHistoryTests(SimpleTestCase):
                           locale_switch["local_verified"], locale_switch["owner_approved"],
                           locale_switch["production_released"]),
                          ("v0.13.1", "review", True, False, False))
+        performance = by_id["PERFORMANCE-AUDIT-2026-09-28"]
+        self.assertEqual((performance["release_sequence"], performance["app_version"],
+                          performance["progress"], performance["local_verified"],
+                          performance["production_released"]),
+                         (15, "v0.13.2", "in_progress", False, False))
         versions = by_id["VERSION-HISTORY-2026-09-27"]
         self.assertEqual((versions["progress"], versions["local_verified"],
                           versions["owner_approved"], versions["production_verified"]),
@@ -49,7 +54,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertContains(page, "GSD-1.0")
         self.assertContains(page, "Каноническая база каталога")
         self.assertContains(page, "ed103a3ff163")
-        self.assertContains(page, 'aria-haspopup="dialog"', count=19)
+        self.assertContains(page, 'aria-haspopup="dialog"', count=20)
         # The catalog/CSP stage was owner-approved and published.
         self.assertContains(page, 'class="ph-legend-dot is-review"', count=1)
         self.assertContains(page, 'Ожидает подтверждения владельца')
@@ -65,7 +70,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertContains(page, 'class="ph-environment ph-local"', count=1)
         self.assertContains(page, 'class="ph-environment ph-production"', count=1)
         self.assertNotContains(page, 'class="ph-environment ph-git"')
-        self.assertContains(page, 'class="ph-git-detail"', count=3)
+        self.assertContains(page, 'class="ph-git-detail"', count=4)
         self.assertEqual(page["Cache-Control"], "private, no-store")
         self.assertEqual(self.client.get("/ru/history/source/release").status_code, 200)
         self.assertEqual(self.client.get("/history/source/GSD-1.0-release-scope").status_code, 200)
@@ -84,6 +89,10 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertContains(
             self.client.get("/ru/history/source/2026-09-28-language-switch"),
             "22 locales",
+        )
+        self.assertContains(
+            self.client.get("/ru/history/source/2026-09-28-performance-audit"),
+            "Release #015",
         )
         self.assertEqual(self.client.get("/ru/history/source/secret").status_code, 404)
 
@@ -139,7 +148,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn("connect-src 'none'", page)
         self.assertIn('id="edition-ru"', page)
         self.assertIn('id="edition-en"', page)
-        self.assertEqual(page.count('data-history-open='), 38)
+        self.assertEqual(page.count('data-history-open='), 40)
         self.assertEqual(page.count('class="ph-milestone ph-review ph-open"'), 2)
         self.assertGreaterEqual(page.count('class="ph-legend-dot is-review"'), 2)
         self.assertIn('.ph-review .ph-dot', page)
@@ -150,7 +159,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn('release-2026-09-28-reconciliation-cleanup', page)
         self.assertIn('ГОТОВО В LOCAL', page)
         self.assertIn('.ph-in_progress .ph-dot', page)
-        self.assertEqual(page.count('data-history-source-template='), 22)
+        self.assertEqual(page.count('data-history-source-template='), 23)
         self.assertEqual(page.count('class="ph-environment ph-local"'), 2)
         self.assertEqual(page.count('class="ph-environment ph-production"'), 2)
         self.assertIn("Номер обращения на экране не показан", page)
@@ -168,8 +177,8 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn('id="edition-toggle"', page)
         self.assertIn('class="ph-theme-icon"', page)
         self.assertIn('class="ph-theme-label"', page)
-        self.assertEqual(page.count('class="ph-release-card"'), 38)
-        self.assertEqual(page.count('role="button" tabindex="0" aria-haspopup="dialog"'), 38)
+        self.assertEqual(page.count('class="ph-release-card"'), 40)
+        self.assertEqual(page.count('role="button" tabindex="0" aria-haspopup="dialog"'), 40)
         self.assertIn("20 сентября 2026", page)
         self.assertIn("25 сентября 2026", page)
         feature_lists = re.findall(r'<ol class="ph-feature-list">(.*?)</ol>', page, re.S)
@@ -182,7 +191,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn('class="ph-change-chips"', page)
         self.assertIn('id="ph-dialog-body"', page)
         self.assertIn('id="ph-close"', page)
-        self.assertEqual(page.count("data-change-card"), 170)
+        self.assertEqual(page.count("data-change-card"), 174)
         self.assertIn('data-history-open="PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26"', page)
         self.assertIn('Кампания не создана и не запущена.', page)
         gsd_details = re.findall(r'<template id="ph-detail-GSD-1\.0">(.*?)</template>', page, re.S)

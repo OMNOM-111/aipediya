@@ -6,12 +6,12 @@ from tools.finalize_release_history import finalize
 
 
 class ReleaseHistoryTests(SimpleTestCase):
-    def test_local_fourteen_is_reserved_while_production_remains_thirteen(self):
+    def test_fifteen_is_reserved_on_branch_while_local_fourteen_and_production_thirteen_remain(self):
         registry = load()
         self.assertEqual(validate(registry), [])
         cards = [row for row in registry["product_history"]["milestones"] if row.get("release_sequence")]
-        self.assertEqual([row["release_sequence"] for row in cards], list(range(1, 15)))
-        self.assertEqual(cards[-1]["app_version"], "v0.13.1")
+        self.assertEqual([row["release_sequence"] for row in cards], list(range(1, 16)))
+        self.assertEqual(cards[-1]["app_version"], "v0.13.2")
         self.assertEqual(registry["product_history"]["current_local"]["release_sequence"], 14)
         self.assertEqual(registry["product_history"]["current_production"]["release_sequence"], 13)
 

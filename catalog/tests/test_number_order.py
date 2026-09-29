@@ -115,6 +115,21 @@ class NumberOrderTests(TestCase):
             tools = self.numbers(self.listing("/tools/", sort="release_desc"))
             self.assertEqual(tools, [3, 2, 1, None, None])
 
+    def test_default_release_page_only_decorates_visible_models(self):
+        from catalog.comparison import decorate
+
+        with mock.patch("catalog.views.INITIAL_PAGE_SIZE", 3), mock.patch("catalog.views.CHUNK_SIZE", 2), \
+             mock.patch("catalog.views.decorate", wraps=decorate) as decorated:
+            first = self.client.get("/")
+            self.assertEqual(first.status_code, 200)
+            self.assertEqual(self.numbers(ROW.findall(first.content.decode())), [8, 7, 6])
+            self.assertEqual(decorated.call_count, 3)
+            decorated.reset_mock()
+            second = self.client.get("/", {"page": 2, "partial": "rows"})
+            self.assertEqual(second.status_code, 200)
+            self.assertEqual(self.numbers(ROW.findall(second.content.decode())), [5, 4])
+            self.assertEqual(decorated.call_count, 2)
+
     def test_filter_leaves_gaps_but_keeps_direction(self):
         numbers = self.numbers(self.listing("/", developer=str(self.lab_a.pk)))
         self.assertTrue(0 < len(numbers) < 8)

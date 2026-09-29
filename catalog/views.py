@@ -261,6 +261,29 @@ def _number_page(qs, number, descending=False):
     return CatalogPaginator.page_from_slice(object_list, count, page_number)
 
 
+def _release_page(qs, number, descending=False):
+    """Page by actual release date, then number, before hydrating related rows.
+
+    The date is authoritative: a newly backfilled older record can temporarily
+    have a newer number until master synchronization renumbers it.
+    """
+    from django.db.models.functions import Coalesce
+
+    count = qs.count()
+    paginator = CatalogPaginator([])
+    paginator.count = count
+    paginator.num_pages = 1 + max(0, count - INITIAL_PAGE_SIZE + CHUNK_SIZE - 1) // CHUNK_SIZE
+    page_number, start, end = paginator.bounds(number)
+    dated = qs.annotate(_release_date=Coalesce("released", "approx_released"))
+    if descending:
+        ordered = dated.order_by(F("_release_date").desc(),
+                                 F("public_number").desc(nulls_first=True), "-pk")
+    else:
+        ordered = dated.order_by(F("_release_date").asc(),
+                                 F("public_number").asc(nulls_last=True), "pk")
+    return CatalogPaginator.page_from_slice(list(ordered[start:end]), count, page_number)
+
+
 def _tool_catalog_context(request, selected_slug=None, hub=None):
     qs = tools()
     if hub is not None:
@@ -599,14 +622,24 @@ def _catalog_context(request, selected_slug=None, hub=None):
     if snapshot not in snapshots:
         snapshot = snapshots[0] if snapshots else ""
     qs = qs.distinct()
-    fast_number_page = (
-        sort in {"number_asc", "number_desc"}
-        and not price_unit
+    fast_page_base = (
+        not price_unit
         and benchmark is None
         and request.GET.get("evaluated_only") != "1"
     )
+    fast_number_page = fast_page_base and sort in {"number_asc", "number_desc"}
+    # The old in-memory sorter leaves undated entries at the end in both
+    # directions. Keep that path when such records exist; dated records can be
+    # ordered and sliced in SQL without changing their release-date semantics.
+    fast_release_page = (
+        fast_page_base and sort in {"release_asc", "release_desc"}
+        and not qs.filter(released__isnull=True, approx_released__isnull=True).exists()
+    )
     if fast_number_page:
-        page = _number_page(qs, request.GET.get("page"), descending=sort == "number_desc")
+        page = _number_page(qs, request.GET.get("page"), descending=sort.endswith("_desc"))
+        models = list(page.object_list)
+    elif fast_release_page:
+        page = _release_page(qs, request.GET.get("page"), descending=sort.endswith("_desc"))
         models = list(page.object_list)
     else:
         models = list(qs)
@@ -628,7 +661,7 @@ def _catalog_context(request, selected_slug=None, hub=None):
     if request.GET.get("evaluated_only") == "1" and benchmark:
         models = [item for item in models if item.comparison_evaluation]
     comparison_count = sum(bool(item.comparison_offer) for item in models)
-    if not fast_number_page:
+    if not (fast_number_page or fast_release_page):
         models = sort_models(models, sort, benchmark)
         page = CatalogPaginator(models).get_page(request.GET.get("page"))
     counts = _catalog_counts()
@@ -658,7 +691,7 @@ def _catalog_context(request, selected_slug=None, hub=None):
         "comparison_count": comparison_count,
         "developers": ModelVersion.objects.filter(published=True, entry_type="model").values("family__developer_id", "family__developer__name").distinct().order_by("family__developer__name"),
         "found_count": page.paginator.count, "shown_count": len(page.object_list),
-        **_numbering_counts(page, qs if fast_number_page else None),
+        **_numbering_counts(page, qs if fast_number_page or fast_release_page else None),
         "kind": kind, "entry_type": entry_type, "entry_types": ENTRY_TYPES,
         "access": access, "developer": developer,
         "entity_kind": "model", "selected_entity": selected_model,

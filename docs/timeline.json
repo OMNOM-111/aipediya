@@ -888,6 +888,17 @@
       "history": "docs/history/2026-09-28-language-switch-local.md",
       "release_tag": "release-2026-09-28-language-switch",
       "summary": "Public browser testing found a stale remembered-language shortcut after History API changes; repaired in Local. The standard expanded-menu Espanol path was not reproduced as broken. All 22 locales pass menu-driven Local QA; owner visual review and separate Production authorization remain required."
+    },
+    {
+      "release_id": "PERFORMANCE-AUDIT-2026-09-28",
+      "release_sequence": 15,
+      "app_version": "v0.13.2",
+      "title": "Isolated AIpediya load optimization",
+      "environment": "local",
+      "stage": "in_progress",
+      "history": "docs/history/2026-09-28-performance-audit-local.md",
+      "release_tag": "release-2026-09-28-performance-audit",
+      "summary": "Production process baseline and Local profiling identified full-catalog Model hydration before pagination. SQL release-date paging improves Local response time; post-change browser gate and separate release authorization remain pending."
     }
   ],
   "product_history": {
@@ -1744,6 +1755,41 @@
         "changes": [
           "Synchronize the remembered-language link with menu links after History API updates",
           "Add 22-locale Django routing and browser menu regressions"
+        ]
+      },
+      {
+        "release_id": "PERFORMANCE-AUDIT-2026-09-28",
+        "release_sequence": 15,
+        "app_version": "v0.13.2",
+        "local_verified": false,
+        "owner_approved": false,
+        "production_released": false,
+        "production_verified": false,
+        "date": "2026-09-28",
+        "title_ru": "Аудит нагрузки и быстрые страницы моделей",
+        "title_en": "Load audit and faster model pages",
+        "icon": "activity",
+        "tags_ru": ["Release #015", "v0.13.2", "Local QA продолжается"],
+        "tags_en": ["Release #015", "v0.13.2", "Local QA in progress"],
+        "capabilities_ru": [
+          "Измерена нагрузка именно процесса AIpediya и стоимость основных публичных страниц.",
+          "Обычная хронологическая выдача моделей выбирает текущую страницу до предзагрузки связей; сохранена сортировка по дате."
+        ],
+        "capabilities_en": [
+          "Measured the AIpediya process and representative public request costs.",
+          "Chronological model listings select the current page before prefetch; release-date ordering is preserved."
+        ],
+        "source": "2026-09-28-performance-audit",
+        "open": true,
+        "progress": "in_progress",
+        "release_tag": "release-2026-09-28-performance-audit",
+        "qa": {
+          "local": "331 catalog tests OK (one skip); check, master check/qa PASS; 44/44 live locale roots and GSD Local 33/33; post-change 88-case browser gate pending",
+          "production": "Read-only baseline only; #013 remains published and #015 has no deployment authorization"
+        },
+        "changes": [
+          "Page chronological Models in SQL before prefetch and decoration",
+          "Add read-only AIpediya process metrics and repeatable Local request profiling"
         ]
       }
     ],
