@@ -13,7 +13,7 @@ class ProductHistoryTests(SimpleTestCase):
         cards = product["milestones"]
         by_id = {row["release_id"]: row for row in cards}
         self.assertEqual(len(by_id), len(cards))
-        self.assertEqual(len(cards), 23)
+        self.assertEqual(len(cards), 24)
         self.assertEqual(product["current_production"]["release_sequence"], 16)
         self.assertEqual(product["current_production"]["app_version"], "v0.14.0")
         self.assertEqual(by_id["release-2026-09-28-reconciliation-cleanup"]["revision"],
@@ -51,10 +51,11 @@ class ProductHistoryTests(SimpleTestCase):
                  (16, "v0.14.0", "done", "GitHub Copilot", True))
         universal = by_id["UNIVERSAL-CATALOG-RELEASE-2026-09-29"]
         self.assertEqual((universal["release_sequence"], universal["app_version"], universal["progress"],
-                  universal["local_verified"], universal["production_released"]),
-                         (17, "v0.15.0", "review", True, False))
+                          universal["local_verified"], universal["owner_approved"], universal["production_released"]),
+                         (17, "v0.15.0", "done", True, True, False))
         self.assertEqual([row["release_id"] for row in cards if row["progress"] == "planned"],
-                         ["PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26"])
+                         ["PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26",
+                          "ORGANIC-SEARCH-FOLLOWUP-2026-09-30"])
 
     def test_local_history_and_sources(self):
         page = self.client.get("/ru/history/")
@@ -114,9 +115,13 @@ class ProductHistoryTests(SimpleTestCase):
         registry = json.loads((Path(__file__).resolve().parents[2] / "docs/timeline.json").read_text(encoding="utf-8"))
         entries = {row["release_id"]: row for row in registry["entries"]}
         paid_id = "PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26"
+        followup_id = "ORGANIC-SEARCH-FOLLOWUP-2026-09-30"
         self.assertEqual(entries[paid_id]["stage"], "planned")
         self.assertEqual(entries[paid_id]["status"], "PLANNED")
-        self.assertEqual(entries[paid_id]["planned_after"], "2026-09-30")
+        self.assertEqual(entries[paid_id]["planned_after"], "organic-search-followup-complete")
+        self.assertEqual(entries[paid_id]["blocked_by"], followup_id)
+        self.assertEqual(entries[followup_id]["stage"], "planned")
+        self.assertEqual(entries[followup_id]["planned_after"], "2026-09-30")
         self.assertEqual(entries[paid_id]["monthly_budget_usd_max"], 15)
         self.assertEqual(entries["GSD-1.0"]["stage"], "released")
         organic_id = "release-2026-09-26-search-visibility-optimization-v2"
@@ -127,7 +132,12 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertTrue(paid_card["open"])
         self.assertEqual(paid_card["progress"], "planned")
         self.assertIsNone(paid_card["revision"])
+        self.assertIn("Do not launch Google Ads now", " ".join(paid_card["capabilities_en"]))
         self.assertIn("paid clicks", " ".join(paid_card["capabilities_en"]))
+        followup_card = next(row for row in registry["product_history"]["milestones"] if row["release_id"] == followup_id)
+        self.assertTrue(followup_card["open"])
+        self.assertEqual(followup_card["progress"], "planned")
+        self.assertIn("34/34 PASS", " ".join(followup_card["capabilities_en"]))
 
     def test_offline_history_records_owner_visual_check_without_publication(self):
         registry = json.loads((Path(__file__).resolve().parents[2] / "docs/timeline.json").read_text(encoding="utf-8"))
@@ -162,7 +172,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn('release-2026-09-28-reconciliation-cleanup', page)
         self.assertNotIn('data-history-open="PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26"', page)
         self.assertNotIn('data-history-open="HISTORY-LOCAL-SHELL-2026-09-29"', page)
-        self.assertEqual(page.count('data-history-source-template='), 26)
+        self.assertEqual(page.count('data-history-source-template='), 27)
         self.assertEqual(page.count('class="ph-environment ph-local"'), 2)
         self.assertEqual(page.count('class="ph-environment ph-production"'), 2)
         self.assertIn("Номер обращения на экране не показан", page)

@@ -1,16 +1,25 @@
 # Текущее состояние AIpedia
 
-Обновлено (UTC): 2026-09-29T22:22:59Z
+Обновлено (UTC): 2026-09-29T22:49:54Z
 
-## 29.09 — Release #017 / v0.15.0 Universal Catalog Release, Local QA PASS; Production не менялась (GitHub Copilot)
+## 29.09 — Release #017 / v0.15.0 Universal Catalog Release DONE; Production не требовалась (GitHub Copilot)
 
-- Создана Timeline-карточка `UNIVERSAL-CATALOG-RELEASE-2026-09-29`, Release #017 / `v0.15.0`, исполнитель GitHub Copilot, старт `2026-09-29T22:06:15Z`. Карточка переведена в `review` / Local QA PASS; `current_local` указывает на #017, `current_production` остаётся #016. Отдельного разрешения владельца на Production этого технического пакета не было, Production не трогалась.
+- Создана Timeline-карточка `UNIVERSAL-CATALOG-RELEASE-2026-09-29`, Release #017 / `v0.15.0`, исполнитель GitHub Copilot, старт `2026-09-29T22:06:15Z`. Карточка закрыта как `done`: Local ✓, Owner ✓, Production —. Владелец 29.09 принял результат и подтвердил, что Production deploy для этого технического этапа не нужен. `current_local` указывает на #017, `current_production` остаётся #016. Production не трогалась.
 - Исправлен существующий release tooling ежедневных catalog updates без новой параллельной системы. `tools/server_release_preflight.py` теперь валидирует catalog plan динамически: final published/numbered counts, изменённые existing rows, created critical rows и allowed factual tables выводятся из конкретного `catalog_plan`. `tools/server_compare.py` ищет deployed `catalog_plan` по release id/tag и сверяет factual DB diff по нему; code-only releases остаются строгими. `tools/server.py catalog` больше не требует фиксированные 331 Models / 149 Tools, а проверяет integrity, FK 0, published==numbered и непрерывные номера.
 - Удалена runtime-привязка к `sequence == 16`, Release #016 expected_counts, predecessor 325/147, итоговым 331/149 и фиксированным evidence totals для последующих выпусков. Поиск по `tools/**` не нашёл оставшихся `sequence == 16`, `331`, `149`, `325, 147`, `expected_counts` в release tooling.
 - Regression: focused release/history suite 20 tests PASS; full `manage.py test catalog --settings=aipedia.test_settings` — 344 tests PASS, 1 skip. Universal catalog-plan trials покрывают future plan sequence без allowlist, create counts, update existing record, связанные service/benchmark/org changes, блокировку посторонних изменений, wrong final counts, idempotent already-applied и code-only behavior. `tools/release_history.py` PASS; `timeline.html` пересобран.
 - GitHub: основной commit #017 `b6f0178741df7ad5425f0f061c2ed2185aa08dc3` отправлен в `origin/main` 2026-09-29T22:22:59Z. Production tag не создавался, потому что Production не выпускалась.
 - Изменено: `tools/server_release_preflight.py`, `tools/server_compare.py`, `tools/server.py`, release/history tests, `catalog/product_history.py`, `docs/timeline.json`, `docs/history/2026-09-29-universal-catalog-release.md`, `docs/PRODUCT_HISTORY.md`, этот статус и производный `timeline.html`. Каталог Models/Tools, master XLSX, Local SQLite и Production SQLite не менялись.
-- **Не завершено:** Production #017 не опубликован. **Следующим выполнить:** если владелец хочет выпустить этот технический пакет, дать отдельное разрешение на Release #017 по `docs/RELEASE.md`; следующий daily catalog release не требует изменений release tooling под новый номер или counts.
+- **Не завершено:** по #017 ничего; Production намеренно не применялась. **Следующим выполнить:** следующий daily catalog release может использовать этот механизм без изменения release tooling под новый номер или counts.
+
+## 29.09 — Organic Search Follow-up restored; Paid Search отложен (GitHub Copilot)
+
+- Найден реальный незавершённый поисковый хвост конца сентября: после Search Visibility Optimization v2 остался органический контрольный замер после recrawl — GSC/Bing canonical/indexed pages, sitemap processing, impressions, clicks, average position, queries, countries, старые URL и повтор SERP-снимков. Он был записан как next step в Search Visibility report и как prerequisite внутри карточки Paid Search, но не имел отдельной видимой planned-карточки.
+- История исправлена без нового Release #: восстановлена planned-карточка `ORGANIC-SEARCH-FOLLOWUP-2026-09-30`; `PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26` сохранена, но смысл изменён на deferred. Решение владельца 29.09: Google Ads сейчас не запускать; сначала довести органическую поисковую доступность и фактическую индексацию, к рекламе возвращаться только отдельным будущим решением.
+- Что уже выполнено ранее: GSD-1.0, Search Activation/Naver/IndexNow, Search Visibility Optimization v2, 45 GSC legacy URL migration, robots exceptions, clean canonical card URLs, four finite EN/RU search pages, IndexNow acceptance for targeted notices. Техническая Search Visibility Optimization остаётся `done`.
+- Что не выполнено: свежие данные кабинетов после recrawl. Предыдущий baseline: GSC 41 impressions, 0 clicks, average position 8.5 за 24.09; GSC sitemap Successful; Bing около 1.4K discovered / performance preparing; Yandex/Naver/Baidu/Brave без свежих подтверждённых метрик. Нельзя считать эти показатели нулём.
+- Текущая read-only public site проверка 29.09: `tools/gsd_public_check.py https://aipediya.com` — 34/34 PASS; `tools/search_visibility_qa.py --base https://aipediya.com` — 45 legacy URL, failures=0, статусы 25×301 / 19×404 / 1×200-noindex. Production не менялась, поисковые кабинеты/IndexNow submissions/ads не трогались.
+- **Следующим выполнить:** 30.09 или когда кабинеты доступны снять GSC/Bing/Yandex/Naver/IndexNow/Brave факты; если сервис недоступен — записать `недоступно` и конкретный следующий шаг. Paid Search не запускать до отдельного решения владельца.
 
 ## 29.09 — Daily Catalog Update #016 / v0.14.0 опубликован, Production PASS (GitHub Copilot)
 

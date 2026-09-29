@@ -765,9 +765,21 @@
       "environment": "local",
       "stage": "planned",
       "status": "PLANNED",
-      "planned_after": "2026-09-30",
+      "planned_after": "organic-search-followup-complete",
       "monthly_budget_usd_max": 15,
+      "blocked_by": "ORGANIC-SEARCH-FOLLOWUP-2026-09-30",
+      "note": "Owner decision 2026-09-29: do not launch Google Ads now. First complete organic search follow-up after Search Visibility Optimization; return to paid search only by separate owner request.",
       "history": "docs/EXECUTION_STATE.md"
+    },
+    {
+      "release_id": "ORGANIC-SEARCH-FOLLOWUP-2026-09-30",
+      "title": "Organic search follow-up after Search Visibility Optimization",
+      "environment": "local",
+      "stage": "planned",
+      "status": "PLANNED",
+      "planned_after": "2026-09-30",
+      "history": "docs/history/2026-09-30-organic-search-followup.md",
+      "note": "Restored from the Search Visibility Optimization and Paid Search planned notes: verify GSC/Bing/Yandex/Naver/IndexNow/Brave and repeat the organic control snapshot before any paid ads work."
     },
     {
       "release_id": "ADAPTIVE-UI-2026-09-26",
@@ -935,15 +947,16 @@
       "app_version": "v0.15.0",
       "title": "Universal daily catalog release tooling",
       "environment": "local",
-      "stage": "review",
-      "status": "LOCAL_QA_PASS",
+      "stage": "done",
+      "status": "COMPLETED_LOCAL",
       "started_utc": "2026-09-29T22:06:15Z",
       "executor": "GitHub Copilot",
       "history": "docs/history/2026-09-29-universal-catalog-release.md",
       "release_tag": "release-2026-09-29-universal-catalog-release",
-      "summary": "Existing daily catalog release tooling now derives baseline, plan scope, expected counts and allowed related-table changes from Production snapshots, Timeline, canonical master outputs and the concrete catalog plan instead of hardcoded Release # and count assumptions. Local regression passed; GitHub contains the #017 work. Production remains Release #016; no Production tag was created.",
+      "summary": "Existing daily catalog release tooling now derives baseline, plan scope, expected counts and allowed related-table changes from Production snapshots, Timeline, canonical master outputs and the concrete catalog plan instead of hardcoded Release # and count assumptions. Local regression passed and owner accepted the result. GitHub contains the #017 work. Production remains Release #016; this technical stage did not require Production deploy or tag.",
       "revision": "b6f0178741df7ad5425f0f061c2ed2185aa08dc3",
-      "github_pushed_at": "2026-09-29T22:22:59Z"
+      "github_pushed_at": "2026-09-29T22:22:59Z",
+      "owner_decision": "Owner accepted Release #017 Local result; no Production deploy required, 2026-09-29T22:48:50Z"
     }
   ],
   "product_history": {
@@ -1358,7 +1371,7 @@
       {
         "release_id": "PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26",
         "local_verified": false,
-        "owner_approved": false,
+        "owner_approved": true,
         "production_released": false,
         "production_verified": false,
         "date": "2026-09-26",
@@ -1376,21 +1389,62 @@
           "Budget ≤ $15/month"
         ],
         "capabilities_ru": [
-          "Органические GSD-1.0 и Search Visibility Optimization уже опубликованы; эта задача относится только к paid acquisition, не к органическому ranking.",
-          "После контрольного замера 30.09.2026 собрать через Google Keyword Planner большой многоязычный master запросов по выбранным странам с volume, competition и CPC.",
-          "Кластеризовать запросы и выбрать небольшой первый набор Exact/Phrase для Search-кампании с жёстким общим бюджетом не более $10–15 в месяц.",
-          "Кампания ещё не создана и не запущена. После фактического запуска записать настройки и результаты в Timeline; paid clicks не смешивать с organic Search Console metrics."
+          "Google Ads сейчас не запускать: владелец 29.09 изменил приоритет в пользу органической поисковой доступности.",
+          "Сначала завершить восстановленную organic follow-up карточку: GSC/Bing/Yandex/Naver/IndexNow/Brave, recrawl, indexing, impressions, clicks, queries, countries и старые URL.",
+          "Paid Search остаётся отдельным будущим экспериментом; Keyword Planner, страны, ключи, группы объявлений, бюджет и кампания не созданы.",
+          "Если владелец позже вернётся к рекламе, paid clicks и spend записывать отдельно от organic Search Console metrics."
         ],
         "capabilities_en": [
-          "Organic GSD-1.0 and Search Visibility Optimization are already published; this is a separate paid-acquisition experiment, not organic ranking work.",
-          "After the September 30, 2026 control measurement, use Google Keyword Planner to build a large multilingual query master with volume, competition and CPC for selected countries.",
-          "Cluster queries and choose a small initial Exact/Phrase set for a Search campaign with a strict total budget of no more than $10–15 per month.",
-          "No campaign has been created or launched. After an actual launch, record settings and results in Timeline; keep paid clicks separate from organic Search Console metrics."
+          "Do not launch Google Ads now: on Sep 29 the owner changed priority to organic search availability first.",
+          "First complete the restored organic follow-up card: GSC/Bing/Yandex/Naver/IndexNow/Brave, recrawl, indexing, impressions, clicks, queries, countries and legacy URLs.",
+          "Paid Search remains a separate future experiment; Keyword Planner, countries, keywords, ad groups, budget and campaign are not created.",
+          "If the owner returns to advertising later, record paid clicks and spend separately from organic Search Console metrics."
         ],
         "revision": null,
         "source": "execution-state",
         "open": true,
         "progress": "planned"
+      },
+      {
+        "release_id": "ORGANIC-SEARCH-FOLLOWUP-2026-09-30",
+        "local_verified": false,
+        "owner_approved": false,
+        "production_released": false,
+        "production_verified": false,
+        "date": "2026-09-30",
+        "title_ru": "Organic Search Follow-up / контрольный замер",
+        "title_en": "Organic Search Follow-up / control snapshot",
+        "icon": "search-check",
+        "tags_ru": [
+          "PLANNED",
+          "Органический поиск",
+          "30.09 контроль"
+        ],
+        "tags_en": [
+          "PLANNED",
+          "Organic search",
+          "Sep 30 control"
+        ],
+        "capabilities_ru": [
+          "Восстановленная плановая задача после Search Visibility Optimization: проверить фактический recrawl, indexing, impressions, clicks, queries, countries и старые URL.",
+          "Предыдущий baseline: GSC 41 impressions, 0 clicks, avg position 8.5 за 24.09; GSC sitemap Successful; Bing sitemap около 1.4K discovered; Search Performance ещё готовился.",
+          "Текущая публичная проверка сайта 29.09: GSD public sample 34/34 PASS; 45 legacy GSC URL дают 25×301, 19×404, 1×200/noindex, failures 0.",
+          "Свежие кабинеты Google/Bing/Yandex/Naver/Brave пока не проверены в этой сессии; недоступные показатели остаются недоступными, не нулями."
+        ],
+        "capabilities_en": [
+          "Restored planned task after Search Visibility Optimization: verify actual recrawl, indexing, impressions, clicks, queries, countries and legacy URLs.",
+          "Previous baseline: GSC 41 impressions, 0 clicks, avg position 8.5 for Sep 24; GSC sitemap Successful; Bing sitemap about 1.4K discovered; Search Performance was still preparing.",
+          "Current public site check on Sep 29: GSD public sample 34/34 PASS; 45 legacy GSC URLs return 25×301, 19×404, 1×200/noindex, failures 0.",
+          "Fresh Google/Bing/Yandex/Naver/Brave consoles were not checked in this session; unavailable metrics remain unavailable, not zero."
+        ],
+        "source": "2026-09-30-organic-search-followup",
+        "open": true,
+        "progress": "planned",
+        "qa": {
+          "local": "History/status restoration only. Public read-only checks on 2026-09-29: gsd_public_check 34/34 PASS; search_visibility_qa 45 legacy URLs, failures=0. No Production changes and no search-console submissions."
+        },
+        "next_ru": "30.09 снять свежие GSC/Bing/Yandex/Naver/IndexNow/Brave факты; если кабинет недоступен — записать недоступно и следующий конкретный шаг.",
+        "next_en": "On Sep 30 capture fresh GSC/Bing/Yandex/Naver/IndexNow/Brave facts; if a console is unavailable, record unavailable and the next concrete step."
       },
       {
         "release_id": "ADAPTIVE-UI-2026-09-26",
@@ -1977,7 +2031,7 @@
         "release_sequence": 17,
         "app_version": "v0.15.0",
         "local_verified": true,
-        "owner_approved": false,
+        "owner_approved": true,
         "production_released": false,
         "production_verified": false,
         "date": "2026-09-29",
@@ -2005,11 +2059,14 @@
           "Keep blockers for out-of-plan changes, wrong baselines, integrity failures, publication-state mismatch and code-only releases."
         ],
         "source": "2026-09-29-universal-catalog-release",
-        "open": true,
-        "progress": "review",
+        "open": false,
+        "progress": "done",
         "release_tag": "release-2026-09-29-universal-catalog-release",
         "revision": "b6f0178741df7ad5425f0f061c2ed2185aa08dc3",
         "github_pushed_at": "2026-09-29T22:22:59Z",
+        "owner_decision": "Owner accepted Release #017 Local result; no Production deploy required, 2026-09-29T22:48:50Z",
+        "owner_decision_ru": "Владелец 29.09 принял Release #017: универсальный daily catalog release-механизм выполнен, проверен и принят; Production deploy не требуется.",
+        "owner_decision_en": "On Sep 29 the owner accepted Release #017: the universal daily catalog release mechanism is implemented, verified and accepted; no Production deploy is required.",
         "executor": "GitHub Copilot",
         "started_utc": "2026-09-29T22:06:15Z",
         "changes": [
@@ -2020,7 +2077,9 @@
           "local": "Focused release/history regression: 20 tests PASS. Full catalog suite: 344 tests PASS, 1 skip. Dynamic trials cover future catalog plan sequence, create counts, update of an existing record, related service/benchmark/org changes, foreign change blocking, wrong final counts, idempotent already-applied state and code-only comparison.",
           "local_ru": "Focused release/history regression: 20 tests PASS. Полный catalog suite: 344 tests PASS, 1 skip. Динамические trials покрывают будущий catalog plan sequence, create counts, update существующей записи, связанные изменения service/benchmark/org, блокировку постороннего изменения, неверные итоговые counts, идемпотентное already-applied состояние и code-only compare.",
           "local_en": "Focused release/history regression: 20 tests PASS. Full catalog suite: 344 tests PASS, 1 skip. Dynamic trials cover a future catalog plan sequence, create counts, existing-record update, related service/benchmark/org changes, foreign-change blocking, wrong final counts, idempotent already-applied state and code-only compare."
-        }
+        },
+        "next_ru": "Следующий daily catalog update может использовать этот механизм без изменения release tooling.",
+        "next_en": "The next daily catalog update can use this mechanism without changing release tooling."
       }
     ],
     "additional_tasks": [
@@ -2112,14 +2171,14 @@
         "title_en": "Paid Search Experiment / Google Ads",
         "goal_ru": "Отдельно от органического SEO проверить платное привлечение пользователей Search-кампанией в пределах общего бюджета $10–15 в месяц.",
         "goal_en": "Test paid Search acquisition separately from organic SEO within a total $10–15 monthly budget.",
-        "done_ru": "PLANNED: веха и границы эксперимента зафиксированы; Keyword Planner master, группы объявлений и кампания ещё не созданы.",
-        "done_en": "PLANNED: experiment scope is recorded; no Keyword Planner master, ad groups or campaign have been created.",
-        "qa_ru": "Проверено только состояние плана в Local Timeline; рекламных показов, кликов, расходов или настроек кампании пока нет.",
-        "qa_en": "Only the Local Timeline plan is checked; there are no campaign impressions, clicks, spend or settings yet.",
-        "owner_ru": "Владелец поручил добавить открытую карточку PLANNED; это не подтверждение запуска кампании.",
-        "owner_en": "Owner requested an open PLANNED card; this does not confirm a campaign launch.",
-        "next_ru": "После контрольного замера 30.09.2026 собрать многоязычный master через Google Keyword Planner (volume, competition, CPC по выбранным странам), кластеризовать и предложить небольшой Exact/Phrase стартовый набор; после реального запуска записать настройки и paid-результаты отдельно от органических метрик GSC.",
-        "next_en": "After the September 30, 2026 control measurement, collect a multilingual Keyword Planner master (volume, competition and CPC by selected country), cluster it and propose a small Exact/Phrase starter set; after a real launch, record settings and paid results separately from organic GSC metrics.",
+        "done_ru": "PLANNED/DEFERRED: границы paid-эксперимента сохранены, но Google Ads сейчас не запускать; Keyword Planner master, группы объявлений, бюджет и кампания не созданы.",
+        "done_en": "PLANNED/DEFERRED: paid-experiment scope is preserved, but Google Ads must not start now; no Keyword Planner master, ad groups, budget or campaign have been created.",
+        "qa_ru": "Проверено только состояние плана в Local Timeline; рекламных показов, кликов, расходов или настроек кампании нет.",
+        "qa_en": "Only the Local Timeline plan is checked; there are no campaign impressions, clicks, spend or settings.",
+        "owner_ru": "Владелец 29.09 изменил приоритет: сначала органическая глобальная поисковая доступность и фактическая индексация, к рекламе возвращаться только отдельным будущим решением.",
+        "owner_en": "On Sep 29 the owner changed priority: organic global search availability and actual indexing first; return to advertising only by a separate future decision.",
+        "next_ru": "Не запускать рекламу. Сначала закрыть `ORGANIC-SEARCH-FOLLOWUP-2026-09-30`; только после фактов органики владелец отдельно решит, нужен ли paid experiment.",
+        "next_en": "Do not launch ads. First close `ORGANIC-SEARCH-FOLLOWUP-2026-09-30`; only after organic facts will the owner separately decide whether a paid experiment is needed.",
         "source": "execution-state"
       },
       {

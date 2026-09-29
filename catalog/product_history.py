@@ -38,6 +38,7 @@ SOURCES = {
     "2026-09-29-internal-history-local": ("Внутренняя история / Internal history", "docs/history/2026-09-29-internal-history-local.md"),
     "2026-09-29-daily-catalog-update": ("Ежедневное обновление каталога / Daily catalog update", "docs/history/2026-09-29-daily-catalog-update.md"),
     "2026-09-29-universal-catalog-release": ("Универсальный catalog release / Universal catalog release", "docs/history/2026-09-29-universal-catalog-release.md"),
+    "2026-09-30-organic-search-followup": ("Organic search follow-up / Контрольный замер поиска", "docs/history/2026-09-30-organic-search-followup.md"),
 }
 
 

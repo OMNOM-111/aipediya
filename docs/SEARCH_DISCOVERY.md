@@ -204,6 +204,20 @@ pending and unresolved queues are zero as of 2026-09-26 21:59 UTC. Google
 Search Console and Bing Webmaster have not yet refreshed indexing/performance
 data. Submission acceptance is not indexing or ranking evidence.
 
+### Restored organic follow-up (planned for 2026-09-30)
+
+The Search Visibility Optimization release is complete, but its organic outcome
+is not. A separate planned card `ORGANIC-SEARCH-FOLLOWUP-2026-09-30` tracks the
+post-recrawl control snapshot: Google Search Console, Bing Webmaster Tools,
+Yandex, Naver, IndexNow/Brave, legacy URL disappearance, canonical/indexed URL
+selection, impressions, clicks, average position, queries, countries and any
+real remaining indexing problems. Metrics that are unavailable must be recorded
+as unavailable, not zero.
+
+Owner decision 2026-09-29: Google Ads must not be launched now. Paid Search / Google Ads
+remains a separate deferred experiment until organic search availability and
+actual indexing facts are reviewed.
+
 ## 6. Collections (hubs)
 
 Finite registry in `catalog/hubs.py` (10 entries, published records only, minimum
