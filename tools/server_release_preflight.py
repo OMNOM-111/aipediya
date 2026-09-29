@@ -58,10 +58,11 @@ def snapshot(path):
         sources = db.execute("SELECT COUNT(*) FROM catalog_source").fetchone()[0]
         benchmarks = db.execute("SELECT COUNT(*) FROM catalog_benchmark").fetchone()[0]
         catalog_digest = hashlib.sha256()
-        tables = [row[0] for row in db.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'catalog_%' ORDER BY name")]
-        for table in tables:
-            catalog_digest.update((table + "\n").encode())
+        tables = db.execute(
+            "SELECT name, sql FROM sqlite_master WHERE type='table' AND name LIKE 'catalog_%' ORDER BY name")
+        for table, schema in tables:
+            catalog_digest.update(repr((table, schema)).encode("utf-8"))
+            catalog_digest.update(b"\n")
             quoted = '"' + table.replace('"', '""') + '"'
             for row in db.execute(f"SELECT * FROM {quoted} ORDER BY rowid"):
                 catalog_digest.update(repr(tuple(row)).encode("utf-8"))

@@ -116,3 +116,7 @@ class ServerAccessContractTests(unittest.TestCase):
             self.assertNotEqual(before["catalog_sha256"], after["catalog_sha256"])
             with self.assertRaisesRegex(RuntimeError, "Code-only trial changed catalog data"):
                 preflight["validate_code_only_catalog"](before, after)
+            with closing(sqlite3.connect(path)) as db:
+                db.execute("ALTER TABLE catalog_contenttranslation ADD COLUMN extra TEXT")
+                db.commit()
+            self.assertNotEqual(after["catalog_sha256"], snapshot(path)["catalog_sha256"])
