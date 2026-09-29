@@ -1738,7 +1738,7 @@
         "progress": "review",
         "release_tag": "release-2026-09-28-language-switch",
         "qa": {
-          "local": "88/88 Local browser cases PASS across 22 locales, Models/Tools, 1440/375 px before handoff; 264 menu navigations HTTP 200, 0 redirects/errors/failed requests; 1712 interaction checks; 332 catalog tests OK (one skip); GSD Local 33/33 PASS. First owner handoff failed because Local had stopped; restored on 127.0.0.1:18810 with six routes 200. Code-only release preflight regression PASS; final owner review pending.",
+          "local": "88/88 Local browser cases PASS across 22 locales, Models/Tools, 1440/375 px before handoff; 264 menu navigations HTTP 200, 0 redirects/errors/failed requests; 1712 interaction checks; 332 catalog tests OK (one skip); GSD Local 33/33 PASS. First owner handoff failed because Local had stopped; restored on 127.0.0.1:18810. Fresh independent HTTP/SSR recheck: 44/44 roots and 44/44 panels 200, 1936 canonical menu hrefs; fresh browser click blocked by browser URL policy. Code-only release preflight regression PASS; final owner review pending.",
           "production": "Owner authorization for #014 is conditional on verified Local; published #013 remains unchanged"
         },
         "changes": [

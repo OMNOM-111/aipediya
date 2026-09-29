@@ -35,6 +35,22 @@ is outside this release.
 
 ## Code-only release gate after Local recovery
 
+### Independent Local recheck after the owner requested self-verification
+
+The browser-control tool rejected the existing Local tab again with its URL
+policy, despite the `http://` URL, and explicitly disallowed alternate browser
+surfaces or indirect browser commands. No fresh browser click is claimed. A
+new, independent read-only check against the running Waitress service passed
+44/44 Models/Tools locale roots and 44/44 representative Model/Tool panel URLs.
+For each response it checked final URL without redirect, HTTP 200, matching
+`<html lang>` and `dir`, visible table rows or an open panel with the same slug,
+and every language-menu link. Across those 88 responses, 1,936 menu `href`s
+matched the canonical locale paths, with zero failures. The dedicated Django
+language-switch tests passed 3/3. Local still listened on `127.0.0.1:18810`
+after the commands. This covers live HTTP/SSR and server-rendered menu links;
+the earlier 88/88 browser report remains the JS and click evidence from before
+the Local launcher outage.
+
 The release-tool review found that `tools/server.py` still defaulted to a
 catalog plan from an earlier release, while server trial preflight accepted
 only release sequences 12 and 13. A code-only #014 archive would have selected
