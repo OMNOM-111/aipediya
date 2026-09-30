@@ -2131,6 +2131,7 @@
         "source": "2026-09-29-catalog-freshness-indicator",
         "open": true,
         "progress": "review",
+        "revision": "d82a29d19542f5e3395c9ddb8d0cd0b2291d42f5",
         "release_tag": "release-2026-09-29-catalog-freshness-indicator",
         "executor": "GitHub Copilot",
         "started_utc": "2026-09-29T23:27:52Z",

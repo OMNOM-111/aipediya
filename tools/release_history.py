@@ -46,7 +46,7 @@ def validate(registry, release_id=None, package_revision=None, html=None):
         else:
             previous = max((row["release_sequence"] for row in numbered
                             if row["release_id"] != release_id and
-                            (row.get("production_verified") or row.get("progress") in ("cancelled", "superseded"))), default=0)
+                            (row.get("production_verified") or row.get("progress") in ("done", "cancelled", "superseded"))), default=0)
             if card["release_sequence"] != previous + 1:
                 errors.append("Candidate must use the next Release sequence")
             if history.get("current_local", {}).get("release_id") != release_id:
