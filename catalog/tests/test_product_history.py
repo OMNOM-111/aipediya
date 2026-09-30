@@ -276,6 +276,28 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertNotIn("site-footer", page)
         self.assertNotRegex(page, r"<(?:script|link)[^>]+(?:src|href)=['\"](?:/|https?://)")
 
+    def test_visible_timeline_is_chronological_in_both_editions(self):
+        page = build().read_text(encoding="utf-8")
+        registry = json.loads((Path(__file__).resolve().parents[2] / "docs/timeline.json").read_text(encoding="utf-8"))
+        cards = {row["release_id"]: row for row in registry["product_history"]["milestones"]}
+        expected_tail = [
+            "CATALOG-FRESHNESS-INDICATOR-2026-09-29",
+            "CATALOG-FRESHNESS-UI-POLISH-2026-09-30",
+            "DAILY-CATALOG-UPDATE-2026-09-30",
+            "ORGANIC-SEARCH-GROWTH-CHECK-2026-10-07",
+        ]
+        ru = re.search(r'<template id="edition-ru">(.*?)</template><template id="edition-en">', page, re.S).group(1)
+        en = re.search(r'<template id="edition-en">(.*?)</template>', page, re.S).group(1)
+        for edition in (ru, en):
+            visible = re.findall(r'data-history-open="([^"]+)"', edition)
+            dates = [cards[release_id]["date"] for release_id in visible]
+            self.assertEqual(dates, sorted(dates))
+            self.assertEqual(visible[-4:], expected_tail)
+            for event_date in sorted(set(dates)):
+                sequences = [cards[release_id]["release_sequence"] for release_id in visible
+                             if cards[release_id]["date"] == event_date and cards[release_id].get("release_sequence") is not None]
+                self.assertEqual(sequences, sorted(sequences))
+
     def test_standalone_history_interaction_hooks_and_reference_layout(self):
         from tools.build_product_history import ROOT
 

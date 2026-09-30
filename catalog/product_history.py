@@ -160,7 +160,16 @@ def _history_context(language):
     ru_months = ("января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря")
     en_months = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
     milestones = []
-    for item in product["milestones"]:
+    ordered_milestones = sorted(
+        enumerate(product["milestones"]),
+        key=lambda pair: (
+            date.fromisoformat(pair[1]["date"]),
+            pair[1].get("release_sequence") is None,
+            pair[1].get("release_sequence") or 0,
+            pair[0],
+        ),
+    )
+    for _, item in ordered_milestones:
         release = entries[item["release_id"]]
         event_date = date.fromisoformat(item["date"])
         date_label = (f"{event_date.day} {ru_months[event_date.month - 1]} {event_date.year}"

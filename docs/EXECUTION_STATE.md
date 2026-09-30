@@ -1,6 +1,12 @@
 # Текущее состояние AIpedia
 
-Обновлено (UTC): 2026-09-30T22:57:39Z
+Обновлено (UTC): 2026-09-30T23:02:43Z
+
+## 30.09 — Timeline chronological ordering corrected (Codex)
+
+- Исправлена только причина неверного визуального порядка Timeline. Renderer ранее обходил `product_history.milestones` в порядке записи JSON, поэтому будущая `ORGANIC-SEARCH-GROWTH-CHECK-2026-10-07` отображалась между карточками 27.09 (#008 и #009). Теперь Local history context стабильно сортирует карточки по фактической ISO-дате по возрастанию; внутри одинаковой даты нумерованные выпуски идут по `release_sequence`, ненумерованные карточки — после них, а равные ненумерованные сохраняют исходный порядок.
+- RU и EN regression подтверждает общий возрастающий порядок и финальный хвост `#018 → #019 → #020 → ORGANIC-SEARCH-GROWTH-CHECK-2026-10-07`; release-history validator PASS, Timeline/history tests 13/13 PASS, `git diff --check` PASS. `docs/timeline.json` и содержимое карточки, baseline, `PLANNED`, `open=true`, дата 07.10 и decision gate не менялись.
+- Изменены только сортировка Local history, точный regression test, этот статус и производный `timeline.html`; `AI_CONTEXT.md`/ZIP пересобраны штатным сборщиком. Новый Release # не создавался; Production, Search snapshot, SEO и Google Ads не затрагивались. **Не завершено:** только запланированный read-only контроль 07.10 из существующей карточки. **Следующим выполнить:** сам контроль лишь по отдельному поручению владельца.
 
 ## 30.09 — Organic Search Growth Check planned for 07.10 (Codex)
 
