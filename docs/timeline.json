@@ -2214,7 +2214,7 @@
         "executor": "Codex",
         "started_utc": "2026-09-30T15:37:41Z",
         "review_ready_utc": "2026-09-30T16:11:44Z",
-        "revision": "7a81df673aa3e88973954bd9fba6ffef8e86cfc9",
+        "revision": "d28de9e118a619d9c370de2d2ac3782dc38ae536",
         "owner_approved_utc": "2026-09-30T16:59:05Z",
         "owner_decision": "Owner accepted the #019 design and explicitly pre-authorized Production after the three final visual remarks passed targeted Local QA in the 2026-09-30 continuation request.",
         "changes": [
@@ -2405,8 +2405,8 @@
       "release_sequence": 19,
       "app_version": "v0.16.1",
       "release_tag": "release-2026-09-30-catalog-freshness-ui-polish",
-      "revision": "7a81df673aa3e88973954bd9fba6ffef8e86cfc9",
-      "github_pushed_at": "2026-09-30T16:21:12Z"
+      "revision": "d28de9e118a619d9c370de2d2ac3782dc38ae536",
+      "github_pushed_at": "2026-09-30T17:08:35Z"
     },
     "current_production": {
       "release_id": "CATALOG-FRESHNESS-INDICATOR-2026-09-29",

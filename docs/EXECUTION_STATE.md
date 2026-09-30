@@ -1,6 +1,6 @@
 # Текущее состояние AIpedia
 
-Обновлено (UTC): 2026-09-30T16:59:05Z
+Обновлено (UTC): 2026-09-30T17:08:35Z
 
 ## 30.09 — Release #019 / v0.16.1 Catalog Freshness UI final polish REVIEW, Local + Owner PASS (Codex)
 
@@ -11,7 +11,7 @@
 - Для Claude Sonnet 5.5 сохранён существующий Anthropic SVG; для Eleven v4 / Eleven v4 Turbo — существующий ElevenLabs SVG. Для трёх Holo-моделей добавлен один официальный H Company mark из press kit/официального сайта; Cue получает официальный product favicon с `cue.im`; Manus — официальный compact brand icon с brand page/`manus.im`. Другие карточки и assets не менялись. SHA-256: H Company `99E65AB9AA604DFCC748BE2CC2C70C6553956C760C792F70B72FF18E7C2D9284`; Cue `CDF8FA09D529075CD075CAD6D88E7417AC231EDCFCA15BC51FE74DE41013CEE3`; Manus `1A0BCCF04FCD912C4099E6A59D57263278264D079959722A03B39D427242CFB5`.
 - Targeted checks: marks + freshness tests — 9/9 PASS; `manage.py check`, `node --check static/site.js`, `git diff --check` PASS. Browser Local: RU 1440, RU owner ultrawide 2502, RU mobile 375 и EN 1440 PASS; полные восемь имён, release dates, 350 px bounds, отсутствие scrollbar для восьми строк/overflow, локализованные тикающие часы, hover/focus/tap/Escape, row highlight, нужные marks, скрытый NEW для 28 сентября и 0 console/page errors подтверждены.
 - Карточка #019 остаётся в `review`: Local ✓ / Owner ✓ / Production —. **Изменено:** прежний scoped набор #019, `static/site.css`, `static/site.js`, release-state manifest, Timeline/status/history и производные handoff-файлы. **Не завершено:** разрешённая серверная процедура и targeted Public QA #019. **Следующим выполнить:** commit/push/tag проверенного кандидата, code-only release строго по `docs/RELEASE.md`, затем закрыть карточку только при полном Production/Public PASS.
-- Проверенный Local-кандидат commit `7a81df673aa3e88973954bd9fba6ffef8e86cfc9` отправлен в `origin/main` в `2026-09-30T16:21:12Z`; GitHub не является публикацией. `current_local` указывает на #019 / этот commit, `current_production` остаётся на неизменённом #018 / `74cf7269c991c121e549c67e863bdfcd0449387a`.
+- Финальный implementation candidate #019 — commit `d28de9e118a619d9c370de2d2ac3782dc38ae536`; `current_local` указывает на него. После release-gate documentation commit оба commit будут отправлены в `origin/main`; GitHub не является публикацией. `current_production` пока остаётся на неизменённом #018 / `74cf7269c991c121e549c67e863bdfcd0449387a`.
 
 ## 29.09 — Release #018 / v0.16.0 Catalog Freshness Indicator DONE, Production PASS (GitHub Copilot)
 

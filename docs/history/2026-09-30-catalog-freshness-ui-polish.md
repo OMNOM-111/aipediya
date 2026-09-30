@@ -2,7 +2,7 @@
 
 Дата: 2026-09-30. Исполнитель: Codex. Timeline: `CATALOG-FRESHNESS-UI-POLISH-2026-09-30`, Release #019 / `v0.16.1`.
 
-Состояние перед выпуском: `review` — Local ✓ / Owner ✓ / Production —. Владелец принял дизайн и в поручении от 30.09 явно разрешил Production #019 после PASS трёх финальных замечаний. Production baseline до процедуры остаётся Release #018, commit `74cf7269c991c121e549c67e863bdfcd0449387a`.
+Состояние перед выпуском: `review` — Local ✓ / Owner ✓ / Production —. Владелец принял дизайн и в поручении от 30.09 явно разрешил Production #019 после PASS трёх финальных замечаний. Проверенный implementation commit — `d28de9e118a619d9c370de2d2ac3782dc38ae536`; Production baseline до процедуры остаётся Release #018, commit `74cf7269c991c121e549c67e863bdfcd0449387a`.
 
 ## Узкий scope
 
