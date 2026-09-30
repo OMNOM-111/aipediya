@@ -183,6 +183,20 @@ class ServerAccessContractTests(unittest.TestCase):
         after["factual_tables"]["catalog_modelorigincountry"] = {1: {"id": 1}}
         validate(create_plan, before, after)
 
+        bare_tool_plan = copy.deepcopy(create_plan)
+        bare_tool_plan["counts"]["create"] = 3
+        bare_tool_plan["final_published"]["Tools"].append("tool2")
+        bare_tool_plan["final_numbers"]["Tools"]["tool2"] = 2
+        bare_tool_plan["changes"].append(
+            {"kind": "create", "sheet": "Tools", "id": "tool2", "row": {},
+             "offers": [], "access": []})
+        bare_tool_after = copy.deepcopy(after)
+        bare_tool_after.update({"published_tools": 2, "numbered_tools": 2})
+        bare_tool_after["tools"]["tool2"] = {"slug": "tool2", "legacy_version_id": None}
+        bare_tool_after["factual_tables"]["catalog_tool"][2] = {
+            "id": 2, "slug": "tool2", "public_number": 2, "legacy_version_id": None}
+        validate(bare_tool_plan, before, bare_tool_after)
+
         foreign = copy.deepcopy(after)
         foreign["model_rows"]["m1"] = {"slug": "m1", "public_number": 99, "name": "M1"}
         with self.assertRaisesRegex(RuntimeError, "outside the plan"):

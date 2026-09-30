@@ -45,6 +45,7 @@
 - Approx Date нормализуется без двойного `≈` в freshness snapshot.
 - Добавлен существующий официальный Cohere mark mapping; изображения других записей не менялись.
 - Обязательная мобильная проверка обнаружила реальный дефект tap: touch-click открывал popover и сразу закрывался generic `pointerleave`. Обработчики `pointerenter`/`pointerleave` теперь меняют состояние только для mouse; добавлена regression-проверка. Механика #018 и закрытая история #019 не переписывались.
+- Первый remote release-preflight безопасно завершился до deploy с точным расхождением: 9 catalog creates дали 8 новых `ModelVersion`. Причина — Codex Security Cloud не имеет price/access и поэтому корректно не требует legacy holder. Универсальный trial gate теперь выводит ожидаемое число legacy rows из фактических nested/new price, access и evaluation changes; отдельный тест покрывает новый Tool без holder. После исправления полный suite повторён: 362 PASS, один Windows skip. Production при этом не менялась.
 
 ## Local QA
 
@@ -56,4 +57,4 @@
 
 ## Текущий остаток
 
-Local полностью принят автоматическими и визуальными проверками; предварительное разрешение владельца на Production стало действующим. Проверенное содержимое зафиксировано candidate commit `c3856613683a529fa9526fb8cdc179f2195075a4`. Следующий шаг — commit/push Timeline metadata, сборка архива #020 и штатный server preflight/release-preflight/dry-run/deploy/verification по `docs/RELEASE.md`. До завершения этой процедуры Production остаётся #019.
+Local полностью принят автоматическими и визуальными проверками; предварительное разрешение владельца на Production стало действующим. Следующий шаг — зафиксировать corrected candidate с trial-gate repair, пересобрать архив #020 и повторить штатный server preflight/release-preflight/dry-run/deploy/verification по `docs/RELEASE.md`. До завершения этой процедуры Production остаётся #019.

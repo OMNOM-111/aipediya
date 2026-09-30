@@ -2299,10 +2299,11 @@
         "changes": [
           "Published 3 verified Models and 6 verified Tools in Local; retained Decisions API and Honeycomb AI Ecosystem as hidden NEEDS_REVIEW records",
           "Updated only the named existing products, preserved Evaluations unchanged and generated the exact 9-create plus 15-renumber release plan",
-          "Corrected new Tool ecosystem sync, semantic JSON comparison, approximate-date normalization, Cohere mark mapping and touch popover persistence discovered during required Local QA"
+          "Corrected new Tool ecosystem sync, semantic JSON comparison, approximate-date normalization, Cohere mark mapping and touch popover persistence discovered during required Local QA",
+          "Corrected the archive trial gate to expect a legacy ModelVersion for a new Tool only when its price, access or evaluation rows require that holder"
         ],
         "qa": {
-          "local": "PASS: canonical check/qa, isolated trial, exact Local sync, repeat-zero/integrity/FK, 362 catalog tests, manage.py check, node syntax, diff check and real RU 1440/2502/375 plus EN 1440 browser QA all passed.",
+          "local": "PASS: canonical check/qa, isolated trial, exact Local sync, repeat-zero/integrity/FK, final 362 catalog tests after the server trial-gate correction, manage.py check, node syntax, diff check and real RU 1440/2502/375 plus EN 1440 browser QA all passed.",
           "local_ru": "PASS: catalog_master check OK and qa PASS; trial plus working Local sync, repeat plan zero, SQLite integrity ok/FK 0; 362 catalog tests PASS with one Windows skip; RU 1440, ultrawide 2502 and mobile 375 verified complete freshness names/dates, no horizontal overflow, clock, focus/tap/Escape, row highlight, affected cards and zero console/page errors.",
           "local_en": "PASS: EN 1440 smoke verified GPT-6.1 Sol and Dots cards, release dates/access, no overflow and zero console/page errors; manage.py check, node --check and git diff --check PASS.",
           "production": "PENDING: Production remains Release #019 until the approved #020 release procedure completes."

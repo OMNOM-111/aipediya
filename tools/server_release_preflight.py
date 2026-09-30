@@ -169,8 +169,24 @@ def validate_catalog_plan_trial(plan, before, after, *, already_applied=False):
     if already_applied:
         return
     creates = [change for change in plan["changes"] if change["kind"] == "create"]
+    legacy_tool_rows = {
+        change["id"] for change in creates
+        if change["sheet"] == "Tools" and (change.get("offers") or change.get("access"))
+    }
+    for change in plan["changes"]:
+        if change.get("kind") not in {"offer_new", "access_new", "evaluation_new"}:
+            continue
+        owner_kind, _sep, owner_slug = change.get("owner", "").partition(":")
+        if owner_kind != "tool":
+            continue
+        current_tool = before["tools"].get(owner_slug)
+        if current_tool is None or not current_tool.get("legacy_version_id"):
+            legacy_tool_rows.add(owner_slug)
     expected_created = {
-        "model_rows": len(creates),
+        # Model creates always add ModelVersion. A Tool adds the legacy
+        # ModelVersion holder only when prices/access/evaluations need it.
+        "model_rows": sum(1 for change in creates if change["sheet"] == "Models")
+                      + len(legacy_tool_rows),
         "tools": sum(1 for change in creates if change["sheet"] == "Tools"),
         "offers": sum(len(change.get("offers", [])) for change in creates) + plan["counts"].get("offer_new", 0),
         "accesses": sum(len(change.get("access", [])) for change in creates) + plan["counts"].get("access_new", 0),

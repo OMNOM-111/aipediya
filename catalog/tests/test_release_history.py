@@ -18,7 +18,7 @@ class ReleaseHistoryTests(SimpleTestCase):
         self.assertFalse(next(row for row in cards if row["release_sequence"] == 17)["production_verified"])
         self.assertFalse(cards[-1]["production_verified"])
         self.assertEqual((cards[-1]["progress"], cards[-1]["local_verified"], cards[-1]["owner_approved"]),
-               ("in_progress", False, False))
+               ("review", True, True))
 
     def test_gate_rejects_missing_review_qa_owner_and_stale_html(self):
         registry = load()
