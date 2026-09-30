@@ -204,19 +204,25 @@ pending and unresolved queues are zero as of 2026-09-26 21:59 UTC. Google
 Search Console and Bing Webmaster have not yet refreshed indexing/performance
 data. Submission acceptance is not indexing or ranking evidence.
 
-### Restored organic follow-up (planned for 2026-09-30)
+### Organic follow-up completed (2026-09-30)
 
-The Search Visibility Optimization release is complete, but its organic outcome
-is not. A separate planned card `ORGANIC-SEARCH-FOLLOWUP-2026-09-30` tracks the
-post-recrawl control snapshot: Google Search Console, Bing Webmaster Tools,
-Yandex, Naver, IndexNow/Brave, legacy URL disappearance, canonical/indexed URL
-selection, impressions, clicks, average position, queries, countries and any
-real remaining indexing problems. Metrics that are unavailable must be recorded
-as unavailable, not zero.
+The read-only card `ORGANIC-SEARCH-FOLLOWUP-2026-09-30` is complete. GSC's
+available September 24–28 data is 775 impressions, 7 clicks, 0.9% CTR and
+average position 13.1; sitemap processing is Successful with 10,421 discovered,
+but Pages/Indexing remains in processing. Bing's sitemap is Success while Search
+Performance remains in preparation and Indexed URLs has no data. Yandex access
+is confirmed, its sitemap is OK, and the visible reports show 0 search
+impressions/clicks and no indexed pages. Naver is signed out, so current account
+state is unavailable. Brave surfaced two bounded `site:` results. Public GSD is
+34/34 PASS and the exact 45 legacy URLs remain 25×301 / 19×404 / 1×200-noindex
+with zero failures. Full evidence and limitations are in
+`docs/history/2026-09-30-organic-search-followup.md`.
 
-Owner decision 2026-09-29: Google Ads must not be launched now. Paid Search / Google Ads
-remains a separate deferred experiment until organic search availability and
-actual indexing facts are reviewed.
+Owner decision 2026-09-29 remains: Google Ads must not be launched now. The
+existing Paid Search / Google Ads card is closed as a deferred planned card,
+not as a completed experiment. No campaign, billing, budget, spend, paid
+impressions or paid clicks exist; only a separate future owner decision can
+start another paid-search task.
 
 ## 6. Collections (hubs)
 

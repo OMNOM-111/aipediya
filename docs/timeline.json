@@ -765,21 +765,21 @@
       "environment": "local",
       "stage": "planned",
       "status": "PLANNED",
-      "planned_after": "organic-search-followup-complete",
+      "planned_after": "separate-future-owner-decision",
       "monthly_budget_usd_max": 15,
-      "blocked_by": "ORGANIC-SEARCH-FOLLOWUP-2026-09-30",
-      "note": "Owner decision 2026-09-29: do not launch Google Ads now. First complete organic search follow-up after Search Visibility Optimization; return to paid search only by separate owner request.",
+      "note": "Closed as a deferred planned card on 2026-09-30. Google Ads was not launched: no campaign, Keyword Planner master, ad groups, keywords, billing, budget, spend, paid impressions or paid clicks exist. Return only by a separate future owner decision.",
       "history": "docs/EXECUTION_STATE.md"
     },
     {
       "release_id": "ORGANIC-SEARCH-FOLLOWUP-2026-09-30",
       "title": "Organic search follow-up after Search Visibility Optimization",
       "environment": "local",
-      "stage": "planned",
-      "status": "PLANNED",
+      "stage": "done",
+      "status": "COMPLETED_LOCAL",
       "planned_after": "2026-09-30",
       "history": "docs/history/2026-09-30-organic-search-followup.md",
-      "note": "Restored from the Search Visibility Optimization and Paid Search planned notes: verify GSC/Bing/Yandex/Naver/IndexNow/Brave and repeat the organic control snapshot before any paid ads work."
+      "completed_utc": "2026-09-30T22:29:14Z",
+      "note": "Read-only post-recrawl control snapshot completed. GSC: 775 impressions, 7 clicks, 0.9% CTR, average position 13.1 for available data Sep 24-28; sitemap Successful with 10,421 discovered, while Pages/Indexing still processes. Bing sitemap Success, Search Performance still preparing and indexed URLs unavailable. Yandex sitemap OK, 0 search impressions/clicks and no indexed pages in the visible report. Naver signed out; Brave surfaced two site: results. Public Search QA remained clean and Production was not changed."
     },
     {
       "release_id": "ADAPTIVE-UI-2026-09-26",
@@ -1415,7 +1415,7 @@
       },
       {
         "release_id": "PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26",
-        "local_verified": false,
+        "local_verified": true,
         "owner_approved": true,
         "production_released": false,
         "production_verified": false,
@@ -1424,36 +1424,42 @@
         "title_en": "Paid Search Experiment / Google Ads",
         "icon": "search-check",
         "tags_ru": [
-          "PLANNED",
-          "Отдельный paid-эксперимент",
-          "Бюджет ≤ $15/месяц"
+          "DEFERRED",
+          "Закрытый план",
+          "Кампания не запускалась"
         ],
         "tags_en": [
-          "PLANNED",
-          "Separate paid experiment",
-          "Budget ≤ $15/month"
+          "DEFERRED",
+          "Closed plan",
+          "Campaign not launched"
         ],
         "capabilities_ru": [
-          "Google Ads сейчас не запускать: владелец 29.09 изменил приоритет в пользу органической поисковой доступности.",
-          "Сначала завершить восстановленную organic follow-up карточку: GSC/Bing/Yandex/Naver/IndexNow/Brave, recrawl, indexing, impressions, clicks, queries, countries и старые URL.",
-          "Paid Search остаётся отдельным будущим экспериментом; Keyword Planner, страны, ключи, группы объявлений, бюджет и кампания не созданы.",
-          "Если владелец позже вернётся к рекламе, paid clicks и spend записывать отдельно от organic Search Console metrics."
+          "Текущий рабочий хвост закрыт как отложенный план, а не как выполненный рекламный эксперимент.",
+          "Google Ads не запускался: campaign, Keyword Planner master, ad groups, keywords, billing и budget не создавались.",
+          "Spend отсутствует; paid impressions и paid clicks отсутствуют именно потому, что кампании не было.",
+          "Возврат к paid search возможен только по отдельному будущему решению владельца; органические метрики с paid не смешиваются."
         ],
         "capabilities_en": [
-          "Do not launch Google Ads now: on Sep 29 the owner changed priority to organic search availability first.",
-          "First complete the restored organic follow-up card: GSC/Bing/Yandex/Naver/IndexNow/Brave, recrawl, indexing, impressions, clicks, queries, countries and legacy URLs.",
-          "Paid Search remains a separate future experiment; Keyword Planner, countries, keywords, ad groups, budget and campaign are not created.",
-          "If the owner returns to advertising later, record paid clicks and spend separately from organic Search Console metrics."
+          "The current work tail is closed as a deferred plan, not as a completed advertising experiment.",
+          "Google Ads was not launched: no campaign, Keyword Planner master, ad groups, keywords, billing or budget were created.",
+          "Spend is absent; paid impressions and paid clicks are absent because no campaign existed.",
+          "Paid search can return only by a separate future owner decision; organic and paid metrics remain separate."
         ],
         "revision": null,
         "source": "execution-state",
-        "open": true,
-        "progress": "planned"
+        "open": false,
+        "progress": "planned",
+        "closure": "Closed planned/deferred card; experiment not run",
+        "qa": {
+          "local": "Timeline semantics checked after the completed organic snapshot: no campaign, billing, budget, spend, paid impressions or paid clicks exist."
+        },
+        "next_ru": "Действий нет. Только отдельное будущее решение владельца может открыть новый paid-search эксперимент.",
+        "next_en": "No action remains. Only a separate future owner decision can open a new paid-search experiment."
       },
       {
         "release_id": "ORGANIC-SEARCH-FOLLOWUP-2026-09-30",
-        "local_verified": false,
-        "owner_approved": false,
+        "local_verified": true,
+        "owner_approved": true,
         "production_released": false,
         "production_verified": false,
         "date": "2026-09-30",
@@ -1461,35 +1467,40 @@
         "title_en": "Organic search control snapshot",
         "icon": "search-check",
         "tags_ru": [
-          "PLANNED",
+          "DONE",
           "Органический поиск",
-          "30.09 контроль"
+          "Read-only контроль"
         ],
         "tags_en": [
-          "PLANNED",
+          "DONE",
           "Organic search",
-          "Sep 30 control"
+          "Read-only control"
         ],
         "capabilities_ru": [
-          "Восстановленная плановая задача после Search Visibility Optimization: проверить фактический recrawl, indexing, impressions, clicks, queries, countries и старые URL.",
-          "Предыдущий baseline: GSC 41 impressions, 0 clicks, avg position 8.5 за 24.09; GSC sitemap Successful; Bing sitemap около 1.4K discovered; Search Performance ещё готовился.",
-          "Текущая публичная проверка сайта 29.09: GSD public sample 34/34 PASS; 45 legacy GSC URL дают 25×301, 19×404, 1×200/noindex, failures 0.",
-          "Свежие кабинеты Google/Bing/Yandex/Naver/Brave пока не проверены в этой сессии; недоступные показатели остаются недоступными, не нулями."
+          "GSC 30.09: доступный период 24–28.09 — 775 показов, 7 кликов, CTR 0,9%, средняя позиция 13,1; 115 запросов, 561 страница, 87 стран. Sitemap Successful, обработан 29.09, 10 421 discovered; Pages/Indexing всё ещё обрабатывается.",
+          "Bing: sitemap Success, 22 child maps, 0 errors/warnings; Search Performance всё ещё готовится, Site Explorer Indexed URLs — no data. IndexNow показывает 18 URL за последние 22 часа; свежий пример Pending / Not Indexed.",
+          "Yandex: кабинет доступен; sitemap index и видимые child maps — OK, 22 ссылки в index. За 27.08–27.09 подтверждены 0 показов и 0 кликов; раздел «Все страницы» показывает «Нет проиндексированных страниц».",
+          "Naver Search Advisor разлогинен, ownership/sitemap сейчас недоступно; публичный verification meta сохранён. Brave site: snapshot показал home и GLiNER2.5-Decide, то есть минимум два обнаруженных URL без полного index count.",
+          "Public read-only QA: GSD 34/34 PASS; ровно 45 legacy URL — 25×301, 19×404, 1×200/noindex, failures 0. Google performance всё ещё содержит параметрические URL; canonical/indexed отчёт недоступен до завершения обработки.",
+          "Ограниченный персонализированный Google SERP: AIpediya не найдена на первой видимой странице для `AIpediya AI models` и `AI model comparison`; это snapshot, не доказательство причин ranking."
         ],
         "capabilities_en": [
-          "Restored planned task after Search Visibility Optimization: verify actual recrawl, indexing, impressions, clicks, queries, countries and legacy URLs.",
-          "Previous baseline: GSC 41 impressions, 0 clicks, avg position 8.5 for Sep 24; GSC sitemap Successful; Bing sitemap about 1.4K discovered; Search Performance was still preparing.",
-          "Current public site check on Sep 29: GSD public sample 34/34 PASS; 45 legacy GSC URLs return 25×301, 19×404, 1×200/noindex, failures 0.",
-          "Fresh Google/Bing/Yandex/Naver/Brave consoles were not checked in this session; unavailable metrics remain unavailable, not zero."
+          "GSC on Sep 30, available Sep 24-28 data: 775 impressions, 7 clicks, 0.9% CTR, average position 13.1; 115 queries, 561 pages and 87 countries. Sitemap is Successful, processed Sep 29, with 10,421 discovered; Pages/Indexing is still processing.",
+          "Bing: sitemap Success, 22 child maps, zero errors/warnings; Search Performance still prepares and Site Explorer Indexed URLs has no data. IndexNow shows 18 URLs in the last 22 hours; a fresh example is Pending / Not Indexed.",
+          "Yandex is accessible: sitemap index and visible child maps are OK, with 22 links in the index. Aug 27-Sep 27 confirms zero impressions and zero clicks; All pages reports no indexed pages.",
+          "Naver Search Advisor is signed out, so current ownership/sitemap is unavailable; the public verification meta remains. Brave site: surfaced the home page and GLiNER2.5-Decide, proving at least two discovered URLs without a complete index count.",
+          "Public read-only QA: GSD 34/34 passes; exactly 45 legacy URLs return 25×301, 19×404 and 1×200/noindex with zero failures. Google performance still attributes data to parameter URLs; canonical/indexed reporting is unavailable until processing completes.",
+          "Limited personalized Google SERP: AIpediya was not found on the first visible page for `AIpediya AI models` or `AI model comparison`; this is a snapshot, not ranking-causation evidence."
         ],
         "source": "2026-09-30-organic-search-followup",
-        "open": true,
-        "progress": "planned",
+        "open": false,
+        "progress": "done",
         "qa": {
-          "local": "History/status restoration only. Public read-only checks on 2026-09-29: gsd_public_check 34/34 PASS; search_visibility_qa 45 legacy URLs, failures=0. No Production changes and no search-console submissions."
+          "local": "Read-only cabinet snapshot for GSC/Bing/Yandex/Naver, Brave and two Google control queries; gsd_public_check 34/34 PASS; search_visibility_qa 45 legacy URLs, failures=0; Production snapshot integrity ok, FK 0; IndexNow DB active pending/retry/unresolved 0.",
+          "production": "Read-only preflight PASS at release 1f412c7; service RUNNING and /healthz 200. No Production mutation, URL submission, DNS change or deploy."
         },
-        "next_ru": "30.09 снять свежие GSC/Bing/Yandex/Naver/IndexNow/Brave факты; если кабинет недоступен — записать недоступно и следующий конкретный шаг.",
-        "next_en": "On Sep 30 capture fresh GSC/Bing/Yandex/Naver/IndexNow/Brave facts; if a console is unavailable, record unavailable and the next concrete step."
+        "next_ru": "Внешний follow-up: после готовности GSC Pages и Bing Performance повторно снять indexed/canonical; после восстановления входа владельцем проверить Naver. Новых code/SEO работ из этой карточки не начинать.",
+        "next_en": "External follow-up: after GSC Pages and Bing Performance become ready, capture indexed/canonical data again; after owner login recovery, check Naver. Start no new code/SEO work from this card."
       },
       {
         "release_id": "ADAPTIVE-UI-2026-09-26",
@@ -2410,14 +2421,14 @@
         "title_en": "Paid Search Experiment / Google Ads",
         "goal_ru": "Отдельно от органического SEO проверить платное привлечение пользователей Search-кампанией в пределах общего бюджета $10–15 в месяц.",
         "goal_en": "Test paid Search acquisition separately from organic SEO within a total $10–15 monthly budget.",
-        "done_ru": "PLANNED/DEFERRED: границы paid-эксперимента сохранены, но Google Ads сейчас не запускать; Keyword Planner master, группы объявлений, бюджет и кампания не созданы.",
-        "done_en": "PLANNED/DEFERRED: paid-experiment scope is preserved, but Google Ads must not start now; no Keyword Planner master, ad groups, budget or campaign have been created.",
-        "qa_ru": "Проверено только состояние плана в Local Timeline; рекламных показов, кликов, расходов или настроек кампании нет.",
-        "qa_en": "Only the Local Timeline plan is checked; there are no campaign impressions, clicks, spend or settings.",
+        "done_ru": "CLOSED PLANNED/DEFERRED: текущий рабочий хвост закрыт без запуска эксперимента. Keyword Planner master, группы, ключи, billing, бюджет и кампания не создавались; spend, paid impressions и paid clicks отсутствуют.",
+        "done_en": "CLOSED PLANNED/DEFERRED: the current work tail is closed without running the experiment. No Keyword Planner master, groups, keywords, billing, budget or campaign were created; spend, paid impressions and paid clicks are absent.",
+        "qa_ru": "После органического control snapshot проверена семантика Timeline: карточка остаётся будущим планом, но больше не является открытым рабочим хвостом и не выдана за выполненный эксперимент.",
+        "qa_en": "After the organic control snapshot, Timeline semantics were checked: the card remains a future plan but is no longer an open work tail and is not presented as a completed experiment.",
         "owner_ru": "Владелец 29.09 изменил приоритет: сначала органическая глобальная поисковая доступность и фактическая индексация, к рекламе возвращаться только отдельным будущим решением.",
         "owner_en": "On Sep 29 the owner changed priority: organic global search availability and actual indexing first; return to advertising only by a separate future decision.",
-        "next_ru": "Не запускать рекламу. Сначала закрыть `ORGANIC-SEARCH-FOLLOWUP-2026-09-30`; только после фактов органики владелец отдельно решит, нужен ли paid experiment.",
-        "next_en": "Do not launch ads. First close `ORGANIC-SEARCH-FOLLOWUP-2026-09-30`; only after organic facts will the owner separately decide whether a paid experiment is needed.",
+        "next_ru": "Действий нет. Возвращаться к paid search только по отдельному будущему решению владельца.",
+        "next_en": "No action remains. Return to paid search only by a separate future owner decision.",
         "source": "execution-state"
       },
       {

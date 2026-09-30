@@ -39,9 +39,9 @@ class PackAiContextTests(SimpleTestCase):
     def test_parse_production_commit_and_state_stamp(self):
         release = (ROOT / "docs" / "RELEASE.md").read_text(encoding="utf-8")
         commit = self.pack.parse_production_commit(release)
-        self.assertEqual(commit, "8713fbc4d040dcf0374e6b60b045a6d0867ff5bd")
+        self.assertEqual(commit, "1f412c70634713f8dbf2ea10ee47115fef997450")
         self.assertEqual(self.pack.parse_production_release(release),
-                 "8713fbc4d040dcf0374e6b60b045a6d0867ff5bd")
+                 "1f412c70634713f8dbf2ea10ee47115fef997450")
         state = (ROOT / "docs" / "EXECUTION_STATE.md").read_text(encoding="utf-8")
         self.assertTrue(self.pack.parse_state_updated(state))
         evidence = self.pack.parse_evidence_paths(state)
