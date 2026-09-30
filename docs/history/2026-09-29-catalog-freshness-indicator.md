@@ -1,4 +1,4 @@
-# Catalog Freshness Indicator — Local Review
+# Catalog Freshness Indicator — Production Release
 
 Дата: 2026-09-29. Исполнитель: GitHub Copilot. Timeline: `CATALOG-FRESHNESS-INDICATOR-2026-09-29`, Release #018 / `v0.16.0`.
 
@@ -56,4 +56,14 @@
 
 ## Состояние
 
-Local — review, ждёт визуальной приёмки владельца. Production не трогалась и остаётся Release #016 / `v0.14.0`.
+Production опубликована и проверена. Release commit `74cf7269c991c121e549c67e863bdfcd0449387a`; archive SHA-256 `61b86d348bd31b2c35a559ea4684c7cf0531b6100435bfe4cbcd9a9ef2c840ee`.
+
+## Production QA
+
+- `tools/server.py preflight` — PASS.
+- `release-preflight` — PASS on online backup `/srv/aipedia/backups/aipedia-preflight-018-20260930T033638Z.sqlite3`.
+- deploy dry-run — PASS.
+- deploy — PASS, `/healthz` release `74cf7269c991c121e549c67e863bdfcd0449387a`.
+- `tools/server.py catalog` — integrity OK, FK 0, 331 Models / 149 Tools.
+- `verify-release aipedia-before-code-20260930T033658Z.sqlite3` — PASS, `changed_factual_tables=[]`.
+- Targeted public smoke — PASS: RU desktop, RU mobile, local clock, hidden duplicate result count, popover, release dates, NEW hidden by new rule, icons as accepted Local, overflow false, JS console/page errors 0.

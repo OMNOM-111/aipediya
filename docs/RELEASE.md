@@ -8,8 +8,21 @@
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный выпуск — **Daily Catalog Update, Release #016 · v0.14.0**,
-2026-09-29: проверенный release id
+Текущий публичный выпуск — **Catalog Freshness Indicator, Release #018 · v0.16.0**,
+2026-09-30: проверенный commit/release id
+`74cf7269c991c121e549c67e863bdfcd0449387a`, tag
+`release-2026-09-29-catalog-freshness-indicator`. Архив
+`aipedia-code-74cf7269c991.zip`, SHA-256
+`61b86d348bd31b2c35a559ea4684c7cf0531b6100435bfe4cbcd9a9ef2c840ee`.
+Server preflight, release-preflight, dry-run, deploy, `/healthz`, `server catalog`,
+`verify-release` и targeted public smoke PASS. Code-only: каталог и фактические
+таблицы не менялись, 331 Models / 149 Tools сохранены, changed factual tables [].
+Backup: `/srv/aipedia/backups/aipedia-before-code-20260930T033658Z.sqlite3`.
+Отчёт — `docs/history/2026-09-29-catalog-freshness-indicator.md`; Timeline #018 закрыта.
+
+### Предыдущий публичный выпуск — Daily Catalog Update #016
+
+Daily Catalog Update, Release #016 · v0.14.0, 2026-09-29: проверенный release id
 `7c18e9f078f457d313ef69b8c70de564c050e231`, tag
 `release-2026-09-29-daily-catalog-update`. Архив
 `aipedia-code-7c18e9f078f4.zip`, SHA-256

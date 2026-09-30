@@ -2100,8 +2100,8 @@
         "app_version": "v0.16.0",
         "local_verified": true,
         "owner_approved": true,
-        "production_released": false,
-        "production_verified": false,
+        "production_released": true,
+        "production_verified": true,
         "date": "2026-09-29",
         "title_ru": "Индикатор свежести каталога",
         "title_en": "Catalog freshness indicator",
@@ -2110,13 +2110,15 @@
           "Release #018",
           "v0.16.0",
           "Local QA PASS",
-          "Owner approved"
+          "Owner approved",
+          "Production QA PASS"
         ],
         "tags_en": [
           "Release #018",
           "v0.16.0",
           "Local QA PASS",
-          "Owner approved"
+          "Owner approved",
+          "Production QA PASS"
         ],
         "capabilities_ru": [
           "Показать посетителю точное UTC-время последнего фактического catalog update и относительное время рядом со счётчиками Models и Tools.",
@@ -2129,9 +2131,9 @@
           "Open a popover on desktop hover/focus and mobile tap/click; while it is open, highlight already loaded rows from the latest update without forcing infinite-scroll loading."
         ],
         "source": "2026-09-29-catalog-freshness-indicator",
-        "open": true,
-        "progress": "review",
-        "revision": "d82a29d19542f5e3395c9ddb8d0cd0b2291d42f5",
+        "open": false,
+        "progress": "done",
+        "revision": "74cf7269c991c121e549c67e863bdfcd0449387a",
         "release_tag": "release-2026-09-29-catalog-freshness-indicator",
         "executor": "GitHub Copilot",
         "started_utc": "2026-09-29T23:27:52Z",
@@ -2146,10 +2148,14 @@
         "qa": {
           "local": "Targeted backend: catalog freshness snapshot/code-only/UI tests 3 PASS; targeted UI test PASS; manage.py check PASS; node --check static/site.js PASS. Final browser QA after owner remarks: duplicate result count visually removed while QA counter remains sr-only; NEW/UPD hidden for date-only Sep 28 releases on Sep 29 and boundary behavior PASS; icons for 8 latest records checked (Anthropic/ElevenLabs logos present; H Company and Manus keep fallback because no existing official mark asset and Simple Icons slugs 404); RU desktop, RU 375, EN smoke, clock, popover, row highlight, overflow false, console/page errors 0.",
           "local_ru": "Targeted backend: catalog freshness snapshot/code-only/UI tests 3 PASS; targeted UI test PASS; manage.py check PASS; node --check static/site.js PASS. Финальный browser QA после замечаний владельца: дублирующий result count визуально убран, QA counter сохранён sr-only; NEW/UPD скрыт для date-only релизов 28 Sep на 29 Sep, boundary behavior PASS; иконки 8 последних записей проверены (Anthropic/ElevenLabs logos есть; H Company и Manus остаются fallback, потому что нет existing official mark asset и Simple Icons slugs 404); RU desktop, RU 375, EN smoke, часы, popover, row highlight, overflow false, console/page errors 0.",
-          "local_en": "Targeted backend: catalog freshness snapshot/code-only/UI tests 3 PASS; targeted UI test PASS; manage.py check PASS; node --check static/site.js PASS. Final browser QA after owner remarks: duplicate result count visually removed while QA counter remains sr-only; NEW/UPD hidden for date-only Sep 28 releases on Sep 29 and boundary behavior PASS; icons for 8 latest records checked (Anthropic/ElevenLabs logos present; H Company and Manus keep fallback because no existing official mark asset and Simple Icons slugs 404); RU desktop, RU 375, EN smoke, clock, popover, row highlight, overflow false, console/page errors 0."
+          "local_en": "Targeted backend: catalog freshness snapshot/code-only/UI tests 3 PASS; targeted UI test PASS; manage.py check PASS; node --check static/site.js PASS. Final browser QA after owner remarks: duplicate result count visually removed while QA counter remains sr-only; NEW/UPD hidden for date-only Sep 28 releases on Sep 29 and boundary behavior PASS; icons for 8 latest records checked (Anthropic/ElevenLabs logos present; H Company and Manus keep fallback because no existing official mark asset and Simple Icons slugs 404); RU desktop, RU 375, EN smoke, clock, popover, row highlight, overflow false, console/page errors 0.",
+          "production": "Server preflight PASS; release-preflight PASS; dry-run PASS; deploy PASS; /healthz release 74cf7269c991c121e549c67e863bdfcd0449387a; server catalog integrity ok, FK 0, 331 Models / 149 Tools; verify-release PASS with changed_factual_tables=[]; public smoke RU desktop/RU 375/EN targeted function PASS, overflow false, console/page errors 0."
         },
-        "next_ru": "При PASS финального commit/push выполнить Production именно #018 по docs/RELEASE.md; если scope расширится — остановиться.",
-        "next_en": "With final commit/push PASS, publish exactly #018 by docs/RELEASE.md; stop if the scope expands."
+        "production_verified_at": "2026-09-30T03:37:56Z",
+        "release_report": "docs/history/2026-09-29-catalog-freshness-indicator.md",
+        "backup": "aipedia-before-code-20260930T033658Z.sqlite3",
+        "next_ru": "Выпуск #018 опубликован и проверен; реальных остатков по #018 нет.",
+        "next_en": "Release #018 is published and verified; no real #018 follow-up remains."
       }
     ],
     "additional_tasks": [
@@ -2324,18 +2330,18 @@
       "release_sequence": 18,
       "app_version": "v0.16.0",
       "release_tag": "release-2026-09-29-catalog-freshness-indicator",
-      "revision": null,
-      "started_utc": "2026-09-29T23:27:52Z"
+      "revision": "74cf7269c991c121e549c67e863bdfcd0449387a",
+      "github_pushed_at": "2026-09-30T03:35:53Z"
     },
     "current_production": {
-      "release_id": "DAILY-CATALOG-UPDATE-2026-09-29",
-      "release_sequence": 16,
-      "app_version": "v0.14.0",
-      "release_tag": "release-2026-09-29-daily-catalog-update",
-      "revision": "7c18e9f078f457d313ef69b8c70de564c050e231",
-      "confirmed_at": "2026-09-29T21:39:59+00:00",
-      "evidence": "1657/1657 PASS; artifacts\\daily-catalog-20260929-gsd-production-qa.json",
-      "source": "docs/history/2026-09-29-daily-catalog-update.md"
+      "release_id": "CATALOG-FRESHNESS-INDICATOR-2026-09-29",
+      "release_sequence": 18,
+      "app_version": "v0.16.0",
+      "release_tag": "release-2026-09-29-catalog-freshness-indicator",
+      "revision": "74cf7269c991c121e549c67e863bdfcd0449387a",
+      "confirmed_at": "2026-09-30T03:37:56Z",
+      "evidence": "health/catalog/verify-release PASS; public smoke targeted PASS",
+      "source": "docs/history/2026-09-29-catalog-freshness-indicator.md"
     }
   }
 }

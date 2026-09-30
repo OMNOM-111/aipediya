@@ -3,22 +3,19 @@
 ## Версии и обязательный выпускной шлюз
 
 **No Timeline → No Release.** Подтверждённые Production-вехи получили
-Release #001–#016; текущий опубликованный baseline — Release #016 · AIpediya
-v0.14.0, `release-2026-09-29-daily-catalog-update`, deployed release id
-`7c18e9f078f457d313ef69b8c70de564c050e231`. Daily Catalog Update прошёл
-Local QA, server preflight, Production deploy, `/healthz`, `verify-release`,
-`catalog_master qa --production`, GSD Public 34/34 и Production QA 1657/1657;
-публичный каталог содержит 331 Models / 149 Tools. Отчёт —
-`docs/history/2026-09-29-daily-catalog-update.md`.
+Release #001–#018; текущий опубликованный baseline — Release #018 · AIpediya
+v0.16.0, `release-2026-09-29-catalog-freshness-indicator`, deployed release id
+`74cf7269c991c121e549c67e863bdfcd0449387a`. Catalog Freshness Indicator прошёл
+Local targeted QA, owner approval, server preflight, release-preflight, dry-run,
+Production deploy, `/healthz`, `verify-release`, server catalog integrity и
+targeted public smoke; публичный каталог содержит 331 Models / 149 Tools.
+Отчёт — `docs/history/2026-09-29-catalog-freshness-indicator.md`.
 
-Текущий Local-пакет на review — Release #018 · v0.16.0,
-`CATALOG-FRESHNESS-INDICATOR-2026-09-29`: в toolbar каталога добавлен
-индикатор свежести последнего фактического catalog update. Источник истины —
-`data/catalog_freshness.json`, seed из daily catalog #016 `catalog_plan`;
-следующие настоящие catalog releases обновляют snapshot через `apply-plan`,
-а code-only releases не меняют его. Local QA исполнителя пройден, визуальная
-приёмка владельца и Production отсутствуют. Последний закрытый Local-этап — Release
-#017 · v0.15.0, `UNIVERSAL-CATALOG-RELEASE-2026-09-29`, принят владельцем;
+Release #018 добавил в toolbar каталога индикатор свежести последнего фактического
+catalog update. Источник истины — `data/catalog_freshness.json`, seed из daily
+catalog #016 `catalog_plan`; следующие настоящие catalog releases обновляют
+snapshot через `apply-plan`, а code-only releases не меняют его. Release #017 ·
+v0.15.0, `UNIVERSAL-CATALOG-RELEASE-2026-09-29`, был принят владельцем в Local;
 Production deploy для #017 не требовался и не выполнялся.
 `release_sequence` — неизменяемый номер выпуска, `app_version` — SemVer.
 До 1.0 новый пользовательский пакет увеличивает minor (`v0.12.0`), исправление
@@ -61,8 +58,8 @@ Production и автономный HTML. Исторические Local-only з�
 открытии. Для английского маршрута меняется лишь начальная редакция RU/EN.
 Local-only CSP разрешает встроенные CSS/JS при запрете сетевых соединений;
 Production по-прежнему отвечает 404. На горизонтальной ленте видны только
-пронумерованные Release #001–#018, все по порядку; #018 находится в Local
-review, #017 закрыт в Local с Owner ✓, а Production-карточка остаётся #016.
+пронумерованные Release #001–#018, все по порядку; #018 закрыт с Local ✓,
+Owner ✓ и Production ✓.
 Ненумерованные Local-only и
 плановые записи сохранены в реестре и документах, но не перемежают выпуски.
 
