@@ -58,8 +58,24 @@ def _source_templates() -> str:
     return "\n".join(parts)
 
 
+def _current_registry_hash() -> str:
+    registry = json.loads((ROOT / "docs/timeline.json").read_text(encoding="utf-8"))
+    return hashlib.sha256(json.dumps(registry, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+
+
+def _generated_at_for(timeline_sha256: str) -> str:
+    if OUTPUT.exists():
+        text = OUTPUT.read_text(encoding="utf-8", errors="replace")
+        same = re.search(r'name="aipediya-timeline-sha256" content="([0-9a-f]{64})"', text)
+        stamp = re.search(r'name="aipediya-history-generated-utc" content="([^"]+)"', text)
+        if same and stamp and same.group(1) == timeline_sha256:
+            return stamp.group(1)
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+
+
 def build() -> Path:
-    generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+    timeline_sha256 = _current_registry_hash()
+    generated_at = _generated_at_for(timeline_sha256)
     ru = _render_edition("ru", generated_at)
     en = _render_edition("en", generated_at)
     css = (ROOT / "static/product-history-offline.css").read_text(encoding="utf-8")
@@ -71,7 +87,6 @@ def build() -> Path:
     issues = validate(registry)
     if issues:
         raise ValueError("Invalid timeline: " + "; ".join(issues))
-    timeline_sha256 = hashlib.sha256(json.dumps(registry, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
     document = f'''<!doctype html>
 <html lang="ru" dir="ltr" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; font-src data:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'">
