@@ -8,17 +8,27 @@
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный выпуск — **Catalog Freshness Indicator, Release #018 · v0.16.0**,
+Текущий публичный выпуск — **Catalog Freshness UI final polish, Release #019 · v0.16.1**,
 2026-09-30: проверенный release id
-`74cf7269c991c121e549c67e863bdfcd0449387a`, tag
-`release-2026-09-29-catalog-freshness-indicator`. Архив
+`8713fbc4d040dcf0374e6b60b045a6d0867ff5bd`, tag
+`release-2026-09-30-catalog-freshness-ui-polish`. Архив
+`aipedia-code-8713fbc4d040.zip`, SHA-256
+`a7ec7e2bc1ebc21ed69a3272b94aecf9ad29f2ec4192ca9984bd0b86a8ceda8f`.
+Server preflight, release-preflight, dry-run, deploy, `/healthz`, `server catalog`,
+`verify-release` и targeted public smoke 28/28 PASS. Code-only: каталог и
+фактические таблицы не менялись, 331 Models / 149 Tools сохранены,
+changed factual tables []. Backup:
+`/srv/aipedia/backups/aipedia-before-code-20260930T172607Z.sqlite3`.
+Отчёт — `docs/history/2026-09-30-catalog-freshness-ui-polish.md`; Timeline #019 закрыта.
+
+### Предыдущий публичный выпуск — Catalog Freshness Indicator #018
+
+Catalog Freshness Indicator, Release #018 · v0.16.0, 2026-09-30:
+release id `74cf7269c991c121e549c67e863bdfcd0449387a`, tag
+`release-2026-09-29-catalog-freshness-indicator`, archive
 `aipedia-code-74cf7269c991.zip`, SHA-256
 `61b86d348bd31b2c35a559ea4684c7cf0531b6100435bfe4cbcd9a9ef2c840ee`.
-Server preflight, release-preflight, dry-run, deploy, `/healthz`, `server catalog`,
-`verify-release` и targeted public smoke PASS. Code-only: каталог и фактические
-таблицы не менялись, 331 Models / 149 Tools сохранены, changed factual tables [].
-Backup: `/srv/aipedia/backups/aipedia-before-code-20260930T033658Z.sqlite3`.
-Отчёт — `docs/history/2026-09-29-catalog-freshness-indicator.md`; Timeline #018 закрыта.
+Отчёт — `docs/history/2026-09-29-catalog-freshness-indicator.md`.
 
 ### Предыдущий публичный выпуск — Daily Catalog Update #016
 

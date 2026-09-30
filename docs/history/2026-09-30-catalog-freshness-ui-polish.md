@@ -2,7 +2,7 @@
 
 Дата: 2026-09-30. Исполнитель: Codex. Timeline: `CATALOG-FRESHNESS-UI-POLISH-2026-09-30`, Release #019 / `v0.16.1`.
 
-Состояние перед выпуском: `review` — Local ✓ / Owner ✓ / Production —. Владелец принял дизайн и в поручении от 30.09 явно разрешил Production #019 после PASS трёх финальных замечаний. Проверенный implementation commit — `d28de9e118a619d9c370de2d2ac3782dc38ae536`; Production baseline до процедуры остаётся Release #018, commit `74cf7269c991c121e549c67e863bdfcd0449387a`.
+Состояние: `done` — Local ✓ / Owner ✓ / Production ✓. Владелец принял дизайн и в поручении от 30.09 явно разрешил Production #019 после PASS трёх финальных замечаний. Deployed release id — `8713fbc4d040dcf0374e6b60b045a6d0867ff5bd`.
 
 ## Узкий scope
 
@@ -44,8 +44,16 @@
 - Загрузка marks подтверждена в DOM: Anthropic/ElevenLabs/Cue SVG, три H Company PNG и Manus PNG; PNG имеют ненулевую `naturalWidth`. Console/page errors — 0.
 - Обязательный полный release-gate до deploy обнаружил закоммиченную в #018 лишнюю индентацию в `catalog/master_sync.py` и две устаревшие проверки commit-id. Выпуск остановлен до Production; индентация исправлена без изменения алгоритма, assertions приведены к фактическим #018/#019 указателям. Повтор: 63 focused master/history tests PASS; полный `manage.py test catalog` — 349/349 PASS, один ожидаемый Windows skip.
 
-Не запускались и не требовались: общий SEO, GSC, Cloudflare, performance, 22-language matrix, полный catalog audit и Production-проверки.
+Не запускались и не требовались: общий SEO, GSC, Cloudflare, performance, 22-language matrix и полный catalog audit.
+
+## Production
+
+- Tag: `release-2026-09-30-catalog-freshness-ui-polish`; archive `aipedia-code-8713fbc4d040.zip`; SHA-256 `a7ec7e2bc1ebc21ed69a3272b94aecf9ad29f2ec4192ca9984bd0b86a8ceda8f`.
+- `tools/server.py preflight` PASS; release-preflight PASS на `/srv/aipedia/backups/aipedia-preflight-019-20260930T172526Z.sqlite3`; local и remote dry-run PASS.
+- Deploy PASS: backup `/srv/aipedia/backups/aipedia-before-code-20260930T172607Z.sqlite3`, `copied_sqlite=false`, publication-state 0 changes, миграций 0, перезапущена только программа `aipedia`.
+- `/healthz` 200 подтверждает `8713fbc4d040dcf0374e6b60b045a6d0867ff5bd`; service RUNNING. `server catalog`: integrity `ok`, FK 0, 331 Models / 149 Tools, номера непрерывны. `verify-release` PASS, `changed_factual_tables=[]`.
+- Targeted Public browser smoke 28/28 PASS: RU desktop 1440, RU mobile 375 и EN desktop 1440; полные имена/даты, 350 px desktop и 343 px mobile, восемь строк без scrollbar, overflow/truncation 0, NEW скрыт, локализованные часы, tap/Escape, все пять mark-вариантов и console errors 0.
 
 ## Handoff
 
-Targeted Local QA трёх финальных замечаний прошёл. Владелец заранее разрешил Production именно #019; следующий шаг — code-only процедура `docs/RELEASE.md`, затем targeted public smoke и закрытие этой же карточки только при полном PASS.
+Release #019 опубликован и проверен; реальных остатков по #019 нет. Следующий самостоятельный пакет начинается с новой Timeline-карточки #020.

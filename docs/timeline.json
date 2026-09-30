@@ -976,20 +976,22 @@
       "release_sequence": 19,
       "app_version": "v0.16.1",
       "title": "Catalog freshness UI final polish",
-      "environment": "local",
-      "stage": "review",
-      "status": "OWNER_APPROVED",
+      "environment": "production",
+      "stage": "released",
+      "status": "RELEASED",
       "started_utc": "2026-09-30T15:37:41Z",
       "executor": "Codex",
       "history": "docs/history/2026-09-30-catalog-freshness-ui-polish.md",
       "release_tag": "release-2026-09-30-catalog-freshness-ui-polish",
-      "summary": "The accepted #018 Catalog Freshness mechanics remain unchanged. Final Local polish uses a compact 350 px popover, keeps all eight names and release dates readable, hides the scrollbar when all rows fit, and preserves the scoped official marks. Targeted Local QA passed and the owner authorized this exact #019 release; Production remains Release #018 until the release procedure completes."
+      "summary": "The accepted #018 Catalog Freshness mechanics remain unchanged. Release #019 uses a compact 350 px popover, keeps all eight names and release dates readable, hides the scrollbar when all rows fit, preserves the scoped official marks, and fixes EN clock/date localization. Local, owner and Production gates passed.",
+      "revision": "8713fbc4d040dcf0374e6b60b045a6d0867ff5bd",
+      "production_verified_at": "2026-09-30T17:30:18+00:00"
     }
   ],
   "product_history": {
     "visibility": "Local only; no owner authentication exists for this page on Production",
-    "production_evidence": "docs/history/2026-09-29-performance-release.md",
-    "production_verified_at": "2026-09-29T19:57:39+00:00",
+    "production_evidence": "docs/history/2026-09-30-catalog-freshness-ui-polish.md",
+    "production_verified_at": "2026-09-30T17:30:18+00:00",
     "milestones": [
       {
         "release_id": "release-2026-09-20-chronology",
@@ -2177,8 +2179,8 @@
         "app_version": "v0.16.1",
         "local_verified": true,
         "owner_approved": true,
-        "production_released": false,
-        "production_verified": false,
+        "production_released": true,
+        "production_verified": true,
         "date": "2026-09-30",
         "title_ru": "Финальная визуальная доводка свежести каталога",
         "title_en": "Catalog freshness UI final polish",
@@ -2188,14 +2190,14 @@
           "v0.16.1",
           "Local QA PASS",
           "Owner approved",
-          "Production not released"
+          "Production PASS"
         ],
         "tags_en": [
           "Release #019",
           "v0.16.1",
           "Local QA PASS",
           "Owner approved",
-          "Production not released"
+          "Production PASS"
         ],
         "capabilities_ru": [
           "Показывать полные названия восьми записей в popover без ellipsis, сохраняя выровненные даты и компактную ширину.",
@@ -2208,13 +2210,13 @@
           "Run targeted Local QA on RU desktop 1440, ultrawide, RU mobile 375 and EN desktop without changing the Catalog Freshness mechanics from #018."
         ],
         "source": "2026-09-30-catalog-freshness-ui-polish",
-        "open": true,
-        "progress": "review",
+        "open": false,
+        "progress": "done",
         "release_tag": "release-2026-09-30-catalog-freshness-ui-polish",
         "executor": "Codex",
         "started_utc": "2026-09-30T15:37:41Z",
         "review_ready_utc": "2026-09-30T16:11:44Z",
-        "revision": "d28de9e118a619d9c370de2d2ac3782dc38ae536",
+        "revision": "8713fbc4d040dcf0374e6b60b045a6d0867ff5bd",
         "owner_approved_utc": "2026-09-30T16:59:05Z",
         "owner_decision": "Owner accepted the #019 design and explicitly pre-authorized Production after the three final visual remarks passed targeted Local QA in the 2026-09-30 continuation request.",
         "changes": [
@@ -2228,10 +2230,14 @@
         "qa": {
           "local": "PASS: targeted Django 9/9 and final full catalog suite 349/349 with one Windows skip; 63 focused master/history tests PASS; manage.py check, node --check and git diff --check PASS. Real Local browser RU 1440, RU ultrawide 2502, RU mobile 375 and EN 1440 verified full names/dates, 350 px bounds, no scrollbar for 8 rows or overflow, locale-correct ticking clock, hover/focus/tap/Escape, row highlight, official marks, hidden Sep 28 NEW and zero console/page errors.",
           "local_ru": "PASS: targeted Django 9/9 и финальный полный catalog suite 349/349 с одним Windows skip; 63 адресных master/history теста PASS; manage.py check, node --check и git diff --check PASS. Настоящий Local RU 1440, ultrawide 2502, RU mobile 375 и EN 1440 подтвердил полные имена/даты, 350 px, отсутствие scrollbar для 8 строк и overflow, локализованные часы, hover/focus/tap/Escape, подсветку, marks, скрытый NEW и 0 console/page errors.",
-          "local_en": "PASS: targeted Django 9/9 and final full catalog suite 349/349 with one Windows skip; 63 focused master/history tests PASS; manage.py check, node --check and git diff --check PASS. Real Local browser RU 1440, ultrawide 2502, RU mobile 375 and EN 1440 verified complete names/dates, 350 px bounds, no scrollbar for eight rows or overflow, locale-correct clock, hover/focus/tap/Escape, highlighting, marks, hidden NEW and zero console/page errors."
+          "local_en": "PASS: targeted Django 9/9 and final full catalog suite 349/349 with one Windows skip; 63 focused master/history tests PASS; manage.py check, node --check and git diff --check PASS. Real Local browser RU 1440, ultrawide 2502, RU mobile 375 and EN 1440 verified complete names/dates, 350 px bounds, no scrollbar for eight rows or overflow, locale-correct clock, hover/focus/tap/Escape, highlighting, marks, hidden NEW and zero console/page errors.",
+          "production": "28/28 PASS; artifacts/release-019-production-qa.json"
         },
-        "next_ru": "Владелец разрешил выпуск #019 после PASS targeted Local QA. Следующим выполнить точную процедуру code-only release по docs/RELEASE.md и закрыть ту же карточку только после Public QA.",
-        "next_en": "The owner authorized #019 after targeted Local QA passed. Next run the exact code-only procedure in docs/RELEASE.md and close this same card only after Public QA passes."
+        "next_ru": "Выпуск #019 опубликован и проверен; реальных остатков по #019 нет.",
+        "next_en": "Release #019 is published and verified; no real #019 follow-up remains.",
+        "production_verified_at": "2026-09-30T17:30:18+00:00",
+        "release_report": "docs/history/2026-09-30-catalog-freshness-ui-polish.md",
+        "backup": "aipedia-before-code-20260930T172607Z.sqlite3"
       }
     ],
     "additional_tasks": [
@@ -2410,14 +2416,14 @@
       "github_pushed_at": "2026-09-30T17:08:35Z"
     },
     "current_production": {
-      "release_id": "CATALOG-FRESHNESS-INDICATOR-2026-09-29",
-      "release_sequence": 18,
-      "app_version": "v0.16.0",
-      "release_tag": "release-2026-09-29-catalog-freshness-indicator",
-      "revision": "74cf7269c991c121e549c67e863bdfcd0449387a",
-      "confirmed_at": "2026-09-30T03:37:56Z",
-      "evidence": "health/catalog/verify-release PASS; public smoke targeted PASS",
-      "source": "docs/history/2026-09-29-catalog-freshness-indicator.md"
+      "release_id": "CATALOG-FRESHNESS-UI-POLISH-2026-09-30",
+      "release_sequence": 19,
+      "app_version": "v0.16.1",
+      "release_tag": "release-2026-09-30-catalog-freshness-ui-polish",
+      "revision": "8713fbc4d040dcf0374e6b60b045a6d0867ff5bd",
+      "confirmed_at": "2026-09-30T17:30:18+00:00",
+      "evidence": "28/28 PASS; artifacts/release-019-production-qa.json",
+      "source": "docs/history/2026-09-30-catalog-freshness-ui-polish.md"
     }
   }
 }
