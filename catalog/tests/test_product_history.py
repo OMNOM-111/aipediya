@@ -13,14 +13,13 @@ class ProductHistoryTests(SimpleTestCase):
         cards = product["milestones"]
         by_id = {row["release_id"]: row for row in cards}
         self.assertEqual(len(by_id), len(cards))
-        self.assertEqual(len(cards), 26)
+        self.assertEqual(len(cards), 27)
         self.assertEqual(product["current_production"]["release_sequence"], 19)
         self.assertEqual(product["current_production"]["app_version"], "v0.16.1")
         self.assertEqual(by_id["release-2026-09-28-reconciliation-cleanup"]["revision"],
                          "5ba1e566338fc17d9b8965d3be180bc1df268e2e")
-        self.assertEqual(product["current_local"]["release_sequence"], 19)
-        self.assertEqual(product["current_local"]["revision"],
-                         "d28de9e118a619d9c370de2d2ac3782dc38ae536")
+        self.assertEqual(product["current_local"]["release_sequence"], 20)
+        self.assertIsNone(product["current_local"]["revision"])
         locale_switch = by_id["LANGUAGE-SWITCH-2026-09-28"]
         self.assertEqual((locale_switch["app_version"], locale_switch["local_verified"],
                           locale_switch["owner_approved"]), ("v0.13.1", True, True))
@@ -63,6 +62,10 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertEqual((polish["release_sequence"], polish["app_version"], polish["progress"],
                           polish["local_verified"], polish["owner_approved"], polish["production_released"]),
                          (19, "v0.16.1", "done", True, True, True))
+        daily_twenty = by_id["DAILY-CATALOG-UPDATE-2026-09-30"]
+        self.assertEqual((daily_twenty["release_sequence"], daily_twenty["app_version"], daily_twenty["progress"],
+                          daily_twenty["local_verified"], daily_twenty["production_released"]),
+                         (20, "v0.17.0", "in_progress", False, False))
         self.assertEqual([row["release_id"] for row in cards if row["progress"] == "planned"],
                          ["PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26",
                           "ORGANIC-SEARCH-FOLLOWUP-2026-09-30"])
@@ -72,13 +75,14 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertEqual(page.status_code, 200)
         self.assertContains(page, "История AIpediya")
         self.assertEqual(page.content, (Path(__file__).resolve().parents[2] / "timeline.html").read_bytes())
-        self.assertEqual(page.content.count(b'data-history-open='), 42)  # 19 releases + 2 planned cards in two editions
+        self.assertEqual(page.content.count(b'data-history-open='), 44)  # 20 releases + 2 planned cards in two editions
         self.assertIn(b'Release #001', page.content)
         self.assertIn(b'Release #015', page.content)
         self.assertIn(b'Release #016', page.content)
         self.assertIn(b'Release #017', page.content)
         self.assertIn(b'Release #018', page.content)
         self.assertIn(b'Release #019', page.content)
+        self.assertIn(b'Release #020', page.content)
         self.assertIn("Контрольный замер органического поиска".encode("utf-8"), page.content)
         self.assertIn(b'PLANNED', page.content)
         self.assertNotIn(b'class="site-header"', page.content)
@@ -198,9 +202,9 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn("connect-src 'none'", page)
         self.assertIn('id="edition-ru"', page)
         self.assertIn('id="edition-en"', page)
-        self.assertEqual(page.count('data-history-open='), 42)
-        self.assertEqual(page.count('class="ph-release-card"'), 42)
-        self.assertEqual(page.count('role="button" tabindex="0" aria-haspopup="dialog"'), 42)
+        self.assertEqual(page.count('data-history-open='), 44)
+        self.assertEqual(page.count('class="ph-release-card"'), 44)
+        self.assertEqual(page.count('role="button" tabindex="0" aria-haspopup="dialog"'), 44)
         self.assertEqual(page.count('class="ph-status-legend"'), 2)
         self.assertIn('release-2026-09-28-reconciliation-cleanup', page)
         self.assertIn('data-history-open="PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26"', page)

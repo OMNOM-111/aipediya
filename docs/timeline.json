@@ -986,6 +986,20 @@
       "summary": "The accepted #018 Catalog Freshness mechanics remain unchanged. Release #019 uses a compact 350 px popover, keeps all eight names and release dates readable, hides the scrollbar when all rows fit, preserves the scoped official marks, and fixes EN clock/date localization. Local, owner and Production gates passed.",
       "revision": "8713fbc4d040dcf0374e6b60b045a6d0867ff5bd",
       "production_verified_at": "2026-09-30T17:30:18+00:00"
+    },
+    {
+      "release_id": "DAILY-CATALOG-UPDATE-2026-09-30",
+      "release_sequence": 20,
+      "app_version": "v0.17.0",
+      "title": "Daily Catalog Update — 30 September 2026",
+      "environment": "local",
+      "stage": "in_progress",
+      "status": "IN_PROGRESS",
+      "started_utc": "2026-09-30T17:37:37Z",
+      "executor": "Codex",
+      "history": "docs/history/2026-09-30-daily-catalog-update-020.md",
+      "release_tag": "release-2026-09-30-daily-catalog-update",
+      "summary": "Release #020 is reserved before catalog work. The package will verify the Sep 30 candidate set and scoped existing-product updates in the current canonical master, then trial and sync only the exact accepted diff to Local before the pre-authorized Production procedure."
     }
   ],
   "product_history": {
@@ -2238,6 +2252,59 @@
         "production_verified_at": "2026-09-30T17:30:18+00:00",
         "release_report": "docs/history/2026-09-30-catalog-freshness-ui-polish.md",
         "backup": "aipedia-before-code-20260930T172607Z.sqlite3"
+      },
+      {
+        "release_id": "DAILY-CATALOG-UPDATE-2026-09-30",
+        "release_sequence": 20,
+        "app_version": "v0.17.0",
+        "local_verified": false,
+        "owner_approved": false,
+        "production_released": false,
+        "production_verified": false,
+        "date": "2026-09-30",
+        "title_ru": "Ежедневное обновление каталога — 30 сентября 2026",
+        "title_en": "Daily Catalog Update — 30 September 2026",
+        "icon": "library-big",
+        "tags_ru": [
+          "Release #020",
+          "v0.17.0",
+          "В работе",
+          "Только Local"
+        ],
+        "tags_en": [
+          "Release #020",
+          "v0.17.0",
+          "In progress",
+          "Local only"
+        ],
+        "capabilities_ru": [
+          "Проверить GPT-6.1 Sol, Embed 5 Pro и Embed 5 Fast по официальным источникам и классифицировать точный статус каждой записи",
+          "Проверить Dots, Codex Security Cloud, Decisions API и Oracle Fusion Claw без дублей и с точной границей Tool/feature/preview",
+          "Обновить только перечисленные существующие продукты и исторические кандидаты, затем провести master → trial → Local sync → targeted QA"
+        ],
+        "capabilities_en": [
+          "Verify GPT-6.1 Sol, Embed 5 Pro and Embed 5 Fast from official sources and classify the exact status of each record",
+          "Verify Dots, Codex Security Cloud, Decisions API and Oracle Fusion Claw without duplicates and with an exact Tool/feature/preview boundary",
+          "Update only the listed existing products and historical candidates, then run master → trial → Local sync → targeted QA"
+        ],
+        "source": "2026-09-30-daily-catalog-update-020",
+        "open": true,
+        "progress": "in_progress",
+        "release_tag": "release-2026-09-30-daily-catalog-update",
+        "revision": null,
+        "executor": "Codex",
+        "started_utc": "2026-09-30T17:37:37Z",
+        "changes": [
+          "Reserve Release #020 before canonical master refresh and research",
+          "Limit scope to the Sep 30 candidate list and named existing-product updates",
+          "Require exact master diff, trial copy, Local sync, targeted browser QA and release gates before Production"
+        ],
+        "qa": {},
+        "owner_decision": "Owner explicitly pre-authorized Production Release #020 after complete Local QA PASS in the 2026-09-30 Daily Catalog Update request.",
+        "owner_decision_ru": "Владелец в поручении 30.09 заранее разрешил Production Release #020 только после полного PASS Local QA.",
+        "owner_decision_en": "In the Sep 30 request the owner explicitly pre-authorized Production Release #020 only after complete Local QA passes.",
+        "next_ru": "Сначала refresh/check текущего canonical master, затем research и exact diff; Production не выполнять до полного Local PASS.",
+        "next_en": "First refresh/check the current canonical master, then research and exact diff; do not deploy Production before complete Local PASS."
       }
     ],
     "additional_tasks": [
@@ -2408,12 +2475,12 @@
       }
     ],
     "current_local": {
-      "release_id": "CATALOG-FRESHNESS-UI-POLISH-2026-09-30",
-      "release_sequence": 19,
-      "app_version": "v0.16.1",
-      "release_tag": "release-2026-09-30-catalog-freshness-ui-polish",
-      "revision": "d28de9e118a619d9c370de2d2ac3782dc38ae536",
-      "github_pushed_at": "2026-09-30T17:08:35Z"
+      "release_id": "DAILY-CATALOG-UPDATE-2026-09-30",
+      "release_sequence": 20,
+      "app_version": "v0.17.0",
+      "release_tag": "release-2026-09-30-daily-catalog-update",
+      "revision": null,
+      "started_utc": "2026-09-30T17:37:37Z"
     },
     "current_production": {
       "release_id": "CATALOG-FRESHNESS-UI-POLISH-2026-09-30",

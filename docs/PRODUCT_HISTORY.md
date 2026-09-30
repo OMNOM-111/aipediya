@@ -3,13 +3,18 @@
 ## Версии и обязательный выпускной шлюз
 
 **No Timeline → No Release.** Подтверждённые Production-вехи получили
-Release #001–#019; текущий опубликованный baseline — Release #019 · AIpediya
+Release #001–#020; текущий опубликованный baseline — Release #019 · AIpediya
 v0.16.1, `release-2026-09-30-catalog-freshness-ui-polish`, deployed release id
 `8713fbc4d040dcf0374e6b60b045a6d0867ff5bd`. Catalog Freshness UI final polish
 прошёл Local/owner gates, server preflight, release-preflight, dry-run, deploy,
 `/healthz`, `verify-release`, catalog integrity и targeted public smoke 28/28;
 публичный каталог содержит 331 Models / 149 Tools.
 Отчёт — `docs/history/2026-09-30-catalog-freshness-ui-polish.md`.
+
+Release #020 · AIpediya v0.17.0 `Daily Catalog Update — 30 September 2026`
+зарезервирован до refresh/research и находится в `in_progress`: Local —,
+условное owner-разрешение после Local PASS, Production —. Работа ведётся только
+из текущего canonical master; Production остаётся на закрытом #019.
 
 Release #019 · AIpediya v0.16.1 создан до начала содержательной работы и
 закрыт как `done`: Local ✓, Owner ✓, Production ✓. Это узкая визуальная
@@ -66,8 +71,8 @@ Production и автономный HTML. Исторические Local-only з�
 открытии. Для английского маршрута меняется лишь начальная редакция RU/EN.
 Local-only CSP разрешает встроенные CSS/JS при запрете сетевых соединений;
 Production по-прежнему отвечает 404. На горизонтальной ленте видны только
-пронумерованные Release #001–#019, все по порядку; #018 и #019 закрыты с
-Local ✓, Owner ✓ и Production ✓.
+пронумерованные Release #001–#020, все по порядку; #018 и #019 закрыты с
+Local ✓, Owner ✓ и Production ✓, #020 находится в `in_progress`.
 Ненумерованные Local-only и
 плановые записи сохранены в реестре и документах, но не перемежают выпуски.
 

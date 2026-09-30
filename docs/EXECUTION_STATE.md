@@ -1,6 +1,12 @@
 # Текущее состояние AIpedia
 
-Обновлено (UTC): 2026-09-30T17:30:18Z
+Обновлено (UTC): 2026-09-30T17:37:37Z
+
+## 30.09 — Release #020 / v0.17.0 Daily Catalog Update IN PROGRESS (Codex)
+
+- До refresh/research и изменений master создана отдельная Timeline-карточка `DAILY-CATALOG-UPDATE-2026-09-30`, Release #020 / `v0.17.0`, старт `2026-09-30T17:37:37Z`. `current_local` указывает на #020; `current_production` остаётся закрытый #019 / `8713fbc4d040dcf0374e6b60b045a6d0867ff5bd`.
+- Scope: только перечисленные в поручении Models/Tools, named existing-product updates и исторические кандидаты. Источник — текущий `AI_CONTEXT/AIpediya_Model_Verification_Master.xlsx`; старый отчёт 795/145 не использовать. Production #020 заранее разрешена только после полного Local QA PASS.
+- **Изменено:** пока только Timeline/status/history #020. Canonical master, Local SQLite и Production после создания карточки не менялись. **Не завершено:** refresh/check, official-source research, exact master diff, trial, Local sync и QA. **Следующим выполнить:** baseline текущего master и `catalog_master refresh/check`, затем проверить существование/дубли всех кандидатов.
 
 ## 30.09 — Release #019 / v0.16.1 Catalog Freshness UI final polish DONE, Production PASS (Codex)
 
