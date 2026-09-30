@@ -1,8 +1,8 @@
-"""Developer marks shown beside a model name.
+"""Official developer and product marks shown beside a catalog name.
 
 Simple Icons paths (CC0) are used for published brand glyphs and recolored
-for the catalog. A few marks are the developer's own compact icon.
-An organization without a mark keeps the letter fallback.
+for the catalog. Official compact icons from developer sites and press kits
+are kept as provided. An organization without a mark keeps the letter fallback.
 
 """
 import re
@@ -20,6 +20,7 @@ ALIASES = {
     "z.ai / zhipu ai": "zai",
     "z.ai": "zai",
     "google": "google",
+    "h company": "hcompany",
     "black forest labs": "bfl",
     "elevenlabs": "elevenlabs",
     "mistral ai": "mistral",
@@ -50,12 +51,19 @@ ALIASES = {
     "cursor": "cursor",
     "github": "github",
     "lm studio": "lmstudio",
+    "manus": "manus",
     "midjourney": "midjourney",
     "ollama": "ollama",
     "suno": "suno",
 }
 
-# Exact organization names of every published Local developer (34).
+# Exact product override for an official product mark. All other entries keep
+# the developer mark. Source: https://cue.im/assets/cue/favicon.svg
+RECORD_ALIASES = {
+    "cue-77457549": "cue",
+}
+
+# Exact organization names of every published Local developer (36).
 # Used by tests so a renamed Organization cannot silently drop its mark.
 PUBLISHED_DEVELOPERS = (
     "AI Singapore",
@@ -68,8 +76,10 @@ PUBLISHED_DEVELOPERS = (
     "ElevenLabs",
     "GitHub",
     "Google",
+    "H Company",
     "LG AI Research",
     "LM Studio",
+    "Manus",
     "Meta",
     "Microsoft",
     "Midjourney",
@@ -124,8 +134,8 @@ def _asset(stem):
     return None
 
 
-def mark_for(name):
-    stem = _stem_for(developer_key(name))
+def mark_for(name, record_slug=""):
+    stem = RECORD_ALIASES.get(str(record_slug or "")) or _stem_for(developer_key(name))
     if not stem:
         return None
     asset = _asset(stem)

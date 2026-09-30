@@ -211,7 +211,7 @@ def decorate(model, taxonomy_labels=None, price_unit='', benchmark=None, price_s
     model.developer_key = alphabet(model.developer_name)
     model.display_version = "" if model.version.casefold() == model.name.casefold() else model.version
     model.initials = initials_for(model.developer_name or model.name)
-    model.mark = mark_for(model.family.developer.name)
+    model.mark = mark_for(model.family.developer.name, model.slug)
     model.table_evaluations = model.composite_evaluations + model.independent_evaluations
     model.table_offers = paired_primary_offers(model)
     model.resource_links = resource_links(model, lang)
@@ -283,7 +283,7 @@ def decorate_tool(tool, taxonomy_labels=None, price_unit='', price_scope='standa
     tool.local_key = alphabet(tool.local_label)
     tool.status_key = alphabet(label(tool.catalog_status, lang))
     tool.initials = initials_for(tool.developer_name or tool.name)
-    tool.mark = mark_for(tool.developer.name)
+    tool.mark = mark_for(tool.developer.name, tool.slug)
     tool.display_version = "" if tool.version.casefold() == tool.name.casefold() else tool.version
     tool.origin_countries = developer_countries(tool.developer.country)
 

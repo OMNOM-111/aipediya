@@ -1,6 +1,16 @@
 # Текущее состояние AIpedia
 
-Обновлено (UTC): 2026-09-30T03:37:56Z
+Обновлено (UTC): 2026-09-30T16:11:44Z
+
+## 30.09 — Release #019 / v0.16.1 Catalog Freshness UI final polish REVIEW, Local PASS (Codex)
+
+- До содержательных изменений создана отдельная Timeline-карточка `CATALOG-FRESHNESS-UI-POLISH-2026-09-30`, Release #019 / `v0.16.1`, старт `2026-09-30T15:37:41Z`. #018 остаётся неизменяемой завершённой историей и текущим Production baseline `74cf7269c991c121e549c67e863bdfcd0449387a`; механика Catalog Freshness не переделывается.
+- Scope ограничен полной отрисовкой восьми имён в popover, официальными visual assets только для этих восьми записей и targeted Local browser QA: RU desktop 1440, ultrawide, RU mobile 375, EN desktop smoke. Production, SEO, GSC, Cloudflare, performance, 22-language matrix и полный catalog audit вне scope и не запускались.
+- Исходное состояние Git: `main == origin/main == 8d99e2d8b08610fb215c03a8d1440e248cf5e7b7`. До старта #019 уже существовали незакоммиченные изменения в `catalog/catalog_master.py`, `catalog/management/commands/catalog_master.py`, `catalog/tests/test_catalog_master.py`, `requirements-dev.txt`; это отдельный неизвестный WIP, он не относится к #019, не изменяется и не будет включён в её commit.
+- Popover сохраняет механику #018, но имена больше не используют ellipsis: desktop `448px`, mobile `350px`, дата справа, имя может переноситься вместо обрезки. На настоящем mobile 375 дополнительно исправлена левая привязка окна; popover имеет границы `12…362`, внутренний и page-level overflow отсутствуют.
+- Для Claude Sonnet 5.5 сохранён существующий Anthropic SVG; для Eleven v4 / Eleven v4 Turbo — существующий ElevenLabs SVG. Для трёх Holo-моделей добавлен один официальный H Company mark из press kit/официального сайта; Cue получает официальный product favicon с `cue.im`; Manus — официальный compact brand icon с brand page/`manus.im`. Другие карточки и assets не менялись. SHA-256: H Company `99E65AB9AA604DFCC748BE2CC2C70C6553956C760C792F70B72FF18E7C2D9284`; Cue `CDF8FA09D529075CD075CAD6D88E7417AC231EDCFCA15BC51FE74DE41013CEE3`; Manus `1A0BCCF04FCD912C4099E6A59D57263278264D079959722A03B39D427242CFB5`.
+- Targeted checks: `catalog.tests.test_marks` + `CatalogTests.test_catalog_freshness_indicator` — 7/7 PASS; `manage.py check --settings=aipedia.test_settings` PASS; `node --check static/site.js` PASS. Browser Local: RU 1440, RU owner ultrawide 2502, RU mobile 375 и EN 1440 PASS; полные восемь имён, release dates, границы/overflow, тикающие часы, hover/focus/tap/Escape, row highlight open/close, нужные marks и 0 console/page errors подтверждены.
+- Карточка #019 переведена в `review`: Local ✓ / Owner — / Production —. **Изменено:** `catalog/comparison.py`, `catalog/marks.py`, `catalog/product_history.py`, `catalog/tests/test_marks.py`, `static/site.css`, три scoped mark assets, Timeline/status/history и производные handoff-файлы. **Не завершено:** визуальная приёмка владельца и отдельно разрешаемый Production-выпуск #019. **Следующим выполнить:** владельцу просмотреть оставленный открытым Local; при принятии отдельно назвать точный commit/tag для выпуска по `docs/RELEASE.md`. До этого Production не менять.
 
 ## 29.09 — Release #018 / v0.16.0 Catalog Freshness Indicator DONE, Production PASS (GitHub Copilot)
 

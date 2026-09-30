@@ -3,13 +3,19 @@
 ## Версии и обязательный выпускной шлюз
 
 **No Timeline → No Release.** Подтверждённые Production-вехи получили
-Release #001–#018; текущий опубликованный baseline — Release #018 · AIpediya
+Release #001–#019; текущий опубликованный baseline — Release #018 · AIpediya
 v0.16.0, `release-2026-09-29-catalog-freshness-indicator`, deployed release id
 `74cf7269c991c121e549c67e863bdfcd0449387a`. Catalog Freshness Indicator прошёл
 Local targeted QA, owner approval, server preflight, release-preflight, dry-run,
 Production deploy, `/healthz`, `verify-release`, server catalog integrity и
 targeted public smoke; публичный каталог содержит 331 Models / 149 Tools.
 Отчёт — `docs/history/2026-09-29-catalog-freshness-indicator.md`.
+
+Release #019 · AIpediya v0.16.1 создан до начала содержательной работы и
+доведён до `review`: Local ✓, Owner —, Production —. Это узкая визуальная
+доводка принятой механики #018 — полные имена в popover и официальные marks
+только для восьми последних записей. Production остаётся на неизменённом #018;
+отчёт Local QA — `docs/history/2026-09-30-catalog-freshness-ui-polish.md`.
 
 Release #018 добавил в toolbar каталога индикатор свежести последнего фактического
 catalog update. Источник истины — `data/catalog_freshness.json`, seed из daily
@@ -58,8 +64,9 @@ Production и автономный HTML. Исторические Local-only з�
 открытии. Для английского маршрута меняется лишь начальная редакция RU/EN.
 Local-only CSP разрешает встроенные CSS/JS при запрете сетевых соединений;
 Production по-прежнему отвечает 404. На горизонтальной ленте видны только
-пронумерованные Release #001–#018, все по порядку; #018 закрыт с Local ✓,
-Owner ✓ и Production ✓.
+пронумерованные Release #001–#019, все по порядку; #018 закрыт с Local ✓,
+Owner ✓ и Production ✓, а #019 находится в `review` с Local ✓,
+Owner — и Production —.
 Ненумерованные Local-only и
 плановые записи сохранены в реестре и документах, но не перемежают выпуски.
 

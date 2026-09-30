@@ -13,9 +13,9 @@ class ProductHistoryTests(SimpleTestCase):
         cards = product["milestones"]
         by_id = {row["release_id"]: row for row in cards}
         self.assertEqual(len(by_id), len(cards))
-        self.assertEqual(len(cards), 25)
-        self.assertEqual(product["current_production"]["release_sequence"], 16)
-        self.assertEqual(product["current_production"]["app_version"], "v0.14.0")
+        self.assertEqual(len(cards), 26)
+        self.assertEqual(product["current_production"]["release_sequence"], 18)
+        self.assertEqual(product["current_production"]["app_version"], "v0.16.0")
         self.assertEqual(by_id["release-2026-09-28-reconciliation-cleanup"]["revision"],
                          "5ba1e566338fc17d9b8965d3be180bc1df268e2e")
         self.assertEqual(product["current_local"]["release_sequence"], 18)
@@ -56,7 +56,11 @@ class ProductHistoryTests(SimpleTestCase):
         freshness = by_id["CATALOG-FRESHNESS-INDICATOR-2026-09-29"]
         self.assertEqual((freshness["release_sequence"], freshness["app_version"], freshness["progress"],
                   freshness["local_verified"], freshness["owner_approved"], freshness["production_released"]),
-                 (18, "v0.16.0", "review", True, False, False))
+                 (18, "v0.16.0", "done", True, True, True))
+        polish = by_id["CATALOG-FRESHNESS-UI-POLISH-2026-09-30"]
+        self.assertEqual((polish["release_sequence"], polish["app_version"], polish["progress"],
+                          polish["local_verified"], polish["owner_approved"], polish["production_released"]),
+                         (19, "v0.16.1", "review", True, False, False))
         self.assertEqual([row["release_id"] for row in cards if row["progress"] == "planned"],
                          ["PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26",
                           "ORGANIC-SEARCH-FOLLOWUP-2026-09-30"])
@@ -66,12 +70,13 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertEqual(page.status_code, 200)
         self.assertContains(page, "История AIpediya")
         self.assertEqual(page.content, (Path(__file__).resolve().parents[2] / "timeline.html").read_bytes())
-        self.assertEqual(page.content.count(b'data-history-open='), 40)  # 18 releases + 2 planned cards in two editions
+        self.assertEqual(page.content.count(b'data-history-open='), 42)  # 19 releases + 2 planned cards in two editions
         self.assertIn(b'Release #001', page.content)
         self.assertIn(b'Release #015', page.content)
         self.assertIn(b'Release #016', page.content)
         self.assertIn(b'Release #017', page.content)
         self.assertIn(b'Release #018', page.content)
+        self.assertIn(b'Release #019', page.content)
         self.assertIn("Контрольный замер органического поиска".encode("utf-8"), page.content)
         self.assertIn(b'PLANNED', page.content)
         self.assertNotIn(b'class="site-header"', page.content)
@@ -114,6 +119,10 @@ class ProductHistoryTests(SimpleTestCase):
             self.client.get("/ru/history/source/2026-09-29-catalog-freshness-indicator"),
             "freshness",
         )
+        self.assertContains(
+            self.client.get("/ru/history/source/2026-09-30-catalog-freshness-ui-polish"),
+            "Local review",
+        )
         self.assertEqual(self.client.get("/ru/history/source/secret").status_code, 404)
 
     def test_local_only_release_done_does_not_claim_production_publication(self):
@@ -149,7 +158,7 @@ class ProductHistoryTests(SimpleTestCase):
         organic_id = "release-2026-09-26-search-visibility-optimization-v2"
         self.assertEqual(entries[organic_id]["stage"], "released")
         self.assertEqual(registry["product_history"]["current_production"]["release_tag"],
-                 "release-2026-09-29-daily-catalog-update")
+                 "release-2026-09-29-catalog-freshness-indicator")
         paid_card = next(row for row in registry["product_history"]["milestones"] if row["release_id"] == paid_id)
         self.assertTrue(paid_card["open"])
         self.assertEqual(paid_card["progress"], "planned")
@@ -173,7 +182,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn("Проверено владельцем", card["tags_ru"])
         self.assertNotIn("Визуальная проверка ожидается", card["tags_ru"])
         self.assertIn("Визуальная проверка", task["owner_ru"])
-        self.assertEqual(registry["product_history"]["current_production"]["release_tag"], "release-2026-09-29-daily-catalog-update")
+        self.assertEqual(registry["product_history"]["current_production"]["release_tag"], "release-2026-09-29-catalog-freshness-indicator")
 
     @override_settings(AIPEDIA_ENV="production", SECURE_SSL_REDIRECT=False)
     def test_history_is_private_in_production(self):
@@ -187,15 +196,15 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn("connect-src 'none'", page)
         self.assertIn('id="edition-ru"', page)
         self.assertIn('id="edition-en"', page)
-        self.assertEqual(page.count('data-history-open='), 40)
-        self.assertEqual(page.count('class="ph-release-card"'), 40)
-        self.assertEqual(page.count('role="button" tabindex="0" aria-haspopup="dialog"'), 40)
+        self.assertEqual(page.count('data-history-open='), 42)
+        self.assertEqual(page.count('class="ph-release-card"'), 42)
+        self.assertEqual(page.count('role="button" tabindex="0" aria-haspopup="dialog"'), 42)
         self.assertEqual(page.count('class="ph-status-legend"'), 2)
         self.assertIn('release-2026-09-28-reconciliation-cleanup', page)
         self.assertIn('data-history-open="PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26"', page)
         self.assertIn('data-history-open="ORGANIC-SEARCH-FOLLOWUP-2026-09-30"', page)
         self.assertNotIn('data-history-open="HISTORY-LOCAL-SHELL-2026-09-29"', page)
-        self.assertEqual(page.count('data-history-source-template='), 28)
+        self.assertEqual(page.count('data-history-source-template='), 29)
         self.assertEqual(page.count('class="ph-environment ph-local"'), 2)
         self.assertEqual(page.count('class="ph-environment ph-production"'), 2)
         self.assertIn("Номер обращения на экране не показан", page)
