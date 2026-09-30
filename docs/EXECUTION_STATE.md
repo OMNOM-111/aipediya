@@ -1,12 +1,15 @@
 # Текущее состояние AIpedia
 
-Обновлено (UTC): 2026-09-30T17:37:37Z
+Обновлено (UTC): 2026-09-30T19:28:34Z
 
-## 30.09 — Release #020 / v0.17.0 Daily Catalog Update IN PROGRESS (Codex)
+## 30.09 — Release #020 / v0.17.0 Daily Catalog Update REVIEW, Local PASS / Owner ✓ / Production — (Codex)
 
-- До refresh/research и изменений master создана отдельная Timeline-карточка `DAILY-CATALOG-UPDATE-2026-09-30`, Release #020 / `v0.17.0`, старт `2026-09-30T17:37:37Z`. `current_local` указывает на #020; `current_production` остаётся закрытый #019 / `8713fbc4d040dcf0374e6b60b045a6d0867ff5bd`.
-- Scope: только перечисленные в поручении Models/Tools, named existing-product updates и исторические кандидаты. Источник — текущий `AI_CONTEXT/AIpediya_Model_Verification_Master.xlsx`; старый отчёт 795/145 не использовать. Production #020 заранее разрешена только после полного Local QA PASS.
-- **Изменено:** пока только Timeline/status/history #020. Canonical master, Local SQLite и Production после создания карточки не менялись. **Не завершено:** refresh/check, official-source research, exact master diff, trial, Local sync и QA. **Следующим выполнить:** baseline текущего master и `catalog_master refresh/check`, затем проверить существование/дубли всех кандидатов.
+- До refresh/research и изменений master создана отдельная Timeline-карточка `DAILY-CATALOG-UPDATE-2026-09-30`, Release #020 / `v0.17.0`, старт `2026-09-30T17:37:37Z`. `current_local` указывает на #020; `current_production` остаётся закрытый #019 / `8713fbc4d040dcf0374e6b60b045a6d0867ff5bd`. #018 и факты #019 не переписывались.
+- Scope выполнен только по перечисленным Models/Tools, named existing-product updates и историческим кандидатам из текущего canonical master. Опубликованы в Local 3 Models (GPT-6.1 Sol, Embed 5 Fast, Embed 5 Pro) и 6 Tools (Codex Security Cloud, Amazon Bedrock Managed Agents, Muse, OpenAI Agents API, Oracle Fusion Claw, Dots); Decisions API и Honeycomb AI Ecosystem сохранены hidden `NEEDS_REVIEW`. Новых deprecations и Evaluation rows нет.
+- Exact master: Models 805→808 (PUBLISHED 331→334), Tools 151→159 (PUBLISHED 149→155), Offers +8, Access +8, Facts +26, Origins +3, Tool Platforms +13, Evaluations 5846 без изменений, удалений 0. Release plan: create 9 + 15 вычисляемых number changes; final state 334 Models / 155 Tools. Исходный master и Local SQLite сохранены в `backups/daily-catalog-20260930-020/`.
+- Trial и working Local: `catalog_master check` OK, `qa` PASS, повторный sync без writable changes, integrity `ok`, FK 0. Финальный suite после touch-fix: 362 PASS, 1 Windows skip; `manage.py check`, `node --check`, `git diff --check` PASS.
+- Настоящий Local RU 1440, ultrawide 2502, mobile 375 и EN 1440 PASS: все девять имён/даты, 350/343 px popover без horizontal overflow, clock/date, hover/focus/Enter/Escape/tap, row highlight, новые карточки/marks и 0 console/page errors. Mobile QA выявил и закрыл scoped дефект: touch popover больше не закрывается немедленным `pointerleave`; mouse behavior сохранён.
+- Карточка #020 переведена в `review`: Local ✓ / Owner ✓ / Production —. Предварительное разрешение владельца стало действующим после полного Local PASS. **Изменено:** canonical master, точный catalog plan/release state/freshness snapshot, 9 Local records, scoped sync/mark/touch fixes, tests и документы #020. **Не завершено:** commit/push, архив и Production verification #020. **Следующим выполнить:** exact-path commit/push, затем штатный build/preflight/dry-run/deploy/QA по `docs/RELEASE.md`.
 
 ## 30.09 — Release #019 / v0.16.1 Catalog Freshness UI final polish DONE, Production PASS (Codex)
 

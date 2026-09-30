@@ -41,14 +41,16 @@ def snapshot_from_plan(plan, updated_at_utc=None):
         else:
             continue
         row = change.get("row") or {}
+        exact_date = row.get("Exact Release Date") or ""
+        approx_date = str(row.get("Approx Date") or "").lstrip("≈").strip()
         entries.append({
             "record_type": "model" if sheet == "Models" else "tool",
             "action": action,
             "record_id": change.get("id", ""),
             "name": row.get("Name") or change.get("name") or change.get("id", ""),
-            "release_date": row.get("Exact Release Date") or row.get("Approx Date") or "",
-            "release_date_approx": not bool(row.get("Exact Release Date")) and bool(row.get("Approx Date")),
-            "release_date_precision": row.get("Approx Precision") or ("day" if row.get("Exact Release Date") else ""),
+            "release_date": exact_date or approx_date,
+            "release_date_approx": not bool(exact_date) and bool(approx_date),
+            "release_date_precision": row.get("Approx Precision") or ("day" if exact_date else ""),
         })
     counts = {
         "added_models": sum(1 for item in entries if item["record_type"] == "model" and item["action"] == "added"),

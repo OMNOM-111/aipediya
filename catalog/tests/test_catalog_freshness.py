@@ -47,3 +47,12 @@ class CatalogFreshnessSnapshotTests(SimpleTestCase):
             steps = deploy_code_release.planned_steps("a" * 40, publication_state="data/release_state.json")
             self.assertFalse(any("catalog_master apply-plan" in step for step in steps))
             self.assertEqual(json.loads(path.read_text(encoding="utf-8")), snapshot)
+
+    def test_snapshot_normalizes_approximate_date_prefix(self):
+        plan = {"changes": [{
+            "kind": "create", "sheet": "Tools", "id": "preview",
+            "row": {"Name": "Preview", "Approx Date": "≈2026-03", "Approx Precision": "month"},
+        }]}
+        item = freshness.snapshot_from_plan(plan, "2026-09-30T00:00:00Z")["entries"][0]
+        self.assertEqual(item["release_date"], "2026-03")
+        self.assertTrue(item["release_date_approx"])

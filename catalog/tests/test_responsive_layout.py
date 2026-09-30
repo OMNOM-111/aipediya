@@ -140,6 +140,8 @@ class ResponsiveAssetContractTests(SimpleTestCase):
         self.assertIn("showModal()", js)
         self.assertIn("fillFilterSheet", js)
         self.assertIn("emptyFilterSheet", js)
+        # Touch taps must stay open; pointer leave is hover-only.
+        self.assertGreaterEqual(js.count('event.pointerType === "mouse"'), 2)
         # Closing the sheet applies pending choices instead of losing them.
         self.assertIn("filterSheetDirty", js)
         # Clicks inside a dialog never close the detail panel; Escape is left

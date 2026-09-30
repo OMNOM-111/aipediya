@@ -563,6 +563,17 @@ def _offer_identity(offer):
 SERVICE_ONLY = {"Source Title", "Source Publisher"}
 
 
+def _same_master_value(column, master_value, database_value):
+    """Compare JSON-backed master fields by value, not whitespace or key order."""
+    if not column.endswith("(JSON)"):
+        return master_value == database_value
+    import json
+    try:
+        return json.loads(master_value or "{}") == json.loads(database_value or "{}")
+    except (TypeError, ValueError):
+        return master_value == database_value
+
+
 def _unsupported(workbook_rows, snapshot, aux, published_ids, planned=()):
     """Unwritten differences, matched by content identity before local SQL key."""
     items = []
@@ -580,7 +591,7 @@ def _unsupported(workbook_rows, snapshot, aux, published_ids, planned=()):
             columns = [c for c in cm.PUBLIC[sheet]
                        if c not in SUPPORTED_COLUMNS[sheet] and c not in IGNORED_COLUMNS
                        and c not in ("Source URL",)
-                       and row.get(c, "") and row.get(c) != local_row.get(c, "")]
+                       and row.get(c, "") and not _same_master_value(c, row.get(c), local_row.get(c, ""))]
             if sheet == "Tools" and "Platforms" in columns:
                 extra = set(_split(local_row.get("Platforms", ""))) - set(_split(row.get("Platforms", "")))
                 if not extra:
@@ -649,7 +660,7 @@ def _unsupported(workbook_rows, snapshot, aux, published_ids, planned=()):
                 supported |= set(SERVICE_COLUMNS)
             if sheet in ("Offers", "Access"):
                 supported |= {"Record Type", "Record ID"}
-            columns = [c for c, v in local.items() if c not in supported and row.get(c, "") != v
+            columns = [c for c, v in local.items() if c not in supported and not _same_master_value(c, row.get(c, ""), v)
                        and row.get(c, "") and c not in ("Conditions Extra (JSON)", "Checked")]
             for column in columns:
                 if sheet == "Offers" and column == "Provider" and (
@@ -740,8 +751,11 @@ def _create(change, today):
                            release_stage=row.get("Release Stage", ""), release_evidence=_evidence(row),
                            **texts, **common)
     else:
+        ecosystem = {lang: row.get(column) for column, lang in
+                     (("Ecosystem EN", "en"), ("Ecosystem RU", "ru")) if row.get(column)}
         obj = Tool(developer=developer, purposes=_split(row.get("Purposes", "")),
-                   local_execution=row.get("Local Execution", ""), official_url=row.get("Official URL", ""), **common)
+                   local_execution=row.get("Local Execution", ""), official_url=row.get("Official URL", ""),
+                   ecosystem=ecosystem, **common)
     obj.save()
     if sheet == "Models":
         for position, code in enumerate(_split(row.get("Origin Countries", ""))):

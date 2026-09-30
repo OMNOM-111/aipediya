@@ -14,7 +14,7 @@ class MarkFileTests(SimpleTestCase):
             self.assertTrue(mark["svg"] or mark["file"], name)
 
     def test_published_developers_all_have_marks(self):
-        self.assertEqual(len(PUBLISHED_DEVELOPERS), 36)
+        self.assertEqual(len(PUBLISHED_DEVELOPERS), 37)
         for name in PUBLISHED_DEVELOPERS:
             mark = mark_for(name)
             self.assertIsNotNone(mark, name)

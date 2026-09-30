@@ -993,13 +993,13 @@
       "app_version": "v0.17.0",
       "title": "Daily Catalog Update — 30 September 2026",
       "environment": "local",
-      "stage": "in_progress",
-      "status": "IN_PROGRESS",
+      "stage": "review",
+      "status": "REVIEW",
       "started_utc": "2026-09-30T17:37:37Z",
       "executor": "Codex",
       "history": "docs/history/2026-09-30-daily-catalog-update-020.md",
       "release_tag": "release-2026-09-30-daily-catalog-update",
-      "summary": "Release #020 is reserved before catalog work. The package will verify the Sep 30 candidate set and scoped existing-product updates in the current canonical master, then trial and sync only the exact accepted diff to Local before the pre-authorized Production procedure."
+      "summary": "Release #020 passed complete Local QA and is in review with the owner's conditional authorization now satisfied: 3 Models and 6 Tools are published in Local, 2 Tool candidates remain hidden for review, and Production has not yet been changed."
     }
   ],
   "product_history": {
@@ -2257,8 +2257,8 @@
         "release_id": "DAILY-CATALOG-UPDATE-2026-09-30",
         "release_sequence": 20,
         "app_version": "v0.17.0",
-        "local_verified": false,
-        "owner_approved": false,
+        "local_verified": true,
+        "owner_approved": true,
         "production_released": false,
         "production_verified": false,
         "date": "2026-09-30",
@@ -2268,14 +2268,16 @@
         "tags_ru": [
           "Release #020",
           "v0.17.0",
-          "В работе",
-          "Только Local"
+          "Local ✓",
+          "Owner ✓",
+          "Production —"
         ],
         "tags_en": [
           "Release #020",
           "v0.17.0",
-          "In progress",
-          "Local only"
+          "Local ✓",
+          "Owner ✓",
+          "Production —"
         ],
         "capabilities_ru": [
           "Проверить GPT-6.1 Sol, Embed 5 Pro и Embed 5 Fast по официальным источникам и классифицировать точный статус каждой записи",
@@ -2289,22 +2291,27 @@
         ],
         "source": "2026-09-30-daily-catalog-update-020",
         "open": true,
-        "progress": "in_progress",
+        "progress": "review",
         "release_tag": "release-2026-09-30-daily-catalog-update",
-        "revision": null,
+        "revision": "90b918a797065adba6b99a1b590a589a333d3728",
         "executor": "Codex",
         "started_utc": "2026-09-30T17:37:37Z",
         "changes": [
-          "Reserve Release #020 before canonical master refresh and research",
-          "Limit scope to the Sep 30 candidate list and named existing-product updates",
-          "Require exact master diff, trial copy, Local sync, targeted browser QA and release gates before Production"
+          "Published 3 verified Models and 6 verified Tools in Local; retained Decisions API and Honeycomb AI Ecosystem as hidden NEEDS_REVIEW records",
+          "Updated only the named existing products, preserved Evaluations unchanged and generated the exact 9-create plus 15-renumber release plan",
+          "Corrected new Tool ecosystem sync, semantic JSON comparison, approximate-date normalization, Cohere mark mapping and touch popover persistence discovered during required Local QA"
         ],
-        "qa": {},
+        "qa": {
+          "local": "PASS: canonical check/qa, isolated trial, exact Local sync, repeat-zero/integrity/FK, 362 catalog tests, manage.py check, node syntax, diff check and real RU 1440/2502/375 plus EN 1440 browser QA all passed.",
+          "local_ru": "PASS: catalog_master check OK and qa PASS; trial plus working Local sync, repeat plan zero, SQLite integrity ok/FK 0; 362 catalog tests PASS with one Windows skip; RU 1440, ultrawide 2502 and mobile 375 verified complete freshness names/dates, no horizontal overflow, clock, focus/tap/Escape, row highlight, affected cards and zero console/page errors.",
+          "local_en": "PASS: EN 1440 smoke verified GPT-6.1 Sol and Dots cards, release dates/access, no overflow and zero console/page errors; manage.py check, node --check and git diff --check PASS.",
+          "production": "PENDING: Production remains Release #019 until the approved #020 release procedure completes."
+        },
         "owner_decision": "Owner explicitly pre-authorized Production Release #020 after complete Local QA PASS in the 2026-09-30 Daily Catalog Update request.",
         "owner_decision_ru": "Владелец в поручении 30.09 заранее разрешил Production Release #020 только после полного PASS Local QA.",
         "owner_decision_en": "In the Sep 30 request the owner explicitly pre-authorized Production Release #020 only after complete Local QA passes.",
-        "next_ru": "Сначала refresh/check текущего canonical master, затем research и exact diff; Production не выполнять до полного Local PASS.",
-        "next_en": "First refresh/check the current canonical master, then research and exact diff; do not deploy Production before complete Local PASS."
+        "next_ru": "Local PASS завершён и условие владельца выполнено; собрать точный commit/archive #020 и провести разрешённый выпуск строго по docs/RELEASE.md.",
+        "next_en": "Local PASS is complete and the owner's condition is satisfied; build the exact #020 commit/archive and run the authorized release strictly through docs/RELEASE.md."
       }
     ],
     "additional_tasks": [
@@ -2479,7 +2486,7 @@
       "release_sequence": 20,
       "app_version": "v0.17.0",
       "release_tag": "release-2026-09-30-daily-catalog-update",
-      "revision": null,
+      "revision": "90b918a797065adba6b99a1b590a589a333d3728",
       "started_utc": "2026-09-30T17:37:37Z"
     },
     "current_production": {

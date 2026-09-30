@@ -1,7 +1,7 @@
 {
  "counts": {
-  "added_models": 6,
-  "added_tools": 2,
+  "added_models": 3,
+  "added_tools": 6,
   "updated_models": 0,
   "updated_records": 0,
   "updated_tools": 0
@@ -9,78 +9,87 @@
  "entries": [
   {
    "action": "added",
-   "name": "Claude Sonnet 5.5",
-   "record_id": "claude-sonnet-5-5-899c1979",
-    "release_date": "2026-09-28",
-    "release_date_approx": false,
-    "release_date_precision": "day",
-   "record_type": "model"
+   "name": "GPT-6.1 Sol",
+   "record_id": "gpt-6-1-sol-e3b8963b",
+   "record_type": "model",
+   "release_date": "2026-09-29",
+   "release_date_approx": false,
+   "release_date_precision": "day"
   },
   {
    "action": "added",
-   "name": "Eleven v4",
-   "record_id": "eleven-v4-1cc3a926",
-    "release_date": "2026-09-28",
-    "release_date_approx": false,
-    "release_date_precision": "day",
-   "record_type": "model"
+   "name": "Embed 5 Pro",
+   "record_id": "embed-5-pro-e5a9c8ce",
+   "record_type": "model",
+   "release_date": "2026-09-30",
+   "release_date_approx": false,
+   "release_date_precision": "day"
   },
   {
    "action": "added",
-   "name": "Eleven v4 Turbo",
-   "record_id": "eleven-v4-turbo-6a02a110",
-    "release_date": "2026-09-28",
-    "release_date_approx": false,
-    "release_date_precision": "day",
-   "record_type": "model"
+   "name": "Embed 5 Fast",
+   "record_id": "embed-5-fast-b11d573d",
+   "record_type": "model",
+   "release_date": "2026-09-30",
+   "release_date_approx": false,
+   "release_date_precision": "day"
   },
   {
    "action": "added",
-   "name": "Holo4-27B",
-   "record_id": "holo4-27b-62d1091f",
-    "release_date": "2026-09-28",
-    "release_date_approx": false,
-    "release_date_precision": "day",
-   "record_type": "model"
+   "name": "Dots",
+   "record_id": "dots-b80b4fd6",
+   "record_type": "tool",
+   "release_date": "2026-09-30",
+   "release_date_approx": false,
+   "release_date_precision": "day"
   },
   {
    "action": "added",
-   "name": "Holo4-35B-A3B",
-   "record_id": "holo4-35b-a3b-b9f93a3e",
-    "release_date": "2026-09-28",
-    "release_date_approx": false,
-    "release_date_precision": "day",
-   "record_type": "model"
+   "name": "Codex Security Cloud",
+   "record_id": "codex-security-cloud-42719bcf",
+   "record_type": "tool",
+   "release_date": "2026-03",
+   "release_date_approx": true,
+   "release_date_precision": "month"
   },
   {
    "action": "added",
-   "name": "Holotron4-30B-A3B",
-   "record_id": "holotron4-30b-a3b-c0c87f8d",
-    "release_date": "2026-09-28",
-    "release_date_approx": false,
-    "release_date_precision": "day",
-   "record_type": "model"
+   "name": "Oracle Fusion Claw",
+   "record_id": "oracle-fusion-claw-0d0c72fe",
+   "record_type": "tool",
+   "release_date": "2026-09-29",
+   "release_date_approx": false,
+   "release_date_precision": "day"
   },
   {
    "action": "added",
-   "name": "Cue",
-   "record_id": "cue-77457549",
-    "release_date": "2026-09-28",
-    "release_date_approx": false,
-    "release_date_precision": "day",
-   "record_type": "tool"
+   "name": "Amazon Bedrock Managed Agents",
+   "record_id": "amazon-bedrock-managed-agents-642b579d",
+   "record_type": "tool",
+   "release_date": "2026-04-28",
+   "release_date_approx": false,
+   "release_date_precision": "day"
   },
   {
    "action": "added",
-   "name": "Manus",
-   "record_id": "manus-0214c7c8",
-    "release_date": "2026-09-28",
-    "release_date_approx": false,
-    "release_date_precision": "day",
-   "record_type": "tool"
+   "name": "OpenAI Agents API",
+   "record_id": "openai-agents-api-383fd219",
+   "record_type": "tool",
+   "release_date": "2026-09-10",
+   "release_date_approx": false,
+   "release_date_precision": "day"
+  },
+  {
+   "action": "added",
+   "name": "Muse",
+   "record_id": "muse-a8472d5d",
+   "record_type": "tool",
+   "release_date": "2026-09-08",
+   "release_date_approx": false,
+   "release_date_precision": "day"
   }
  ],
- "release": "release-2026-09-29-daily-catalog-update",
+ "release": "release-2026-09-30-daily-catalog-update",
  "schema": "aipedia-catalog-freshness/1",
- "updated_at_utc": "2026-09-29T21:39:59Z"
+ "updated_at_utc": "2026-09-30T19:16:21Z"
 }

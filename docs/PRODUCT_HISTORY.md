@@ -12,9 +12,10 @@ v0.16.1, `release-2026-09-30-catalog-freshness-ui-polish`, deployed release id
 Отчёт — `docs/history/2026-09-30-catalog-freshness-ui-polish.md`.
 
 Release #020 · AIpediya v0.17.0 `Daily Catalog Update — 30 September 2026`
-зарезервирован до refresh/research и находится в `in_progress`: Local —,
-условное owner-разрешение после Local PASS, Production —. Работа ведётся только
-из текущего canonical master; Production остаётся на закрытом #019.
+находится в `review`: Local ✓, Owner ✓, Production —. Из текущего canonical
+master в Local опубликованы 3 Models и 6 Tools; два неоднозначных Tool оставлены
+hidden `NEEDS_REVIEW`. Exact trial/sync, integrity/FK, 362 tests и настоящий
+RU 1440/2502/375 + EN 1440 browser QA прошли; Production пока остаётся #019.
 
 Release #019 · AIpediya v0.16.1 создан до начала содержательной работы и
 закрыт как `done`: Local ✓, Owner ✓, Production ✓. Это узкая визуальная
@@ -72,7 +73,8 @@ Production и автономный HTML. Исторические Local-only з�
 Local-only CSP разрешает встроенные CSS/JS при запрете сетевых соединений;
 Production по-прежнему отвечает 404. На горизонтальной ленте видны только
 пронумерованные Release #001–#020, все по порядку; #018 и #019 закрыты с
-Local ✓, Owner ✓ и Production ✓, #020 находится в `in_progress`.
+Local ✓, Owner ✓ и Production ✓, #020 находится в `review` с Local ✓ / Owner ✓ /
+Production —.
 Ненумерованные Local-only и
 плановые записи сохранены в реестре и документах, но не перемежают выпуски.
 

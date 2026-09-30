@@ -221,6 +221,19 @@ class MasterSyncTests(TestCase):
         self.command("sync-local", apply=True)
         self.assertEqual(ModelVersion.objects.get(slug="keep").license, "")
 
+    def test_new_tools_keep_ecosystem_text(self):
+        tool_row = {column: "" for column in cm.MAIN["Tools"]}
+        tool_row.update({
+            "Record ID": "new-tool", "Status": "PUBLISHED", "Publication Decision": "PUBLIC",
+            "Name": "New Tool", "Developer": "New Lab", "Exact Release Date": "2026-09-30",
+            "Official Source": "https://example.com/new-tool", "Last Verified": "2026-09-30",
+            "Category": "ai_app", "Ecosystem EN": "Product suite", "Ecosystem RU": "Экосистема продукта",
+        })
+        today = date(2026, 9, 30)
+        master_sync._create({"sheet": "Tools", "row": tool_row}, today)
+        self.assertEqual(Tool.objects.get(slug="new-tool").ecosystem,
+                         {"en": "Product suite", "ru": "Экосистема продукта"})
+
     def test_mass_change_guard_and_failing_master_write_nothing(self):
         for index in range(3):
             self.model("m%d" % index, published=False)
@@ -272,6 +285,13 @@ class MasterSyncTests(TestCase):
     def test_score_storage_rounding_is_intentional(self):
         self.assertTrue(master_sync._same_stored_score("0.77757", "0.778"))
         self.assertFalse(master_sync._same_stored_score("0.77757", "0.777"))
+
+    def test_json_master_values_ignore_formatting_and_key_order(self):
+        self.assertTrue(master_sync._same_master_value(
+            "Origin (JSON)", '{"countries":["US"],"checked":"2026-09-30"}',
+            '{"checked": "2026-09-30", "countries": ["US"]}'))
+        self.assertFalse(master_sync._same_master_value(
+            "Origin (JSON)", '{"countries":["US"]}', '{"countries":["CA"]}'))
 
 
 @unittest.skipUnless(HAS_OPENPYXL, "openpyxl is not installed")

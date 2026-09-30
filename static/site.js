@@ -104,8 +104,12 @@ function setFreshnessOpen(open) {
   if (!open && document.activeElement === freshnessButton) freshnessButton.blur();
 }
 if (freshnessButton) {
-  freshnessShell.addEventListener("pointerenter", () => setFreshnessOpen(true));
-  freshnessShell.addEventListener("pointerleave", () => setFreshnessOpen(false));
+  freshnessShell.addEventListener("pointerenter", (event) => {
+    if (event.pointerType === "mouse") setFreshnessOpen(true);
+  });
+  freshnessShell.addEventListener("pointerleave", (event) => {
+    if (event.pointerType === "mouse") setFreshnessOpen(false);
+  });
   freshnessShell.addEventListener("focusin", () => setFreshnessOpen(true));
   freshnessShell.addEventListener("focusout", (event) => {
     if (!freshnessShell.contains(event.relatedTarget)) setFreshnessOpen(false);
