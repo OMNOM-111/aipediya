@@ -12,10 +12,12 @@ targeted public smoke; публичный каталог содержит 331 Mo
 Отчёт — `docs/history/2026-09-29-catalog-freshness-indicator.md`.
 
 Release #019 · AIpediya v0.16.1 создан до начала содержательной работы и
-доведён до `review`: Local ✓, Owner —, Production —. Это узкая визуальная
-доводка принятой механики #018 — полные имена в popover и официальные marks
-только для восьми последних записей. Production остаётся на неизменённом #018;
-отчёт Local QA — `docs/history/2026-09-30-catalog-freshness-ui-polish.md`.
+находится в `review`: Local ✓, Owner ✓, Production —. Это узкая визуальная
+доводка принятой механики #018 — полные имена в компактном popover, отсутствие
+scrollbar для восьми текущих строк, корректный EN clock/date и официальные marks
+только для восьми последних записей. Владелец разрешил выпуск после targeted
+Local QA; до завершения процедуры Production остаётся на неизменённом #018.
+Отчёт — `docs/history/2026-09-30-catalog-freshness-ui-polish.md`.
 
 Release #018 добавил в toolbar каталога индикатор свежести последнего фактического
 catalog update. Источник истины — `data/catalog_freshness.json`, seed из daily
@@ -66,7 +68,7 @@ Local-only CSP разрешает встроенные CSS/JS при запре�
 Production по-прежнему отвечает 404. На горизонтальной ленте видны только
 пронумерованные Release #001–#019, все по порядку; #018 закрыт с Local ✓,
 Owner ✓ и Production ✓, а #019 находится в `review` с Local ✓,
-Owner — и Production —.
+Owner ✓ и Production —.
 Ненумерованные Local-only и
 плановые записи сохранены в реестре и документах, но не перемежают выпуски.
 

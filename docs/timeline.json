@@ -978,12 +978,12 @@
       "title": "Catalog freshness UI final polish",
       "environment": "local",
       "stage": "review",
-      "status": "LOCAL_QA_PASS",
+      "status": "OWNER_APPROVED",
       "started_utc": "2026-09-30T15:37:41Z",
       "executor": "Codex",
       "history": "docs/history/2026-09-30-catalog-freshness-ui-polish.md",
       "release_tag": "release-2026-09-30-catalog-freshness-ui-polish",
-      "summary": "The accepted #018 Catalog Freshness mechanics remain unchanged. Local UI polish shows all eight names without ellipsis and uses scoped official H Company, Cue and Manus marks. Targeted Local browser QA passed; owner review is pending and Production remains immutable Release #018."
+      "summary": "The accepted #018 Catalog Freshness mechanics remain unchanged. Final Local polish uses a compact 350 px popover, keeps all eight names and release dates readable, hides the scrollbar when all rows fit, and preserves the scoped official marks. Targeted Local QA passed and the owner authorized this exact #019 release; Production remains Release #018 until the release procedure completes."
     }
   ],
   "product_history": {
@@ -2176,7 +2176,7 @@
         "release_sequence": 19,
         "app_version": "v0.16.1",
         "local_verified": true,
-        "owner_approved": false,
+        "owner_approved": true,
         "production_released": false,
         "production_verified": false,
         "date": "2026-09-30",
@@ -2187,14 +2187,14 @@
           "Release #019",
           "v0.16.1",
           "Local QA PASS",
-          "Owner review pending",
+          "Owner approved",
           "Production not released"
         ],
         "tags_en": [
           "Release #019",
           "v0.16.1",
           "Local QA PASS",
-          "Owner review pending",
+          "Owner approved",
           "Production not released"
         ],
         "capabilities_ru": [
@@ -2214,18 +2214,23 @@
         "executor": "Codex",
         "started_utc": "2026-09-30T15:37:41Z",
         "review_ready_utc": "2026-09-30T16:11:44Z",
+        "revision": "7a81df673aa3e88973954bd9fba6ffef8e86cfc9",
+        "owner_approved_utc": "2026-09-30T16:59:05Z",
+        "owner_decision": "Owner accepted the #019 design and explicitly pre-authorized Production after the three final visual remarks passed targeted Local QA in the 2026-09-30 continuation request.",
         "changes": [
-          "Freshness popover names no longer use ellipsis; the compact 448 px desktop / 350 px mobile layout keeps release dates right-aligned and allows a name to wrap instead of truncating",
+          "Freshness popover names no longer use ellipsis; the compact 350 px layout keeps release dates right-aligned, allows at most natural wrapping, and stays inside the 375 px viewport without page overflow",
+          "All eight current rows fit without a visible scrollbar; future overflow retains wheel/touch scrolling with a 4 px transparent-track scrollbar and a subdued thumb",
+          "The clock/date block formats its local time in the interface language, so EN no longer inherits a Russian Windows month label",
           "The three H Company models share the official H brand mark, Cue uses the official Cue product favicon, and Manus uses the official Manus brand icon; existing Anthropic and ElevenLabs marks remain unchanged",
           "Targeted real-browser Local QA passed on RU desktop 1440, the owner's 2502 px ultrawide viewport, RU mobile 375 and EN desktop 1440; #018 mechanics and Production were not changed"
         ],
         "qa": {
-          "local": "PASS: targeted Django tests 7/7, manage.py check, node --check; real Local browser RU 1440, RU ultrawide 2502, RU mobile 375 and EN 1440. Full names/dates, compact bounds, no popover/page overflow, ticking clock, hover/focus/tap/Escape, row highlight open/close, exact official marks and zero console/page errors verified.",
-          "local_ru": "PASS: targeted Django 7/7, manage.py check, node --check; настоящий Local в RU 1440, RU ultrawide 2502, RU mobile 375 и EN 1440. Проверены полные имена и даты, компактные границы, отсутствие overflow popover/page, часы, hover/focus/tap/Escape, подсветка строк, точные официальные marks и 0 console/page errors.",
-          "local_en": "PASS: targeted Django 7/7, manage.py check, node --check; real Local browser at RU 1440, RU ultrawide 2502, RU mobile 375 and EN 1440. Full names and dates, compact bounds, no popover/page overflow, clock, hover/focus/tap/Escape, row highlighting, exact official marks and zero console/page errors were verified."
+          "local": "PASS: targeted Django tests 9/9, manage.py check, node --check and git diff --check; real Local browser RU 1440, RU ultrawide 2502, RU mobile 375 and EN 1440. Full names/dates, 350 px compact bounds, no scrollbar for 8 rows, no popover/page overflow, locale-correct ticking clock, hover/focus/tap/Escape, row highlight, exact official marks, NEW hidden for Sep 28 and zero console/page errors verified.",
+          "local_ru": "PASS: targeted Django 9/9, manage.py check, node --check и git diff --check; настоящий Local в RU 1440, RU ultrawide 2502, RU mobile 375 и EN 1440. Проверены полные имена и даты, компактные 350 px, отсутствие scrollbar для 8 строк и overflow, локализованные часы, hover/focus/tap/Escape, подсветка строк, официальные marks, скрытый NEW для 28 сентября и 0 console/page errors.",
+          "local_en": "PASS: targeted Django 9/9, manage.py check, node --check and git diff --check; real Local browser at RU 1440, RU ultrawide 2502, RU mobile 375 and EN 1440. Complete names and dates, 350 px bounds, no scrollbar for eight rows or overflow, locale-correct clock, hover/focus/tap/Escape, row highlighting, official marks, hidden Sep 28 NEW badges and zero console/page errors were verified."
         },
-        "next_ru": "Остановиться для визуального просмотра владельцем на настоящем Local. Production не выполнять без отдельного разрешения владельца на конкретный #019 commit/tag по docs/RELEASE.md.",
-        "next_en": "Stop for the owner's visual review on the real Local site. Do not release Production without separate owner authorization for the exact #019 commit/tag under docs/RELEASE.md."
+        "next_ru": "Владелец разрешил выпуск #019 после PASS targeted Local QA. Следующим выполнить точную процедуру code-only release по docs/RELEASE.md и закрыть ту же карточку только после Public QA.",
+        "next_en": "The owner authorized #019 after targeted Local QA passed. Next run the exact code-only procedure in docs/RELEASE.md and close this same card only after Public QA passes."
       }
     ],
     "additional_tasks": [

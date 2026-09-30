@@ -62,7 +62,7 @@ class ProductHistoryTests(SimpleTestCase):
         polish = by_id["CATALOG-FRESHNESS-UI-POLISH-2026-09-30"]
         self.assertEqual((polish["release_sequence"], polish["app_version"], polish["progress"],
                           polish["local_verified"], polish["owner_approved"], polish["production_released"]),
-                         (19, "v0.16.1", "review", True, False, False))
+                         (19, "v0.16.1", "review", True, True, False))
         self.assertEqual([row["release_id"] for row in cards if row["progress"] == "planned"],
                          ["PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26",
                           "ORGANIC-SEARCH-FOLLOWUP-2026-09-30"])

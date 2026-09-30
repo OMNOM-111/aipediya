@@ -38,10 +38,11 @@ function localDateLabel(date) {
     const months = ["янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"];
     return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
   }
-  return new Intl.DateTimeFormat(undefined, { day: "numeric", month: "short", year: "numeric" }).format(date);
+  return new Intl.DateTimeFormat(lang, { day: "numeric", month: "short", year: "numeric" }).format(date);
 }
 function localTimeLabel(date) {
-  return new Intl.DateTimeFormat(undefined, { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).format(date);
+  const lang = document.documentElement.lang || "en";
+  return new Intl.DateTimeFormat(lang, { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).format(date);
 }
 function updateFreshnessClock() {
   const now = new Date();

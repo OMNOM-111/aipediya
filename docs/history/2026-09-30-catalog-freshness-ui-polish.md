@@ -2,13 +2,15 @@
 
 Дата: 2026-09-30. Исполнитель: Codex. Timeline: `CATALOG-FRESHNESS-UI-POLISH-2026-09-30`, Release #019 / `v0.16.1`.
 
-Состояние: `review` — Local ✓ / Owner — / Production —. Проверенный Local-кандидат — commit `7a81df673aa3e88973954bd9fba6ffef8e86cfc9`, отправленный в `origin/main`; Production baseline остаётся Release #018, commit `74cf7269c991c121e549c67e863bdfcd0449387a`.
+Состояние перед выпуском: `review` — Local ✓ / Owner ✓ / Production —. Владелец принял дизайн и в поручении от 30.09 явно разрешил Production #019 после PASS трёх финальных замечаний. Production baseline до процедуры остаётся Release #018, commit `74cf7269c991c121e549c67e863bdfcd0449387a`.
 
 ## Узкий scope
 
 - Механика Catalog Freshness из #018 сохранена без переделки.
-- В popover убран ellipsis только у имён восьми последних записей. Desktop-ширина — 448 px, mobile — 350 px; release date остаётся выровненной справа, а длинное имя может переноситься вместо обрезки.
-- На ширине 375 px popover привязан к левому краю freshness-block и помещается в viewport с отступами 12 px.
+- В popover убран ellipsis только у имён восьми последних записей. Ширина — компактные 350 px; release date остаётся выровненной справа, а длинное имя может переноситься вместо обрезки.
+- Текущие восемь строк помещаются без видимой полосы прокрутки. Для будущего переполнения сохранены wheel/touch scroll и тонкая 4 px полоса с прозрачным track, слабым thumb и усилением на hover.
+- На ширине 375 px popover имеет фактическую ширину 343.5 px и границы примерно `12…355.5`, поэтому закрытое и открытое окно не создаёт горизонтальный page overflow.
+- Блок часов использует язык интерфейса для `Intl.DateTimeFormat`: EN показывает `Sep 30, 2026`, не наследуя русский месяц из Windows; локальное время продолжает тикать каждую секунду.
 - Изображения других записей каталога не менялись; каталог, master XLSX и Local SQLite не менялись.
 
 ## Проверка восьми marks
@@ -30,17 +32,19 @@
 
 ## Local QA
 
-- `catalog.tests.test_marks` + `CatalogTests.test_catalog_freshness_indicator` — 7/7 PASS.
-- `manage.py check --settings=aipedia.test_settings` — PASS.
+- `catalog.tests.test_marks` + `CatalogTests.test_catalog_freshness_indicator` + `catalog.tests.test_catalog_freshness` — 9/9 PASS.
+- `manage.py check` — PASS.
 - `node --check static/site.js` — PASS.
-- RU desktop 1440×900 — PASS: восемь полных имён, даты выровнены, popover 448 px, overflow отсутствует, clock tick / hover / focus / Enter / Escape / row highlight open-close проверены.
-- RU ultrawide 2502×1315 (текущая ширина владельца) — PASS: popover 448 px, полные имена и даты, overflow отсутствует, hover и подсветка строк работают.
-- RU mobile 375×812 — PASS: tap открывает, Escape закрывает; popover 350 px в границах 12…362, внутренний и page-level overflow отсутствуют, имена и даты полные.
-- EN desktop 1440×900 smoke — PASS: `Latest update`, восемь полных имён, восемь дат `Sep 28, 2026`, popover 448 px, overflow отсутствует.
+- `git diff --check` — PASS; четыре ранее отмеченных файла catalog master/requirements подтверждены как CRLF-only без содержательной разницы и безопасно нормализованы до clean state.
+- RU desktop 1440×900 — PASS: восемь полных имён, даты выровнены, popover 350 px, все строки помещаются без scrollbar, overflow отсутствует, clock tick / hover / focus / Enter / Escape / row highlight проверены.
+- RU ultrawide 2502×1314 (текущая ширина владельца) — PASS: popover 350 px, полные имена и даты, overflow отсутствует, hover и подсветка строк работают.
+- RU mobile 375×812 — PASS: tap открывает, Escape закрывает; popover 343.5 px в границах около 12…355.5, внутренний и page-level overflow отсутствуют, имена и даты полные.
+- EN desktop 1440×900 smoke — PASS: `Latest update`, EN clock date `Sep 30, 2026`, восемь полных имён, восемь дат `Sep 28, 2026`, popover 350 px, overflow отсутствует.
+- Правило release-date не менялось: у записей от 28 сентября видимых `NEW` нет.
 - Загрузка marks подтверждена в DOM: Anthropic/ElevenLabs/Cue SVG, три H Company PNG и Manus PNG; PNG имеют ненулевую `naturalWidth`. Console/page errors — 0.
 
 Не запускались и не требовались: общий SEO, GSC, Cloudflare, performance, 22-language matrix, полный catalog audit и Production-проверки.
 
 ## Handoff
 
-Настоящий Local оставлен запущенным для визуального просмотра владельцем. Следующий шаг — только owner review. Production не выполнять без отдельной команды владельца на точный #019 commit/tag по `docs/RELEASE.md`.
+Targeted Local QA трёх финальных замечаний прошёл. Владелец заранее разрешил Production именно #019; следующий шаг — code-only процедура `docs/RELEASE.md`, затем targeted public smoke и закрытие этой же карточки только при полном PASS.
