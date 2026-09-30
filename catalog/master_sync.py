@@ -1135,11 +1135,11 @@ def build_release_plan(workbook_rows, changes, master_sha256="", release=""):
                        for r in workbook_rows[sheet]} for sheet in cm.MAIN}
     published = {sheet: sorted(r["Record ID"] for r in workbook_rows[sheet] if r.get("Status") == "PUBLISHED")
                  for sheet in cm.MAIN}
-        plan = {"schema": PLAN_SCHEMA, "release": release, "master_sha256": master_sha256,
+    plan = {"schema": PLAN_SCHEMA, "release": release, "master_sha256": master_sha256,
             "changes": serial, "final_numbers": numbers, "final_published": published,
             "counts": {kind: sum(1 for c in serial if c["kind"] == kind) for kind in WRITE_KINDS}}
-        plan["catalog_update"] = freshness.snapshot_from_plan(plan)
-        return plan
+    plan["catalog_update"] = freshness.snapshot_from_plan(plan)
+    return plan
 
 
 def _current(change):

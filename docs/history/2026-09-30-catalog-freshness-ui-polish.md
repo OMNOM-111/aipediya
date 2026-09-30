@@ -42,6 +42,7 @@
 - EN desktop 1440×900 smoke — PASS: `Latest update`, EN clock date `Sep 30, 2026`, восемь полных имён, восемь дат `Sep 28, 2026`, popover 350 px, overflow отсутствует.
 - Правило release-date не менялось: у записей от 28 сентября видимых `NEW` нет.
 - Загрузка marks подтверждена в DOM: Anthropic/ElevenLabs/Cue SVG, три H Company PNG и Manus PNG; PNG имеют ненулевую `naturalWidth`. Console/page errors — 0.
+- Обязательный полный release-gate до deploy обнаружил закоммиченную в #018 лишнюю индентацию в `catalog/master_sync.py` и две устаревшие проверки commit-id. Выпуск остановлен до Production; индентация исправлена без изменения алгоритма, assertions приведены к фактическим #018/#019 указателям. Повтор: 63 focused master/history tests PASS; полный `manage.py test catalog` — 349/349 PASS, один ожидаемый Windows skip.
 
 Не запускались и не требовались: общий SEO, GSC, Cloudflare, performance, 22-language matrix, полный catalog audit и Production-проверки.
 
