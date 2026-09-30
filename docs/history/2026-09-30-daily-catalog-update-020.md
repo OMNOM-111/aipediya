@@ -56,4 +56,4 @@
 
 ## Текущий остаток
 
-Local полностью принят автоматическими и визуальными проверками; предварительное разрешение владельца на Production стало действующим. Следующий шаг — commit/push точного проверенного состояния, сборка архива #020 и штатный server preflight/release-preflight/dry-run/deploy/verification по `docs/RELEASE.md`. До завершения этой процедуры Production остаётся #019.
+Local полностью принят автоматическими и визуальными проверками; предварительное разрешение владельца на Production стало действующим. Проверенное содержимое зафиксировано candidate commit `c3856613683a529fa9526fb8cdc179f2195075a4`. Следующий шаг — commit/push Timeline metadata, сборка архива #020 и штатный server preflight/release-preflight/dry-run/deploy/verification по `docs/RELEASE.md`. До завершения этой процедуры Production остаётся #019.
