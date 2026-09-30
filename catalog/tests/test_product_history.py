@@ -20,7 +20,7 @@ class ProductHistoryTests(SimpleTestCase):
                          "5ba1e566338fc17d9b8965d3be180bc1df268e2e")
         self.assertEqual(product["current_local"]["release_sequence"], 20)
         self.assertEqual(product["current_local"]["revision"],
-                         "c3856613683a529fa9526fb8cdc179f2195075a4")
+                         "b3d2916913a87109a8fffd8694b90ffe90e7f4b1")
         locale_switch = by_id["LANGUAGE-SWITCH-2026-09-28"]
         self.assertEqual((locale_switch["app_version"], locale_switch["local_verified"],
                           locale_switch["owner_approved"]), ("v0.13.1", True, True))

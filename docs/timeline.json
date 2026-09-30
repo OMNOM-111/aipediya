@@ -2293,7 +2293,7 @@
         "open": true,
         "progress": "review",
         "release_tag": "release-2026-09-30-daily-catalog-update",
-        "revision": "c3856613683a529fa9526fb8cdc179f2195075a4",
+        "revision": "b3d2916913a87109a8fffd8694b90ffe90e7f4b1",
         "executor": "Codex",
         "started_utc": "2026-09-30T17:37:37Z",
         "changes": [
@@ -2487,7 +2487,7 @@
       "release_sequence": 20,
       "app_version": "v0.17.0",
       "release_tag": "release-2026-09-30-daily-catalog-update",
-      "revision": "c3856613683a529fa9526fb8cdc179f2195075a4",
+      "revision": "b3d2916913a87109a8fffd8694b90ffe90e7f4b1",
       "started_utc": "2026-09-30T17:37:37Z"
     },
     "current_production": {

@@ -57,4 +57,4 @@
 
 ## Текущий остаток
 
-Local полностью принят автоматическими и визуальными проверками; предварительное разрешение владельца на Production стало действующим. Следующий шаг — зафиксировать corrected candidate с trial-gate repair, пересобрать архив #020 и повторить штатный server preflight/release-preflight/dry-run/deploy/verification по `docs/RELEASE.md`. До завершения этой процедуры Production остаётся #019.
+Local полностью принят автоматическими и визуальными проверками; предварительное разрешение владельца на Production стало действующим. Corrected candidate commit: `b3d2916913a87109a8fffd8694b90ffe90e7f4b1`. Следующий шаг — пересобрать архив #020 и повторить штатный server preflight/release-preflight/dry-run/deploy/verification по `docs/RELEASE.md`. До завершения этой процедуры Production остаётся #019.
