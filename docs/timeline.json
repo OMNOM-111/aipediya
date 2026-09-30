@@ -782,6 +782,17 @@
       "note": "Read-only post-recrawl control snapshot completed. GSC: 775 impressions, 7 clicks, 0.9% CTR, average position 13.1 for available data Sep 24-28; sitemap Successful with 10,421 discovered, while Pages/Indexing still processes. Bing sitemap Success, Search Performance still preparing and indexed URLs unavailable. Yandex sitemap OK, 0 search impressions/clicks and no indexed pages in the visible report. Naver signed out; Brave surfaced two site: results. Public Search QA remained clean and Production was not changed."
     },
     {
+      "release_id": "ORGANIC-SEARCH-GROWTH-CHECK-2026-10-07",
+      "title": "Organic search growth check",
+      "environment": "local",
+      "stage": "planned",
+      "status": "PLANNED",
+      "planned_after": "2026-10-07",
+      "continues": "ORGANIC-SEARCH-FOLLOWUP-2026-09-30",
+      "history": "docs/history/2026-10-07-organic-search-growth-check.md",
+      "note": "Planning-only read-only control for October 7. Baseline from Sep 30: GSC Sep 24-28 = 775 impressions, 7 clicks, 0.9% CTR, average position 13.1, 115 queries, 561 pages, 87 countries, sitemap Successful and 10,421 discovered while Pages/Indexing/canonical was still processing; Bing sitemap Success with 22 child maps and Performance/Indexed unavailable; Yandex sitemap OK with 0 impressions/clicks and no indexed pages displayed; Naver signed out; IndexNow pending/retry/unresolved 0 and 10,720 accepted, which is not indexing; Brave surfaced at least two results; 45 legacy URLs remained 25×301, 19×404 and 1×200/noindex with zero failures. No Production, SEO, search submission or ads action is authorized."
+    },
+    {
       "release_id": "ADAPTIVE-UI-2026-09-26",
       "release_sequence": 9,
       "app_version": "v0.9.0",
@@ -1501,6 +1512,54 @@
         },
         "next_ru": "Внешний follow-up: после готовности GSC Pages и Bing Performance повторно снять indexed/canonical; после восстановления входа владельцем проверить Naver. Новых code/SEO работ из этой карточки не начинать.",
         "next_en": "External follow-up: after GSC Pages and Bing Performance become ready, capture indexed/canonical data again; after owner login recovery, check Naver. Start no new code/SEO work from this card."
+      },
+      {
+        "release_id": "ORGANIC-SEARCH-GROWTH-CHECK-2026-10-07",
+        "local_verified": false,
+        "owner_approved": true,
+        "production_released": false,
+        "production_verified": false,
+        "date": "2026-10-07",
+        "title_ru": "Повторный контроль органического роста",
+        "title_en": "Organic search growth check",
+        "icon": "search-check",
+        "tags_ru": [
+          "PLANNED",
+          "Органический рост",
+          "7 октября"
+        ],
+        "tags_en": [
+          "PLANNED",
+          "Organic growth",
+          "October 7"
+        ],
+        "capabilities_ru": [
+          "Baseline 30.09, GSC 24–28.09: 775 показов, 7 кликов, CTR 0,9%, средняя позиция 13,1; 115 запросов, 561 страница, 87 стран; sitemap Successful, 10 421 discovered; Pages/Indexing/canonical ещё обрабатывались. Ранний baseline: 41 показ, 0 кликов, позиция 8,5; позицию сравнивать только с учётом окна и состава запросов.",
+          "Bing baseline: sitemap Success, 22 child maps, 0 errors/warnings, Performance ещё готовился, Indexed URLs — No data. Yandex: sitemap OK, 0 показов/кликов, indexed pages не отображались. Naver: разлогинен, ownership/sitemap/indexing не подтверждены, verification meta присутствует.",
+          "IndexNow baseline: pending 0, retry 0, unresolved failures 0, accepted URLs 10 720; accepted не равно indexed. Brave: минимум два результата без полного index count. Legacy: 25×301, 19×404, 1×200/noindex, failures 0.",
+          "7 октября сравнить последние 7 полных дней с предыдущими 7: GSC impressions/clicks/CTR/position/queries/pages/countries/top queries/landing pages, подтверждаемое branded/non-branded, sitemap и Pages/Indexing/canonical; Bing/Yandex/Naver/IndexNow/Brave — только доступные read-only факты.",
+          "Если доступна существующая Cloudflare Web Analytics, отдельно снять visits, page views, страны/страницы и сопоставимую динамику. GSC clicks, impressions, Cloudflare visits и page views не смешивать.",
+          "Decision gate: при росте — paid не запускать; при незрелых данных — без отрицательного вывода назначить новый контроль; только при зрелой нормальной индексации и подтверждённом слабом plateau представить владельцу отдельный Paid Search candidate до $15/месяц. Никакой рекламы автоматически."
+        ],
+        "capabilities_en": [
+          "Sep 30 baseline, GSC Sep 24–28: 775 impressions, 7 clicks, 0.9% CTR, average position 13.1; 115 queries, 561 pages and 87 countries; sitemap Successful with 10,421 discovered; Pages/Indexing/canonical was still processing. Early baseline: 41 impressions, 0 clicks, position 8.5; compare position only in the context of window and query mix.",
+          "Bing baseline: sitemap Success, 22 child maps, zero errors/warnings, Performance still preparing and Indexed URLs had No data. Yandex: sitemap OK, zero impressions/clicks and indexed pages not displayed. Naver: signed out; ownership/sitemap/indexing unconfirmed, public verification meta present.",
+          "IndexNow baseline: pending 0, retry 0, unresolved failures 0 and 10,720 accepted URLs; accepted does not mean indexed. Brave: at least two results without a complete index count. Legacy: 25×301, 19×404, 1×200/noindex, zero failures.",
+          "On October 7 compare the latest seven complete days with the previous seven: GSC impressions/clicks/CTR/position/queries/pages/countries/top queries/landing pages, evidence-supported branded/non-branded, sitemap and Pages/Indexing/canonical; Bing/Yandex/Naver/IndexNow/Brave only from available read-only evidence.",
+          "If existing Cloudflare Web Analytics is available read-only, separately capture visits, page views, countries/pages and comparable-period change. Do not mix GSC clicks or impressions with Cloudflare visits or page views.",
+          "Decision gate: with growth, do not launch paid; with immature data, draw no negative conclusion and schedule another control; only with mature healthy indexing and a confirmed weak plateau present a separate Paid Search candidate up to $15/month for owner decision. Never launch ads automatically."
+        ],
+        "revision": null,
+        "source": "2026-10-07-organic-search-growth-check",
+        "open": true,
+        "progress": "planned",
+        "qa": {
+          "local": "Planning-only card. Baseline and comparison protocol recorded from the completed Sep 30 evidence; no fresh search measurement was run."
+        },
+        "owner_decision_ru": "Владелец 30.09 поручил создать плановый read-only контроль на 07.10 без нового Release #, Production-изменений и автоматического запуска рекламы.",
+        "owner_decision_en": "On Sep 30 the owner requested a planned read-only control for Oct 7 without a new Release #, Production changes or automatic ad launch.",
+        "next_ru": "7 октября выполнить только сопоставимый read-only snapshot. Недоступное записать как «недоступно / не удалось подтвердить». Любой paid experiment — только отдельное решение владельца.",
+        "next_en": "On October 7 run only the comparable read-only snapshot. Record unavailable facts as unavailable / not confirmed. Any paid experiment requires a separate owner decision."
       },
       {
         "release_id": "ADAPTIVE-UI-2026-09-26",

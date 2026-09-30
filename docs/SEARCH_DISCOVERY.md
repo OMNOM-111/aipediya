@@ -224,6 +224,27 @@ not as a completed experiment. No campaign, billing, budget, spend, paid
 impressions or paid clicks exist; only a separate future owner decision can
 start another paid-search task.
 
+### Next organic growth control (planned for 2026-10-07)
+
+The open Local-only card `ORGANIC-SEARCH-GROWTH-CHECK-2026-10-07` continues the
+completed September 30 snapshot without reopening it. It has no Release # or
+SemVer and authorizes no Production, SEO, URL-submission or advertising action.
+Its recorded baseline is the September 30 evidence above: GSC 775 impressions,
+7 clicks, 0.9% CTR, average position 13.1, 115 queries, 561 pages, 87 countries
+and 10,421 discovered; Bing Performance/indexed data unavailable; Yandex zero
+visible search impressions/clicks and no displayed indexed pages; Naver signed
+out; IndexNow active queues zero with 10,720 accepted URLs; Brave at least two
+bounded results; legacy URLs 25×301 / 19×404 / 1×200-noindex with zero failures.
+
+On October 7, use comparable full seven-day windows for Search metrics and keep
+GSC clicks/impressions separate from Cloudflare visits/page views. Recheck
+Google Pages/Indexing/canonical, Bing performance/indexed data and the available
+Yandex/Naver/IndexNow/Brave facts. If growth continues, do not launch paid
+search. If data remains immature, draw no negative conclusion and schedule
+another check. Only mature healthy indexing plus a confirmed weak plateau may
+produce a separate Paid Search candidate (up to $15/month) for owner decision;
+it never creates campaign, billing, keywords, budget or spend automatically.
+
 ## 6. Collections (hubs)
 
 Finite registry in `catalog/hubs.py` (10 entries, published records only, minimum

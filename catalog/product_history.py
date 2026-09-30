@@ -41,6 +41,7 @@ SOURCES = {
     "2026-09-29-catalog-freshness-indicator": ("Индикатор свежести каталога / Catalog freshness indicator", "docs/history/2026-09-29-catalog-freshness-indicator.md"),
     "2026-09-30-catalog-freshness-ui-polish": ("Доводка свежести каталога / Catalog freshness UI polish", "docs/history/2026-09-30-catalog-freshness-ui-polish.md"),
     "2026-09-30-organic-search-followup": ("Organic search follow-up / Контрольный замер поиска", "docs/history/2026-09-30-organic-search-followup.md"),
+    "2026-10-07-organic-search-growth-check": ("Повторный контроль органического роста / Organic search growth check", "docs/history/2026-10-07-organic-search-growth-check.md"),
 }
 
 

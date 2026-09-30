@@ -1,6 +1,16 @@
 # Текущее состояние AIpedia
 
-Обновлено (UTC): 2026-09-30T22:41:13Z
+Обновлено (UTC): 2026-09-30T22:57:39Z
+
+## 30.09 — Organic Search Growth Check planned for 07.10 (Codex)
+
+- По прямому поручению владельца создана одна новая ненумерованная Timeline-карточка `ORGANIC-SEARCH-GROWTH-CHECK-2026-10-07`: `stage/status=planned/PLANNED`, `open=true`, дата 07.10.2026, без Release # и SemVer. Она продолжает закрытую `ORGANIC-SEARCH-FOLLOWUP-2026-09-30`; завершённые факты старой карточки не открывались и не менялись.
+- В карточке записан baseline 30.09: GSC за доступные 24–28.09 — 775 impressions, 7 clicks, CTR 0,9%, average position 13,1, 115 queries, 561 pages, 87 countries, sitemap Successful и 10 421 discovered; Pages/Indexing/canonical ещё обрабатывались. Ранний ориентир 41 / 0 / 8,5 сохранён только с оговоркой о разных окнах и query mix.
+- Зафиксированы остальные исходные факты: Bing Success / 22 child maps / 0 errors-warnings / Performance preparing / Indexed No data; Yandex sitemap OK / 0 impressions-clicks / indexed pages не отображались; Naver разлогинен при сохранённом verification meta; IndexNow pending/retry/unresolved 0 и accepted 10 720 (не доказательство indexing); Brave минимум 2 результата; legacy URL 25×301 / 19×404 / 1×200-noindex / failures 0.
+- План 07.10 требует сопоставить последние 7 полных дней с предыдущими 7 по GSC, Bing, Yandex, Naver, IndexNow и Brave; при доступной существующей Cloudflare Web Analytics отдельно снять visits/page views. Impressions, GSC clicks, Cloudflare visits и page views не смешиваются; недоступное записывается как `недоступно / не удалось подтвердить`.
+- Decision gate: при продолжающемся росте paid search не запускать; при незрелых данных не делать отрицательных выводов и назначить следующий контроль; только при зрелой технически нормальной индексации и подтверждённом слабом plateau представить владельцу отдельный `Paid Search Experiment — candidate for owner decision` с возможным пределом до $15/месяц. Campaign, billing, Keyword Planner master, keywords, budget и spend без отдельного решения запрещены.
+- Проверка планового состояния: release-history validator PASS; Timeline/history/AI_CONTEXT tests 15/15 PASS; полный catalog suite 364 PASS, 1 ожидаемый Windows skip; `git diff --check` PASS. `timeline.html` показывает 20 нумерованных выпусков и одну новую открытую planned-карточку в каждой языковой редакции; закрытые Search-карточки не открылись повторно.
+- Сейчас выполнено только планирование и обновление Local/GitHub history. Изменены `docs/timeline.json`, этот статус, Search/Product History, новый plan-report, источник Local history, точные regression tests и производный `timeline.html`; неизвестных пользовательских файлов нет. Search snapshot заново не запускался; SEO, robots/sitemap/canonical/hreflang, master, Models/Tools, SQLite, поисковые submissions, Google Ads и Production не менялись. `AI_CONTEXT.md` и ZIP пересобраны штатным сборщиком; документальное закрытие сохранено в `origin/main` после финального push. **Не завершено:** сам read-only замер 07.10, как и предусмотрено открытой planned-карточкой. **Следующим выполнить:** 07.10 открыть эту карточку только по новому поручению владельца и снять описанный сопоставимый snapshot.
 
 ## 30.09 — Organic Search Follow-up DONE; Paid Search closed/deferred (Codex)
 

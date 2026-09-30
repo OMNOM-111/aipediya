@@ -13,7 +13,7 @@ class ProductHistoryTests(SimpleTestCase):
         cards = product["milestones"]
         by_id = {row["release_id"]: row for row in cards}
         self.assertEqual(len(by_id), len(cards))
-        self.assertEqual(len(cards), 27)
+        self.assertEqual(len(cards), 28)
         self.assertEqual(product["current_production"]["release_sequence"], 20)
         self.assertEqual(product["current_production"]["app_version"], "v0.17.0")
         self.assertEqual(by_id["release-2026-09-28-reconciliation-cleanup"]["revision"],
@@ -70,14 +70,15 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertTrue(daily_twenty["owner_approved"])
         self.assertTrue(daily_twenty["production_verified"])
         self.assertEqual([row["release_id"] for row in cards if row["progress"] == "planned"],
-                         ["PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26"])
+                         ["PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26",
+                          "ORGANIC-SEARCH-GROWTH-CHECK-2026-10-07"])
 
     def test_local_history_and_sources(self):
         page = self.client.get("/ru/history/")
         self.assertEqual(page.status_code, 200)
         self.assertContains(page, "История AIpediya")
         self.assertEqual(page.content, (Path(__file__).resolve().parents[2] / "timeline.html").read_bytes())
-        self.assertEqual(page.content.count(b'data-history-open='), 40)  # 20 numbered releases in two editions; both Search cards are closed
+        self.assertEqual(page.content.count(b'data-history-open='), 42)  # 20 numbered releases + one open planned card in two editions
         self.assertIn(b'Release #001', page.content)
         self.assertIn(b'Release #015', page.content)
         self.assertIn(b'Release #016', page.content)
@@ -86,6 +87,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn(b'Release #019', page.content)
         self.assertIn(b'Release #020', page.content)
         self.assertNotIn("Контрольный замер органического поиска".encode("utf-8"), page.content)
+        self.assertIn("Повторный контроль органического роста".encode("utf-8"), page.content)
         self.assertIn(b"Organic search follow-up /", page.content)
         self.assertIn(b'PLANNED', page.content)
         self.assertNotIn(b'class="site-header"', page.content)
@@ -132,6 +134,10 @@ class ProductHistoryTests(SimpleTestCase):
             self.client.get("/ru/history/source/2026-09-30-catalog-freshness-ui-polish"),
             "Local review",
         )
+        self.assertContains(
+            self.client.get("/ru/history/source/2026-10-07-organic-search-growth-check"),
+            "775 impressions",
+        )
         self.assertEqual(self.client.get("/ru/history/source/secret").status_code, 404)
 
     def test_local_only_release_done_does_not_claim_production_publication(self):
@@ -156,6 +162,7 @@ class ProductHistoryTests(SimpleTestCase):
         entries = {row["release_id"]: row for row in registry["entries"]}
         paid_id = "PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26"
         followup_id = "ORGANIC-SEARCH-FOLLOWUP-2026-09-30"
+        growth_id = "ORGANIC-SEARCH-GROWTH-CHECK-2026-10-07"
         self.assertEqual(entries[paid_id]["stage"], "planned")
         self.assertEqual(entries[paid_id]["status"], "PLANNED")
         self.assertEqual(entries[paid_id]["planned_after"], "separate-future-owner-decision")
@@ -163,6 +170,12 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertEqual(entries[followup_id]["stage"], "done")
         self.assertEqual(entries[followup_id]["status"], "COMPLETED_LOCAL")
         self.assertEqual(entries[followup_id]["planned_after"], "2026-09-30")
+        self.assertEqual(entries[growth_id]["stage"], "planned")
+        self.assertEqual(entries[growth_id]["status"], "PLANNED")
+        self.assertEqual(entries[growth_id]["planned_after"], "2026-10-07")
+        self.assertEqual(entries[growth_id]["continues"], followup_id)
+        self.assertNotIn("release_sequence", entries[growth_id])
+        self.assertNotIn("app_version", entries[growth_id])
         self.assertEqual(entries[paid_id]["monthly_budget_usd_max"], 15)
         self.assertEqual(entries["GSD-1.0"]["stage"], "released")
         organic_id = "release-2026-09-26-search-visibility-optimization-v2"
@@ -180,6 +193,12 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertEqual(followup_card["progress"], "done")
         self.assertTrue(followup_card["local_verified"])
         self.assertIn("34/34 passes", " ".join(followup_card["capabilities_en"]))
+        growth_card = next(row for row in registry["product_history"]["milestones"] if row["release_id"] == growth_id)
+        self.assertTrue(growth_card["open"])
+        self.assertEqual(growth_card["progress"], "planned")
+        self.assertFalse(growth_card["production_released"])
+        self.assertIn("10,720 accepted URLs", " ".join(growth_card["capabilities_en"]))
+        self.assertIn("Never launch ads automatically", " ".join(growth_card["capabilities_en"]))
 
     def test_offline_history_records_owner_visual_check_without_publication(self):
         registry = json.loads((Path(__file__).resolve().parents[2] / "docs/timeline.json").read_text(encoding="utf-8"))
@@ -207,15 +226,16 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn("connect-src 'none'", page)
         self.assertIn('id="edition-ru"', page)
         self.assertIn('id="edition-en"', page)
-        self.assertEqual(page.count('data-history-open='), 40)
-        self.assertEqual(page.count('class="ph-release-card"'), 40)
-        self.assertEqual(page.count('role="button" tabindex="0" aria-haspopup="dialog"'), 40)
+        self.assertEqual(page.count('data-history-open='), 42)
+        self.assertEqual(page.count('class="ph-release-card"'), 42)
+        self.assertEqual(page.count('role="button" tabindex="0" aria-haspopup="dialog"'), 42)
         self.assertEqual(page.count('class="ph-status-legend"'), 2)
         self.assertIn('release-2026-09-28-reconciliation-cleanup', page)
         self.assertNotIn('data-history-open="PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26"', page)
         self.assertNotIn('data-history-open="ORGANIC-SEARCH-FOLLOWUP-2026-09-30"', page)
+        self.assertIn('data-history-open="ORGANIC-SEARCH-GROWTH-CHECK-2026-10-07"', page)
         self.assertNotIn('data-history-open="HISTORY-LOCAL-SHELL-2026-09-29"', page)
-        self.assertEqual(page.count('data-history-source-template='), 29)
+        self.assertEqual(page.count('data-history-source-template='), 30)
         self.assertEqual(page.count('class="ph-environment ph-local"'), 2)
         self.assertEqual(page.count('class="ph-environment ph-production"'), 2)
         self.assertIn("Номер обращения на экране не показан", page)
