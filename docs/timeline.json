@@ -2396,12 +2396,12 @@
       }
     ],
     "current_local": {
-      "release_id": "CATALOG-FRESHNESS-INDICATOR-2026-09-29",
-      "release_sequence": 18,
-      "app_version": "v0.16.0",
-      "release_tag": "release-2026-09-29-catalog-freshness-indicator",
-      "revision": "74cf7269c991c121e549c67e863bdfcd0449387a",
-      "github_pushed_at": "2026-09-30T03:35:53Z"
+      "release_id": "CATALOG-FRESHNESS-UI-POLISH-2026-09-30",
+      "release_sequence": 19,
+      "app_version": "v0.16.1",
+      "release_tag": "release-2026-09-30-catalog-freshness-ui-polish",
+      "revision": "7a81df673aa3e88973954bd9fba6ffef8e86cfc9",
+      "github_pushed_at": "2026-09-30T16:21:12Z"
     },
     "current_production": {
       "release_id": "CATALOG-FRESHNESS-INDICATOR-2026-09-29",

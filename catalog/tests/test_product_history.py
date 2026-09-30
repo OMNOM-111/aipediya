@@ -18,7 +18,9 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertEqual(product["current_production"]["app_version"], "v0.16.0")
         self.assertEqual(by_id["release-2026-09-28-reconciliation-cleanup"]["revision"],
                          "5ba1e566338fc17d9b8965d3be180bc1df268e2e")
-        self.assertEqual(product["current_local"]["release_sequence"], 18)
+        self.assertEqual(product["current_local"]["release_sequence"], 19)
+        self.assertEqual(product["current_local"]["revision"],
+                         "7a81df673aa3e88973954bd9fba6ffef8e86cfc9")
         locale_switch = by_id["LANGUAGE-SWITCH-2026-09-28"]
         self.assertEqual((locale_switch["app_version"], locale_switch["local_verified"],
                           locale_switch["owner_approved"]), ("v0.13.1", True, True))
