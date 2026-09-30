@@ -69,8 +69,7 @@ class ServerAccessContractTests(unittest.TestCase):
             wrapper.deploy("/tmp/aipedia-code-abcdefabcdef-abcdefabcdef.zip", "a" * 64,
                            "b" * 40, True, None, "data/release_state.json")
         args = run.call_args.args[0]
-        self.assertIn("--publication-state", args)
-        self.assertIn("--dry-run", args)
+        self.assertEqual(args[-3:], ["data/release_state.json", "-", "1"])
         self.assertNotIn("--catalog-plan", args)
 
         with tempfile.TemporaryDirectory() as temp:

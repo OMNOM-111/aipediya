@@ -6,6 +6,7 @@ Application deployment still requires a separately approved release.
 """
 
 import argparse
+import base64
 import hashlib
 import json
 import re
@@ -225,14 +226,28 @@ def deploy(remote, digest, commit, dry_run, plan, publication):
                 report.get("catalog_plan"), report.get("publication_state")) != (
                     "PASS", digest, commit, plan, publication):
             raise SystemExit("Release-preflight report does not match the archive")
-    args = ["ssh", ALIAS, "sudo", "-n", "python3",
-            REMOTE_ROOT + "/app/tools/deploy_code_release.py", remote, "--sha256", digest,
-            "--publication-state", publication]
-    if plan:
-        args.extend(("--catalog-plan", plan))
-    if dry_run:
-        args.append("--dry-run")
-    result = run(args, timeout=1200)
+    payload = {
+        name: base64.b64encode((ROOT / "tools" / name).read_bytes()).decode("ascii")
+        for name in ("deploy_code_release.py", "release_history.py")
+    }
+    script = """
+import base64, json, pathlib, subprocess, sys, tempfile
+payload = json.loads(%r)
+tmp = pathlib.Path(tempfile.mkdtemp(prefix='aipedia-deploy-tools-'))
+for name, data in payload.items():
+    (tmp / name).write_bytes(base64.b64decode(data))
+cmd = [sys.executable, str(tmp / 'deploy_code_release.py'), sys.argv[1], '--sha256', sys.argv[2], '--publication-state', sys.argv[3]]
+if sys.argv[4] != '-':
+    cmd.extend(['--catalog-plan', sys.argv[4]])
+if sys.argv[5] == '1':
+    cmd.append('--dry-run')
+result = subprocess.run(cmd, text=True, capture_output=True)
+print(result.stdout, end='')
+print(result.stderr, end='', file=sys.stderr)
+raise SystemExit(result.returncode)
+""" % json.dumps(payload)
+    result = run(["ssh", ALIAS, "sudo", "-n", "python3", "-", remote, digest, publication, plan or "-", "1" if dry_run else "0"],
+                 input_text=script, timeout=1200)
     if result.stdout:
         print(result.stdout)
     if result.returncode:

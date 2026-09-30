@@ -47,6 +47,7 @@
 - `NEW` / `UPD` now means the model or tool itself is still newly released. Date-only records show badges only on the release calendar date in the visitor's browser-local timezone; exact datetimes use the first 24 hours; approximate dates never invent an exact window.
 - The eight latest records' marks were checked only in scope: Anthropic and ElevenLabs resolve to existing SVG marks; H Company and Manus keep fallback initials because there is no existing official mark asset in `static/marks` and Simple Icons raw slugs `hcompany` / `manus` return 404. No invented or generated logos were added.
 - Targeted QA after these final remarks: `node --check static/site.js` PASS; `manage.py check --settings=aipedia.test_settings` PASS; targeted freshness tests PASS; browser RU desktop, RU 375 px, EN smoke, ticking local clock, hidden duplicate result text, popover open/close, release dates, NEW expiry boundary, row highlight, overflow and JS errors PASS.
+- Release tooling note: local `tools/server.py` now runs the current allowlisted `deploy_code_release.py` / `release_history.py` from a temporary remote directory during deploy, so #018 can be validated from Production #016 even though #017 was a Local-only reserved Release #. Targeted server wrapper test PASS.
 
 ## Next allowed paths
 
