@@ -24,6 +24,14 @@ CODES = ["en", "ru", "zh-Hans", "es", "fr", "ar", "pt-BR", "de", "ja", "ko", "hi
 RTL = {"ar", "fa"}
 PUBLIC = "https://aipediya.com"
 UA = "AIpediya-GSD-production-QA/1.0 (+owner read-only check)"
+INITIAL_PAGE_SIZE = 150
+CHUNK_SIZE = 50
+
+
+def listing_num_pages(count):
+    if count <= INITIAL_PAGE_SIZE:
+        return 1
+    return 1 + (count - INITIAL_PAGE_SIZE + CHUNK_SIZE - 1) // CHUNK_SIZE
 
 
 class NoRedirect(HTTPRedirectHandler):
@@ -179,9 +187,21 @@ def main():
         expected = 200 if args.datasets_enabled else 404
         qa.check("datasets", f"{path} {expected}", status == expected, status)
 
-    # Pagination and crawlability.
-    for path, expected in (("/?page=2", 200), ("/?page=5", 200), ("/?page=6", 404), ("/?page=abc", 404),
-                           ("/tools/?page=2", 404), ("/ru/?page=3", 200)):
+    # Pagination and crawlability. The bounds follow the release manifest so
+    # catalog growth does not turn a newly valid page into a false QA failure.
+    model_pages = listing_num_pages(len(public_models))
+    tool_pages = listing_num_pages(len(public_tools))
+    pagination_checks = [
+        ("/?page=2", 200 if model_pages >= 2 else 404),
+        (f"/?page={model_pages + 1}", 404),
+        ("/?page=abc", 404),
+        ("/tools/?page=2", 200 if tool_pages >= 2 else 404),
+        (f"/tools/?page={tool_pages + 1}", 404),
+        ("/ru/?page=3", 200 if model_pages >= 3 else 404),
+    ]
+    if model_pages > 1:
+        pagination_checks.insert(1, (f"/?page={model_pages}", 200))
+    for path, expected in pagination_checks:
         status, _, html = qa.get(path)
         qa.check("pagination", f"{path} -> {expected}", status == expected, status)
         if expected == 200 and status == 200:

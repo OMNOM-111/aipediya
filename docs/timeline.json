@@ -992,20 +992,22 @@
       "release_sequence": 20,
       "app_version": "v0.17.0",
       "title": "Daily Catalog Update — 30 September 2026",
-      "environment": "local",
-      "stage": "review",
-      "status": "REVIEW",
+      "environment": "production",
+      "stage": "released",
+      "status": "RELEASED",
       "started_utc": "2026-09-30T17:37:37Z",
       "executor": "Codex",
       "history": "docs/history/2026-09-30-daily-catalog-update-020.md",
       "release_tag": "release-2026-09-30-daily-catalog-update",
-      "summary": "Release #020 passed complete Local QA and is in review with the owner's conditional authorization now satisfied: 3 Models and 6 Tools are published in Local, 2 Tool candidates remain hidden for review, and Production has not yet been changed."
+      "summary": "Release #020 is published and verified: 3 Models and 6 Tools were added to the public catalog, 2 Tool candidates remain hidden for review, Local/Owner/Production gates passed, and Production has 334 Models / 155 Tools.",
+      "revision": "1f412c70634713f8dbf2ea10ee47115fef997450",
+      "production_verified_at": "2026-09-30T19:56:49+00:00"
     }
   ],
   "product_history": {
     "visibility": "Local only; no owner authentication exists for this page on Production",
-    "production_evidence": "docs/history/2026-09-30-catalog-freshness-ui-polish.md",
-    "production_verified_at": "2026-09-30T17:30:18+00:00",
+    "production_evidence": "docs/history/2026-09-30-daily-catalog-update-020.md",
+    "production_verified_at": "2026-09-30T19:56:49+00:00",
     "milestones": [
       {
         "release_id": "release-2026-09-20-chronology",
@@ -2259,8 +2261,8 @@
         "app_version": "v0.17.0",
         "local_verified": true,
         "owner_approved": true,
-        "production_released": false,
-        "production_verified": false,
+        "production_released": true,
+        "production_verified": true,
         "date": "2026-09-30",
         "title_ru": "Ежедневное обновление каталога — 30 сентября 2026",
         "title_en": "Daily Catalog Update — 30 September 2026",
@@ -2270,14 +2272,14 @@
           "v0.17.0",
           "Local ✓",
           "Owner ✓",
-          "Production —"
+          "Production ✓"
         ],
         "tags_en": [
           "Release #020",
           "v0.17.0",
           "Local ✓",
           "Owner ✓",
-          "Production —"
+          "Production ✓"
         ],
         "capabilities_ru": [
           "Проверить GPT-6.1 Sol, Embed 5 Pro и Embed 5 Fast по официальным источникам и классифицировать точный статус каждой записи",
@@ -2290,29 +2292,33 @@
           "Update only the listed existing products and historical candidates, then run master → trial → Local sync → targeted QA"
         ],
         "source": "2026-09-30-daily-catalog-update-020",
-        "open": true,
-        "progress": "review",
+        "open": false,
+        "progress": "done",
         "release_tag": "release-2026-09-30-daily-catalog-update",
-        "revision": "b3d2916913a87109a8fffd8694b90ffe90e7f4b1",
+        "revision": "1f412c70634713f8dbf2ea10ee47115fef997450",
         "executor": "Codex",
         "started_utc": "2026-09-30T17:37:37Z",
         "changes": [
           "Published 3 verified Models and 6 verified Tools in Local; retained Decisions API and Honeycomb AI Ecosystem as hidden NEEDS_REVIEW records",
           "Updated only the named existing products, preserved Evaluations unchanged and generated the exact 9-create plus 15-renumber release plan",
           "Corrected new Tool ecosystem sync, semantic JSON comparison, approximate-date normalization, Cohere mark mapping and touch popover persistence discovered during required Local QA",
-          "Corrected the archive trial gate to expect a legacy ModelVersion for a new Tool only when its price, access or evaluation rows require that holder"
+          "Corrected the archive trial gate to expect a legacy ModelVersion for a new Tool only when its price, access or evaluation rows require that holder",
+          "Made post-deploy comparison map planned stable slugs to database primary keys and made Production pagination QA derive valid pages from the release manifest"
         ],
         "qa": {
-          "local": "PASS: canonical check/qa, isolated trial, exact Local sync, repeat-zero/integrity/FK, final 362 catalog tests after the server trial-gate correction, manage.py check, node syntax, diff check and real RU 1440/2502/375 plus EN 1440 browser QA all passed.",
-          "local_ru": "PASS: catalog_master check OK and qa PASS; trial plus working Local sync, repeat plan zero, SQLite integrity ok/FK 0; 362 catalog tests PASS with one Windows skip; RU 1440, ultrawide 2502 and mobile 375 verified complete freshness names/dates, no horizontal overflow, clock, focus/tap/Escape, row highlight, affected cards and zero console/page errors.",
+          "local": "PASS: canonical check/qa, isolated trial, exact Local sync, repeat-zero/integrity/FK, final 364 catalog tests after all release-gate corrections, manage.py check, node syntax, diff check and real RU 1440/2502/375 plus EN 1440 browser QA all passed.",
+          "local_ru": "PASS: catalog_master check OK and qa PASS; trial plus working Local sync, repeat plan zero, SQLite integrity ok/FK 0; final 364 catalog tests PASS with one Windows skip; RU 1440, ultrawide 2502 and mobile 375 verified complete freshness names/dates, no horizontal overflow, clock, focus/tap/Escape, row highlight, affected cards and zero console/page errors.",
           "local_en": "PASS: EN 1440 smoke verified GPT-6.1 Sol and Dots cards, release dates/access, no overflow and zero console/page errors; manage.py check, node --check and git diff --check PASS.",
-          "production": "PENDING: Production remains Release #019 until the approved #020 release procedure completes."
+          "production": "1659/1659 PASS; artifacts/release-020-production-qa.json"
         },
         "owner_decision": "Owner explicitly pre-authorized Production Release #020 after complete Local QA PASS in the 2026-09-30 Daily Catalog Update request.",
         "owner_decision_ru": "Владелец в поручении 30.09 заранее разрешил Production Release #020 только после полного PASS Local QA.",
         "owner_decision_en": "In the Sep 30 request the owner explicitly pre-authorized Production Release #020 only after complete Local QA passes.",
-        "next_ru": "Local PASS завершён и условие владельца выполнено; собрать точный commit/archive #020 и провести разрешённый выпуск строго по docs/RELEASE.md.",
-        "next_en": "Local PASS is complete and the owner's condition is satisfied; build the exact #020 commit/archive and run the authorized release strictly through docs/RELEASE.md."
+        "next_ru": "Выпуск #020 опубликован и проверен; реальных остатков по его scope нет.",
+        "next_en": "Release #020 is published and verified; no real follow-up remains within its scope.",
+        "production_verified_at": "2026-09-30T19:56:49+00:00",
+        "release_report": "docs/history/2026-09-30-daily-catalog-update-020.md",
+        "backup": "aipedia-before-code-20260930T194252Z.sqlite3"
       }
     ],
     "additional_tasks": [
@@ -2487,18 +2493,18 @@
       "release_sequence": 20,
       "app_version": "v0.17.0",
       "release_tag": "release-2026-09-30-daily-catalog-update",
-      "revision": "b3d2916913a87109a8fffd8694b90ffe90e7f4b1",
+      "revision": "1f412c70634713f8dbf2ea10ee47115fef997450",
       "started_utc": "2026-09-30T17:37:37Z"
     },
     "current_production": {
-      "release_id": "CATALOG-FRESHNESS-UI-POLISH-2026-09-30",
-      "release_sequence": 19,
-      "app_version": "v0.16.1",
-      "release_tag": "release-2026-09-30-catalog-freshness-ui-polish",
-      "revision": "8713fbc4d040dcf0374e6b60b045a6d0867ff5bd",
-      "confirmed_at": "2026-09-30T17:30:18+00:00",
-      "evidence": "28/28 PASS; artifacts/release-019-production-qa.json",
-      "source": "docs/history/2026-09-30-catalog-freshness-ui-polish.md"
+      "release_id": "DAILY-CATALOG-UPDATE-2026-09-30",
+      "release_sequence": 20,
+      "app_version": "v0.17.0",
+      "release_tag": "release-2026-09-30-daily-catalog-update",
+      "revision": "1f412c70634713f8dbf2ea10ee47115fef997450",
+      "confirmed_at": "2026-09-30T19:56:49+00:00",
+      "evidence": "1659/1659 PASS; artifacts/release-020-production-qa.json",
+      "source": "docs/history/2026-09-30-daily-catalog-update-020.md"
     }
   }
 }

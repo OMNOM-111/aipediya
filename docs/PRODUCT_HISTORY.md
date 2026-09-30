@@ -3,19 +3,19 @@
 ## Версии и обязательный выпускной шлюз
 
 **No Timeline → No Release.** Подтверждённые Production-вехи получили
-Release #001–#020; текущий опубликованный baseline — Release #019 · AIpediya
-v0.16.1, `release-2026-09-30-catalog-freshness-ui-polish`, deployed release id
-`8713fbc4d040dcf0374e6b60b045a6d0867ff5bd`. Catalog Freshness UI final polish
-прошёл Local/owner gates, server preflight, release-preflight, dry-run, deploy,
-`/healthz`, `verify-release`, catalog integrity и targeted public smoke 28/28;
-публичный каталог содержит 331 Models / 149 Tools.
-Отчёт — `docs/history/2026-09-30-catalog-freshness-ui-polish.md`.
+Release #001–#020; текущий опубликованный baseline — Release #020 · AIpediya
+v0.17.0, `release-2026-09-30-daily-catalog-update`, deployed release id
+`1f412c70634713f8dbf2ea10ee47115fef997450`. Daily Catalog Update прошёл
+Local/owner gates, server preflight, release-preflight, dry-run, deploy,
+`/healthz`, `verify-release`, catalog integrity, Production QA 1659/1659 и
+targeted public browser smoke; публичный каталог содержит 334 Models / 155 Tools.
+Отчёт — `docs/history/2026-09-30-daily-catalog-update-020.md`.
 
 Release #020 · AIpediya v0.17.0 `Daily Catalog Update — 30 September 2026`
-находится в `review`: Local ✓, Owner ✓, Production —. Из текущего canonical
-master в Local опубликованы 3 Models и 6 Tools; два неоднозначных Tool оставлены
-hidden `NEEDS_REVIEW`. Exact trial/sync, integrity/FK, 362 tests и настоящий
-RU 1440/2502/375 + EN 1440 browser QA прошли; Production пока остаётся #019.
+закрыт как `done`: Local ✓, Owner ✓, Production ✓. Из текущего canonical master
+опубликованы 3 Models и 6 Tools; два неоднозначных Tool оставлены hidden
+`NEEDS_REVIEW`. Exact trial/sync, integrity/FK, финальные 364 tests, Production
+QA 1659/1659 и настоящий RU/EN desktop/mobile browser QA прошли.
 
 Release #019 · AIpediya v0.16.1 создан до начала содержательной работы и
 закрыт как `done`: Local ✓, Owner ✓, Production ✓. Это узкая визуальная
@@ -72,9 +72,8 @@ Production и автономный HTML. Исторические Local-only з�
 открытии. Для английского маршрута меняется лишь начальная редакция RU/EN.
 Local-only CSP разрешает встроенные CSS/JS при запрете сетевых соединений;
 Production по-прежнему отвечает 404. На горизонтальной ленте видны только
-пронумерованные Release #001–#020, все по порядку; #018 и #019 закрыты с
-Local ✓, Owner ✓ и Production ✓, #020 находится в `review` с Local ✓ / Owner ✓ /
-Production —.
+пронумерованные Release #001–#020, все по порядку; #018, #019 и #020 закрыты с
+Local ✓, Owner ✓ и Production ✓.
 Ненумерованные Local-only и
 плановые записи сохранены в реестре и документах, но не перемежают выпуски.
 

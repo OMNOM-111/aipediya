@@ -8,17 +8,29 @@
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный выпуск — **Catalog Freshness UI final polish, Release #019 · v0.16.1**,
+Текущий публичный выпуск — **Daily Catalog Update, Release #020 · v0.17.0**,
 2026-09-30: проверенный release id
-`8713fbc4d040dcf0374e6b60b045a6d0867ff5bd`, tag
+`1f412c70634713f8dbf2ea10ee47115fef997450`, tag
+`release-2026-09-30-daily-catalog-update`. Архив
+`aipedia-code-1f412c706347.zip`, SHA-256
+`6ca2858b4cc2c8a8f99e5033766ba73144507d119c22b191a471c0077ba2882d`.
+Server preflight, release-preflight, dry-run, deploy, `/healthz`, `server catalog`,
+`verify-release`, `catalog_master qa --production`, GSD Public 34/34, полный
+Production QA 1659/1659 и targeted public browser QA PASS. Каталог: 334 Models /
+155 Tools; добавлены 3 Models и 6 Tools, Evaluation/Benchmark rows не менялись.
+Backup: `/srv/aipedia/backups/aipedia-before-code-20260930T194252Z.sqlite3`.
+Отчёт — `docs/history/2026-09-30-daily-catalog-update-020.md`; Timeline #020 закрыта.
+
+### Предыдущий публичный выпуск — Catalog Freshness UI final polish #019
+
+Catalog Freshness UI final polish, Release #019 · v0.16.1, 2026-09-30:
+проверенный release id `8713fbc4d040dcf0374e6b60b045a6d0867ff5bd`, tag
 `release-2026-09-30-catalog-freshness-ui-polish`. Архив
 `aipedia-code-8713fbc4d040.zip`, SHA-256
 `a7ec7e2bc1ebc21ed69a3272b94aecf9ad29f2ec4192ca9984bd0b86a8ceda8f`.
 Server preflight, release-preflight, dry-run, deploy, `/healthz`, `server catalog`,
-`verify-release` и targeted public smoke 28/28 PASS. Code-only: каталог и
-фактические таблицы не менялись, 331 Models / 149 Tools сохранены,
-changed factual tables []. Backup:
-`/srv/aipedia/backups/aipedia-before-code-20260930T172607Z.sqlite3`.
+`verify-release` и targeted public smoke 28/28 PASS; 331 Models / 149 Tools.
+Backup: `/srv/aipedia/backups/aipedia-before-code-20260930T172607Z.sqlite3`.
 Отчёт — `docs/history/2026-09-30-catalog-freshness-ui-polish.md`; Timeline #019 закрыта.
 
 ### Предыдущий публичный выпуск — Catalog Freshness Indicator #018

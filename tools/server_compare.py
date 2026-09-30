@@ -134,9 +134,17 @@ def validate_plan_diff(plan, old, new, changed_tables, before_counts, after_coun
     for key, expected in final_counts.items():
         if after_counts.get(key) != expected:
             problems.append("%s=%s differs from plan %s" % (key, after_counts.get(key), expected))
+    planned_model_slugs = planned_existing_ids(plan, "Models", {"update", "number"})
+    planned_tool_slugs = planned_existing_ids(plan, "Tools", {"update", "number"})
     critical = {
-        "catalog_modelversion": planned_existing_ids(plan, "Models", {"update", "number"}),
-        "catalog_tool": planned_existing_ids(plan, "Tools", {"update", "number"}),
+        "catalog_modelversion": {
+            key for key, row in old.get("catalog_modelversion", {}).items()
+            if row.get("slug") in planned_model_slugs
+        },
+        "catalog_tool": {
+            key for key, row in old.get("catalog_tool", {}).items()
+            if row.get("slug") in planned_tool_slugs
+        },
         "catalog_offer": planned_existing_ids(plan, "Offers", {"offer", "reassign"}, "offer"),
         "catalog_access": planned_existing_ids(plan, "Access", {"access_service", "reassign"}, "access"),
     }
@@ -160,8 +168,23 @@ def validate_plan_diff(plan, old, new, changed_tables, before_counts, after_coun
         elif table not in existing_table_updates:
             problems.append("%s existing rows changed unexpectedly" % table)
     creates = [change for change in plan["changes"] if change["kind"] == "create"]
+    old_tools = {row.get("slug"): row for row in old.get("catalog_tool", {}).values()}
+    legacy_tool_rows = {
+        change["id"] for change in creates
+        if change["sheet"] == "Tools" and (change.get("offers") or change.get("access"))
+    }
+    for change in plan["changes"]:
+        if change.get("kind") not in {"offer_new", "access_new", "evaluation_new"}:
+            continue
+        owner_kind, _sep, owner_slug = change.get("owner", "").partition(":")
+        if owner_kind != "tool":
+            continue
+        current_tool = old_tools.get(owner_slug)
+        if current_tool is None or not current_tool.get("legacy_version_id"):
+            legacy_tool_rows.add(owner_slug)
     expected_created = {
-        "catalog_modelversion": len(creates),
+        "catalog_modelversion": sum(1 for change in creates if change["sheet"] == "Models")
+                                + len(legacy_tool_rows),
         "catalog_tool": sum(1 for change in creates if change["sheet"] == "Tools"),
         "catalog_offer": sum(len(change.get("offers", [])) for change in creates) + plan["counts"].get("offer_new", 0),
         "catalog_access": sum(len(change.get("access", [])) for change in creates) + plan["counts"].get("access_new", 0),

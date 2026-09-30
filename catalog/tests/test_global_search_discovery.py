@@ -18,6 +18,7 @@ from catalog.models import ContentTranslation, DiscoveryEvent, ModelVersion, Off
 from catalog.seo import json_ld_script, sitemap_urlsets
 from catalog.search_pages import _official_standard, context_rows, pricing_rows
 from catalog.translation_pipeline import source_hash
+from tools.gsd_production_qa import listing_num_pages
 
 
 def public_model():
@@ -664,6 +665,10 @@ class DispatcherTests(TestCase):
 
 
 class BrowserContractRegressionTests(TestCase):
+    def test_production_qa_pagination_bounds_follow_catalog_growth(self):
+        self.assertEqual([listing_num_pages(count) for count in (149, 150, 151, 200, 201)],
+                         [1, 1, 2, 2, 3])
+
     """Defects found in GSD-1.0 browser QA."""
 
     @classmethod

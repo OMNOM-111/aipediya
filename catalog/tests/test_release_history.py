@@ -6,19 +6,19 @@ from tools.finalize_release_history import finalize
 
 
 class ReleaseHistoryTests(SimpleTestCase):
-    def test_twenty_is_the_reserved_local_candidate(self):
+    def test_twenty_is_the_verified_production_release(self):
         registry = load()
         self.assertEqual(validate(registry), [])
         cards = [row for row in registry["product_history"]["milestones"] if row.get("release_sequence")]
         self.assertEqual([row["release_sequence"] for row in cards], list(range(1, 21)))
         self.assertEqual(cards[-1]["app_version"], "v0.17.0")
         self.assertEqual(registry["product_history"]["current_local"]["release_sequence"], 20)
-        self.assertEqual(registry["product_history"]["current_production"]["release_sequence"], 19)
+        self.assertEqual(registry["product_history"]["current_production"]["release_sequence"], 20)
         self.assertTrue(next(row for row in cards if row["release_sequence"] == 18)["production_verified"])
         self.assertFalse(next(row for row in cards if row["release_sequence"] == 17)["production_verified"])
-        self.assertFalse(cards[-1]["production_verified"])
+        self.assertTrue(cards[-1]["production_verified"])
         self.assertEqual((cards[-1]["progress"], cards[-1]["local_verified"], cards[-1]["owner_approved"]),
-               ("review", True, True))
+               ("done", True, True))
 
     def test_gate_rejects_missing_review_qa_owner_and_stale_html(self):
         registry = load()

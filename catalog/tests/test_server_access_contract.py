@@ -384,3 +384,41 @@ class ServerAccessContractTests(unittest.TestCase):
             failed = report()
             self.assertFalse(failed["ok"])
             self.assertTrue(any("catalog_source existing rows" in problem for problem in failed["problems"]))
+
+    def test_catalog_release_comparison_maps_slugs_and_allows_tool_without_legacy_holder(self):
+        spec = importlib.util.spec_from_file_location("server_compare_slug_test", ROOT / "tools/server_compare.py")
+        compare = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(compare)
+        plan = {
+            "schema": "aipedia-catalog-plan/1", "release": "future",
+            "counts": {"create": 2, "number": 1},
+            "final_published": {"Models": ["m1", "m2"], "Tools": ["tool2", "tool1"]},
+            "final_numbers": {"Models": {"m1": 1, "m2": 2},
+                              "Tools": {"tool2": 1, "tool1": 2}},
+            "changes": [
+                {"kind": "create", "sheet": "Models", "id": "m2", "row": {},
+                 "offers": [], "access": []},
+                {"kind": "create", "sheet": "Tools", "id": "tool2", "row": {},
+                 "offers": [], "access": []},
+                {"kind": "number", "sheet": "Tools", "id": "tool1", "before": 1, "after": 2},
+            ],
+        }
+        old = {
+            "catalog_modelversion": {1: {"id": 1, "slug": "m1", "public_number": 1}},
+            "catalog_tool": {7: {"id": 7, "slug": "tool1", "public_number": 1,
+                                  "legacy_version_id": None}},
+        }
+        new = copy.deepcopy(old)
+        new["catalog_modelversion"][2] = {"id": 2, "slug": "m2", "public_number": 2}
+        new["catalog_tool"][7]["public_number"] = 2
+        new["catalog_tool"][8] = {"id": 8, "slug": "tool2", "public_number": 1,
+                                   "legacy_version_id": None}
+        before_counts = {"models": 1, "tools": 1, "models_numbered": True,
+                         "tools_numbered": True, "models_numbered_count": 1,
+                         "tools_numbered_count": 1}
+        after_counts = {"models": 2, "tools": 2, "models_numbered": True,
+                        "tools_numbered": True, "models_numbered_count": 2,
+                        "tools_numbered_count": 2}
+        self.assertEqual(compare.validate_plan_diff(
+            plan, old, new, ["catalog_modelversion", "catalog_tool"],
+            before_counts, after_counts), [])
