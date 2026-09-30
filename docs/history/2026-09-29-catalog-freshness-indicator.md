@@ -41,6 +41,13 @@
 - Table `NEW` / `UPD` badges are smaller and lighter and are shown only for the first 24 hours after the catalog update timestamp. A client-side visibility check hides them automatically after 24 hours without a new catalog release. The record release date shown in the popover remains separate and does not control badge lifetime.
 - Final targeted QA: RU desktop, RU 375 px, EN smoke, ticking clock, browser timezone formatting, simulated +25h `NEW/UPD` hide, hover/tap/focus, popover, release dates, row highlight open/close, overflow and JS errors PASS. No broad audits or full catalog suite were run in this final visual step.
 
+## Owner final remarks before Production
+
+- The duplicate visible `331 результатов` text was removed from the UI; the counter remains present as `sr-only` so the existing mandatory catalog QA parser can still verify counts.
+- `NEW` / `UPD` now means the model or tool itself is still newly released. Date-only records show badges only on the release calendar date in the visitor's browser-local timezone; exact datetimes use the first 24 hours; approximate dates never invent an exact window.
+- The eight latest records' marks were checked only in scope: Anthropic and ElevenLabs resolve to existing SVG marks; H Company and Manus keep fallback initials because there is no existing official mark asset in `static/marks` and Simple Icons raw slugs `hcompany` / `manus` return 404. No invented or generated logos were added.
+- Targeted QA after these final remarks: `node --check static/site.js` PASS; `manage.py check --settings=aipedia.test_settings` PASS; targeted freshness tests PASS; browser RU desktop, RU 375 px, EN smoke, ticking local clock, hidden duplicate result text, popover open/close, release dates, NEW expiry boundary, row highlight, overflow and JS errors PASS.
+
 ## Next allowed paths
 
 - **OWNER ACCEPTS:** the next agent does not change code; after a separate owner command, it publishes exactly the committed Release #018 / `v0.16.0` candidate by `docs/RELEASE.md`, runs only mandatory release gates and a short public smoke, then closes #018.

@@ -296,8 +296,7 @@ textarea { width: 100%; resize: vertical; }
   min-height: 34px;
 }
 .toolbar-end {
-  display: grid; grid-template-columns: auto auto; grid-template-areas: "actions freshness" "actions counts";
-  align-items: center; justify-items: end; gap: 2px 14px;
+  display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px 14px;
   min-width: 0; margin-inline-start: auto;
 }
 .type-tabs { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
@@ -314,9 +313,9 @@ textarea { width: 100%; resize: vertical; }
   background: var(--mint); color: var(--on-mint); border-color: var(--mint); font-weight: 600;
   box-shadow: none;
 }
-.catalog-counts { grid-area: counts; color: var(--muted); font-size: 13px; min-width: 0; text-align: end; }
+.catalog-counts { color: var(--muted); font-size: 13px; min-width: 0; text-align: end; }
 .catalog-counts > #result-count { white-space: nowrap; }
-.catalog-freshness-shell { grid-area: freshness; position: relative; display: inline-flex; justify-self: end; }
+.catalog-freshness-shell { position: relative; display: inline-flex; }
 .catalog-freshness {
   display: grid; grid-template-columns: auto auto; gap: 1px 8px; align-items: baseline;
   min-height: 35px; padding: 2px 6px;
@@ -357,7 +356,7 @@ textarea { width: 100%; resize: vertical; }
   font-size: 7px; line-height: 1; font-weight: 700; opacity: .64; transform: translateY(-.18em);
 }
 .catalog-update-badge-updated { border-color: var(--line-strong); color: var(--text-soft); }
-.catalog-page.is-catalog-freshness-expired .catalog-update-badge { display: none; }
+.catalog-update-badge[hidden], .freshness-action[hidden] { display: none; }
 .catalog-page.is-catalog-freshness-open tr.catalog-update-row {
   background: linear-gradient(90deg, rgba(94, 234, 212, .08), transparent 42%);
 }
@@ -365,7 +364,7 @@ textarea { width: 100%; resize: vertical; }
 /* Compact Filter / Sort entry points. Hidden while the full desktop table
    shows every column with its own header filters; shown on touch screens and
    whenever the catalog is narrow enough for columns to fold away. */
-.catalog-actions { grid-area: actions; display: none; align-items: center; gap: 8px; justify-self: end; }
+.catalog-actions { display: none; align-items: center; gap: 8px; }
 .toolbar-button {
   display: inline-flex; align-items: center; justify-content: center; gap: 7px;
   height: 36px; padding: 0 13px; border-radius: var(--r-ctl);
@@ -1014,12 +1013,8 @@ details summary { font-size: 12px; padding: 7px 0; color: var(--link); cursor: p
   }
   .type-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .type-tab { min-width: 0; height: var(--touch); padding: 0 12px; }
-  .toolbar-end {
-    display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "actions freshness" "actions counts";
-    align-items: center; gap: 4px 10px; width: 100%;
-  }
+  .toolbar-end { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
   .catalog-actions { display: flex; }
-  .catalog-freshness-shell, .catalog-counts { justify-self: end; }
   .toolbar-button { height: var(--touch); padding: 0 14px; }
   .catalog-freshness { max-width: 100%; white-space: normal; }
   .catalog-freshness-popover { inset-inline-start: auto; inset-inline-end: 0; width: min(336px, calc(100vw - 24px)); }

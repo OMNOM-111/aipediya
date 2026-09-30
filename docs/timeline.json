@@ -2099,7 +2099,7 @@
         "release_sequence": 18,
         "app_version": "v0.16.0",
         "local_verified": true,
-        "owner_approved": false,
+        "owner_approved": true,
         "production_released": false,
         "production_verified": false,
         "date": "2026-09-29",
@@ -2109,12 +2109,14 @@
         "tags_ru": [
           "Release #018",
           "v0.16.0",
-          "Local QA PASS"
+          "Local QA PASS",
+          "Owner approved"
         ],
         "tags_en": [
           "Release #018",
           "v0.16.0",
-          "Local QA PASS"
+          "Local QA PASS",
+          "Owner approved"
         ],
         "capabilities_ru": [
           "Показать посетителю точное UTC-время последнего фактического catalog update и относительное время рядом со счётчиками Models и Tools.",
@@ -2137,13 +2139,16 @@
           "Embed catalog_update snapshot into future catalog_plan files and write the persisted snapshot only during apply-plan",
           "Render exact UTC time, relative time, freshness state, popover counts/list and visible-row NEW/UPD highlighting"
         ],
+        "owner_decision": "Owner accepted the Local #018 implementation and pre-authorized Production for this exact release after the three final UI/icon fixes and targeted Local QA PASS.",
+        "owner_decision_ru": "Владелец принял Local #018 и заранее разрешил Production именно для Release #018 / v0.16.0 после трёх финальных правок и targeted Local QA PASS.",
+        "owner_decision_en": "Owner accepted Local #018 and pre-authorized Production specifically for Release #018 / v0.16.0 after the three final fixes and targeted Local QA PASS.",
         "qa": {
-          "local": "Targeted backend: catalog freshness snapshot/code-only/UI tests 3 PASS; targeted UI test PASS; manage.py check PASS; node --check static/site.js PASS. Final browser QA: RU desktop 1440 right-aligned date/time over result count, ticking local clock via browser Intl, hover/focus popover, no UTC/Fresh-data text, release dates from catalog data, 24h NEW/UPD hide simulated PASS, row highlight only while open; RU 375 tap/Escape PASS, overflow false; EN smoke PASS; console/page errors 0. Local restarted on 127.0.0.1:18810 with 331 Models / 149 Tools.",
-          "local_ru": "Targeted backend: catalog freshness snapshot/code-only/UI tests 3 PASS; targeted UI test PASS; manage.py check PASS; node --check static/site.js PASS. Финальный browser QA: RU desktop 1440 date/time правым краем над result count, локальные часы через browser Intl тикают, hover/focus popover, без UTC/«Свежие данные», release dates из catalog data, 24h NEW/UPD hide simulated PASS, подсветка строк только пока открыто; RU 375 tap/Escape PASS, overflow false; EN smoke PASS; console/page errors 0. Local перезапущен на 127.0.0.1:18810, 331 Models / 149 Tools.",
-          "local_en": "Targeted backend: catalog freshness snapshot/code-only/UI tests 3 PASS; targeted UI test PASS; manage.py check PASS; node --check static/site.js PASS. Final browser QA: RU desktop 1440 right-aligned date/time over result count, ticking local clock via browser Intl, hover/focus popover, no UTC/Fresh-data text, catalog release dates, 24h NEW/UPD hide simulated PASS, row highlight only while open; RU 375 tap/Escape PASS, overflow false; EN smoke PASS; console/page errors 0. Local restarted on 127.0.0.1:18810 with 331 Models / 149 Tools."
+          "local": "Targeted backend: catalog freshness snapshot/code-only/UI tests 3 PASS; targeted UI test PASS; manage.py check PASS; node --check static/site.js PASS. Final browser QA after owner remarks: duplicate result count visually removed while QA counter remains sr-only; NEW/UPD hidden for date-only Sep 28 releases on Sep 29 and boundary behavior PASS; icons for 8 latest records checked (Anthropic/ElevenLabs logos present; H Company and Manus keep fallback because no existing official mark asset and Simple Icons slugs 404); RU desktop, RU 375, EN smoke, clock, popover, row highlight, overflow false, console/page errors 0.",
+          "local_ru": "Targeted backend: catalog freshness snapshot/code-only/UI tests 3 PASS; targeted UI test PASS; manage.py check PASS; node --check static/site.js PASS. Финальный browser QA после замечаний владельца: дублирующий result count визуально убран, QA counter сохранён sr-only; NEW/UPD скрыт для date-only релизов 28 Sep на 29 Sep, boundary behavior PASS; иконки 8 последних записей проверены (Anthropic/ElevenLabs logos есть; H Company и Manus остаются fallback, потому что нет existing official mark asset и Simple Icons slugs 404); RU desktop, RU 375, EN smoke, часы, popover, row highlight, overflow false, console/page errors 0.",
+          "local_en": "Targeted backend: catalog freshness snapshot/code-only/UI tests 3 PASS; targeted UI test PASS; manage.py check PASS; node --check static/site.js PASS. Final browser QA after owner remarks: duplicate result count visually removed while QA counter remains sr-only; NEW/UPD hidden for date-only Sep 28 releases on Sep 29 and boundary behavior PASS; icons for 8 latest records checked (Anthropic/ElevenLabs logos present; H Company and Manus keep fallback because no existing official mark asset and Simple Icons slugs 404); RU desktop, RU 375, EN smoke, clock, popover, row highlight, overflow false, console/page errors 0."
         },
-        "next_ru": "Владелец проверяет Local; Production возможна только отдельной командой на конкретный выпуск.",
-        "next_en": "Owner reviews Local; Production requires a separate command for the exact release."
+        "next_ru": "При PASS финального commit/push выполнить Production именно #018 по docs/RELEASE.md; если scope расширится — остановиться.",
+        "next_en": "With final commit/push PASS, publish exactly #018 by docs/RELEASE.md; stop if the scope expands."
       }
     ],
     "additional_tasks": [

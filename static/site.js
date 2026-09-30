@@ -53,23 +53,45 @@ function updateFreshnessClock() {
     if (!Number.isNaN(stamp.getTime())) item.textContent = `${localDateLabel(stamp)}, ${localTimeLabel(stamp)}`;
   });
 }
-function updateFreshnessVisibility() {
-  if (!catalogFreshness?.updated_at_utc) return;
-  const stamp = Date.parse(catalogFreshness.updated_at_utc);
-  if (!Number.isFinite(stamp)) return;
-  document.body.classList.toggle("is-catalog-freshness-expired", Date.now() - stamp >= 24 * 60 * 60 * 1000);
+function badgeIsCurrent(releaseDate, approx, precision) {
+  // NEW/UPD reflects the record's real recency, not when it entered AIpediya.
+  if (!releaseDate || approx === true || approx === "true") return false;
+  if (releaseDate.includes("T")) {
+    const t = Date.parse(releaseDate);
+    if (!Number.isFinite(t)) return false;
+    const delta = Date.now() - t;
+    return delta >= 0 && delta < 24 * 60 * 60 * 1000;
+  }
+  const p = String(precision || "").toLowerCase();
+  if (p && p !== "day") return false;
+  const parts = releaseDate.split("-");
+  if (parts.length < 3) return false;
+  const now = new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  const todayLocal = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  return releaseDate === todayLocal;
 }
+function updateBadgeRecency() {
+  document.querySelectorAll(".catalog-update-badge").forEach((badge) => {
+    badge.hidden = !badgeIsCurrent(badge.dataset.badgeReleaseDate, badge.dataset.badgeReleaseApprox === "true", badge.dataset.badgeReleasePrecision);
+  });
+  document.querySelectorAll(".freshness-entry").forEach((li) => {
+    const action = li.querySelector(".freshness-action");
+    if (action) action.hidden = !badgeIsCurrent(li.dataset.badgeReleaseDate, li.dataset.badgeReleaseApprox === "true", li.dataset.badgeReleasePrecision);
+  });
+}
+window.aipediaBadgeIsCurrent = badgeIsCurrent;
 function updateRelativeTimes() {
   document.querySelectorAll("[data-relative-time]").forEach((item) => {
     item.textContent = relativeTimeLabel(item.dataset.updatedAt || "");
   });
 }
 updateFreshnessClock();
-updateFreshnessVisibility();
+updateBadgeRecency();
 updateRelativeTimes();
-if (catalogFreshness) window.setInterval(() => { updateFreshnessClock(); updateFreshnessVisibility(); }, 1000);
+if (catalogFreshness) window.setInterval(() => { updateFreshnessClock(); updateBadgeRecency(); }, 1000);
 if (catalogFreshness) window.setInterval(updateRelativeTimes, 60000);
-window.aipediaUpdateFreshnessVisibility = updateFreshnessVisibility;
+window.aipediaUpdateBadgeRecency = updateBadgeRecency;
 
 const freshnessShell = document.querySelector("[data-catalog-freshness]");
 const freshnessButton = freshnessShell?.querySelector(".catalog-freshness");
