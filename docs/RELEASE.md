@@ -9,7 +9,7 @@ Push в GitHub **не** публикует сайт. Ярлык Local, кноп�
 сами по себе не выполняют deploy.
 
 Текущий публичный выпуск — **Catalog Freshness Indicator, Release #018 · v0.16.0**,
-2026-09-30: проверенный commit/release id
+2026-09-30: проверенный release id
 `74cf7269c991c121e549c67e863bdfcd0449387a`, tag
 `release-2026-09-29-catalog-freshness-indicator`. Архив
 `aipedia-code-74cf7269c991.zip`, SHA-256
