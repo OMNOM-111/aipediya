@@ -10,14 +10,15 @@ class ReleaseHistoryTests(SimpleTestCase):
         registry = load()
         self.assertEqual(validate(registry), [])
         cards = [row for row in registry["product_history"]["milestones"] if row.get("release_sequence")]
-        self.assertEqual([row["release_sequence"] for row in cards], list(range(1, 18)))
-        self.assertEqual(cards[-1]["app_version"], "v0.15.0")
-        self.assertEqual(registry["product_history"]["current_local"]["release_sequence"], 17)
+        self.assertEqual([row["release_sequence"] for row in cards], list(range(1, 19)))
+        self.assertEqual(cards[-1]["app_version"], "v0.16.0")
+        self.assertEqual(registry["product_history"]["current_local"]["release_sequence"], 18)
         self.assertEqual(registry["product_history"]["current_production"]["release_sequence"], 16)
-        self.assertTrue(cards[-2]["production_verified"])
+        self.assertTrue(next(row for row in cards if row["release_sequence"] == 16)["production_verified"])
+        self.assertFalse(next(row for row in cards if row["release_sequence"] == 17)["production_verified"])
         self.assertFalse(cards[-1]["production_verified"])
         self.assertEqual((cards[-1]["progress"], cards[-1]["local_verified"], cards[-1]["owner_approved"]),
-                 ("done", True, True))
+                 ("review", True, False))
 
     def test_gate_rejects_missing_review_qa_owner_and_stale_html(self):
         registry = load()

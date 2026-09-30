@@ -296,7 +296,8 @@ textarea { width: 100%; resize: vertical; }
   min-height: 34px;
 }
 .toolbar-end {
-  display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px 14px;
+  display: grid; grid-template-columns: auto auto; grid-template-areas: "actions freshness" "actions counts";
+  align-items: center; justify-items: end; gap: 2px 14px;
   min-width: 0; margin-inline-start: auto;
 }
 .type-tabs { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
@@ -313,13 +314,58 @@ textarea { width: 100%; resize: vertical; }
   background: var(--mint); color: var(--on-mint); border-color: var(--mint); font-weight: 600;
   box-shadow: none;
 }
-.catalog-counts { color: var(--muted); font-size: 13px; min-width: 0; text-align: end; }
+.catalog-counts { grid-area: counts; color: var(--muted); font-size: 13px; min-width: 0; text-align: end; }
 .catalog-counts > #result-count { white-space: nowrap; }
+.catalog-freshness-shell { grid-area: freshness; position: relative; display: inline-flex; justify-self: end; }
+.catalog-freshness {
+  display: grid; grid-template-columns: auto auto; gap: 1px 8px; align-items: baseline;
+  min-height: 35px; padding: 2px 6px;
+  border: 1px solid transparent; border-radius: 8px;
+  background: transparent; color: var(--text-soft);
+  font-size: 11px; line-height: 1.15; white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+.catalog-freshness:hover, .catalog-freshness:focus-visible, .catalog-freshness-shell.is-open .catalog-freshness {
+  border-color: var(--mint-line); background: var(--mint-dim); color: var(--text);
+}
+.freshness-date { color: var(--muted); font-size: 10.5px; }
+.freshness-time { color: var(--text); font-size: 14px; font-weight: 520; font-variant-numeric: tabular-nums; letter-spacing: 0; }
+.freshness-age { grid-column: 1 / -1; color: var(--muted); font-size: 9.5px; }
+.catalog-freshness.is-amber .freshness-age { color: #d6a95b; }
+.catalog-freshness-popover {
+  position: absolute; inset-inline-end: 0; top: calc(100% + 8px); z-index: var(--z-popover);
+  width: min(430px, calc(100vw - 24px)); padding: 12px;
+  border: 1px solid var(--line-strong); border-radius: var(--r-panel);
+  background: color-mix(in srgb, var(--panel) 94%, transparent); color: var(--text);
+  box-shadow: var(--shadow); opacity: 0; visibility: hidden; transform: translateY(-4px);
+  transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
+}
+.catalog-freshness-shell.is-open .catalog-freshness-popover {
+  opacity: 1; visibility: visible; transform: translateY(0);
+}
+.popover-title { font-size: 13px; font-weight: 650; }
+.popover-time { margin-top: 3px; color: var(--muted); font-size: 12px; }
+.freshness-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 4px; max-height: 250px; overflow: auto; }
+.freshness-entry { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; gap: 9px; align-items: baseline; font-size: 12px; }
+.freshness-section { margin-top: 7px; color: var(--muted); font-size: 11px; font-weight: 650; }
+.freshness-section:first-child { margin-top: 0; }
+.freshness-action { color: var(--mint-text); font-size: 10px; font-weight: 700; letter-spacing: 0; }
+.freshness-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.freshness-release-date { color: var(--muted); font-size: 11px; white-space: nowrap; }
+.catalog-update-badge {
+  display: inline-flex; margin-inline-start: 4px; padding: 1px 3px; border-radius: 4px;
+  border: 1px solid rgba(126, 243, 222, .22); color: var(--mint-text);
+  font-size: 7px; line-height: 1; font-weight: 700; opacity: .64; transform: translateY(-.18em);
+}
+.catalog-update-badge-updated { border-color: var(--line-strong); color: var(--text-soft); }
+.catalog-page.is-catalog-freshness-expired .catalog-update-badge { display: none; }
+.catalog-page.is-catalog-freshness-open tr.catalog-update-row {
+  background: linear-gradient(90deg, rgba(94, 234, 212, .08), transparent 42%);
+}
 
 /* Compact Filter / Sort entry points. Hidden while the full desktop table
    shows every column with its own header filters; shown on touch screens and
    whenever the catalog is narrow enough for columns to fold away. */
-.catalog-actions { display: none; align-items: center; gap: 8px; }
+.catalog-actions { grid-area: actions; display: none; align-items: center; gap: 8px; justify-self: end; }
 .toolbar-button {
   display: inline-flex; align-items: center; justify-content: center; gap: 7px;
   height: 36px; padding: 0 13px; border-radius: var(--r-ctl);
@@ -968,9 +1014,16 @@ details summary { font-size: 12px; padding: 7px 0; color: var(--link); cursor: p
   }
   .type-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .type-tab { min-width: 0; height: var(--touch); padding: 0 12px; }
-  .toolbar-end { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
+  .toolbar-end {
+    display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "actions freshness" "actions counts";
+    align-items: center; gap: 4px 10px; width: 100%;
+  }
   .catalog-actions { display: flex; }
+  .catalog-freshness-shell, .catalog-counts { justify-self: end; }
   .toolbar-button { height: var(--touch); padding: 0 14px; }
+  .catalog-freshness { max-width: 100%; white-space: normal; }
+  .catalog-freshness-popover { inset-inline-start: auto; inset-inline-end: 0; width: min(336px, calc(100vw - 24px)); }
+  .freshness-entry { grid-template-columns: 28px minmax(0, 1fr) auto; gap: 7px; }
   .catalog-counts { white-space: normal; font-size: 12.5px; text-align: end; min-width: 0; }
   .count-note { display: block; font-size: 11.5px; white-space: normal; overflow-wrap: anywhere; }
   .filter-chips, .comparison-basis { margin-left: 0; margin-right: 0; }

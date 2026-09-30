@@ -1,0 +1,86 @@
+{
+ "counts": {
+  "added_models": 6,
+  "added_tools": 2,
+  "updated_models": 0,
+  "updated_records": 0,
+  "updated_tools": 0
+ },
+ "entries": [
+  {
+   "action": "added",
+   "name": "Claude Sonnet 5.5",
+   "record_id": "claude-sonnet-5-5-899c1979",
+    "release_date": "2026-09-28",
+    "release_date_approx": false,
+    "release_date_precision": "day",
+   "record_type": "model"
+  },
+  {
+   "action": "added",
+   "name": "Eleven v4",
+   "record_id": "eleven-v4-1cc3a926",
+    "release_date": "2026-09-28",
+    "release_date_approx": false,
+    "release_date_precision": "day",
+   "record_type": "model"
+  },
+  {
+   "action": "added",
+   "name": "Eleven v4 Turbo",
+   "record_id": "eleven-v4-turbo-6a02a110",
+    "release_date": "2026-09-28",
+    "release_date_approx": false,
+    "release_date_precision": "day",
+   "record_type": "model"
+  },
+  {
+   "action": "added",
+   "name": "Holo4-27B",
+   "record_id": "holo4-27b-62d1091f",
+    "release_date": "2026-09-28",
+    "release_date_approx": false,
+    "release_date_precision": "day",
+   "record_type": "model"
+  },
+  {
+   "action": "added",
+   "name": "Holo4-35B-A3B",
+   "record_id": "holo4-35b-a3b-b9f93a3e",
+    "release_date": "2026-09-28",
+    "release_date_approx": false,
+    "release_date_precision": "day",
+   "record_type": "model"
+  },
+  {
+   "action": "added",
+   "name": "Holotron4-30B-A3B",
+   "record_id": "holotron4-30b-a3b-c0c87f8d",
+    "release_date": "2026-09-28",
+    "release_date_approx": false,
+    "release_date_precision": "day",
+   "record_type": "model"
+  },
+  {
+   "action": "added",
+   "name": "Cue",
+   "record_id": "cue-77457549",
+    "release_date": "2026-09-28",
+    "release_date_approx": false,
+    "release_date_precision": "day",
+   "record_type": "tool"
+  },
+  {
+   "action": "added",
+   "name": "Manus",
+   "record_id": "manus-0214c7c8",
+    "release_date": "2026-09-28",
+    "release_date_approx": false,
+    "release_date_precision": "day",
+   "record_type": "tool"
+  }
+ ],
+ "release": "release-2026-09-29-daily-catalog-update",
+ "schema": "aipedia-catalog-freshness/1",
+ "updated_at_utc": "2026-09-29T21:39:59Z"
+}

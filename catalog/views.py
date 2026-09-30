@@ -245,6 +245,20 @@ def _catalog_counts():
     }
 
 
+def _catalog_freshness(lang):
+    from . import freshness
+    return freshness.context(lang)
+
+
+def _mark_catalog_update(items, catalog_freshness, record_type):
+    entries = catalog_freshness.get("entries", []) if catalog_freshness else []
+    actions = {item["record_id"]: item["action"] for item in entries if item.get("record_type") == record_type}
+    for item in items:
+        action = actions.get(item.slug)
+        item.catalog_update_action = action or ""
+        item.catalog_update_badge = "NEW" if action == "added" else ("UPD" if action == "updated" else "")
+
+
 def _number_page(qs, number, descending=False):
     """Return one chronological page without hydrating the whole catalogue."""
     count = qs.count()
@@ -447,6 +461,8 @@ def _tool_catalog_context(request, selected_slug=None, hub=None):
         sort=sort,
         developers=developers,
     )
+    catalog_freshness = _catalog_freshness(lang)
+    _mark_catalog_update(page.object_list, catalog_freshness, "tool")
     return {
         "page": page,
         "q": q,
@@ -461,6 +477,7 @@ def _tool_catalog_context(request, selected_slug=None, hub=None):
         "catalog_status": getattr(selected_tool, "catalog_status", ""),
         "panel_tab": panel_tab,
         "counts": _catalog_counts(),
+        "catalog_freshness": catalog_freshness,
         "found_count": page.paginator.count,
         "shown_count": len(page.object_list),
         **_numbering_counts(page, qs if fast_number_page else None),
@@ -679,11 +696,14 @@ def _catalog_context(request, selected_slug=None, hub=None):
                     selected_model, taxonomy_labels, price_unit, benchmark, price_scope, lang,
                     configuration, snapshot, price_variant, price_condition, price_modality,
                 )
+    catalog_freshness = _catalog_freshness(lang)
+    _mark_catalog_update(page.object_list, catalog_freshness, "model")
     context = {
         "page": page, "q": q, "category": category_code, "sort": sort, "status": status,
         "categories": categories, "access_kinds": access_kinds, "sort_options": list(orders),
         "price_units": price_units, "price_unit": price_unit, "price_scope": price_scope,
         "benchmarks": benchmarks, "benchmark": benchmark, "counts": counts,
+        "catalog_freshness": catalog_freshness,
         "configurations": configurations, "configuration": configuration,
         "snapshots": snapshots, "snapshot": snapshot, "price_variant": price_variant,
         "price_modality": price_modality,

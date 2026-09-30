@@ -957,6 +957,19 @@
       "revision": "b6f0178741df7ad5425f0f061c2ed2185aa08dc3",
       "github_pushed_at": "2026-09-29T22:22:59Z",
       "owner_decision": "Owner accepted Release #017 Local result; no Production deploy required, 2026-09-29T22:48:50Z"
+    },
+    {
+      "release_id": "CATALOG-FRESHNESS-INDICATOR-2026-09-29",
+      "release_sequence": 18,
+      "app_version": "v0.16.0",
+      "title": "Catalog freshness indicator",
+      "environment": "local",
+      "stage": "review",
+      "status": "LOCAL_QA_PASS",
+      "started_utc": "2026-09-29T23:27:52Z",
+      "executor": "GitHub Copilot",
+      "release_tag": "release-2026-09-29-catalog-freshness-indicator",
+      "summary": "A compact catalog freshness signal is shown in the catalog toolbar, derived from existing publication revisions and record check dates. Local QA passed, owner review is pending, and Production remains Release #016 until a separate owner-approved release."
     }
   ],
   "product_history": {
@@ -2080,6 +2093,57 @@
         },
         "next_ru": "Следующий daily catalog update может использовать этот механизм без изменения release tooling.",
         "next_en": "The next daily catalog update can use this mechanism without changing release tooling."
+      },
+      {
+        "release_id": "CATALOG-FRESHNESS-INDICATOR-2026-09-29",
+        "release_sequence": 18,
+        "app_version": "v0.16.0",
+        "local_verified": true,
+        "owner_approved": false,
+        "production_released": false,
+        "production_verified": false,
+        "date": "2026-09-29",
+        "title_ru": "Индикатор свежести каталога",
+        "title_en": "Catalog freshness indicator",
+        "icon": "calendar-clock",
+        "tags_ru": [
+          "Release #018",
+          "v0.16.0",
+          "Local QA PASS"
+        ],
+        "tags_en": [
+          "Release #018",
+          "v0.16.0",
+          "Local QA PASS"
+        ],
+        "capabilities_ru": [
+          "Показать посетителю точное UTC-время последнего фактического catalog update и относительное время рядом со счётчиками Models и Tools.",
+          "Сохранять compact snapshot из существующего catalog_plan при реальном apply-plan: added/updated Models/Tools, Record ID и display name; code-only выпуск snapshot не меняет.",
+          "Открывать popover по hover/focus на desktop и tap/click на mobile; пока popover открыт, подсвечивать уже загруженные строки последнего update без догрузки infinite scroll."
+        ],
+        "capabilities_en": [
+          "Show the exact UTC timestamp of the latest factual catalog update and relative time next to the Models and Tools counters.",
+          "Persist a compact snapshot from the existing catalog_plan on real apply-plan: added/updated Models/Tools, Record ID and display name; code-only releases do not change it.",
+          "Open a popover on desktop hover/focus and mobile tap/click; while it is open, highlight already loaded rows from the latest update without forcing infinite-scroll loading."
+        ],
+        "source": "2026-09-29-catalog-freshness-indicator",
+        "open": true,
+        "progress": "review",
+        "release_tag": "release-2026-09-29-catalog-freshness-indicator",
+        "executor": "GitHub Copilot",
+        "started_utc": "2026-09-29T23:27:52Z",
+        "changes": [
+          "Add catalog_freshness.json as the persisted latest catalog-update snapshot, seeded from #016 catalog_plan",
+          "Embed catalog_update snapshot into future catalog_plan files and write the persisted snapshot only during apply-plan",
+          "Render exact UTC time, relative time, freshness state, popover counts/list and visible-row NEW/UPD highlighting"
+        ],
+        "qa": {
+          "local": "Targeted backend: catalog freshness snapshot/code-only/UI tests 3 PASS; targeted UI test PASS; manage.py check PASS; node --check static/site.js PASS. Final browser QA: RU desktop 1440 right-aligned date/time over result count, ticking local clock via browser Intl, hover/focus popover, no UTC/Fresh-data text, release dates from catalog data, 24h NEW/UPD hide simulated PASS, row highlight only while open; RU 375 tap/Escape PASS, overflow false; EN smoke PASS; console/page errors 0. Local restarted on 127.0.0.1:18810 with 331 Models / 149 Tools.",
+          "local_ru": "Targeted backend: catalog freshness snapshot/code-only/UI tests 3 PASS; targeted UI test PASS; manage.py check PASS; node --check static/site.js PASS. Финальный browser QA: RU desktop 1440 date/time правым краем над result count, локальные часы через browser Intl тикают, hover/focus popover, без UTC/«Свежие данные», release dates из catalog data, 24h NEW/UPD hide simulated PASS, подсветка строк только пока открыто; RU 375 tap/Escape PASS, overflow false; EN smoke PASS; console/page errors 0. Local перезапущен на 127.0.0.1:18810, 331 Models / 149 Tools.",
+          "local_en": "Targeted backend: catalog freshness snapshot/code-only/UI tests 3 PASS; targeted UI test PASS; manage.py check PASS; node --check static/site.js PASS. Final browser QA: RU desktop 1440 right-aligned date/time over result count, ticking local clock via browser Intl, hover/focus popover, no UTC/Fresh-data text, catalog release dates, 24h NEW/UPD hide simulated PASS, row highlight only while open; RU 375 tap/Escape PASS, overflow false; EN smoke PASS; console/page errors 0. Local restarted on 127.0.0.1:18810 with 331 Models / 149 Tools."
+        },
+        "next_ru": "Владелец проверяет Local; Production возможна только отдельной командой на конкретный выпуск.",
+        "next_en": "Owner reviews Local; Production requires a separate command for the exact release."
       }
     ],
     "additional_tasks": [
@@ -2250,12 +2314,12 @@
       }
     ],
     "current_local": {
-      "release_id": "UNIVERSAL-CATALOG-RELEASE-2026-09-29",
-      "release_sequence": 17,
-      "app_version": "v0.15.0",
-      "release_tag": "release-2026-09-29-universal-catalog-release",
-      "revision": "b6f0178741df7ad5425f0f061c2ed2185aa08dc3",
-      "github_pushed_at": "2026-09-29T22:22:59Z"
+      "release_id": "CATALOG-FRESHNESS-INDICATOR-2026-09-29",
+      "release_sequence": 18,
+      "app_version": "v0.16.0",
+      "release_tag": "release-2026-09-29-catalog-freshness-indicator",
+      "revision": null,
+      "started_utc": "2026-09-29T23:27:52Z"
     },
     "current_production": {
       "release_id": "DAILY-CATALOG-UPDATE-2026-09-29",

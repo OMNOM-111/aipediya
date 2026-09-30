@@ -11,10 +11,15 @@ Local QA, server preflight, Production deploy, `/healthz`, `verify-release`,
 публичный каталог содержит 331 Models / 149 Tools. Отчёт —
 `docs/history/2026-09-29-daily-catalog-update.md`.
 
-Текущий Local-завершённый этап — Release #017 · v0.15.0,
-`UNIVERSAL-CATALOG-RELEASE-2026-09-29`: release tooling ежедневных catalog
-updates стал универсальным, прошёл Local regression и принят владельцем;
-Production deploy не требовался и не выполнялся.
+Текущий Local-пакет на review — Release #018 · v0.16.0,
+`CATALOG-FRESHNESS-INDICATOR-2026-09-29`: в toolbar каталога добавлен
+индикатор свежести последнего фактического catalog update. Источник истины —
+`data/catalog_freshness.json`, seed из daily catalog #016 `catalog_plan`;
+следующие настоящие catalog releases обновляют snapshot через `apply-plan`,
+а code-only releases не меняют его. Local QA исполнителя пройден, визуальная
+приёмка владельца и Production отсутствуют. Последний закрытый Local-этап — Release
+#017 · v0.15.0, `UNIVERSAL-CATALOG-RELEASE-2026-09-29`, принят владельцем;
+Production deploy для #017 не требовался и не выполнялся.
 `release_sequence` — неизменяемый номер выпуска, `app_version` — SemVer.
 До 1.0 новый пользовательский пакет увеличивает minor (`v0.12.0`), исправление
 опубликованного пакета — patch (`v0.12.1`). `v1.0.0` требует отдельного
@@ -56,8 +61,9 @@ Production и автономный HTML. Исторические Local-only з�
 открытии. Для английского маршрута меняется лишь начальная редакция RU/EN.
 Local-only CSP разрешает встроенные CSS/JS при запрете сетевых соединений;
 Production по-прежнему отвечает 404. На горизонтальной ленте видны только
-пронумерованные Release #001–#017, все по порядку; #017 закрыт в Local с
-Owner ✓, а Production-карточка остаётся #016. Ненумерованные Local-only и
+пронумерованные Release #001–#018, все по порядку; #018 находится в Local
+review, #017 закрыт в Local с Owner ✓, а Production-карточка остаётся #016.
+Ненумерованные Local-only и
 плановые записи сохранены в реестре и документах, но не перемежают выпуски.
 
 Текущая автономная редакция использует отдельный минимальный шаблон

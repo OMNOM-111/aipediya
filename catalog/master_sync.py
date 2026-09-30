@@ -1128,15 +1128,18 @@ def _restore(attr, value):
 
 def build_release_plan(workbook_rows, changes, master_sha256="", release=""):
     import json as _json
+    from . import freshness
     writes = [c for c in changes if c["kind"] in WRITE_KINDS]
     serial = _json.loads(_json.dumps(writes, default=lambda v: _norm("", v)))
     numbers = {sheet: {r["Record ID"]: (int(r["Public Number"]) if r.get("Public Number") and r.get("Status") == "PUBLISHED" else None)
                        for r in workbook_rows[sheet]} for sheet in cm.MAIN}
     published = {sheet: sorted(r["Record ID"] for r in workbook_rows[sheet] if r.get("Status") == "PUBLISHED")
                  for sheet in cm.MAIN}
-    return {"schema": PLAN_SCHEMA, "release": release, "master_sha256": master_sha256,
+        plan = {"schema": PLAN_SCHEMA, "release": release, "master_sha256": master_sha256,
             "changes": serial, "final_numbers": numbers, "final_published": published,
             "counts": {kind: sum(1 for c in serial if c["kind"] == kind) for kind in WRITE_KINDS}}
+        plan["catalog_update"] = freshness.snapshot_from_plan(plan)
+        return plan
 
 
 def _current(change):
@@ -1304,4 +1307,7 @@ def apply_plan(plan):
         problems = final_state_problems(plan)
         if problems:
             raise ValueError("final state differs from the plan, rolled back: %s" % problems)
+        if written:
+            from . import freshness
+            freshness.write_plan_snapshot(plan)
     return written

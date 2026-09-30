@@ -1,10 +1,13 @@
 from datetime import date, timedelta
 from decimal import Decimal
+from pathlib import Path
+import tempfile
 from django.core.exceptions import ValidationError
 from django.core.management import call_command
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.utils import timezone
 from catalog.models import ModelVersion, Offer, Evaluation, Benchmark, Revision, Organization
+from catalog import freshness
 
 
 class CatalogTests(TestCase):
@@ -28,6 +31,37 @@ class CatalogTests(TestCase):
             self.assertContains(response, f"#{model.public_number}")
         self.assertEqual(self.client.get("/models/not-real").status_code, 404)
         self.assertEqual(self.client.get("/healthz").json()["service"], "aipedia")
+
+    def test_catalog_freshness_indicator(self):
+        stamp = freshness.utc_stamp(timezone.now() - timedelta(minutes=31))
+        snapshot = {
+            "schema": freshness.SCHEMA,
+            "release": "test-catalog-update",
+            "updated_at_utc": stamp,
+            "counts": {"added_models": 1, "added_tools": 0, "updated_models": 1, "updated_tools": 0, "updated_records": 1},
+            "entries": [
+                {"record_type": "model", "action": "added", "record_id": "qwen3-8b", "name": "Qwen3-8B"},
+                {"record_type": "model", "action": "updated", "record_id": "flux-1-schnell", "name": "FLUX.1 [schnell]"},
+            ],
+        }
+        with tempfile.TemporaryDirectory() as tmp, override_settings(
+            AIPEDIA_CATALOG_FRESHNESS_PATH=str(Path(tmp) / "freshness.json")
+        ):
+            freshness.write_snapshot(snapshot)
+            response = self.client.get("/ru/")
+            self.assertContains(response, "catalog-freshness is-accent")
+            self.assertContains(response, "Обновлено")
+            self.assertContains(response, "31 мин назад")
+            self.assertContains(response, "Модели · 2")
+            self.assertContains(response, "NEW")
+            self.assertContains(response, "UPD")
+            self.assertContains(response, "Qwen3-8B")
+            self.assertContains(response, "catalog-update-row catalog-update-added")
+            self.assertEqual(response.context["catalog_freshness"]["counts"]["updated_records"], 1)
+            english = self.client.get("/")
+            self.assertContains(english, "Updated")
+            self.assertContains(english, "31 min ago")
+            self.assertContains(english, f'datetime="{stamp}"')
 
     def test_search_category_task_access(self):
         self.assertEqual(self.names({"q": "qWeN"}), ["qwen3-8b"])

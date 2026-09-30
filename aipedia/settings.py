@@ -62,6 +62,10 @@ AIPEDIA_REQUEST_METRICS_PATH = (
     BASE_DIR / "artifacts/request-metrics.jsonl" if AIPEDIA_ENV == "local"
     else BASE_DIR.parent / "logs/request-metrics.jsonl"
 )
+AIPEDIA_CATALOG_FRESHNESS_PATH = os.environ.get(
+    "AIPEDIA_CATALOG_FRESHNESS_PATH",
+    str(BASE_DIR / "data" / "catalog_freshness.json"),
+)
 if AIPEDIA_REQUEST_METRICS_ENABLED:
     MIDDLEWARE.insert(0, "catalog.observability.RequestMetricsMiddleware")
 ROOT_URLCONF = "aipedia.urls"

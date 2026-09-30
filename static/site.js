@@ -2,6 +2,103 @@
 
 if (window.lucide) window.lucide.createIcons();
 
+let catalogFreshness = null;
+try { catalogFreshness = JSON.parse(document.getElementById("catalog-freshness-data")?.textContent || "null"); } catch (_) {}
+
+function pluralRu(value, one, few, many) {
+  if (value % 10 === 1 && value % 100 !== 11) return one;
+  if ([2, 3, 4].includes(value % 10) && ![12, 13, 14].includes(value % 100)) return few;
+  return many;
+}
+function relativeTimeLabel(stamp) {
+  const then = Date.parse(stamp);
+  if (!Number.isFinite(then)) return "";
+  const minutes = Math.max(0, Math.floor((Date.now() - then) / 60000));
+  const lang = document.documentElement.lang || "en";
+  if (lang === "ru") {
+    if (minutes < 1) return "только что";
+    if (minutes < 60) return `${minutes} мин назад`;
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    if (hours < 24) return mins ? `${hours} ч ${mins} мин назад` : `${hours} ч назад`;
+    const days = Math.floor(hours / 24);
+    return `${days} ${pluralRu(days, "день", "дня", "дней")} назад`;
+  }
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes} min ago`;
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  if (hours < 24) return mins ? `${hours}h ${mins}m ago` : `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return days === 1 ? "1 day ago" : `${days} days ago`;
+}
+function localDateLabel(date) {
+  const lang = document.documentElement.lang || "en";
+  if (lang === "ru") {
+    const months = ["янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"];
+    return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+  }
+  return new Intl.DateTimeFormat(undefined, { day: "numeric", month: "short", year: "numeric" }).format(date);
+}
+function localTimeLabel(date) {
+  return new Intl.DateTimeFormat(undefined, { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).format(date);
+}
+function updateFreshnessClock() {
+  const now = new Date();
+  document.querySelectorAll("[data-local-date]").forEach((item) => { item.textContent = localDateLabel(now); });
+  document.querySelectorAll("[data-local-time]").forEach((item) => { item.textContent = localTimeLabel(now); });
+  document.querySelectorAll("[data-update-local-time]").forEach((item) => {
+    const value = item.getAttribute("datetime") || item.dataset.updatedAt || catalogFreshness?.updated_at_utc || "";
+    const stamp = new Date(value);
+    if (!Number.isNaN(stamp.getTime())) item.textContent = `${localDateLabel(stamp)}, ${localTimeLabel(stamp)}`;
+  });
+}
+function updateFreshnessVisibility() {
+  if (!catalogFreshness?.updated_at_utc) return;
+  const stamp = Date.parse(catalogFreshness.updated_at_utc);
+  if (!Number.isFinite(stamp)) return;
+  document.body.classList.toggle("is-catalog-freshness-expired", Date.now() - stamp >= 24 * 60 * 60 * 1000);
+}
+function updateRelativeTimes() {
+  document.querySelectorAll("[data-relative-time]").forEach((item) => {
+    item.textContent = relativeTimeLabel(item.dataset.updatedAt || "");
+  });
+}
+updateFreshnessClock();
+updateFreshnessVisibility();
+updateRelativeTimes();
+if (catalogFreshness) window.setInterval(() => { updateFreshnessClock(); updateFreshnessVisibility(); }, 1000);
+if (catalogFreshness) window.setInterval(updateRelativeTimes, 60000);
+window.aipediaUpdateFreshnessVisibility = updateFreshnessVisibility;
+
+const freshnessShell = document.querySelector("[data-catalog-freshness]");
+const freshnessButton = freshnessShell?.querySelector(".catalog-freshness");
+function setFreshnessOpen(open) {
+  if (!freshnessShell || !freshnessButton) return;
+  freshnessShell.classList.toggle("is-open", open);
+  freshnessButton.setAttribute("aria-expanded", String(open));
+  document.body.classList.toggle("is-catalog-freshness-open", open);
+  if (!open && document.activeElement === freshnessButton) freshnessButton.blur();
+}
+if (freshnessButton) {
+  freshnessShell.addEventListener("pointerenter", () => setFreshnessOpen(true));
+  freshnessShell.addEventListener("pointerleave", () => setFreshnessOpen(false));
+  freshnessShell.addEventListener("focusin", () => setFreshnessOpen(true));
+  freshnessShell.addEventListener("focusout", (event) => {
+    if (!freshnessShell.contains(event.relatedTarget)) setFreshnessOpen(false);
+  });
+  freshnessButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    setFreshnessOpen(true);
+  });
+  document.addEventListener("click", (event) => {
+    if (freshnessShell && !freshnessShell.contains(event.target)) setFreshnessOpen(false);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") setFreshnessOpen(false);
+  });
+}
+
 const filters = document.querySelector("#catalog-filters") || document.querySelector("#filters");
 let filterSheetDirty = false;
 if (filters) {
