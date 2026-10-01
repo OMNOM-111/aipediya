@@ -1026,7 +1026,8 @@
       "executor": "Codex",
       "history": "docs/history/2026-10-01-daily-catalog-update-021.md",
       "release_tag": "release-2026-10-01-daily-catalog-update",
-      "summary": "Release #021 passed Local QA: 2 Models and 1 Tool were added, verified changes were applied to existing records and four unresolved candidates remain hidden in NEEDS_REVIEW. Production remains Release #020 pending separate owner approval."
+      "summary": "Release #021 passed Local QA: 2 Models and 1 Tool were added, verified changes were applied to existing records and four unresolved candidates remain hidden in NEEDS_REVIEW. Production remains Release #020 pending separate owner approval.",
+      "revision": "29b52923da5ebe8c2509d8890a4a7cf87f537c11"
     }
   ],
   "product_history": {
@@ -2442,7 +2443,7 @@
         "open": true,
         "progress": "review",
         "release_tag": "release-2026-10-01-daily-catalog-update",
-        "revision": null,
+        "revision": "29b52923da5ebe8c2509d8890a4a7cf87f537c11",
         "executor": "Codex",
         "started_utc": "2026-10-01T15:55:19Z",
         "changes": [
@@ -2630,7 +2631,7 @@
       "release_sequence": 21,
       "app_version": "v0.18.0",
       "release_tag": "release-2026-10-01-daily-catalog-update",
-      "revision": null,
+      "revision": "29b52923da5ebe8c2509d8890a4a7cf87f537c11",
       "started_utc": "2026-10-01T15:55:19Z"
     },
     "current_production": {
