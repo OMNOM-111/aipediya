@@ -122,6 +122,43 @@ The next isolated preflight exposed an additive-schema comparison edge: migratio
 
 The first live deploy then completed and the public `/healthz`, service and 336/156 catalog checks passed, but `verify-release` itself crashed on a catalog table without an `id` because tuple rows were sent through the dict-only nullable-column helper. The comparator now handles dict and tuple rows separately. A local comparison of the exact pre-deploy backup snapshot against the post-deploy Production snapshot returns `ok: true`, no problems, the exact expected changed tables, integrity `ok` and FK 0. The release remains open until the fixed verifier is deployed and every public check passes against the final commit.
 
+## Production release result (authoritative)
+
+Release #021 / `v0.18.0` is published at https://aipediya.com/ on commit
+`a03d501b9ed25699c97e336188bd28215d3f1bd2`. The final archive is
+`artifacts/code-release/aipedia-code-a03d501b9ed2.zip`, SHA-256
+`27fb0ea506ddc1fbe05c0d8e2a8708cc09b974823e601900aa84935cdd84561e`.
+The catalog-changing deploy used rollback backup
+`aipedia-before-code-20261001T200729Z.sqlite3`; the final verifier-only code
+switch used `aipedia-before-code-20261001T201456Z.sqlite3` and correctly wrote
+no catalog rows. Local SQLite was never copied to Production.
+
+All mandatory post-release checks passed:
+
+- `/healthz`: HTTP 200, environment `production`, service `aipedia`, release
+  `a03d501b9ed25699c97e336188bd28215d3f1bd2`; Supervisor program `aipedia`
+  is RUNNING.
+- Server catalog: 336 Models / 156 Tools, continuous numbering, SQLite
+  integrity `ok`, foreign keys 0. `verify-release` against the original
+  pre-deploy backup is PASS with no problems and only the expected scoped
+  factual tables changed.
+- `catalog_master qa --production`: PASS, 336/156; the existing documented
+  data-quality queue remains 199 and is not a release blocker.
+- GSD public contract: 34/34 PASS. Full Production QA: 1659/1659 PASS across
+  698 requests and 22 locales, including listings, SSR cards, redirects,
+  methodology, hubs, pagination, robots, sitemaps and hidden records. Evidence:
+  `artifacts/daily-catalog-20261001-021/production-qa.json`.
+- Headless Edge Production browser QA: PASS for RU/EN, desktop/mobile,
+  dark/light, Models and Tools. The six freshness entries show 3 `NEW` +
+  3 `UPD`; Gemini 4 Argon shows the Google SVG and Max Output `1M`, while
+  Input Context and active prices remain empty; Cloudflare OS is visible in
+  Tools; JavaScript errors, failed responses and visible overflow are all zero.
+  Evidence: `artifacts/daily-catalog-20261001-021/production-browser/browser-qa.json`.
+
+The Timeline card can therefore be closed as Production verified. There are no
+remaining release tasks; the 199-item master quality queue remains separate,
+explicitly classified ongoing data work.
+
 ## Handoff
 
 Local owner-fix candidate commit: `036de2020bee8ce5859932bf9f9c1c96a9c46719`. Release tag зарезервирован в Timeline, но не создан до отдельного разрешения на Production.

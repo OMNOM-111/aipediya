@@ -14,8 +14,8 @@ class ProductHistoryTests(SimpleTestCase):
         by_id = {row["release_id"]: row for row in cards}
         self.assertEqual(len(by_id), len(cards))
         self.assertEqual(len(cards), 29)
-        self.assertEqual(product["current_production"]["release_sequence"], 20)
-        self.assertEqual(product["current_production"]["app_version"], "v0.17.0")
+        self.assertEqual(product["current_production"]["release_sequence"], 21)
+        self.assertEqual(product["current_production"]["app_version"], "v0.18.0")
         self.assertEqual(by_id["release-2026-09-28-reconciliation-cleanup"]["revision"],
                          "5ba1e566338fc17d9b8965d3be180bc1df268e2e")
         self.assertEqual(product["current_local"]["release_sequence"], 21)
@@ -72,7 +72,8 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertEqual((daily_twenty_one["release_sequence"], daily_twenty_one["app_version"],
                           daily_twenty_one["progress"], daily_twenty_one["local_verified"],
                           daily_twenty_one["owner_approved"], daily_twenty_one["production_released"]),
-                         (21, "v0.18.0", "review", True, True, False))
+                         (21, "v0.18.0", "done", True, True, True))
+        self.assertTrue(daily_twenty_one["production_verified"])
         self.assertEqual([row["release_id"] for row in cards if row["progress"] == "planned"],
                          ["PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26",
                           "ORGANIC-SEARCH-GROWTH-CHECK-2026-10-07"])
@@ -190,7 +191,7 @@ class ProductHistoryTests(SimpleTestCase):
         organic_id = "release-2026-09-26-search-visibility-optimization-v2"
         self.assertEqual(entries[organic_id]["stage"], "released")
         self.assertEqual(registry["product_history"]["current_production"]["release_tag"],
-                 "release-2026-09-30-daily-catalog-update")
+                 "release-2026-10-01-daily-catalog-update")
         paid_card = next(row for row in registry["product_history"]["milestones"] if row["release_id"] == paid_id)
         self.assertFalse(paid_card["open"])
         self.assertEqual(paid_card["progress"], "planned")
@@ -221,7 +222,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn("Проверено владельцем", card["tags_ru"])
         self.assertNotIn("Визуальная проверка ожидается", card["tags_ru"])
         self.assertIn("Визуальная проверка", task["owner_ru"])
-        self.assertEqual(registry["product_history"]["current_production"]["release_tag"], "release-2026-09-30-daily-catalog-update")
+        self.assertEqual(registry["product_history"]["current_production"]["release_tag"], "release-2026-10-01-daily-catalog-update")
 
     @override_settings(AIPEDIA_ENV="production", SECURE_SSL_REDIRECT=False)
     def test_history_is_private_in_production(self):

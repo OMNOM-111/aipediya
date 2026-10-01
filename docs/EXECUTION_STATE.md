@@ -1,6 +1,13 @@
 # Текущее состояние AIpedia
 
-Обновлено (UTC): 2026-10-01T18:22:00Z
+## 01.10 - Release #021 / v0.18.0 DONE, Production PASS
+
+- Published https://aipediya.com/ on commit `a03d501b9ed25699c97e336188bd28215d3f1bd2`; `/healthz` is HTTP 200 and confirms that exact release, and the `aipedia` service is RUNNING.
+- Production catalog is 336 Models / 156 Tools with continuous numbering, SQLite integrity `ok` and foreign keys 0. `verify-release` against `aipedia-before-code-20261001T200729Z.sqlite3` is PASS with no problems and only the expected scoped factual tables changed. Local SQLite was not copied.
+- Post-release QA: `catalog_master qa --production` PASS (known quality queue 199); GSD public 34/34; full Production QA 1659/1659; headless Edge RU/EN desktop/mobile Models/Tools and owner fixes PASS with 3 NEW + 3 UPD, Google SVG, Argon Max Output 1M, empty unknown Input Context/active prices, no JS/network/overflow errors.
+- Changed: Release #021 code, catalog data, migration, release tooling, Timeline/history/status and QA evidence are complete. Not complete: no release-scope work. Next: handle any future catalog research under a new Timeline card. User `.claude/` remains untouched and untracked.
+
+Обновлено (UTC): 2026-10-01T20:24:51Z
 
 ## 01.10 — Release #021 / v0.18.0: owner approval, Production release authorized
 

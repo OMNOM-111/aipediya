@@ -1019,9 +1019,9 @@
       "release_sequence": 21,
       "app_version": "v0.18.0",
       "title": "Daily Catalog Update - 1 October 2026",
-      "environment": "local",
-      "stage": "approved",
-      "status": "APPROVED_FOR_PRODUCTION",
+      "environment": "production",
+      "stage": "released",
+      "status": "RELEASED",
       "started_utc": "2026-10-01T15:55:19Z",
       "executor": "Codex",
       "history": "docs/history/2026-10-01-daily-catalog-update-021.md",
@@ -1032,13 +1032,14 @@
         "Map Google DeepMind to the existing official google.svg mark for Gemini 4 Argon",
         "Add the official Gemini 4 Argon maximum output of 1,000,000 tokens through canonical master, trial and Local sync; keep input context and active pricing empty"
       ],
-      "revision": "036de2020bee8ce5859932bf9f9c1c96a9c46719"
+      "revision": "a03d501b9ed25699c97e336188bd28215d3f1bd2",
+      "production_verified_at": "2026-10-01T20:24:39+00:00"
     }
   ],
   "product_history": {
     "visibility": "Local only; no owner authentication exists for this page on Production",
-    "production_evidence": "docs/history/2026-09-30-daily-catalog-update-020.md",
-    "production_verified_at": "2026-09-30T19:56:49+00:00",
+    "production_evidence": "docs/history/2026-10-01-daily-catalog-update-021.md",
+    "production_verified_at": "2026-10-01T13:24:39-07:00",
     "milestones": [
       {
         "release_id": "release-2026-09-20-chronology",
@@ -2416,8 +2417,8 @@
         "app_version": "v0.18.0",
         "local_verified": true,
         "owner_approved": true,
-        "production_released": false,
-        "production_verified": false,
+        "production_released": true,
+        "production_verified": true,
         "date": "2026-10-01",
         "title_ru": "Ежедневное обновление каталога — 1 октября 2026",
         "title_en": "Daily Catalog Update — 1 October 2026",
@@ -2445,10 +2446,10 @@
           "Classify deprecation and NEEDS_REVIEW candidates, then run canonical master → trial → Local sync → QA"
         ],
         "source": "2026-10-01-daily-catalog-update-021",
-        "open": true,
-        "progress": "review",
+        "open": false,
+        "progress": "done",
         "release_tag": "release-2026-10-01-daily-catalog-update",
-        "revision": "036de2020bee8ce5859932bf9f9c1c96a9c46719",
+        "revision": "a03d501b9ed25699c97e336188bd28215d3f1bd2",
         "executor": "Codex",
         "started_utc": "2026-10-01T15:55:19Z",
         "changes": [
@@ -2461,11 +2462,14 @@
         ],
         "qa": {
           "local": "PASS: canonical check/qa, isolated trial, exact Local sync, repeat-zero plan, release-plan dry-run, SQLite integrity/FK, Django 368 tests OK (1 Windows skip), and RU/EN desktop/mobile dark/light browser QA. All 6 NEW/UPD labels visible; Argon Google SVG/Version/Max Output/unknown Input Context/no active pricing verified; no visible overflow, JavaScript errors or HTTP failures.",
-          "production": "PENDING: owner authorized Release #021 on 2026-10-01; server preflight, deploy and public QA have not run yet."
+          "production": "1659/1659 PASS; artifacts/daily-catalog-20261001-021/production-qa.json"
         },
         "next_ru": "Выполнить штатный server preflight, backup, trial, deploy и public QA; закрыть карточку только при полном PASS.",
         "owner_decision": "After reviewing the three corrected Local screenshots, the owner explicitly instructed Codex to publish AIpediya Release #021 on 2026-10-01.",
-        "next_en": "Run the standard server preflight, backup, trial, deploy and public QA; close the card only after a complete PASS."
+        "next_en": "Run the standard server preflight, backup, trial, deploy and public QA; close the card only after a complete PASS.",
+        "production_verified_at": "2026-10-01T20:24:39+00:00",
+        "release_report": "docs/history/2026-10-01-daily-catalog-update-021.md",
+        "backup": "aipedia-before-code-20261001T200729Z.sqlite3"
       }
     ],
     "additional_tasks": [
@@ -2644,14 +2648,14 @@
       "started_utc": "2026-10-01T15:55:19Z"
     },
     "current_production": {
-      "release_id": "DAILY-CATALOG-UPDATE-2026-09-30",
-      "release_sequence": 20,
-      "app_version": "v0.17.0",
-      "release_tag": "release-2026-09-30-daily-catalog-update",
-      "revision": "1f412c70634713f8dbf2ea10ee47115fef997450",
-      "confirmed_at": "2026-09-30T19:56:49+00:00",
-      "evidence": "1659/1659 PASS; artifacts/release-020-production-qa.json",
-      "source": "docs/history/2026-09-30-daily-catalog-update-020.md"
+      "release_id": "DAILY-CATALOG-UPDATE-2026-10-01",
+      "release_sequence": 21,
+      "app_version": "v0.18.0",
+      "release_tag": "release-2026-10-01-daily-catalog-update",
+      "revision": "a03d501b9ed25699c97e336188bd28215d3f1bd2",
+      "confirmed_at": "2026-10-01T20:24:39+00:00",
+      "evidence": "1659/1659 PASS; artifacts/daily-catalog-20261001-021/production-qa.json",
+      "source": "docs/history/2026-10-01-daily-catalog-update-021.md"
     }
   }
 }

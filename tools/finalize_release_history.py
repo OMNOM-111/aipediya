@@ -30,8 +30,10 @@ def finalize(registry, release_id, commit, release_report, backup, qa_evidence, 
     card.setdefault("qa", {})["production"] = qa_evidence
     card["open"] = False
     entry = next(row for row in registry["entries"] if row["release_id"] == release_id)
-    entry.update(environment="production", stage="released", revision=commit,
+    entry.update(environment="production", stage="released", status="RELEASED", revision=commit,
                  production_verified_at=timestamp, release_tag=card["release_tag"])
+    registry["product_history"]["production_evidence"] = release_report
+    registry["product_history"]["production_verified_at"] = timestamp
     registry["product_history"]["current_production"] = {
         "release_id": release_id, "release_sequence": card["release_sequence"],
         "app_version": card["app_version"], "release_tag": card["release_tag"],

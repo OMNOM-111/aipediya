@@ -1,3 +1,19 @@
+# Current published release
+
+**Daily Catalog Update, Release #021 / v0.18.0** was published on 2026-10-01.
+Verified Production release commit:
+`a03d501b9ed25699c97e336188bd28215d3f1bd2`; tag
+`release-2026-10-01-daily-catalog-update`. Archive
+`aipedia-code-a03d501b9ed2.zip`, SHA-256
+`27fb0ea506ddc1fbe05c0d8e2a8708cc09b974823e601900aa84935cdd84561e`.
+Server preflight, isolated trial, dry-run, deploy, `/healthz`, service/catalog,
+`verify-release`, `catalog_master qa --production`, GSD Public 34/34,
+Production QA 1659/1659 and targeted RU/EN desktop/mobile browser QA all PASS.
+Production contains 336 Models / 156 Tools. Rollback backup for the catalog
+change: `/srv/aipedia/backups/aipedia-before-code-20261001T200729Z.sqlite3`.
+Report: `docs/history/2026-10-01-daily-catalog-update-021.md`; Timeline #021 is
+closed. The older #020 section below is preserved as release history.
+
 # Ручной выпуск AIpedia
 
 Порядок допуска исполнителей — корневой `AGENTS.md`; этот файл описывает выпуск,
