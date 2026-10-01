@@ -2,6 +2,12 @@
 
 Обновлено (UTC): 2026-10-01T18:22:00Z
 
+## 01.10 — Release #021 / v0.18.0: owner approval, Production release authorized
+
+- After reviewing the three owner-fix Local screenshots, the owner explicitly instructed Codex to publish AIpediya. The authorization is scoped to Release #021 / `v0.18.0` and the verified Local state.
+- Repeated release gate: `catalog_master check` OK; `catalog_master qa` PASS, 336 Models / 156 Tools, quality queue 199; Django 368 tests OK, 1 Windows skip; system, migration, JavaScript and diff checks PASS.
+- Changed: Timeline is being moved to the owner-approved gate before archive assembly. Not complete: server preflight, backup, trial, deploy and public QA. Next: run the canonical server phase and close #021 only after complete PASS.
+
 ## 01.10 — Release #021 / v0.18.0: owner-fix Local PASS, review
 
 - Три замечания владельца исправлены в существующей Timeline-карточке #021:

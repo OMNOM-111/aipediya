@@ -1020,13 +1020,13 @@
       "app_version": "v0.18.0",
       "title": "Daily Catalog Update - 1 October 2026",
       "environment": "local",
-      "stage": "review",
-      "status": "READY_FOR_OWNER_REVIEW",
+      "stage": "approved",
+      "status": "APPROVED_FOR_PRODUCTION",
       "started_utc": "2026-10-01T15:55:19Z",
       "executor": "Codex",
       "history": "docs/history/2026-10-01-daily-catalog-update-021.md",
       "release_tag": "release-2026-10-01-daily-catalog-update",
-      "summary": "Release #021 owner fixes are complete in Local: all six current-snapshot NEW/UPD labels are visible, Google DeepMind uses the existing Google mark, and Gemini 4 Argon has the official 1,000,000-token maximum output while unknown input context and inactive future pricing remain unpublished. Production remains Release #020 and is not authorized.",
+      "summary": "Release #021 owner fixes are complete in Local: all six current-snapshot NEW/UPD labels are visible, Google DeepMind uses the existing Google mark, and Gemini 4 Argon has the official 1,000,000-token maximum output while unknown input context and inactive future pricing remain unpublished. After reviewing the three Local screenshots, the owner explicitly authorized this Production release on 2026-10-01.",
       "review_findings": [
         "Show NEW/UPD for every entry in the current release snapshot independently of the product release date while retaining the date guard for catalog-row labels",
         "Map Google DeepMind to the existing official google.svg mark for Gemini 4 Argon",
@@ -2415,7 +2415,7 @@
         "release_sequence": 21,
         "app_version": "v0.18.0",
         "local_verified": true,
-        "owner_approved": false,
+        "owner_approved": true,
         "production_released": false,
         "production_verified": false,
         "date": "2026-10-01",
@@ -2426,13 +2426,13 @@
           "Release #021",
           "v0.18.0",
           "Local — исправления проверены",
-          "Production — не разрешён"
+          "Owner — выпуск разрешён"
         ],
         "tags_en": [
           "Release #021",
           "v0.18.0",
           "Local — owner fixes verified",
-          "Production - not authorized"
+          "Owner - release authorized"
         ],
         "capabilities_ru": [
           "Проверить Gemini 4 Argon, pplx-embed-v2-context-9b-preview и Cloudflare OS по официальным источникам и точной границе preview/GA",
@@ -2461,10 +2461,11 @@
         ],
         "qa": {
           "local": "PASS: canonical check/qa, isolated trial, exact Local sync, repeat-zero plan, release-plan dry-run, SQLite integrity/FK, Django 368 tests OK (1 Windows skip), and RU/EN desktop/mobile dark/light browser QA. All 6 NEW/UPD labels visible; Argon Google SVG/Version/Max Output/unknown Input Context/no active pricing verified; no visible overflow, JavaScript errors or HTTP failures.",
-          "production": "NOT RUN: Production remains Release #020 and requires separate owner approval."
+          "production": "PENDING: owner authorized Release #021 on 2026-10-01; server preflight, deploy and public QA have not run yet."
         },
-        "next_ru": "Владельцу визуально проверить исправленный Local; Production не изменять без отдельного разрешения на Release #021.",
-        "next_en": "Owner to review the corrected Local; Production remains untouched until separate approval for Release #021."
+        "next_ru": "Выполнить штатный server preflight, backup, trial, deploy и public QA; закрыть карточку только при полном PASS.",
+        "owner_decision": "After reviewing the three corrected Local screenshots, the owner explicitly instructed Codex to publish AIpediya Release #021 on 2026-10-01.",
+        "next_en": "Run the standard server preflight, backup, trial, deploy and public QA; close the card only after a complete PASS."
       }
     ],
     "additional_tasks": [

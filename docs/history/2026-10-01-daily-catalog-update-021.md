@@ -1,5 +1,9 @@
 # Daily Catalog Update — 1 October 2026
 
+## Owner approval (2026-10-01)
+
+After reviewing the three corrected Local screenshots, the owner explicitly instructed Codex to publish AIpediya. This is the separate Production authorization for Release #021 / `v0.18.0`. Production remains on Release #020 until the standard server preflight, backup, trial and deploy complete; the card may be closed only after all post-deploy checks pass.
+
 Дата: 2026-10-01. Исполнитель: Codex. Timeline: `DAILY-CATALOG-UPDATE-2026-10-01`, Release #021 / `v0.18.0`.
 
 Состояние: `review` — Local PASS, проверка владельцем ожидается, Production не разрешена и остаётся на Release #020 / `v0.17.0`.
