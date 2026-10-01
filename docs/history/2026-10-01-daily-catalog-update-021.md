@@ -114,6 +114,10 @@ batch workflow вернул точную ошибку `Library prepare_uploads i
 Локальные файлы проверены и сохранены; повторная загрузка не выполнялась, чтобы
 не создать дубликаты при неопределённой доступности Library.
 
+## Release-preflight correction
+
+The first isolated server preflight stopped before deploy because planned English-source updates correctly marked existing `catalog_contenttranslation` rows outdated, while the preflight allowlist did not yet model that derived change. The release tooling now permits translation-state changes only for the exact Model/Tool IDs in planned `update` operations, rejects created/removed translation rows and unrelated objects, and applies the same scope check in post-deploy comparison. The regression test covers allowed, unrelated and created-row cases. Production was not changed by the failed preflight.
+
 ## Handoff
 
 Local owner-fix candidate commit: `036de2020bee8ce5859932bf9f9c1c96a9c46719`. Release tag зарезервирован в Timeline, но не создан до отдельного разрешения на Production.

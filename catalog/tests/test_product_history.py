@@ -72,7 +72,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertEqual((daily_twenty_one["release_sequence"], daily_twenty_one["app_version"],
                           daily_twenty_one["progress"], daily_twenty_one["local_verified"],
                           daily_twenty_one["owner_approved"], daily_twenty_one["production_released"]),
-                         (21, "v0.18.0", "review", True, False, False))
+                         (21, "v0.18.0", "review", True, True, False))
         self.assertEqual([row["release_id"] for row in cards if row["progress"] == "planned"],
                          ["PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26",
                           "ORGANIC-SEARCH-GROWTH-CHECK-2026-10-07"])

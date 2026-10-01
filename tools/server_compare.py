@@ -55,6 +55,7 @@ def expected_tables(plan):
                 tables.update({"catalog_access", "catalog_service", "catalog_source", "catalog_organization"})
         elif kind == "update":
             tables.add("catalog_modelversion" if sheet == "Models" else "catalog_tool")
+            tables.add("catalog_contenttranslation")
             if "source" in change.get("after", {}):
                 tables.add("catalog_source")
         elif kind == "number":
@@ -136,6 +137,8 @@ def validate_plan_diff(plan, old, new, changed_tables, before_counts, after_coun
             problems.append("%s=%s differs from plan %s" % (key, after_counts.get(key), expected))
     planned_model_slugs = planned_existing_ids(plan, "Models", {"update", "number"})
     planned_tool_slugs = planned_existing_ids(plan, "Tools", {"update", "number"})
+    translation_model_slugs = planned_existing_ids(plan, "Models", {"update"})
+    translation_tool_slugs = planned_existing_ids(plan, "Tools", {"update"})
     critical = {
         "catalog_modelversion": {
             key for key, row in old.get("catalog_modelversion", {}).items()
@@ -147,6 +150,13 @@ def validate_plan_diff(plan, old, new, changed_tables, before_counts, after_coun
         },
         "catalog_offer": planned_existing_ids(plan, "Offers", {"offer", "reassign"}, "offer"),
         "catalog_access": planned_existing_ids(plan, "Access", {"access_service", "reassign"}, "access"),
+    }
+    translation_objects = {
+        ("model", row.get("id")) for row in old.get("catalog_modelversion", {}).values()
+        if row.get("slug") in translation_model_slugs
+    } | {
+        ("tool", row.get("id")) for row in old.get("catalog_tool", {}).values()
+        if row.get("slug") in translation_tool_slugs
     }
     existing_table_updates = {"catalog_service", "catalog_benchmark", "catalog_organization", "catalog_evaluation"}
     if not any(change["kind"] in {"access_service", "service_provider"} for change in plan["changes"]):
@@ -161,7 +171,18 @@ def validate_plan_diff(plan, old, new, changed_tables, before_counts, after_coun
         changed_existing = table_existing_changes(old.get(table, {}), new.get(table, {}))
         if not changed_existing:
             continue
-        if table in critical:
+        if table == "catalog_contenttranslation":
+            if changed_existing == {"__removed__"} or set(old.get(table, {})) != set(new.get(table, {})):
+                problems.append("catalog_contenttranslation rows created or removed unexpectedly")
+                continue
+            extra = [key for key in changed_existing
+                     if (old[table][key].get("entity_type"), old[table][key].get("object_id"))
+                     not in translation_objects
+                     or (new[table][key].get("entity_type"), new[table][key].get("object_id")) !=
+                        (old[table][key].get("entity_type"), old[table][key].get("object_id"))]
+            if extra:
+                problems.append("catalog_contenttranslation existing rows changed outside plan: %s" % extra[:5])
+        elif table in critical:
             extra = sorted(changed_existing - critical[table])
             if extra:
                 problems.append("%s existing rows changed outside plan: %s" % (table, extra[:5]))

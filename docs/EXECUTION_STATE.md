@@ -7,6 +7,7 @@
 - After reviewing the three owner-fix Local screenshots, the owner explicitly instructed Codex to publish AIpediya. The authorization is scoped to Release #021 / `v0.18.0` and the verified Local state.
 - Repeated release gate: `catalog_master check` OK; `catalog_master qa` PASS, 336 Models / 156 Tools, quality queue 199; Django 368 tests OK, 1 Windows skip; system, migration, JavaScript and diff checks PASS.
 - Changed: Timeline is being moved to the owner-approved gate before archive assembly. Not complete: server preflight, backup, trial, deploy and public QA. Next: run the canonical server phase and close #021 only after complete PASS.
+- First server release-preflight stopped before deploy on an intended derived `catalog_contenttranslation` invalidation from the three planned Model/Tool updates. The preflight and post-deploy comparison now scope such state changes to the exact planned object IDs and reject new/removed or unrelated translation rows; targeted 10/10 tests PASS. Production remained untouched on Release #020. Next: repeat the full Local gate, commit/push the release-tooling correction, rebuild the archive and rerun server preflight.
 
 ## 01.10 — Release #021 / v0.18.0: owner-fix Local PASS, review
 

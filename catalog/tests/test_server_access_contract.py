@@ -236,6 +236,9 @@ class ServerAccessContractTests(unittest.TestCase):
                 "catalog_service": {1: {"id": 1, "provider_id": 1, "url": "old"}},
                 "catalog_benchmark": {1: {"id": 1, "category": "old"}},
                 "catalog_organization": {1: {"id": 1, "country": ""}},
+                "catalog_contenttranslation": {
+                    1: {"id": 1, "entity_type": "model", "object_id": 1, "state": "current"},
+                },
             },
         }
         plan = {
@@ -264,7 +267,19 @@ class ServerAccessContractTests(unittest.TestCase):
         after["factual_tables"]["catalog_service"][1].update({"provider_id": 2, "url": "new"})
         after["factual_tables"]["catalog_benchmark"][1]["category"] = "text"
         after["factual_tables"]["catalog_organization"][1]["country"] = "US"
+        after["factual_tables"]["catalog_contenttranslation"][1]["state"] = "outdated"
         validate(plan, base, after)
+
+        unrelated_translation = copy.deepcopy(after)
+        unrelated_translation["factual_tables"]["catalog_contenttranslation"][1]["object_id"] = 999
+        with self.assertRaisesRegex(RuntimeError, "translation rows outside planned"):
+            validate(plan, base, unrelated_translation)
+
+        created_translation = copy.deepcopy(after)
+        created_translation["factual_tables"]["catalog_contenttranslation"][2] = {
+            "id": 2, "entity_type": "model", "object_id": 1, "state": "current"}
+        with self.assertRaisesRegex(RuntimeError, "created or removed translation rows"):
+            validate(plan, base, created_translation)
 
     def test_code_only_release_comparison_requires_unchanged_factual_tables(self):
         spec = importlib.util.spec_from_file_location("server_compare_test", ROOT / "tools/server_compare.py")

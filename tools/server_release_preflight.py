@@ -73,6 +73,9 @@ def expected_tables(plan):
                 tables.update({"catalog_access", "catalog_service", "catalog_source", "catalog_organization"})
         elif kind == "update":
             tables.add("catalog_modelversion" if sheet == "Models" else "catalog_tool")
+            # Saving an updated Model/Tool intentionally invalidates only its
+            # stale machine-translation rows when an English source changed.
+            tables.add("catalog_contenttranslation")
             if "source" in change.get("after", {}):
                 tables.add("catalog_source")
         elif kind == "number":
@@ -132,6 +135,33 @@ def changed_existing(before, after, label):
     return {key for key in before[label] if before[label][key] != after[label].get(key)}
 
 
+def validate_translation_changes(plan, before, after):
+    old_rows = before["factual_tables"].get("catalog_contenttranslation", {})
+    new_rows = after["factual_tables"].get("catalog_contenttranslation", {})
+    if old_rows == new_rows:
+        return
+    allowed = set()
+    for slug in planned_existing_ids(plan, "Models", {"update"}):
+        row = next((item for item in before["factual_tables"].get("catalog_modelversion", {}).values()
+                    if item.get("slug") == slug), None)
+        if row:
+            allowed.add(("model", row["id"]))
+    for slug in planned_existing_ids(plan, "Tools", {"update"}):
+        row = next((item for item in before["factual_tables"].get("catalog_tool", {}).values()
+                    if item.get("slug") == slug), None)
+        if row:
+            allowed.add(("tool", row["id"]))
+    if set(old_rows) != set(new_rows):
+        raise RuntimeError("Trial created or removed translation rows outside the plan")
+    changed = [key for key in old_rows if old_rows[key] != new_rows.get(key)]
+    extra = [key for key in changed
+             if (old_rows[key].get("entity_type"), old_rows[key].get("object_id")) not in allowed
+             or (new_rows[key].get("entity_type"), new_rows[key].get("object_id")) !=
+                (old_rows[key].get("entity_type"), old_rows[key].get("object_id"))]
+    if extra:
+        raise RuntimeError("Trial changed translation rows outside planned Model/Tool updates: " + repr(extra[:5]))
+
+
 def planned_final_counts(plan):
     model_numbers = plan["final_numbers"].get("Models", {})
     tool_numbers = plan["final_numbers"].get("Tools", {})
@@ -166,6 +196,7 @@ def validate_catalog_plan_trial(plan, before, after, *, already_applied=False):
         extra = sorted(changed_existing(before, after, label) - allowed)
         if extra:
             raise RuntimeError("Trial changed existing %s rows outside the plan: %s" % (label, extra[:5]))
+    validate_translation_changes(plan, before, after)
     if already_applied:
         return
     creates = [change for change in plan["changes"] if change["kind"] == "create"]
