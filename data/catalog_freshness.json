@@ -1,34 +1,25 @@
 {
  "counts": {
-  "added_models": 3,
-  "added_tools": 6,
-  "updated_models": 0,
-  "updated_records": 0,
-  "updated_tools": 0
+  "added_models": 2,
+  "added_tools": 1,
+  "updated_models": 1,
+  "updated_records": 3,
+  "updated_tools": 2
  },
  "entries": [
   {
-   "action": "added",
-   "name": "GPT-6.1 Sol",
-   "record_id": "gpt-6-1-sol-e3b8963b",
+   "action": "updated",
+   "name": "GLM-5.3-Flash",
+   "record_id": "glm-53-flash-bdc83193",
    "record_type": "model",
-   "release_date": "2026-09-29",
+   "release_date": "",
    "release_date_approx": false,
-   "release_date_precision": "day"
+   "release_date_precision": ""
   },
   {
    "action": "added",
-   "name": "Embed 5 Pro",
-   "record_id": "embed-5-pro-e5a9c8ce",
-   "record_type": "model",
-   "release_date": "2026-09-30",
-   "release_date_approx": false,
-   "release_date_precision": "day"
-  },
-  {
-   "action": "added",
-   "name": "Embed 5 Fast",
-   "record_id": "embed-5-fast-b11d573d",
+   "name": "Gemini 4 Argon",
+   "record_id": "gemini-4-argon-bcdaec0e",
    "record_type": "model",
    "release_date": "2026-09-30",
    "release_date_approx": false,
@@ -36,60 +27,42 @@
   },
   {
    "action": "added",
-   "name": "Dots",
-   "record_id": "dots-b80b4fd6",
-   "record_type": "tool",
+   "name": "pplx-embed-v2-context-9b-preview",
+   "record_id": "pplx-embed-v2-context-9b-preview-88e13515",
+   "record_type": "model",
    "release_date": "2026-09-30",
    "release_date_approx": false,
    "release_date_precision": "day"
   },
   {
-   "action": "added",
-   "name": "Codex Security Cloud",
-   "record_id": "codex-security-cloud-42719bcf",
+   "action": "updated",
+   "name": "Codex",
+   "record_id": "codex-59301cf4",
    "record_type": "tool",
-   "release_date": "2026-03",
-   "release_date_approx": true,
-   "release_date_precision": "month"
-  },
-  {
-   "action": "added",
-   "name": "Oracle Fusion Claw",
-   "record_id": "oracle-fusion-claw-0d0c72fe",
-   "record_type": "tool",
-   "release_date": "2026-09-29",
+   "release_date": "",
    "release_date_approx": false,
-   "release_date_precision": "day"
+   "release_date_precision": ""
   },
   {
-   "action": "added",
-   "name": "Amazon Bedrock Managed Agents",
-   "record_id": "amazon-bedrock-managed-agents-642b579d",
+   "action": "updated",
+   "name": "Perplexity",
+   "record_id": "perplexity-7a1d922e",
    "record_type": "tool",
-   "release_date": "2026-04-28",
+   "release_date": "",
    "release_date_approx": false,
-   "release_date_precision": "day"
+   "release_date_precision": ""
   },
   {
    "action": "added",
-   "name": "OpenAI Agents API",
-   "record_id": "openai-agents-api-383fd219",
+   "name": "Cloudflare OS",
+   "record_id": "cloudflare-os-038daad4",
    "record_type": "tool",
-   "release_date": "2026-09-10",
-   "release_date_approx": false,
-   "release_date_precision": "day"
-  },
-  {
-   "action": "added",
-   "name": "Muse",
-   "record_id": "muse-a8472d5d",
-   "record_type": "tool",
-   "release_date": "2026-09-08",
+   "release_date": "2026-08-05",
    "release_date_approx": false,
    "release_date_precision": "day"
   }
  ],
- "release": "release-2026-09-30-daily-catalog-update",
+ "release": "release-2026-10-01-daily-catalog-update",
  "schema": "aipedia-catalog-freshness/1",
- "updated_at_utc": "2026-09-30T19:16:21Z"
+ "updated_at_utc": "2026-10-01T17:04:09Z"
 }

@@ -1013,6 +1013,20 @@
       "summary": "Release #020 is published and verified: 3 Models and 6 Tools were added to the public catalog, 2 Tool candidates remain hidden for review, Local/Owner/Production gates passed, and Production has 334 Models / 155 Tools.",
       "revision": "1f412c70634713f8dbf2ea10ee47115fef997450",
       "production_verified_at": "2026-09-30T19:56:49+00:00"
+    },
+    {
+      "release_id": "DAILY-CATALOG-UPDATE-2026-10-01",
+      "release_sequence": 21,
+      "app_version": "v0.18.0",
+      "title": "Daily Catalog Update - 1 October 2026",
+      "environment": "local",
+      "stage": "review",
+      "status": "READY_FOR_OWNER_REVIEW",
+      "started_utc": "2026-10-01T15:55:19Z",
+      "executor": "Codex",
+      "history": "docs/history/2026-10-01-daily-catalog-update-021.md",
+      "release_tag": "release-2026-10-01-daily-catalog-update",
+      "summary": "Release #021 passed Local QA: 2 Models and 1 Tool were added, verified changes were applied to existing records and four unresolved candidates remain hidden in NEEDS_REVIEW. Production remains Release #020 pending separate owner approval."
     }
   ],
   "product_history": {
@@ -2389,6 +2403,59 @@
         "production_verified_at": "2026-09-30T19:56:49+00:00",
         "release_report": "docs/history/2026-09-30-daily-catalog-update-020.md",
         "backup": "aipedia-before-code-20260930T194252Z.sqlite3"
+      },
+      {
+        "release_id": "DAILY-CATALOG-UPDATE-2026-10-01",
+        "release_sequence": 21,
+        "app_version": "v0.18.0",
+        "local_verified": true,
+        "owner_approved": false,
+        "production_released": false,
+        "production_verified": false,
+        "date": "2026-10-01",
+        "title_ru": "Ежедневное обновление каталога — 1 октября 2026",
+        "title_en": "Daily Catalog Update — 1 October 2026",
+        "icon": "library-big",
+        "tags_ru": [
+          "Release #021",
+          "v0.18.0",
+          "Local - PASS / проверка владельцем",
+          "Production — не разрешён"
+        ],
+        "tags_en": [
+          "Release #021",
+          "v0.18.0",
+          "Local - PASS / owner review",
+          "Production - not authorized"
+        ],
+        "capabilities_ru": [
+          "Проверить Gemini 4 Argon, pplx-embed-v2-context-9b-preview и Cloudflare OS по официальным источникам и точной границе preview/GA",
+          "Обновить только подтверждённые изменения существующих GLM-5.3-Flash, Gemini, GitHub Copilot и Codex без создания дублей",
+          "Классифицировать deprecation и NEEDS_REVIEW-кандидатов, затем провести canonical master → trial → Local sync → QA"
+        ],
+        "capabilities_en": [
+          "Verify Gemini 4 Argon, pplx-embed-v2-context-9b-preview and Cloudflare OS from official sources with the exact preview/GA boundary",
+          "Update only confirmed changes to existing GLM-5.3-Flash, Gemini, GitHub Copilot and Codex records without duplicates",
+          "Classify deprecation and NEEDS_REVIEW candidates, then run canonical master → trial → Local sync → QA"
+        ],
+        "source": "2026-10-01-daily-catalog-update-021",
+        "open": true,
+        "progress": "review",
+        "release_tag": "release-2026-10-01-daily-catalog-update",
+        "revision": null,
+        "executor": "Codex",
+        "started_utc": "2026-10-01T15:55:19Z",
+        "changes": [
+          "Added Gemini 4 Argon and pplx-embed-v2-context-9b-preview as Models and Cloudflare OS as a Tool; retained Ling-3.1-Flash, Cloudflare AI Search, Cloudflare Monetization Gateway and Robinhood Agents as hidden NEEDS_REVIEW records",
+          "Updated verified GLM-5.3-Flash, Gemini, GitHub Copilot, Codex, Perplexity and SourceCraft facts without inventing a deprecation or a standalone model for HydraFusion or Automations",
+          "Inserted historical Cloudflare OS at Tool #146 under the chronological numbering rule, shifting ten later Tool numbers by +1 while preserving every Record ID and public URL"
+        ],
+        "qa": {
+          "local": "PASS: canonical check/qa, isolated trial, exact Local sync, repeat-zero plan, release-plan dry-run, SQLite integrity/FK, Django suite and 10-case RU/EN desktop/mobile browser QA.",
+          "production": "NOT RUN: Production remains Release #020 and requires separate owner approval."
+        },
+        "next_ru": "Владельцу проверить Local-кандидат на http://127.0.0.1:18810/ru/; Production не изменять без отдельного разрешения на Release #021.",
+        "next_en": "Owner reviews the Local candidate at http://127.0.0.1:18810/ru/; Production remains untouched until separate approval for Release #021."
       }
     ],
     "additional_tasks": [
@@ -2559,12 +2626,12 @@
       }
     ],
     "current_local": {
-      "release_id": "DAILY-CATALOG-UPDATE-2026-09-30",
-      "release_sequence": 20,
-      "app_version": "v0.17.0",
-      "release_tag": "release-2026-09-30-daily-catalog-update",
-      "revision": "1f412c70634713f8dbf2ea10ee47115fef997450",
-      "started_utc": "2026-09-30T17:37:37Z"
+      "release_id": "DAILY-CATALOG-UPDATE-2026-10-01",
+      "release_sequence": 21,
+      "app_version": "v0.18.0",
+      "release_tag": "release-2026-10-01-daily-catalog-update",
+      "revision": null,
+      "started_utc": "2026-10-01T15:55:19Z"
     },
     "current_production": {
       "release_id": "DAILY-CATALOG-UPDATE-2026-09-30",

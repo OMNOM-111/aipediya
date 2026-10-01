@@ -13,14 +13,13 @@ class ProductHistoryTests(SimpleTestCase):
         cards = product["milestones"]
         by_id = {row["release_id"]: row for row in cards}
         self.assertEqual(len(by_id), len(cards))
-        self.assertEqual(len(cards), 28)
+        self.assertEqual(len(cards), 29)
         self.assertEqual(product["current_production"]["release_sequence"], 20)
         self.assertEqual(product["current_production"]["app_version"], "v0.17.0")
         self.assertEqual(by_id["release-2026-09-28-reconciliation-cleanup"]["revision"],
                          "5ba1e566338fc17d9b8965d3be180bc1df268e2e")
-        self.assertEqual(product["current_local"]["release_sequence"], 20)
-        self.assertEqual(product["current_local"]["revision"],
-                         "1f412c70634713f8dbf2ea10ee47115fef997450")
+        self.assertEqual(product["current_local"]["release_sequence"], 21)
+        self.assertEqual(product["current_local"]["app_version"], "v0.18.0")
         locale_switch = by_id["LANGUAGE-SWITCH-2026-09-28"]
         self.assertEqual((locale_switch["app_version"], locale_switch["local_verified"],
                           locale_switch["owner_approved"]), ("v0.13.1", True, True))
@@ -69,6 +68,11 @@ class ProductHistoryTests(SimpleTestCase):
                          (20, "v0.17.0", "done", True, True))
         self.assertTrue(daily_twenty["owner_approved"])
         self.assertTrue(daily_twenty["production_verified"])
+        daily_twenty_one = by_id["DAILY-CATALOG-UPDATE-2026-10-01"]
+        self.assertEqual((daily_twenty_one["release_sequence"], daily_twenty_one["app_version"],
+                          daily_twenty_one["progress"], daily_twenty_one["local_verified"],
+                          daily_twenty_one["owner_approved"], daily_twenty_one["production_released"]),
+                         (21, "v0.18.0", "review", True, False, False))
         self.assertEqual([row["release_id"] for row in cards if row["progress"] == "planned"],
                          ["PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26",
                           "ORGANIC-SEARCH-GROWTH-CHECK-2026-10-07"])
@@ -78,7 +82,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertEqual(page.status_code, 200)
         self.assertContains(page, "История AIpediya")
         self.assertEqual(page.content, (Path(__file__).resolve().parents[2] / "timeline.html").read_bytes())
-        self.assertEqual(page.content.count(b'data-history-open='), 42)  # 20 numbered releases + one open planned card in two editions
+        self.assertEqual(page.content.count(b'data-history-open='), 44)  # 21 numbered releases + one open planned card in two editions
         self.assertIn(b'Release #001', page.content)
         self.assertIn(b'Release #015', page.content)
         self.assertIn(b'Release #016', page.content)
@@ -86,6 +90,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn(b'Release #018', page.content)
         self.assertIn(b'Release #019', page.content)
         self.assertIn(b'Release #020', page.content)
+        self.assertIn(b'Release #021', page.content)
         self.assertNotIn("Контрольный замер органического поиска".encode("utf-8"), page.content)
         self.assertIn("Повторный контроль органического роста".encode("utf-8"), page.content)
         self.assertIn(b"Organic search follow-up /", page.content)
@@ -133,6 +138,10 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertContains(
             self.client.get("/ru/history/source/2026-09-30-catalog-freshness-ui-polish"),
             "Local review",
+        )
+        self.assertContains(
+            self.client.get("/ru/history/source/2026-10-01-daily-catalog-update-021"),
+            "Release #021",
         )
         self.assertContains(
             self.client.get("/ru/history/source/2026-10-07-organic-search-growth-check"),
@@ -226,16 +235,16 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertIn("connect-src 'none'", page)
         self.assertIn('id="edition-ru"', page)
         self.assertIn('id="edition-en"', page)
-        self.assertEqual(page.count('data-history-open='), 42)
-        self.assertEqual(page.count('class="ph-release-card"'), 42)
-        self.assertEqual(page.count('role="button" tabindex="0" aria-haspopup="dialog"'), 42)
+        self.assertEqual(page.count('data-history-open='), 44)
+        self.assertEqual(page.count('class="ph-release-card"'), 44)
+        self.assertEqual(page.count('role="button" tabindex="0" aria-haspopup="dialog"'), 44)
         self.assertEqual(page.count('class="ph-status-legend"'), 2)
         self.assertIn('release-2026-09-28-reconciliation-cleanup', page)
         self.assertNotIn('data-history-open="PAID-SEARCH-EXPERIMENT-GOOGLE-ADS-2026-09-26"', page)
         self.assertNotIn('data-history-open="ORGANIC-SEARCH-FOLLOWUP-2026-09-30"', page)
         self.assertIn('data-history-open="ORGANIC-SEARCH-GROWTH-CHECK-2026-10-07"', page)
         self.assertNotIn('data-history-open="HISTORY-LOCAL-SHELL-2026-09-29"', page)
-        self.assertEqual(page.count('data-history-source-template='), 30)
+        self.assertEqual(page.count('data-history-source-template='), 31)
         self.assertEqual(page.count('class="ph-environment ph-local"'), 2)
         self.assertEqual(page.count('class="ph-environment ph-production"'), 2)
         self.assertIn("Номер обращения на экране не показан", page)
@@ -281,9 +290,9 @@ class ProductHistoryTests(SimpleTestCase):
         registry = json.loads((Path(__file__).resolve().parents[2] / "docs/timeline.json").read_text(encoding="utf-8"))
         cards = {row["release_id"]: row for row in registry["product_history"]["milestones"]}
         expected_tail = [
-            "CATALOG-FRESHNESS-INDICATOR-2026-09-29",
             "CATALOG-FRESHNESS-UI-POLISH-2026-09-30",
             "DAILY-CATALOG-UPDATE-2026-09-30",
+            "DAILY-CATALOG-UPDATE-2026-10-01",
             "ORGANIC-SEARCH-GROWTH-CHECK-2026-10-07",
         ]
         ru = re.search(r'<template id="edition-ru">(.*?)</template><template id="edition-en">', page, re.S).group(1)

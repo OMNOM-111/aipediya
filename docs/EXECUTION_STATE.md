@@ -1,6 +1,17 @@
 # Текущее состояние AIpedia
 
-Обновлено (UTC): 2026-09-30T23:02:43Z
+Обновлено (UTC): 2026-10-01T17:01:56Z
+
+## 01.10 — Release #021 / v0.18.0 Daily Catalog Update: Local PASS, owner review
+
+- Создана до содержательной работы Timeline-карточка `DAILY-CATALOG-UPDATE-2026-10-01`, Release #021 / `v0.18.0`. Состояние: `review`; Local ✓, Owner —, Production —. Production остаётся на #020 / `v0.17.0`; сервер, Production SQLite, Supervisor, tunnel и публичный HTML не затрагивались.
+- Последний ежедневный отчёт сверён с официальными источниками. В Local опубликованы 2 Models — Gemini 4 Argon и `pplx-embed-v2-context-9b-preview` — и 1 Tool — Cloudflare OS. Подтверждённые данные обновлены у GLM-5.3-Flash, Gemini, GitHub Copilot, Codex, Perplexity и SourceCraft. Ling-3.1-Flash, Cloudflare AI Search, Cloudflare Monetization Gateway и Robinhood Agents сохранены только в master как `NEEDS_REVIEW`; HydraFusion и Computer Automations не превращены в ложные самостоятельные карточки.
+- Canonical master: Models 811 (336 PUBLISHED / 475 NEEDS_REVIEW), Tools 163 (156 / 7), Offers 684, Evaluations 5846, Access 1325, Facts 1926, Origins 862, Tool Platforms 279. Master SHA-256 `9A88216E1AC4A31B9E56EB8251848FD13453F66301C8DE6D61632FCCEAAFADB2`; исходный master и Local SQLite сохранены в `backups/daily-catalog-20261001-021/`.
+- Cloudflare OS вставлен хронологически как Tool #146 по подтверждённому `D-2026-09-26-catalog-master`; 10 последующих Tool-номеров сдвинулись на +1 до Dots #156. Все Record ID, slugs и URL неизменны; изменения номеров записаны в Changelog.
+- Trial и рабочий Local применили одинаковый план: create 3, update 3, offer 4, access_new 1, number 10; 22 writes, repeat writable changes 0. Release-plan dry-run на исходном backup `pending/applicable`, рабочий Local `already applied`. Итог Local: 336 Models / 156 Tools, integrity `ok`, FK 0. `catalog_master check` OK и `catalog_master qa` PASS (quality queue 199) получены после рабочего sync; последняя попытка повторить команды после full suite в той же ограниченной Windows-сессии классифицирована как средовое `sqlite3.OperationalError: unable to open database file` при одновременной загрузке большого XLSX и SQLite, а не data mismatch: отдельные SQLite-запросы, release-plan check и полный suite проходят.
+- QA: полный catalog suite 365 PASS, 1 штатный Windows skip; `manage.py check` PASS; release-history validator PASS. Headless Edge: 10/10 RU/EN desktop/mobile dark/light, новые карточки и SourceCraft pricing, 0 console/page errors. Скрытый freshness-popover даёт одинаковый `document_overflow=203` на новой Cloudflare OS и старом Codex, но видимого overflow нет; это pre-existing unrelated CSS и data-only scope не расширялся.
+- Артефакты: `data/release/daily-catalog-20261001/catalog_plan.json`, `release_state.json`, корневые `data/release_state.json` и `data/catalog_freshness.json`; подробный отчёт `docs/history/2026-10-01-daily-catalog-update-021.md`; trial/browser/QA evidence — `artifacts/daily-catalog-20261001-021/`. Local preview должен быть оставлен работающим на `http://127.0.0.1:18810/ru/` после финального restart.
+- Изменено: canonical master, release manifests/freshness, Timeline/history/status, source allowlist и regression tests, воспроизводимый update/browser-QA tooling, производные `timeline.html` и AI_CONTEXT. Pre-existing неизвестный `.claude/` оставлен без чтения и изменений. **Не завершено:** только визуальное решение владельца и, если он отдельно разрешит, Production-фаза #021. **Следующим выполнить:** владелец проверяет Local; без отдельной команды на конкретный Release #021 Production не менять.
 
 ## 30.09 — Timeline chronological ordering corrected (Codex)
 
