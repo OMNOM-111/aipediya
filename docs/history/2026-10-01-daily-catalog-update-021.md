@@ -112,6 +112,6 @@ batch workflow вернул точную ошибку `Library prepare_uploads i
 
 ## Handoff
 
-Local candidate commit: `29b52923da5ebe8c2509d8890a4a7cf87f537c11`. Release tag зарезервирован в Timeline, но не создан до отдельного разрешения на Production.
+Local owner-fix candidate commit: `036de2020bee8ce5859932bf9f9c1c96a9c46719`. Release tag зарезервирован в Timeline, но не создан до отдельного разрешения на Production.
 
 Local preview: `http://127.0.0.1:18810/ru/`. Владелец проверяет новые и обновлённые карточки и десять ожидаемых хронологических сдвигов Tool-номеров. Production, серверная SQLite, Supervisor, tunnel и публичный HTML не изменялись. Следующий шаг возможен только после отдельного разрешения владельца на Release #021 по `docs/RELEASE.md`.

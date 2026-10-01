@@ -1032,7 +1032,7 @@
         "Map Google DeepMind to the existing official google.svg mark for Gemini 4 Argon",
         "Add the official Gemini 4 Argon maximum output of 1,000,000 tokens through canonical master, trial and Local sync; keep input context and active pricing empty"
       ],
-      "revision": "29b52923da5ebe8c2509d8890a4a7cf87f537c11"
+      "revision": "036de2020bee8ce5859932bf9f9c1c96a9c46719"
     }
   ],
   "product_history": {
@@ -2448,7 +2448,7 @@
         "open": true,
         "progress": "review",
         "release_tag": "release-2026-10-01-daily-catalog-update",
-        "revision": "29b52923da5ebe8c2509d8890a4a7cf87f537c11",
+        "revision": "036de2020bee8ce5859932bf9f9c1c96a9c46719",
         "executor": "Codex",
         "started_utc": "2026-10-01T15:55:19Z",
         "changes": [
@@ -2639,7 +2639,7 @@
       "release_sequence": 21,
       "app_version": "v0.18.0",
       "release_tag": "release-2026-10-01-daily-catalog-update",
-      "revision": "29b52923da5ebe8c2509d8890a4a7cf87f537c11",
+      "revision": "036de2020bee8ce5859932bf9f9c1c96a9c46719",
       "started_utc": "2026-10-01T15:55:19Z"
     },
     "current_production": {

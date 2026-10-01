@@ -23,7 +23,8 @@
   потеряны и повторная загрузка не выполнялась.
 - Local preview работает на `http://127.0.0.1:18810/ru/`. Production остаётся
   Release #020 / `v0.17.0`; Production, сервер, SQLite, Supervisor и tunnel не
-  затрагивались. Tag #021 не создан.
+  затрагивались. Git owner-fix candidate:
+  `036de2020bee8ce5859932bf9f9c1c96a9c46719`; tag #021 не создан.
 - Dirty state разобран: все tracked-изменения относятся к owner-fix #021;
   пользовательская untracked `.claude/` не читалась и не менялась; артефакты и
   backups штатно игнорируются Git. **Изменено:** code, migration, master,
@@ -31,6 +32,13 @@
   только визуальная приёмка владельца и отдельно заблокированная Library-копия
   PNG. **Следующим выполнить:** владелец проверяет Local; Production возможен
   только после отдельной команды на конкретный Release #021.
+- Финальный handoff после candidate commit обновляет только
+  `docs/EXECUTION_STATE.md`,
+  `docs/history/2026-10-01-daily-catalog-update-021.md`,
+  `docs/timeline.json` и производный `timeline.html`, чтобы закрепить точную
+  revision карточки и фактическое состояние Local / GitHub / Production.
+- GitHub: `origin/main` содержит owner-fix candidate `036de20` и финальный
+  handoff-commit; после push проверено равенство `main == origin/main`.
 
 ## 01.10 — Release #021 / v0.18.0: промежуточный checkpoint owner-fix (закрыт)
 
