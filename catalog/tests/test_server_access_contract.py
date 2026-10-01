@@ -132,6 +132,13 @@ class ServerAccessContractTests(unittest.TestCase):
         with mock.patch.dict(sys.modules, {"pwd": types.ModuleType("pwd")}):
             preflight = runpy.run_path(str(ROOT / "tools/server_release_preflight.py"))
         validate = preflight["validate_catalog_plan_trial"]
+        changed_existing = preflight["changed_existing"]
+        self.assertEqual(changed_existing(
+            {"rows": {1: {"id": 1, "name": "same"}}},
+            {"rows": {1: {"id": 1, "name": "same", "new_nullable": None}}}, "rows"), set())
+        self.assertEqual(changed_existing(
+            {"rows": {1: {"id": 1, "name": "same"}}},
+            {"rows": {1: {"id": 1, "name": "same", "new_nullable": 1}}}, "rows"), {1})
         base_counts = {
             "integrity": "ok", "foreign_keys": 0,
             "numbers_continuous": True, "model_numbers_continuous": True,
@@ -285,6 +292,12 @@ class ServerAccessContractTests(unittest.TestCase):
         spec = importlib.util.spec_from_file_location("server_compare_test", ROOT / "tools/server_compare.py")
         compare = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(compare)
+        self.assertEqual(compare.table_existing_changes(
+            {1: {"id": 1, "name": "same"}},
+            {1: {"id": 1, "name": "same", "new_nullable": None}}), set())
+        self.assertEqual(compare.table_existing_changes(
+            {1: {"id": 1, "name": "same"}},
+            {1: {"id": 1, "name": "same", "new_nullable": 1}}), {1})
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             (root / "app").mkdir()

@@ -118,6 +118,8 @@ batch workflow вернул точную ошибку `Library prepare_uploads i
 
 The first isolated server preflight stopped before deploy because planned English-source updates correctly marked existing `catalog_contenttranslation` rows outdated, while the preflight allowlist did not yet model that derived change. The release tooling now permits translation-state changes only for the exact Model/Tool IDs in planned `update` operations, rejects created/removed translation rows and unrelated objects, and applies the same scope check in post-deploy comparison. The regression test covers allowed, unrelated and created-row cases. Production was not changed by the failed preflight.
 
+The next isolated preflight exposed an additive-schema comparison edge: migration `0020_modelversion_max_output` adds a nullable column to every existing row, so the previous comparator treated missing-before versus `NULL`-after as a change to every model. Existing-row comparison now treats only missing versus `NULL` as equivalent; non-null values and unrelated changes still fail. The exact Production snapshot plus migration and 22-write plan passes the corrected validator locally with the expected changed tables. Production again remained untouched.
+
 ## Handoff
 
 Local owner-fix candidate commit: `036de2020bee8ce5859932bf9f9c1c96a9c46719`. Release tag зарезервирован в Timeline, но не создан до отдельного разрешения на Production.

@@ -56,6 +56,11 @@ def changed_factual_tables(before, after):
     return [name for name in names if before["factual_tables"].get(name, {}) != after["factual_tables"].get(name, {})]
 
 
+def rows_equivalent(before, after):
+    """Treat a newly added nullable column as unchanged for existing rows."""
+    return all(before.get(key) == after.get(key) for key in set(before) | set(after))
+
+
 def expected_tables(plan):
     tables = set()
     for change in plan["changes"]:
@@ -132,7 +137,8 @@ def changed_existing(before, after, label):
     if not set(before[label]).issubset(after[label]):
         removed = sorted(set(before[label]) - set(after[label]))[:5]
         raise RuntimeError("Trial removed existing %s rows: %s" % (label, removed))
-    return {key for key in before[label] if before[label][key] != after[label].get(key)}
+    return {key for key in before[label]
+            if not rows_equivalent(before[label][key], after[label].get(key, {}))}
 
 
 def validate_translation_changes(plan, before, after):
