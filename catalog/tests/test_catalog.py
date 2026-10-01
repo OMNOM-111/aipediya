@@ -63,6 +63,16 @@ class CatalogTests(TestCase):
             self.assertContains(english, "31 min ago")
             self.assertContains(english, f'datetime="{stamp}"')
 
+    def test_model_panel_distinguishes_input_context_and_max_output(self):
+        model = ModelVersion.objects.get(slug="qwen3-8b")
+        model.context = None
+        model.max_output = 1_000_000
+        model.save(update_fields=["context", "max_output"])
+        response = self.client.get("/models/qwen3-8b")
+        self.assertContains(response, "Input context")
+        self.assertContains(response, "Max output")
+        self.assertContains(response, "1M")
+
     def test_search_category_task_access(self):
         self.assertEqual(self.names({"q": "qWeN"}), ["qwen3-8b"])
         self.assertEqual(self.names({"category": "image"}), ["flux-1-schnell"])

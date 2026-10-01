@@ -78,7 +78,9 @@ function updateBadgeRecency() {
   });
   document.querySelectorAll(".freshness-entry").forEach((li) => {
     const action = li.querySelector(".freshness-action");
-    if (action) action.hidden = !badgeIsCurrent(li.dataset.badgeReleaseDate, li.dataset.badgeReleaseApprox === "true", li.dataset.badgeReleasePrecision);
+    // The popover is the immutable current-release snapshot: its NEW/UPD
+    // labels describe this catalog update, independently of product dates.
+    if (action) action.hidden = false;
   });
 }
 window.aipediaBadgeIsCurrent = badgeIsCurrent;

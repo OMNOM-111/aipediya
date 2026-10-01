@@ -45,6 +45,7 @@ class ModelVersion(models.Model):
     origin = models.JSONField(default=dict, blank=True)
     philosophy = models.JSONField(default=dict, blank=True)
     context = models.PositiveIntegerField(null=True, blank=True)
+    max_output = models.PositiveIntegerField(null=True, blank=True)
     released = models.DateField(null=True, blank=True)
     release_evidence = models.JSONField(default=dict, blank=True)
     # Approximate public/release-evidence date used only when no exact date is

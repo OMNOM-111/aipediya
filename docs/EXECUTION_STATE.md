@@ -1,6 +1,44 @@
 # Текущее состояние AIpedia
 
-Обновлено (UTC): 2026-10-01T17:01:56Z
+Обновлено (UTC): 2026-10-01T18:22:00Z
+
+## 01.10 — Release #021 / v0.18.0: owner-fix Local PASS, review
+
+- Три замечания владельца исправлены в существующей Timeline-карточке #021:
+  tooltip текущего snapshot показывает 3 NEW + 3 UPD независимо от дат продуктов;
+  `Google DeepMind` использует существующий `google.svg`; Gemini 4 Argon имеет
+  отдельный Max Output `1,000,000`, при этом Input Context, API ID и активные
+  цены оставлены пустыми. Будущая цена сохранена фактом с `active:false`.
+- Canonical master schema v5 прошла isolated trial/apply/repeat no-op и рабочий
+  Local sync/repeat no-op. `catalog_master check`: OK; `qa`: PASS; 336 Models /
+  156 Tools, quality queue 199. Master SHA-256
+  `078CAD227021B6D8DE76CBB673532D7B81E0097E930D861ACB190E5F70E0C448`.
+- Local QA: Django 368 PASS, 1 штатный Windows skip; system/migration/JS/Python/
+  diff checks PASS; SQLite integrity `ok`, FK 0. Browser matrix RU/EN,
+  desktop/mobile, dark/light: visible NEW/UPD 6/6, Argon mark/version/limits/
+  empty pricing PASS, overflow 0, JavaScript errors 0, HTTP failures 0.
+- Три owner-review PNG и JSON-отчёт находятся в
+  `artifacts/daily-catalog-20261001-021/owner-fixes/`. Library upload отдельно
+  заблокирован ошибкой `Library prepare_uploads is not available`; файлы не
+  потеряны и повторная загрузка не выполнялась.
+- Local preview работает на `http://127.0.0.1:18810/ru/`. Production остаётся
+  Release #020 / `v0.17.0`; Production, сервер, SQLite, Supervisor и tunnel не
+  затрагивались. Tag #021 не создан.
+- Dirty state разобран: все tracked-изменения относятся к owner-fix #021;
+  пользовательская untracked `.claude/` не читалась и не менялась; артефакты и
+  backups штатно игнорируются Git. **Изменено:** code, migration, master,
+  release plan, tests, Timeline/history/status и Local data. **Не завершено:**
+  только визуальная приёмка владельца и отдельно заблокированная Library-копия
+  PNG. **Следующим выполнить:** владелец проверяет Local; Production возможен
+  только после отдельной команды на конкретный Release #021.
+
+## 01.10 — Release #021 / v0.18.0: промежуточный checkpoint owner-fix (закрыт)
+
+- Работа продолжает существующую Timeline-карточку `DAILY-CATALOG-UPDATE-2026-10-01`; новый Release # и SemVer не создаются. Карточка до правок возвращена из `review` в `local`, `local_verified=false`. Production остаётся Release #020 / `v0.17.0` и не разрешена.
+- Стартовая сверка: `main == origin/main == e88d97d348177be35bf9b91e14d69c8ebea8e4a6`. Единственный исходный untracked путь — неизвестный пользовательский `.claude/`; он не читается, не меняется и не удаляется.
+- Доказанные дефекты: tooltip текущего snapshot скрывает NEW/UPD по дате релиза продукта; developer `Google DeepMind` не сопоставлен существующему `google.svg`; у Gemini 4 Argon отсутствует официальное значение Max Output `1,000,000` tokens в canonical master и Local.
+- Намеренно сохранить: датовый guard для меток строк каталога; пустой Input Context и API ID Argon; пустые active prices и неактивный future offer; существующие Record ID, URL, данные и правило хронологической нумерации.
+- **Изменено:** только статус и существующая карточка #021 перед содержательной работой. **Не завершено:** code/master fix, trial/apply/repeat dry-run, полный Local и browser QA. **Следующим выполнить:** минимальные исправления и доказать видимые NEW/UPD, Google mark и поля панели Argon на Local `127.0.0.1:18810`.
 
 ## 01.10 — Release #021 / v0.18.0 Daily Catalog Update: Local PASS, owner review
 

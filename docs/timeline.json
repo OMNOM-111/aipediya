@@ -1026,7 +1026,12 @@
       "executor": "Codex",
       "history": "docs/history/2026-10-01-daily-catalog-update-021.md",
       "release_tag": "release-2026-10-01-daily-catalog-update",
-      "summary": "Release #021 passed Local QA: 2 Models and 1 Tool were added, verified changes were applied to existing records and four unresolved candidates remain hidden in NEEDS_REVIEW. Production remains Release #020 pending separate owner approval.",
+      "summary": "Release #021 owner fixes are complete in Local: all six current-snapshot NEW/UPD labels are visible, Google DeepMind uses the existing Google mark, and Gemini 4 Argon has the official 1,000,000-token maximum output while unknown input context and inactive future pricing remain unpublished. Production remains Release #020 and is not authorized.",
+      "review_findings": [
+        "Show NEW/UPD for every entry in the current release snapshot independently of the product release date while retaining the date guard for catalog-row labels",
+        "Map Google DeepMind to the existing official google.svg mark for Gemini 4 Argon",
+        "Add the official Gemini 4 Argon maximum output of 1,000,000 tokens through canonical master, trial and Local sync; keep input context and active pricing empty"
+      ],
       "revision": "29b52923da5ebe8c2509d8890a4a7cf87f537c11"
     }
   ],
@@ -2420,13 +2425,13 @@
         "tags_ru": [
           "Release #021",
           "v0.18.0",
-          "Local - PASS / проверка владельцем",
+          "Local — исправления проверены",
           "Production — не разрешён"
         ],
         "tags_en": [
           "Release #021",
           "v0.18.0",
-          "Local - PASS / owner review",
+          "Local — owner fixes verified",
           "Production - not authorized"
         ],
         "capabilities_ru": [
@@ -2449,14 +2454,17 @@
         "changes": [
           "Added Gemini 4 Argon and pplx-embed-v2-context-9b-preview as Models and Cloudflare OS as a Tool; retained Ling-3.1-Flash, Cloudflare AI Search, Cloudflare Monetization Gateway and Robinhood Agents as hidden NEEDS_REVIEW records",
           "Updated verified GLM-5.3-Flash, Gemini, GitHub Copilot, Codex, Perplexity and SourceCraft facts without inventing a deprecation or a standalone model for HydraFusion or Automations",
-          "Inserted historical Cloudflare OS at Tool #146 under the chronological numbering rule, shifting ten later Tool numbers by +1 while preserving every Record ID and public URL"
+          "Inserted historical Cloudflare OS at Tool #146 under the chronological numbering rule, shifting ten later Tool numbers by +1 while preserving every Record ID and public URL",
+          "Kept all six NEW/UPD labels visible in the current release tooltip independently of product release dates while preserving the date guard on catalogue-row badges",
+          "Mapped Google DeepMind to the existing Google SVG and added Gemini 4 Argon Max Output 1,000,000 through canonical master and Local sync; Input Context, API ID and active prices remain empty",
+          "Retained the established left-aligned mobile freshness popover after repeated owner-fix QA confirmed it stays inside the viewport"
         ],
         "qa": {
-          "local": "PASS: canonical check/qa, isolated trial, exact Local sync, repeat-zero plan, release-plan dry-run, SQLite integrity/FK, Django suite and 10-case RU/EN desktop/mobile browser QA.",
+          "local": "PASS: canonical check/qa, isolated trial, exact Local sync, repeat-zero plan, release-plan dry-run, SQLite integrity/FK, Django 368 PASS (1 Windows skip), and RU/EN desktop/mobile dark/light browser QA. All 6 NEW/UPD labels visible; Argon Google SVG/Version/Max Output/unknown Input Context/no active pricing verified; no visible overflow, JavaScript errors or HTTP failures.",
           "production": "NOT RUN: Production remains Release #020 and requires separate owner approval."
         },
-        "next_ru": "Владельцу проверить Local-кандидат на http://127.0.0.1:18810/ru/; Production не изменять без отдельного разрешения на Release #021.",
-        "next_en": "Owner reviews the Local candidate at http://127.0.0.1:18810/ru/; Production remains untouched until separate approval for Release #021."
+        "next_ru": "Владельцу визуально проверить исправленный Local; Production не изменять без отдельного разрешения на Release #021.",
+        "next_en": "Owner to review the corrected Local; Production remains untouched until separate approval for Release #021."
       }
     ],
     "additional_tasks": [

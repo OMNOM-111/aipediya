@@ -14,7 +14,7 @@ class MarkFileTests(SimpleTestCase):
             self.assertTrue(mark["svg"] or mark["file"], name)
 
     def test_published_developers_all_have_marks(self):
-        self.assertEqual(len(PUBLISHED_DEVELOPERS), 37)
+        self.assertEqual(len(PUBLISHED_DEVELOPERS), 38)
         for name in PUBLISHED_DEVELOPERS:
             mark = mark_for(name)
             self.assertIsNotNone(mark, name)
@@ -31,6 +31,9 @@ class MarkFileTests(SimpleTestCase):
     def test_unknown_developer_keeps_the_letter_fallback(self):
         self.assertIsNone(mark_for("No Such Lab"))
         self.assertIsNone(mark_for(""))
+
+    def test_google_deepmind_uses_existing_google_mark(self):
+        self.assertEqual(mark_for("Google DeepMind")["svg"], mark_for("Google")["svg"])
 
     def test_release_019_uses_only_the_official_target_marks(self):
         self.assertEqual(mark_for("Anthropic")["svg"], mark_for("Anthropic", "claude-sonnet-5-5-899c1979")["svg"])

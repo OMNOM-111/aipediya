@@ -5,6 +5,8 @@ from .ui_translations import CATEGORY_TRANSLATIONS, TRANSLATIONS
 
 
 TEXT = {
+    "input_context": ("Входной контекст", "Input context"),
+    "max_output": ("Максимум на выходе", "Max output"),
     "released": ("Релиз", "Release"),
     "release_unknown": ("Дата выпуска не подтверждена", "Release date not verified"),
     "chronology_note": ("№ — порядок по дате выпуска: от старых к новым. При одинаковой дате — по названию. Без подтверждённой даты — без номера, в конце хронологии.", "Numbers follow release dates, oldest first; same-day releases use name order. Unverified dates have no number and appear last in chronology."),

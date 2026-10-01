@@ -1,4 +1,4 @@
-"""Catalog master v4: editorial fields, drafts and the master -> Local sync."""
+"""Catalog master v5: editorial fields, drafts and the master -> Local sync."""
 import shutil
 import tempfile
 import unittest
@@ -703,6 +703,19 @@ class ExistingRecordNewRowsTests(MasterSyncTests):
             "Source URL": "https://epoch.ai/benchmarks", "Checked": "2026-09-27", "Observation Key": "a" * 64,
             "Source Model": "old_max", "Source Record ID": "ebr.csv:1", "Snapshot": "2026-09-27"})
         next(r for r in rows["Tools"] if r["Record ID"] == "kit")["Developer Country"] = "USA"
+
+    def test_max_output_syncs_without_filling_unknown_input_context(self):
+        self.assertIsNone(self.old.context)
+        self.assertIsNone(self.old.max_output)
+
+        def set_output(rows):
+            next(row for row in rows["Models"] if row["Record ID"] == "old")["Max Output"] = "1000000"
+
+        self.edit(set_output)
+        self.command("sync-local", apply=True)
+        self.old.refresh_from_db()
+        self.assertIsNone(self.old.context)
+        self.assertEqual(self.old.max_output, 1_000_000)
 
     def test_new_rows_are_created_once_and_import_adds_nothing(self):
         from catalog.models import Access, Evaluation, ModelOriginCountry, Offer

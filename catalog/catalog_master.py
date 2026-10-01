@@ -20,8 +20,10 @@ from pathlib import Path
 from .comparison import alphabet
 
 WORKBOOK_PATH = Path("AI_CONTEXT") / "AIpediya_Model_Verification_Master.xlsx"
-SCHEMA = "aipediya-catalog-master/4"
-UPGRADABLE_SCHEMAS = {"aipediya-catalog-master/2", "aipediya-catalog-master/3"}
+SCHEMA = "aipediya-catalog-master/5"
+UPGRADABLE_SCHEMAS = {
+    "aipediya-catalog-master/2", "aipediya-catalog-master/3", "aipediya-catalog-master/4",
+}
 PRODUCTION_ORIGIN = "https://aipediya.com"
 MAX_VALIDATED_ROW = 5000
 
@@ -75,7 +77,7 @@ VERIFICATION = [
 ]
 MODEL_PUBLIC = [
     "Release Stage", "Family", "Version", "Category", "Tasks", "Input Modalities",
-    "Output Modalities", "Context", "License", "Open Weights", "Catalog Status",
+    "Output Modalities", "Context", "Max Output", "License", "Open Weights", "Catalog Status",
     "Developer Country", "Origin Countries", "Description EN", "Description RU",
     "Suitable EN", "Suitable RU", "Limitations EN", "Limitations RU",
     "Source Title", "Source URL", "Source Publisher", "Checked (DB)",
@@ -257,7 +259,7 @@ def model_row(model):
         "Tasks": "; ".join(model.tasks or []),
         "Input Modalities": "; ".join(model.input_modalities or []),
         "Output Modalities": "; ".join(model.output_modalities or []),
-        "Context": _text(model.context), "License": model.license,
+        "Context": _text(model.context), "Max Output": _text(model.max_output), "License": model.license,
         "Open Weights": _text(model.open_weights), "Catalog Status": model.catalog_status,
         "Developer Country": developer.country,
         "Origin Countries": "; ".join(link.country_id for link in model.origin_country_links.all()),
@@ -1002,7 +1004,8 @@ def read_workbook(path=WORKBOOK_PATH):
         if upgrading and sheet in MAIN:
             absent = [c for c in absent if c not in (
                 "Publication Decision", "Approx Precision", "Reason", "Canonical / Parent Record ID",
-                "Decision Code", "Decision Date", "Decision Sources", "Relation Type", "Aliases")]
+                "Decision Code", "Decision Date", "Decision Sources", "Relation Type", "Aliases",
+                "Max Output")]
         if absent:
             raise ValueError("%s sheet %s lacks columns: %s" % (path, sheet, ", ".join(absent)))
         extra[sheet] = [h for h in headers if h and h not in columns]
@@ -1010,6 +1013,9 @@ def read_workbook(path=WORKBOOK_PATH):
         for raw in values:
             row = {h: _text(v) for h, v in zip(headers, raw) if h}
             if any(row.values()):
+                if upgrading:
+                    for column in columns:
+                        row.setdefault(column, "")
                 if upgrading and sheet in MAIN and not row.get("Publication Decision"):
                     row["Publication Decision"] = "PUBLIC" if row.get("Status") == "PUBLISHED" else "NEEDS_REVIEW"
                 rows[sheet].append(row)

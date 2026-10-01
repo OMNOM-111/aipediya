@@ -300,6 +300,7 @@
     "Limitations RU": "Доступ пока только через ограниченную программу Fairwind; широкий доступ, API ID, входное контекстное окно и действующие цены ещё не опубликованы.",
     "Local Number": "335",
     "Local PK": "954",
+    "Max Output": "1000000",
     "Missing Count": "0",
     "Missing Data": "",
     "Name": "Gemini 4 Argon",
@@ -386,6 +387,7 @@
     "Limitations RU": "Preview-интерфейс и embeddings могут измениться без обратной совместимости; запросы и документы кодируются разными методами; hosted API Perplexity не подтверждён.",
     "Local Number": "336",
     "Local PK": "955",
+    "Max Output": "",
     "Missing Count": "0",
     "Missing Data": "",
     "Name": "pplx-embed-v2-context-9b-preview",
@@ -2271,7 +2273,7 @@
    "zoom-ai-companion-76f2ef02"
   ]
  },
- "master_sha256": "9a88216e1ac4a31b9e56eb8251848fd13453f66301c8de6d61632fcceaafadb2",
+ "master_sha256": "078cad227021b6d8de76cbb673532d7b81e0097e930d861acb190e5f70e0c448",
  "release": "release-2026-10-01-daily-catalog-update",
  "schema": "aipedia-catalog-plan/1"
 }

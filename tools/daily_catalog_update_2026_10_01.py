@@ -159,6 +159,7 @@ class Update:
             "Tasks": "reasoning; code; agents; cybersecurity; knowledge work; vision; video understanding",
             "Input Modalities": "text; image; video; files",
             "Output Modalities": "text",
+            "Max Output": "1000000",
             "License": "Proprietary",
             "Open Weights": "NO",
             "Catalog Status": "active",

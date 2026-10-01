@@ -1,7 +1,7 @@
 # Catalog master: как вести базу и готовить обновление сайта
 
 Действующая книга одна: `AI_CONTEXT/AIpediya_Model_Verification_Master.xlsx`
-(схема `aipediya-catalog-master/4`, версия v015 от 2026-09-26; принятый файл сохранён как
+(схема `aipediya-catalog-master/5`, расширенная nullable-полем `Max Output` 2026-10-01; базовая версия v015 от 2026-09-26; принятый файл сохранён как
 `backups/catalog-master-v015-20260926/AIpediya_Model_Verification_Master_v015_as_received.xlsx`,
 правки импорта — `tools/master_v015_import_2026_09_26.py`; v014/v013 — резервные копии). Версии v001–v012 и черновик
 v013 — неактивные резервные копии в `backups/catalog-master-finalize-20260925/`

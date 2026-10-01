@@ -49,7 +49,7 @@ RENUMBER = "catalog_master_renumber"
 MODEL_FIELDS = {
     "Release Stage": "release_stage", "Category": "category", "Tasks": "tasks",
     "Input Modalities": "input_modalities", "Output Modalities": "output_modalities",
-    "Context": "context", "License": "license", "Open Weights": "open_weights",
+    "Context": "context", "Max Output": "max_output", "License": "license", "Open Weights": "open_weights",
     "Catalog Status": "catalog_status",
 }
 TOOL_FIELDS = {
@@ -81,10 +81,10 @@ def _convert(attr, value):
     if value == CLEAR:
         if attr in LIST_FIELDS:
             return []
-        return {"context": None, "open_weights": False}.get(attr, "")
+        return {"context": None, "max_output": None, "open_weights": False}.get(attr, "")
     if attr in LIST_FIELDS:
         return _split(value)
-    if attr == "context":
+    if attr in {"context", "max_output"}:
         return int(value)
     if attr == "open_weights":
         return value == "YES"
@@ -747,6 +747,7 @@ def _create(change, today):
                            input_modalities=_split(row.get("Input Modalities", "")),
                            output_modalities=_split(row.get("Output Modalities", "")),
                            context=int(row["Context"]) if row.get("Context") else None,
+                           max_output=int(row["Max Output"]) if row.get("Max Output") else None,
                            license=row.get("License", ""), open_weights=row.get("Open Weights") == "YES",
                            release_stage=row.get("Release Stage", ""), release_evidence=_evidence(row),
                            **texts, **common)

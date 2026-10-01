@@ -20,6 +20,7 @@ ALIASES = {
     "z.ai / zhipu ai": "zai",
     "z.ai": "zai",
     "google": "google",
+    "google deepmind": "google",
     "h company": "hcompany",
     "black forest labs": "bfl",
     "elevenlabs": "elevenlabs",
@@ -64,7 +65,7 @@ RECORD_ALIASES = {
     "cue-77457549": "cue",
 }
 
-# Exact organization names of every published Local developer (36).
+# Exact organization names of every published Local developer (38).
 # Used by tests so a renamed Organization cannot silently drop its mark.
 PUBLISHED_DEVELOPERS = (
     "AI Singapore",
@@ -78,6 +79,7 @@ PUBLISHED_DEVELOPERS = (
     "ElevenLabs",
     "GitHub",
     "Google",
+    "Google DeepMind",
     "H Company",
     "LG AI Research",
     "LM Studio",

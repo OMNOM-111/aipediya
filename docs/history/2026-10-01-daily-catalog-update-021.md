@@ -49,7 +49,7 @@ Record ID, slug и публичные URL всех записей неизмен
 
 ## Release manifests и Local QA
 
-- `catalog_plan.json`: create 3, update 3, offer 4, access_new 1, number 10; dry-run на исходном backup — `pending/applicable`, рабочий Local — `already applied`. SHA-256 `CCA0805000DD488368C745787F1B9C7E715DC755781036D436E0AB46F106C90C`.
+- `catalog_plan.json`: create 3, update 3, offer 4, access_new 1, number 10; dry-run на исходном backup — `pending/applicable`, рабочий Local — `already applied`. После добавления Max Output итоговый SHA-256 `3C1D6205371BDE390105996906C29AF6D094CAE4B3869FFC80CBA5D9C102B3F2`.
 - `release_state.json`: 336 Models / 156 Tools, SHA-256 `9A8909C5B1D20A4C7DD6B78CC208C6A5D720368CBD1931177D70A96EAB6FFDBB`.
 - `catalog_freshness.json`: 2 added Models, 1 added Tool, 1 updated Model, 2 updated Tools; SHA-256 `87AA900015E0EF91C7E01FDE25628FEBA7CC3F9ACE7D2F401D989FC6F061DFB4`.
 - Изолированный trial и рабочий Local получили одинаковый план: 22 записи, повторное применение не содержит writable changes; SQLite integrity `ok`, foreign keys 0.
@@ -57,6 +57,58 @@ Record ID, slug и публичные URL всех записей неизмен
 - Полный `manage.py test catalog --settings=aipedia.test_settings`: 365 PASS, 1 штатный Windows skip; `manage.py check`: PASS; release-history validator: PASS.
 - Browser QA: 10/10 сценариев RU/EN, desktop/mobile, dark/light; проверены новые карточки, GLM, Codex, Perplexity и четыре цены SourceCraft; JavaScript/page errors 0, видимого horizontal overflow нет.
 - На мобильном viewport скрытый `catalog-freshness-popover` даёт одинаковый `document_overflow=203` и у новой Cloudflare OS, и у существующего Codex. Это существующее unrelated поведение невидимого элемента, не регрессия данных Release #021; CSS не менялся в рамках data-only поручения.
+
+## Исправления после первого просмотра владельца
+
+Владелец обнаружил три видимых дефекта уже после первого Local PASS. Карточка
+Release #021 была возвращена из `review` в `local`, исправления выполнены в том
+же неизменяемом выпуске и после повторного полного QA карточка снова переведена
+в `review`:
+
+- tooltip справа вверху теперь всегда показывает действие текущего release
+  snapshot: 3 `NEW` и 3 `UPD`. Дата релиза продукта больше не скрывает эти
+  метки; датовый guard для меток на строках каталога сохранён;
+- `Google DeepMind` сопоставлен существующему `static/marks/google.svg`, поэтому
+  Gemini 4 Argon показывает официальный Google glyph без нового или внешнего
+  asset;
+- canonical master schema обновлена до v5: у Model появился отдельный nullable
+  `Max Output`; для Gemini 4 Argon записано `1,000,000`, а неизвестный Input
+  Context остался пустым. API ID и активные Offers не добавлены. Объявленные
+  будущие цены `$2/$10`, 95% cached-input discount и последующие `$4/$20`
+  сохранены только как `announced_future_pricing` с `active:false`;
+- повторный мобильный QA поймал промежуточную попытку неверно выровнять
+  freshness-popover вправо; она отменена, сохранено штатное выравнивание влево
+  для ширины до 480 px, итоговый viewport подтверждён без overflow.
+
+Canonical patch прошёл isolated trial → apply → повторный no-op, затем тот же
+цикл на рабочем Local. Итоговый master SHA-256:
+`078CAD227021B6D8DE76CBB673532D7B81E0097E930D861ACB190E5F70E0C448`.
+Резервные копии до owner-fix находятся в
+`backups/daily-catalog-20261001-021/owner-fixes/`.
+
+Повторная проверка:
+
+- `catalog_master check`: OK; `catalog_master qa`: PASS, Models 336 / Tools 156,
+  quality queue 199;
+- Django catalog suite: 368 PASS, 1 штатный Windows skip; `manage.py check`,
+  migration check, JavaScript syntax, Python compile и `git diff --check`: PASS;
+- SQLite: `integrity_check=ok`, foreign keys 0;
+- browser QA: RU/EN, 1440×900 и 375×812, dark/light; 6/6 видимых NEW/UPD,
+  Google SVG, Version `Gemini 4 Argon`, Max Output `1M`, пустой Input Context и
+  пустая таблица активных цен; видимый overflow 0, JavaScript errors 0,
+  HTTP failures 0. Отчёт:
+  `artifacts/daily-catalog-20261001-021/owner-fixes/browser-qa.json`.
+
+Три кадра для просмотра владельцем:
+
+- `artifacts/daily-catalog-20261001-021/owner-fixes/browser/01-models-argon-logo-max-output.png`;
+- `artifacts/daily-catalog-20261001-021/owner-fixes/browser/02-freshness-hover-new-upd.png`;
+- `artifacts/daily-catalog-20261001-021/owner-fixes/browser/03-tools-cloudflare-os.png`.
+
+Передача кадров в ChatGPT Library не состоялась: обязательный подготовленный
+batch workflow вернул точную ошибку `Library prepare_uploads is not available`.
+Локальные файлы проверены и сохранены; повторная загрузка не выполнялась, чтобы
+не создать дубликаты при неопределённой доступности Library.
 
 ## Handoff
 
