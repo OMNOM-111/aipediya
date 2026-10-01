@@ -120,6 +120,8 @@ The first isolated server preflight stopped before deploy because planned Englis
 
 The next isolated preflight exposed an additive-schema comparison edge: migration `0020_modelversion_max_output` adds a nullable column to every existing row, so the previous comparator treated missing-before versus `NULL`-after as a change to every model. Existing-row comparison now treats only missing versus `NULL` as equivalent; non-null values and unrelated changes still fail. The exact Production snapshot plus migration and 22-write plan passes the corrected validator locally with the expected changed tables. Production again remained untouched.
 
+The first live deploy then completed and the public `/healthz`, service and 336/156 catalog checks passed, but `verify-release` itself crashed on a catalog table without an `id` because tuple rows were sent through the dict-only nullable-column helper. The comparator now handles dict and tuple rows separately. A local comparison of the exact pre-deploy backup snapshot against the post-deploy Production snapshot returns `ok: true`, no problems, the exact expected changed tables, integrity `ok` and FK 0. The release remains open until the fixed verifier is deployed and every public check passes against the final commit.
+
 ## Handoff
 
 Local owner-fix candidate commit: `036de2020bee8ce5859932bf9f9c1c96a9c46719`. Release tag зарезервирован в Timeline, но не создан до отдельного разрешения на Production.

@@ -122,9 +122,17 @@ def planned_final_counts(plan):
 def table_existing_changes(before, after):
     if not set(before).issubset(after):
         return {"__removed__"}
-    return {key for key in before
-            if not all(before[key].get(column) == after.get(key, {}).get(column)
-                       for column in set(before[key]) | set(after.get(key, {})))}
+    changed = set()
+    for key, old_row in before.items():
+        new_row = after.get(key)
+        if isinstance(old_row, dict) and isinstance(new_row, dict):
+            equivalent = all(old_row.get(column) == new_row.get(column)
+                             for column in set(old_row) | set(new_row))
+        else:
+            equivalent = old_row == new_row
+        if not equivalent:
+            changed.add(key)
+    return changed
 
 
 def validate_plan_diff(plan, old, new, changed_tables, before_counts, after_counts):

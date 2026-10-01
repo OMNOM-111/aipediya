@@ -298,6 +298,8 @@ class ServerAccessContractTests(unittest.TestCase):
         self.assertEqual(compare.table_existing_changes(
             {1: {"id": 1, "name": "same"}},
             {1: {"id": 1, "name": "same", "new_nullable": 1}}), {1})
+        self.assertEqual(compare.table_existing_changes({0: ("same",)}, {0: ("same",)}), set())
+        self.assertEqual(compare.table_existing_changes({0: ("same",)}, {0: ("changed",)}), {0})
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             (root / "app").mkdir()
