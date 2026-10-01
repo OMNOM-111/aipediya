@@ -90,7 +90,7 @@ Canonical patch прошёл isolated trial → apply → повторный no-
 
 - `catalog_master check`: OK; `catalog_master qa`: PASS, Models 336 / Tools 156,
   quality queue 199;
-- Django catalog suite: 368 PASS, 1 штатный Windows skip; `manage.py check`,
+- Django catalog suite: 368 tests — OK (1 штатный Windows skip); `manage.py check`,
   migration check, JavaScript syntax, Python compile и `git diff --check`: PASS;
 - SQLite: `integrity_check=ok`, foreign keys 0;
 - browser QA: RU/EN, 1440×900 и 375×812, dark/light; 6/6 видимых NEW/UPD,

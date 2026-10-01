@@ -2460,7 +2460,7 @@
           "Retained the established left-aligned mobile freshness popover after repeated owner-fix QA confirmed it stays inside the viewport"
         ],
         "qa": {
-          "local": "PASS: canonical check/qa, isolated trial, exact Local sync, repeat-zero plan, release-plan dry-run, SQLite integrity/FK, Django 368 PASS (1 Windows skip), and RU/EN desktop/mobile dark/light browser QA. All 6 NEW/UPD labels visible; Argon Google SVG/Version/Max Output/unknown Input Context/no active pricing verified; no visible overflow, JavaScript errors or HTTP failures.",
+          "local": "PASS: canonical check/qa, isolated trial, exact Local sync, repeat-zero plan, release-plan dry-run, SQLite integrity/FK, Django 368 tests OK (1 Windows skip), and RU/EN desktop/mobile dark/light browser QA. All 6 NEW/UPD labels visible; Argon Google SVG/Version/Max Output/unknown Input Context/no active pricing verified; no visible overflow, JavaScript errors or HTTP failures.",
           "production": "NOT RUN: Production remains Release #020 and requires separate owner approval."
         },
         "next_ru": "Владельцу визуально проверить исправленный Local; Production не изменять без отдельного разрешения на Release #021.",

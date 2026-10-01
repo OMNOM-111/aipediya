@@ -13,7 +13,7 @@
   Local sync/repeat no-op. `catalog_master check`: OK; `qa`: PASS; 336 Models /
   156 Tools, quality queue 199. Master SHA-256
   `078CAD227021B6D8DE76CBB673532D7B81E0097E930D861ACB190E5F70E0C448`.
-- Local QA: Django 368 PASS, 1 штатный Windows skip; system/migration/JS/Python/
+- Local QA: Django 368 tests — OK (1 штатный Windows skip); system/migration/JS/Python/
   diff checks PASS; SQLite integrity `ok`, FK 0. Browser matrix RU/EN,
   desktop/mobile, dark/light: visible NEW/UPD 6/6, Argon mark/version/limits/
   empty pricing PASS, overflow 0, JavaScript errors 0, HTTP failures 0.
