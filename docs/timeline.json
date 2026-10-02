@@ -2500,14 +2500,14 @@
         "tags_ru": [
           "Release #022",
           "v0.19.0",
-          "В работе",
-          "Только Local"
+          "Trial PASS",
+          "Ожидает приёмки diff"
         ],
         "tags_en": [
           "Release #022",
           "v0.19.0",
-          "In progress",
-          "Local only"
+          "Trial PASS",
+          "Awaiting diff acceptance"
         ],
         "capabilities_ru": [
           "Добавить decision-модели текущего окна Clef, Clef-flash и Strands Decider 2B без ложного генеративного Max Output и без выдачи vendor/self-reported результатов за независимые",
@@ -2527,16 +2527,18 @@
         "executor": "Claude Code",
         "started_utc": "2026-10-02T18:59:06Z",
         "changes": [
-          "Reserve Release #022 / v0.19.0 before canonical master backup, Production observation refresh and research",
-          "Limit scope to Clef, Clef-flash, Strands Decider 2B, Kev 1.0 catch-up, AnythingLLM catch-up and the existing GitHub Copilot record",
-          "Require exact master diff, isolated trial, owner acceptance of the diff, Local sync, browser QA and a separate owner Production approval"
+          "Reserved Release #022 / v0.19.0 before backup, Production observation refresh and research",
+          "Canonical master: added Clef, Clef-flash and Strands Decider 2B (2026-10-01 decision models, no generative Max Output, vendor/self-reported results only as developer_reported facts)",
+          "Historical catch-ups: Kev-0.8B and Kev-4B (2026-09-24), Kev-9B v2 and Kev-27B v2 (2026-09-30), AnythingLLM Tool (≈2023-06-07); chronology inserted them at #323/#324/#338/#339 and Tool #60, shifting 14 Model and 97 Tool numbers",
+          "Updated the existing GitHub Copilot record: desktop/windows/macos platforms, Computer Use and Dynamic Workflows facts, Copilot-only model retirements without global archiving",
+          "Isolated trial PASS: 8 create / 111 number / 1 platforms, repeat plan 0, integrity ok, FK 0, qa PASS 343/157; awaiting owner acceptance of the diff before working Local sync"
         ],
         "qa": {},
         "owner_decision": "Owner requested preparation of the 2026-10-02 Daily Catalog Update. Production is not authorized until the owner separately approves this exact Release # / SemVer.",
         "owner_decision_ru": "Владелец поручил подготовить обновление каталога за 02.10. Production не разрешена до отдельного одобрения владельцем именно этого Release # / SemVer.",
         "owner_decision_en": "The owner requested preparation of the Oct 2 catalog update. Production is not authorized until the owner separately approves this exact Release # / SemVer.",
-        "next_ru": "Backup master и Local, обновить наблюдение Production, проверить дубли и источники, внести master, refresh/check/qa, trial и owner diff.",
-        "next_en": "Back up master and Local, refresh Production observation, check duplicates and sources, edit master, refresh/check/qa, trial and owner diff."
+        "next_ru": "Владелец принимает trial diff; затем backup рабочей Local, sync-local --apply, import/check/qa, тесты и браузерный QA.",
+        "next_en": "Owner accepts the trial diff; then back up working Local, sync-local --apply, import/check/qa, tests and browser QA."
       }
     ],
     "additional_tasks": [

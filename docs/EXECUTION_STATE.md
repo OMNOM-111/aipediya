@@ -7,6 +7,14 @@
 - Scope: Clef, Clef-flash, Strands Decider 2B (текущее окно); Kev-0.8B/4B/9B v2/27B v2 и AnythingLLM (historical catch-up); существующий GitHub Copilot. Production не разрешена до отдельной команды владельца на #022 / `v0.19.0`.
 - **Изменено:** Timeline/status/history #022. **Не завершено:** backup, research, master, trial, owner diff, Local sync, QA. **Следующим выполнить:** backup master и Local SQLite в `backups/daily-catalog-20261002-022/`, затем `import --production`.
 
+### 02.10 — #022 trial PASS, OWNER GATE (ожидается приёмка diff)
+
+- Backup: `backups/daily-catalog-20261002-022/master-before.xlsx` (`078cad22…c448`) и `aipedia-before-release-022.sqlite3` (`5036034f…e65a`, integrity ok). Наблюдение Production обновлено read-only `import --production`: 336/156, release `a03d501`.
+- Canonical master изменён скриптом `tools/daily_catalog_update_2026_10_02.py` + `refresh`; `check: OK`; SHA-256 `04b23ff56680bd2885618e331839c3f65a776d285c5d3f073405a79fdf79c027`. Создано 7 Models + 1 Tool, обновлён GitHub Copilot; 119 номеров в Changelog (111 сдвигов существующих: 14 Models, 97 Tools).
+- Trial (`backups/…/trial.sqlite3`, `AIPEDIA_DB`): 8 create / 111 number / 1 platforms; повторный plan 0 writable, 0 unsupported; integrity ok, FK 0; `qa` PASS 343/157, 0 errors, queue 199 → 206 (+7 developer_reported). Изменения существующих строк — только `public_number`. Owner diff — `docs/history/2026-10-02-daily-catalog-update-022.md`.
+- Расхождения с заданием записаны: Clef-flash vision подтверждён собственными страницами; Kev одноимённые ранние веса с 2026-09-20 (использованы даты закреплённых checkpoints); AnythingLLM — Exact пуст, ≈2023-06-07 (первичный Medium 403); Copilot замена Claude Opus 4.7 → **Claude Opus 5.5** по посту 10-02 (анонс 09-16 — Opus 5); `docker` не controlled platform.
+- **Local / GitHub / Production:** рабочий Local SQLite не изменён (336/156), Local-сервер не запущен; GitHub `origin/main` содержит резерв #022 (`b1442f7`) + этот prep commit; Production — #021 / `a03d501`. **Не завершено:** рабочий Local sync, тесты, браузерный QA, candidate, Production. **Следующим выполнить:** после приёмки владельцем diff — backup рабочей Local, `sync-local --apply`, import/check/qa, тесты, браузерный QA.
+
 ## 01.10 - Release #021 / v0.18.0 DONE, Production PASS
 
 - Published https://aipediya.com/ on commit `a03d501b9ed25699c97e336188bd28215d3f1bd2`; `/healthz` is HTTP 200 and confirms that exact release, and the `aipedia` service is RUNNING.
