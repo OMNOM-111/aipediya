@@ -6,7 +6,7 @@ from tools.finalize_release_history import finalize
 
 
 class ReleaseHistoryTests(SimpleTestCase):
-    def test_twenty_two_is_the_reserved_local_candidate(self):
+    def test_twenty_two_is_the_local_review_candidate(self):
         registry = load()
         self.assertEqual(validate(registry), [])
         cards = [row for row in registry["product_history"]["milestones"] if row.get("release_sequence")]
@@ -20,7 +20,7 @@ class ReleaseHistoryTests(SimpleTestCase):
         self.assertTrue(next(row for row in cards if row["release_sequence"] == 21)["production_verified"])
         self.assertFalse(cards[-1]["production_verified"])
         self.assertEqual((cards[-1]["progress"], cards[-1]["local_verified"], cards[-1]["owner_approved"]),
-               ("in_progress", False, False))
+               ("review", True, False))
 
     def test_gate_rejects_missing_review_qa_owner_and_stale_html(self):
         registry = load()

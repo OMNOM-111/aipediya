@@ -1041,13 +1041,13 @@
       "app_version": "v0.19.0",
       "title": "Daily Catalog Update — 2 October 2026",
       "environment": "local",
-      "stage": "in_progress",
-      "status": "IN_PROGRESS",
+      "stage": "review",
+      "status": "LOCAL_QA_PASS",
       "started_utc": "2026-10-02T18:59:06Z",
       "executor": "Claude Code",
       "history": "docs/history/2026-10-02-daily-catalog-update-022.md",
       "release_tag": "release-2026-10-02-daily-catalog-update",
-      "summary": "Release #022 is reserved before catalog work. The package adds the current-window decision models Clef, Clef-flash and Strands Decider 2B, historical catch-ups for the four Kev 1.0 models and the AnythingLLM Tool, and updates the existing GitHub Copilot record, through canonical master → trial → Local sync → QA. Production requires a separate owner approval of this exact release."
+      "summary": "Release #022 is Local-verified: 343 Models / 157 Tools after the owner-accepted master diff (3 current-window decision models, 4 Kev historical catch-ups, AnythingLLM historical catch-up, GitHub Copilot update) plus a mobile freshness-popover overflow fix. Production remains on Release #021 until the owner explicitly approves this exact release."
     }
   ],
   "product_history": {
@@ -2489,7 +2489,7 @@
         "release_id": "DAILY-CATALOG-UPDATE-2026-10-02",
         "release_sequence": 22,
         "app_version": "v0.19.0",
-        "local_verified": false,
+        "local_verified": true,
         "owner_approved": false,
         "production_released": false,
         "production_verified": false,
@@ -2500,14 +2500,14 @@
         "tags_ru": [
           "Release #022",
           "v0.19.0",
-          "Trial PASS",
-          "Ожидает приёмки diff"
+          "Local ✓ — 343 / 157",
+          "Ожидает решения о Production"
         ],
         "tags_en": [
           "Release #022",
           "v0.19.0",
-          "Trial PASS",
-          "Awaiting diff acceptance"
+          "Local ✓ — 343 / 157",
+          "Awaiting Production decision"
         ],
         "capabilities_ru": [
           "Добавить decision-модели текущего окна Clef, Clef-flash и Strands Decider 2B без ложного генеративного Max Output и без выдачи vendor/self-reported результатов за независимые",
@@ -2521,24 +2521,26 @@
         ],
         "source": "2026-10-02-daily-catalog-update-022",
         "open": true,
-        "progress": "in_progress",
+        "progress": "review",
         "release_tag": "release-2026-10-02-daily-catalog-update",
         "revision": null,
         "executor": "Claude Code",
         "started_utc": "2026-10-02T18:59:06Z",
         "changes": [
-          "Reserved Release #022 / v0.19.0 before backup, Production observation refresh and research",
-          "Canonical master: added Clef, Clef-flash and Strands Decider 2B (2026-10-01 decision models, no generative Max Output, vendor/self-reported results only as developer_reported facts)",
-          "Historical catch-ups: Kev-0.8B and Kev-4B (2026-09-24), Kev-9B v2 and Kev-27B v2 (2026-09-30), AnythingLLM Tool (≈2023-06-07); chronology inserted them at #323/#324/#338/#339 and Tool #60, shifting 14 Model and 97 Tool numbers",
-          "Updated the existing GitHub Copilot record: desktop/windows/macos platforms, Computer Use and Dynamic Workflows facts, Copilot-only model retirements without global archiving",
-          "Isolated trial PASS: 8 create / 111 number / 1 platforms, repeat plan 0, integrity ok, FK 0, qa PASS 343/157; awaiting owner acceptance of the diff before working Local sync"
+          "Added Clef, Clef-flash and Strands Decider 2B (2026-10-01 decision models): no generative Max Output, vendor/self-reported results kept as developer_reported facts, Workers AI prices $0.24 and $0.09 per 1M input tokens",
+          "Historical catch-ups: Kev-0.8B and Kev-4B (2026-09-24), Kev-27B v2 and Kev-9B v2 (2026-09-30) as Models #323/#324/#338/#339, and AnythingLLM (≈2023-06-07) as Tool #60; 14 Model and 97 Tool numbers shifted chronologically with Record IDs and URLs unchanged",
+          "Updated the existing GitHub Copilot record with desktop/windows/macos platforms, Computer Use and Dynamic Workflows facts and Copilot-only model retirements, without new cards or global archiving",
+          "Fixed the pre-existing mobile (≤480 px) Catalog Freshness popover overflow by anchoring it to the toolbar row end; desktop unchanged",
+          "Repaired the locale-switch browser gate outside-click step, stale since the Release #021 sr-only counter; N/A on the full-screen 375 px panel"
         ],
-        "qa": {},
-        "owner_decision": "Owner requested preparation of the 2026-10-02 Daily Catalog Update. Production is not authorized until the owner separately approves this exact Release # / SemVer.",
-        "owner_decision_ru": "Владелец поручил подготовить обновление каталога за 02.10. Production не разрешена до отдельного одобрения владельцем именно этого Release # / SemVer.",
-        "owner_decision_en": "The owner requested preparation of the Oct 2 catalog update. Production is not authorized until the owner separately approves this exact Release # / SemVer.",
-        "next_ru": "Владелец принимает trial diff; затем backup рабочей Local, sync-local --apply, import/check/qa, тесты и браузерный QA.",
-        "next_en": "Owner accepts the trial diff; then back up working Local, sync-local --apply, import/check/qa, tests and browser QA."
+        "qa": {
+          "local": "PASS: owner-accepted trial diff applied to working Local via release-plan/apply-plan copy and sync-local (128 writes, identical to trial); repeat plan 0; 343 Models / 157 Tools with contiguous numbers; SQLite integrity ok, FK 0; catalog_master check OK, qa PASS (0 errors, queue 206); release_state 343/157 dry-run 0 changes; Django 368 tests OK (1 Windows skip); manage.py check, makemigrations --check, node --check, git diff --check PASS; Release #022 browser QA 44 checks PASS (RU/EN desktop, RU/EN 375, dark/light, new/changed cards, search, newest/oldest, prices, flags, checks, 8 NEW popover, row badges date-guarded, 0 overflow, 0 JS/HTTP errors); locale-switch gate 88/88 PASS, 0 console/network/HTTP errors."
+        },
+        "owner_decision": "Owner accepted the Release #022 trial diff on 2026-10-02 and asked for working Local sync, QA and an exact Production candidate. Production is not yet authorized.",
+        "owner_decision_ru": "Владелец принял trial diff Release #022 02.10.2026 и поручил sync рабочего Local, QA и точный Production candidate. Production пока не разрешена.",
+        "owner_decision_en": "The owner accepted the Release #022 trial diff on Oct 2, 2026 and requested working Local sync, QA and an exact Production candidate. Production is not yet authorized.",
+        "next_ru": "Ждать явной команды владельца «Публикуем Release #022 / v0.19.0 в Production.»; затем owner_approved, сборка архива и серверная фаза по docs/RELEASE.md.",
+        "next_en": "Wait for the owner's explicit command to publish Release #022 / v0.19.0; then owner_approved, archive build and the server phase per docs/RELEASE.md."
       }
     ],
     "additional_tasks": [

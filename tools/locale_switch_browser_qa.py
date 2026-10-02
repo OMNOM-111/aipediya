@@ -139,15 +139,34 @@ def check_case(browser, base, code, kind, width):
             elif button == "escape":
                 page.keyboard.press("Escape")
             else:
-                page.locator(".catalog-counts").click()
+                # .catalog-counts is sr-only since Release #021: click a neutral point of the
+                # catalog outside the panel that is not a control (pager summary or toolbar gap).
+                point = page.evaluate("""() => {
+                    const panel = document.getElementById('model-panel');
+                    const neutral = (x, y) => { const el = document.elementFromPoint(x, y);
+                        return el && !panel.contains(el) && !el.closest('a, button, input, select, summary, details, label, .site-header, tr[data-slug], dialog'); };
+                    for (const sel of ['.page-range', '.catalog-toolbar', '.catalog-column']) {
+                        for (const el of document.querySelectorAll(sel)) { const r = el.getBoundingClientRect();
+                            for (let y = r.top + 2; y < Math.min(r.bottom, innerHeight); y += 4)
+                                for (let x = r.left + 2; x < Math.min(r.right, innerWidth); x += 4)
+                                    if (neutral(x, y)) return [x, y]; } }
+                    return null; }""")
+                check(point is not None, "no neutral point outside the panel")
+                page.mouse.click(point[0], point[1])
             check(page.locator("#model-panel.is-open").count() == 0, f"{button} did not close panel")
             check(urlparse(page.url).path == localized, f"{button} close URL {page.url}")
             check(page.locator(f'a[data-set-lang="es"]').get_attribute("href").startswith("/es/"), "language links stale after close")
         step("close X", lambda: close_with("x"))
         step("reopen for Escape", panel_open)
         step("close Escape", lambda: close_with("escape"))
-        step("reopen for outside click", panel_open)
-        step("close outside click", lambda: close_with("outside"))
+        if width >= 768:
+            step("reopen for outside click", panel_open)
+            step("close outside click", lambda: close_with("outside"))
+        else:
+            # Below 768 px the panel is a full-screen fixed sheet under the header and
+            # header clicks intentionally keep it open: there is no "outside" to click.
+            result["checks"].append({"name": "close outside click", "status": "N/A",
+                                     "note": "full-screen mobile panel; closed by X and Escape above"})
 
         def history():
             page.locator("#model-rows .model-name").first.click()
@@ -227,7 +246,7 @@ def check_case(browser, base, code, kind, width):
         result["failed_requests"] = list(failed)
         result["http_errors"] = list(bad_responses)
         result["navigation_responses"] = list(nav_responses)
-        result["status"] = "PASS" if result["checks"] and all(x["status"] == "PASS" for x in result["checks"]) and not errors and not failed and not bad_responses else "FAIL"
+        result["status"] = "PASS" if result["checks"] and all(x["status"] in ("PASS", "N/A") for x in result["checks"]) and not errors and not failed and not bad_responses else "FAIL"
         context.close()
     return result
 

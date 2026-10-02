@@ -87,3 +87,69 @@ Facts 1926 → 1958, Origins 862 → 869, Evaluations 5846 (без измене�
 
 Рабочий Local SQLite не изменён. Следующий шаг — только после приёмки владельцем этого diff:
 backup рабочей Local, `sync-local --apply`, import/check/qa, тесты и браузерный QA.
+
+## Owner acceptance и рабочий Local (2026-10-02)
+
+Владелец принял diff Release #022 / `v0.19.0` и поручил применить его к рабочему Local,
+подготовить точный Production candidate и остановиться перед Production.
+
+- Backup рабочей Local перед sync: `backups/daily-catalog-20261002-022/aipedia-before-sync-022.sqlite3`
+  (SHA-256 `5036034f…e65a`, integrity ok, 336/156; содержимое каталога идентично первому backup).
+- Release manifests на копии исходного снимка (= публичное состояние Production #021):
+  `data/release/daily-catalog-20261002/catalog_plan.json` SHA-256
+  `bcdf3d752bf21ac45496b17f79ec952e8df5492957f53db8231cae4018532e47` — create 8, number 111,
+  platforms 1, всего 128 writes; `apply-plan` dry-run `pending/applicable`, на второй копии
+  применён («final state matches the plan»), повтор `already applied`.
+  `release_state.json` (корень и `data/release/daily-catalog-20261002/`) SHA-256
+  `60bac5092018ed28ff81143eba2f31ffc157b05ba2e08867823b81f6838fda16`, 343/157; dry-run apply на
+  release-копии и рабочем Local — 0 изменений. `data/catalog_freshness.json` SHA-256
+  `db4bcfeff71961292a2940ecb3143d65ff59a76cb1532269941fda028fe4e36e`: 7 added Models, 1 added Tool.
+- Рабочий Local: `sync-local --apply` 128 changes; план идентичен trial (SHA-256 совпал);
+  `import` — 0 записей кроме 8 Tool Platforms; повторный plan = baseline (0 writable, 0 unsupported);
+  `apply-plan` на рабочем Local — `already applied`. Итог **343 Models / 157 Tools**, номера 1–343 и
+  1–157 непрерывны, integrity `ok`, FK 0, Evaluations 5010 (без изменений). Каталожные строки
+  рабочего Local совпадают с release-копией. `catalog_master check` OK; `catalog_master qa` PASS —
+  0 errors, 17 прежних warnings, quality queue 206.
+- Итоговый master SHA-256 (после `import`, On Local=YES у 8 новых, On Production=NO):
+  `adfa21e69d41fe4c7f8d58e3b4d260774fd392dba3f7624f93c3983a0665332f`.
+- Переводы: по прецеденту #020/#021 daily-выпуск переносит EN/RU; остальные 20 локалей — штатный fallback.
+
+### Catalog Freshness
+
+Snapshot выпуска содержит 8 записей `NEW` (7 Models + AnythingLLM) с фактическими датами релиза.
+Бейджи строк каталога скрыты для всех восьми: правило фактической даты (только сегодняшняя
+дата) не даёт ложного NEW ни Kev, ни AnythingLLM, ни Clef/Strands от 01.10. Механика не менялась.
+Классифицированное расхождение: обновление GitHub Copilot передаётся операцией `platforms`, а
+существующий `snapshot_from_plan` считает `updated` только операции `update` — поэтому в
+popover нет `UPD Copilot`. Механику по поручению не переписывал.
+
+### Исправление вёрстки, найденное в QA
+
+Мобильный браузерный QA обнаружил, что открытый popover свежести при ширине 375–480 px выходит
+за правый край (на Local и **так же на публичном Production #021**: кнопка на x≈238, popover до
+581 px, `scrollWidth` 581). Это существующий дефект #021, не связанный с данными #022 (прежний QA
+его не поймал). Исправлено минимально в `static/site.css` (только `@media (max-width: 480px)`):
+popover привязан к правому краю строки toolbar, а не к кнопке. Проверено 7 маршрутов
+(RU/EN/DE/AR-RTL/JA, Models/Tools) × 10 ширин 320–1440: 0 переполнений; десктоп не затронут.
+
+### Local QA
+
+- `manage.py test catalog --settings=aipedia.test_settings`: 368 tests OK (1 штатный Windows skip);
+  `manage.py check` (local и test settings) — 0 issues; `makemigrations --check` — No changes;
+  `node --check static/site.js` и `git diff --check` — PASS.
+- Браузер (headless Edge, `tools/daily_catalog_browser_qa_2026_10_02.py`): PASS, 44 проверки —
+  RU/EN desktop 1440, RU/EN mobile 375, dark/light; Models 343 / Tools 157; сортировка
+  newest (343 Strands, 342 Clef-flash, 341 Clef, 340 pplx) и oldest (Jurassic-1 Jumbo); поиск по
+  имени, alias `@cf/cloudflare/clef` и `jaredpalmer/kev-9b`; прямые URL всех 7 моделей, AnythingLLM,
+  GitHub Copilot, Cloudflare OS (#147) и сдвинутых Sarvam Vision 2.1 (#325), Gemini 4 Argon (#337),
+  pplx (#340); цены $0.24 / $0.09 / $0 / $50 / $99 и условия «не бесплатный inference»; страна США и
+  флаги; Checks — «Публикуемых независимых результатов для точной версии нет»; Copilot Windows/macOS;
+  popover 8 NEW; 0 JS/page errors, 0 HTTP ≥400, 0 visible overflow. Отчёт и 12 кадров:
+  `artifacts/daily-catalog-20261002-022/browser-qa.json`, `…/browser/`.
+- Locale-switch gate (`docs/RELEASE.md`, обязателен для code release из-за правки CSS):
+  первый прогон показал FAIL во всех случаях на одном шаге «close outside click» — скрипт
+  кликал по `.catalog-counts`, который стал `sr-only` в owner-fix #021 (последний полный
+  88/88 был в #015). Скрипт исправлен: на desktop клик по нейтральной точке каталога вне
+  панели; на 375 px шаг помечен `N/A`, потому что панель — fixed full-screen лист под шапкой,
+  а клики по шапке намеренно не закрывают её (закрытие X и Escape проверяется в том же случае).
+  Результат полного прогона — ниже, в разделе Release candidate.

@@ -1,5 +1,12 @@
 # Текущее состояние AIpedia
 
+## 02.10 — Release #022 / v0.19.0 LOCAL PASS, review — ожидает решения владельца о Production (Claude Code)
+
+- Владелец принял trial diff. Рабочий Local: backup `backups/daily-catalog-20261002-022/aipedia-before-sync-022.sqlite3`; release-plan на копии исходного снимка `data/release/daily-catalog-20261002/catalog_plan.json` (`bcdf3d75…2e47`, 128 writes: create 8 / number 111 / platforms 1), apply-plan на копии и `already applied` на рабочем Local; `sync-local --apply` 128 changes (план = trial), import, повторный plan 0. Итог **343 Models / 157 Tools**, номера непрерывны, integrity ok, FK 0, `check` OK, `qa` PASS (0 errors, queue 206). `release_state.json` `60bac509…da16` 343/157; `catalog_freshness.json` 7+1 NEW.
+- Найдено в QA и исправлено: существующий с #021 (и на публичном Production) overflow мобильного popover свежести при 375–480 px — `static/site.css`, только `@media (max-width: 480px)`; устаревший шаг outside-click в `tools/locale_switch_browser_qa.py` (клик по sr-only счётчику; на 375 px — `N/A`, full-screen панель). Copilot не показан как UPD в popover: существующий `snapshot_from_plan` считает только `kind=update` — классифицировано, механика не менялась.
+- QA: Django 368 OK (1 Windows skip); `manage.py check`, `makemigrations --check`, `node --check`, `git diff --check` PASS; browser QA #022 44/44 PASS; locale-switch 88/88 PASS, 0 console/network/HTTP errors. Отчёт — `docs/history/2026-10-02-daily-catalog-update-022.md`.
+- **Local / GitHub / Production:** Local `127.0.0.1:18810` работает на 343/157; GitHub получит candidate commit этого шага; Production — #021 / `a03d501`, не тронут. **Не завершено:** решение владельца о Production, archive build, серверная фаза, Public QA, tag. **Следующим выполнить:** только после фразы владельца «Публикуем Release #022 / v0.19.0 в Production.» — owner_approved, `build_code_release.py --release-id DAILY-CATALOG-UPDATE-2026-10-02`, server preflight/backup/trial/dry-run/deploy по `docs/RELEASE.md` с `--catalog-plan data/release/daily-catalog-20261002/catalog_plan.json --publication-state data/release_state.json`.
+
 ## 02.10 — Release #022 / v0.19.0 Daily Catalog Update IN PROGRESS (Claude Code)
 
 - До backup, обновления наблюдения Production и изменений master создана карточка `DAILY-CATALOG-UPDATE-2026-10-02`, Release #022 / `v0.19.0`, старт `2026-10-02T18:59:06Z`. `current_local` → #022; `current_production` остаётся #021 / `a03d501b9ed25699c97e336188bd28215d3f1bd2`.

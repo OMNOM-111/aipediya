@@ -12,10 +12,11 @@ targeted public browser smoke; публичный каталог содержи�
 Отчёт — `docs/history/2026-09-30-daily-catalog-update-020.md`.
 
 Release #022 · AIpediya v0.19.0 `Daily Catalog Update — 2 October 2026`
-зарезервирован 2026-10-02 до backup, research и изменений master и находится в
-`in_progress`: Local —, Owner —, Production —. Production остаётся на закрытом
-Release #021 · v0.18.0 (336 Models / 156 Tools) до отдельного одобрения
-владельцем именно #022.
+зарезервирован 2026-10-02 до backup, research и изменений master; после приёмки
+владельцем trial diff применён к рабочему Local и находится в `review`: Local ✓
+(343 Models / 157 Tools), Owner — (Production не разрешена), Production —.
+Production остаётся на закрытом Release #021 · v0.18.0 (336 Models / 156 Tools)
+до отдельного одобрения владельцем именно #022.
 
 Release #020 · AIpediya v0.17.0 `Daily Catalog Update — 30 September 2026`
 закрыт как `done`: Local ✓, Owner ✓, Production ✓. Из текущего canonical master
@@ -79,7 +80,7 @@ Production и автономный HTML. Исторические Local-only з�
 Local-only CSP разрешает встроенные CSS/JS при запрете сетевых соединений;
 Production по-прежнему отвечает 404. На горизонтальной ленте видны только
 пронумерованные Release #001–#022, все по порядку; #018–#021 закрыты с
-Local ✓, Owner ✓ и Production ✓, #022 находится в `in_progress`.
+Local ✓, Owner ✓ и Production ✓, #022 находится в `review`.
 Ненумерованные Local-only и
 плановые записи сохранены в реестре и документах, но не перемежают выпуски.
 

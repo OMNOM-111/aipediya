@@ -1052,7 +1052,12 @@ details summary { font-size: 12px; padding: 7px 0; color: var(--link); cursor: p
 }
 
 @media (max-width: 480px) {
-  .catalog-freshness-popover { inset-inline-start: 0; inset-inline-end: auto; }
+  /* The button may sit at either end of the wrapped toolbar row. Anchor the
+     popover to the row's end, which is always the content edge, so a popover
+     of min(350px, 100vw - 32px) always stays inside the viewport. */
+  .toolbar-end { position: relative; }
+  .catalog-freshness-shell { position: static; }
+  .catalog-freshness-popover { inset-inline-start: auto; inset-inline-end: 0; }
 }
 
 /* Touch screens: no hover, so header filters and search hints must not rely

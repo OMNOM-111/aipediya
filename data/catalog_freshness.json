@@ -1,25 +1,61 @@
 {
  "counts": {
-  "added_models": 2,
+  "added_models": 7,
   "added_tools": 1,
-  "updated_models": 1,
-  "updated_records": 3,
-  "updated_tools": 2
+  "updated_models": 0,
+  "updated_records": 0,
+  "updated_tools": 0
  },
  "entries": [
   {
-   "action": "updated",
-   "name": "GLM-5.3-Flash",
-   "record_id": "glm-53-flash-bdc83193",
+   "action": "added",
+   "name": "Clef",
+   "record_id": "clef-bdc7df20",
    "record_type": "model",
-   "release_date": "",
+   "release_date": "2026-10-01",
    "release_date_approx": false,
-   "release_date_precision": ""
+   "release_date_precision": "day"
   },
   {
    "action": "added",
-   "name": "Gemini 4 Argon",
-   "record_id": "gemini-4-argon-bcdaec0e",
+   "name": "Clef-flash",
+   "record_id": "clef-flash-4eaa2224",
+   "record_type": "model",
+   "release_date": "2026-10-01",
+   "release_date_approx": false,
+   "release_date_precision": "day"
+  },
+  {
+   "action": "added",
+   "name": "Strands Decider 2B",
+   "record_id": "strands-decider-2b-81831af4",
+   "record_type": "model",
+   "release_date": "2026-10-01",
+   "release_date_approx": false,
+   "release_date_precision": "day"
+  },
+  {
+   "action": "added",
+   "name": "Kev-0.8B",
+   "record_id": "kev-0-8b-46011d0e",
+   "record_type": "model",
+   "release_date": "2026-09-24",
+   "release_date_approx": false,
+   "release_date_precision": "day"
+  },
+  {
+   "action": "added",
+   "name": "Kev-4B",
+   "record_id": "kev-4b-2ab542cc",
+   "record_type": "model",
+   "release_date": "2026-09-24",
+   "release_date_approx": false,
+   "release_date_precision": "day"
+  },
+  {
+   "action": "added",
+   "name": "Kev-9B v2",
+   "record_id": "kev-9b-v2-7e1fcef1",
    "record_type": "model",
    "release_date": "2026-09-30",
    "release_date_approx": false,
@@ -27,42 +63,24 @@
   },
   {
    "action": "added",
-   "name": "pplx-embed-v2-context-9b-preview",
-   "record_id": "pplx-embed-v2-context-9b-preview-88e13515",
+   "name": "Kev-27B v2",
+   "record_id": "kev-27b-v2-59a82a0e",
    "record_type": "model",
    "release_date": "2026-09-30",
    "release_date_approx": false,
    "release_date_precision": "day"
   },
   {
-   "action": "updated",
-   "name": "Codex",
-   "record_id": "codex-59301cf4",
-   "record_type": "tool",
-   "release_date": "",
-   "release_date_approx": false,
-   "release_date_precision": ""
-  },
-  {
-   "action": "updated",
-   "name": "Perplexity",
-   "record_id": "perplexity-7a1d922e",
-   "record_type": "tool",
-   "release_date": "",
-   "release_date_approx": false,
-   "release_date_precision": ""
-  },
-  {
    "action": "added",
-   "name": "Cloudflare OS",
-   "record_id": "cloudflare-os-038daad4",
+   "name": "AnythingLLM",
+   "record_id": "anythingllm-90d04ca3",
    "record_type": "tool",
-   "release_date": "2026-08-05",
-   "release_date_approx": false,
+   "release_date": "2023-06-07",
+   "release_date_approx": true,
    "release_date_precision": "day"
   }
  ],
- "release": "release-2026-10-01-daily-catalog-update",
+ "release": "release-2026-10-02-daily-catalog-update",
  "schema": "aipedia-catalog-freshness/1",
- "updated_at_utc": "2026-10-01T17:04:09Z"
+ "updated_at_utc": "2026-10-02T19:41:58Z"
 }
