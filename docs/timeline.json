@@ -1047,7 +1047,8 @@
       "executor": "Claude Code",
       "history": "docs/history/2026-10-02-daily-catalog-update-022.md",
       "release_tag": "release-2026-10-02-daily-catalog-update",
-      "summary": "Release #022 is Local-verified: 343 Models / 157 Tools after the owner-accepted master diff (3 current-window decision models, 4 Kev historical catch-ups, AnythingLLM historical catch-up, GitHub Copilot update) plus a mobile freshness-popover overflow fix. Production remains on Release #021 until the owner explicitly approves this exact release."
+      "summary": "Release #022 is Local-verified: 343 Models / 157 Tools after the owner-accepted master diff (3 current-window decision models, 4 Kev historical catch-ups, AnythingLLM historical catch-up, GitHub Copilot update) plus a mobile freshness-popover overflow fix. Production remains on Release #021 until the owner explicitly approves this exact release.",
+      "revision": "7caa3e7a0730b297eb0335ccbc1badd59cb66213"
     }
   ],
   "product_history": {
@@ -2523,7 +2524,7 @@
         "open": true,
         "progress": "review",
         "release_tag": "release-2026-10-02-daily-catalog-update",
-        "revision": null,
+        "revision": "7caa3e7a0730b297eb0335ccbc1badd59cb66213",
         "executor": "Claude Code",
         "started_utc": "2026-10-02T18:59:06Z",
         "changes": [
@@ -2715,7 +2716,7 @@
       "release_sequence": 22,
       "app_version": "v0.19.0",
       "release_tag": "release-2026-10-02-daily-catalog-update",
-      "revision": null,
+      "revision": "7caa3e7a0730b297eb0335ccbc1badd59cb66213",
       "started_utc": "2026-10-02T18:59:06Z"
     },
     "current_production": {

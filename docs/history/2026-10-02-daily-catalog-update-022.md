@@ -3,7 +3,7 @@
 Дата: 2026-10-02. Исполнитель: Claude Code. Timeline: `DAILY-CATALOG-UPDATE-2026-10-02`,
 Release #022 / `v0.19.0`, tag `release-2026-10-02-daily-catalog-update` (зарезервирован, не создан).
 
-Состояние: `in_progress` — Local —, Owner —, Production —.
+Состояние: `review` — Local ✓ (343 Models / 157 Tools), Owner — (trial diff принят, Production не разрешена), Production — (#021).
 
 ## Baseline (2026-10-02, до изменений)
 
@@ -153,3 +153,25 @@ popover привязан к правому краю строки toolbar, а н�
   панели; на 375 px шаг помечен `N/A`, потому что панель — fixed full-screen лист под шапкой,
   а клики по шапке намеренно не закрывают её (закрытие X и Escape проверяется в том же случае).
   Результат полного прогона — ниже, в разделе Release candidate.
+
+## Release candidate (ожидает решения владельца)
+
+- Release #022 / `v0.19.0`, Timeline `DAILY-CATALOG-UPDATE-2026-10-02`, reserved tag
+  `release-2026-10-02-daily-catalog-update` (создаётся только на опубликованном commit после
+  Production PASS, как в #021).
+- Candidate commit (код + данные + манифесты): `7caa3e7a0730b297eb0335ccbc1badd59cb66213`.
+- Locale-switch gate: **88/88 PASS** (22 локали × Models/Tools × 1440/375), 0 console / network /
+  HTTP errors; на 375 px шаг outside-click `N/A` (44 случая). Отчёт —
+  `artifacts/locale-switch-browser-qa.json` (сведён из 4 партиций `artifacts/daily-catalog-20261002-022/locale-part*.json`).
+- Build gate: `release_history.validate` для #022 даёт только «Candidate missing owner_approved»;
+  с симулированным approval — 0 ошибок. Состав `git archive HEAD` — 411 файлов без SQLite,
+  `.env`, ключей, backups, artifacts и `data/local/`.
+- Серверная фаза после разрешения: `tools/build_code_release.py --release-id
+  DAILY-CATALOG-UPDATE-2026-10-02` на commit с записанным approval, затем по `docs/RELEASE.md`
+  server preflight → backup → release-preflight/trial на снимке Production → dry-run →
+  `deploy_code_release.py <archive> --sha256 <digest> --catalog-plan
+  data/release/daily-catalog-20261002/catalog_plan.json --publication-state data/release_state.json`
+  → `/healthz`, service, integrity/FK, 343/157, `verify-release`, `catalog_master qa --production`,
+  GSD/Production QA, public browser QA. Local SQLite на сервер не копируется.
+
+Production, серверная SQLite, Supervisor, tunnel и публичный HTML не изменялись.
