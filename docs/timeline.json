@@ -1034,6 +1034,20 @@
       ],
       "revision": "a03d501b9ed25699c97e336188bd28215d3f1bd2",
       "production_verified_at": "2026-10-01T20:24:39+00:00"
+    },
+    {
+      "release_id": "DAILY-CATALOG-UPDATE-2026-10-02",
+      "release_sequence": 22,
+      "app_version": "v0.19.0",
+      "title": "Daily Catalog Update — 2 October 2026",
+      "environment": "local",
+      "stage": "in_progress",
+      "status": "IN_PROGRESS",
+      "started_utc": "2026-10-02T18:59:06Z",
+      "executor": "Claude Code",
+      "history": "docs/history/2026-10-02-daily-catalog-update-022.md",
+      "release_tag": "release-2026-10-02-daily-catalog-update",
+      "summary": "Release #022 is reserved before catalog work. The package adds the current-window decision models Clef, Clef-flash and Strands Decider 2B, historical catch-ups for the four Kev 1.0 models and the AnythingLLM Tool, and updates the existing GitHub Copilot record, through canonical master → trial → Local sync → QA. Production requires a separate owner approval of this exact release."
     }
   ],
   "product_history": {
@@ -2470,6 +2484,59 @@
         "production_verified_at": "2026-10-01T20:24:39+00:00",
         "release_report": "docs/history/2026-10-01-daily-catalog-update-021.md",
         "backup": "aipedia-before-code-20261001T200729Z.sqlite3"
+      },
+      {
+        "release_id": "DAILY-CATALOG-UPDATE-2026-10-02",
+        "release_sequence": 22,
+        "app_version": "v0.19.0",
+        "local_verified": false,
+        "owner_approved": false,
+        "production_released": false,
+        "production_verified": false,
+        "date": "2026-10-02",
+        "title_ru": "Ежедневное обновление каталога — 2 октября 2026",
+        "title_en": "Daily Catalog Update — 2 October 2026",
+        "icon": "library-big",
+        "tags_ru": [
+          "Release #022",
+          "v0.19.0",
+          "В работе",
+          "Только Local"
+        ],
+        "tags_en": [
+          "Release #022",
+          "v0.19.0",
+          "In progress",
+          "Local only"
+        ],
+        "capabilities_ru": [
+          "Добавить decision-модели текущего окна Clef, Clef-flash и Strands Decider 2B без ложного генеративного Max Output и без выдачи vendor/self-reported результатов за независимые",
+          "Догнать историю: четыре модели Kev 1.0 с их фактическими датами и Tool AnythingLLM с датой первого публичного существования, а не датой импорта",
+          "Обновить существующий GitHub Copilot (платформы, Computer Use, Dynamic Workflows, Copilot-only retirements) без новых карточек и глобальных архиваций, затем master → trial → Local sync → QA"
+        ],
+        "capabilities_en": [
+          "Add the current-window decision models Clef, Clef-flash and Strands Decider 2B without an invented generative Max Output and without presenting vendor/self-reported results as independent",
+          "Catch up history: the four Kev 1.0 models with their actual dates and the AnythingLLM Tool with its first public existence date, not the import date",
+          "Update the existing GitHub Copilot record (platforms, Computer Use, Dynamic Workflows, Copilot-only retirements) without new cards or global archiving, then run master → trial → Local sync → QA"
+        ],
+        "source": "2026-10-02-daily-catalog-update-022",
+        "open": true,
+        "progress": "in_progress",
+        "release_tag": "release-2026-10-02-daily-catalog-update",
+        "revision": null,
+        "executor": "Claude Code",
+        "started_utc": "2026-10-02T18:59:06Z",
+        "changes": [
+          "Reserve Release #022 / v0.19.0 before canonical master backup, Production observation refresh and research",
+          "Limit scope to Clef, Clef-flash, Strands Decider 2B, Kev 1.0 catch-up, AnythingLLM catch-up and the existing GitHub Copilot record",
+          "Require exact master diff, isolated trial, owner acceptance of the diff, Local sync, browser QA and a separate owner Production approval"
+        ],
+        "qa": {},
+        "owner_decision": "Owner requested preparation of the 2026-10-02 Daily Catalog Update. Production is not authorized until the owner separately approves this exact Release # / SemVer.",
+        "owner_decision_ru": "Владелец поручил подготовить обновление каталога за 02.10. Production не разрешена до отдельного одобрения владельцем именно этого Release # / SemVer.",
+        "owner_decision_en": "The owner requested preparation of the Oct 2 catalog update. Production is not authorized until the owner separately approves this exact Release # / SemVer.",
+        "next_ru": "Backup master и Local, обновить наблюдение Production, проверить дубли и источники, внести master, refresh/check/qa, trial и owner diff.",
+        "next_en": "Back up master and Local, refresh Production observation, check duplicates and sources, edit master, refresh/check/qa, trial and owner diff."
       }
     ],
     "additional_tasks": [
@@ -2640,12 +2707,12 @@
       }
     ],
     "current_local": {
-      "release_id": "DAILY-CATALOG-UPDATE-2026-10-01",
-      "release_sequence": 21,
-      "app_version": "v0.18.0",
-      "release_tag": "release-2026-10-01-daily-catalog-update",
-      "revision": "036de2020bee8ce5859932bf9f9c1c96a9c46719",
-      "started_utc": "2026-10-01T15:55:19Z"
+      "release_id": "DAILY-CATALOG-UPDATE-2026-10-02",
+      "release_sequence": 22,
+      "app_version": "v0.19.0",
+      "release_tag": "release-2026-10-02-daily-catalog-update",
+      "revision": null,
+      "started_utc": "2026-10-02T18:59:06Z"
     },
     "current_production": {
       "release_id": "DAILY-CATALOG-UPDATE-2026-10-01",

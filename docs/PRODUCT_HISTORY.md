@@ -11,6 +11,12 @@ Local/owner gates, server preflight, release-preflight, dry-run, deploy,
 targeted public browser smoke; публичный каталог содержит 334 Models / 155 Tools.
 Отчёт — `docs/history/2026-09-30-daily-catalog-update-020.md`.
 
+Release #022 · AIpediya v0.19.0 `Daily Catalog Update — 2 October 2026`
+зарезервирован 2026-10-02 до backup, research и изменений master и находится в
+`in_progress`: Local —, Owner —, Production —. Production остаётся на закрытом
+Release #021 · v0.18.0 (336 Models / 156 Tools) до отдельного одобрения
+владельцем именно #022.
+
 Release #020 · AIpediya v0.17.0 `Daily Catalog Update — 30 September 2026`
 закрыт как `done`: Local ✓, Owner ✓, Production ✓. Из текущего canonical master
 опубликованы 3 Models и 6 Tools; два неоднозначных Tool оставлены hidden
@@ -72,8 +78,8 @@ Production и автономный HTML. Исторические Local-only з�
 открытии. Для английского маршрута меняется лишь начальная редакция RU/EN.
 Local-only CSP разрешает встроенные CSS/JS при запрете сетевых соединений;
 Production по-прежнему отвечает 404. На горизонтальной ленте видны только
-пронумерованные Release #001–#020, все по порядку; #018, #019 и #020 закрыты с
-Local ✓, Owner ✓ и Production ✓.
+пронумерованные Release #001–#022, все по порядку; #018–#021 закрыты с
+Local ✓, Owner ✓ и Production ✓, #022 находится в `in_progress`.
 Ненумерованные Local-only и
 плановые записи сохранены в реестре и документах, но не перемежают выпуски.
 

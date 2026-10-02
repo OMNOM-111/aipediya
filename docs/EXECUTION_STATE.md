@@ -1,5 +1,12 @@
 # Текущее состояние AIpedia
 
+## 02.10 — Release #022 / v0.19.0 Daily Catalog Update IN PROGRESS (Claude Code)
+
+- До backup, обновления наблюдения Production и изменений master создана карточка `DAILY-CATALOG-UPDATE-2026-10-02`, Release #022 / `v0.19.0`, старт `2026-10-02T18:59:06Z`. `current_local` → #022; `current_production` остаётся #021 / `a03d501b9ed25699c97e336188bd28215d3f1bd2`.
+- Baseline: `HEAD == origin/main == 4a348c7`, дерево чистое; `/healthz` 200 на `a03d501`; Local SQLite 336/156; master SHA-256 `078cad22…c448`, 811 Models (336 PUBLISHED) / 163 Tools (156). Расхождение: Meta `Production Checked` от 2026-09-29 (325/147), у 11 Models и 9 Tools `On Production` устарел — обновить штатным `catalog_master import --production`.
+- Scope: Clef, Clef-flash, Strands Decider 2B (текущее окно); Kev-0.8B/4B/9B v2/27B v2 и AnythingLLM (historical catch-up); существующий GitHub Copilot. Production не разрешена до отдельной команды владельца на #022 / `v0.19.0`.
+- **Изменено:** Timeline/status/history #022. **Не завершено:** backup, research, master, trial, owner diff, Local sync, QA. **Следующим выполнить:** backup master и Local SQLite в `backups/daily-catalog-20261002-022/`, затем `import --production`.
+
 ## 01.10 - Release #021 / v0.18.0 DONE, Production PASS
 
 - Published https://aipediya.com/ on commit `a03d501b9ed25699c97e336188bd28215d3f1bd2`; `/healthz` is HTTP 200 and confirms that exact release, and the `aipedia` service is RUNNING.
