@@ -33,6 +33,37 @@ class CatalogFreshnessSnapshotTests(SimpleTestCase):
              ("model", "updated", "model-old", "Model Old"), ("tool", "updated", "tool-old", "Tool Old")],
         )
 
+    def test_related_row_changes_update_the_existing_card_but_renumbering_does_not(self):
+        plan = {"changes": [
+            {"kind": "create", "sheet": "Models", "id": "kev", "row": {"Name": "Kev", "Exact Release Date": "2026-09-24"}},
+            {"kind": "number", "sheet": "Models", "id": "old-model", "before": 3, "after": 4},
+            {"kind": "number", "sheet": "Models", "id": "kev", "before": None, "after": 3},
+            {"kind": "platforms", "sheet": "Tools", "id": "copilot", "before": ["web"], "after": ["macos"]},
+            {"kind": "offer_new", "sheet": "Offers", "id": "o1", "owner": "tool:copilot"},
+            {"kind": "access_new", "sheet": "Access", "id": "a1", "owner": "model:glm"},
+            {"kind": "evaluation", "sheet": "Evaluations", "id": "e1", "identity": {"model": "gpt"}},
+            {"kind": "service_provider", "sheet": "Offers", "id": "Shared API", "identity": {"name": "Shared API"}},
+            {"kind": "benchmark_category", "sheet": "Evaluations", "id": "Bench", "identity": {"name": "Bench"}},
+        ]}
+        rows = {"Models": [{"Record ID": "glm", "Name": "GLM"}, {"Record ID": "gpt", "Name": "GPT"}],
+                "Tools": [{"Record ID": "copilot", "Name": "GitHub Copilot"}]}
+        snapshot = freshness.snapshot_from_plan(plan, "2026-10-02T00:00:00Z", rows=rows)
+        self.assertEqual(
+            [(item["record_type"], item["action"], item["record_id"], item["name"]) for item in snapshot["entries"]],
+            [("model", "added", "kev", "Kev"), ("tool", "updated", "copilot", "GitHub Copilot"),
+             ("model", "updated", "glm", "GLM"), ("model", "updated", "gpt", "GPT")],
+        )
+        self.assertEqual(snapshot["counts"]["updated_records"], 3)
+
+    def test_recent_release_predicate_uses_confirmed_dates_only(self):
+        from datetime import date
+        today = date(2026, 10, 2)
+        self.assertTrue(freshness.is_recent_release(date(2026, 10, 2), today))
+        self.assertTrue(freshness.is_recent_release(date(2026, 10, 1), today))
+        self.assertFalse(freshness.is_recent_release(date(2026, 9, 30), today))
+        self.assertFalse(freshness.is_recent_release(date(2026, 10, 3), today))
+        self.assertFalse(freshness.is_recent_release(None, today))
+
     def test_code_only_release_does_not_change_freshness_snapshot(self):
         snapshot = {
             "schema": freshness.SCHEMA,

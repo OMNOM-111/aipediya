@@ -54,47 +54,17 @@ function updateFreshnessClock() {
     if (!Number.isNaN(stamp.getTime())) item.textContent = `${localDateLabel(stamp)}, ${localTimeLabel(stamp)}`;
   });
 }
-function badgeIsCurrent(releaseDate, approx, precision) {
-  // NEW/UPD reflects the record's real recency, not when it entered AIpediya.
-  if (!releaseDate || approx === true || approx === "true") return false;
-  if (releaseDate.includes("T")) {
-    const t = Date.parse(releaseDate);
-    if (!Number.isFinite(t)) return false;
-    const delta = Date.now() - t;
-    return delta >= 0 && delta < 24 * 60 * 60 * 1000;
-  }
-  const p = String(precision || "").toLowerCase();
-  if (p && p !== "day") return false;
-  const parts = releaseDate.split("-");
-  if (parts.length < 3) return false;
-  const now = new Date();
-  const pad = (n) => String(n).padStart(2, "0");
-  const todayLocal = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-  return releaseDate === todayLocal;
-}
-function updateBadgeRecency() {
-  document.querySelectorAll(".catalog-update-badge").forEach((badge) => {
-    badge.hidden = !badgeIsCurrent(badge.dataset.badgeReleaseDate, badge.dataset.badgeReleaseApprox === "true", badge.dataset.badgeReleasePrecision);
-  });
-  document.querySelectorAll(".freshness-entry").forEach((li) => {
-    const action = li.querySelector(".freshness-action");
-    // The popover is the immutable current-release snapshot: its NEW/UPD
-    // labels describe this catalog update, independently of product dates.
-    if (action) action.hidden = false;
-  });
-}
-window.aipediaBadgeIsCurrent = badgeIsCurrent;
+// Row NEW badges are rendered by the server from the record's confirmed release
+// date (catalog.freshness.is_recent_release); the client never re-decides them.
 function updateRelativeTimes() {
   document.querySelectorAll("[data-relative-time]").forEach((item) => {
     item.textContent = relativeTimeLabel(item.dataset.updatedAt || "");
   });
 }
 updateFreshnessClock();
-updateBadgeRecency();
 updateRelativeTimes();
-if (catalogFreshness) window.setInterval(() => { updateFreshnessClock(); updateBadgeRecency(); }, 1000);
+if (catalogFreshness) window.setInterval(updateFreshnessClock, 1000);
 if (catalogFreshness) window.setInterval(updateRelativeTimes, 60000);
-window.aipediaUpdateBadgeRecency = updateBadgeRecency;
 
 const freshnessShell = document.querySelector("[data-catalog-freshness]");
 const freshnessButton = freshnessShell?.querySelector(".catalog-freshness");

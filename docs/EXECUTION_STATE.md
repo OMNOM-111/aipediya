@@ -1,5 +1,15 @@
 # Текущее состояние AIpedia
 
+## 02.10 — Release #022 / v0.19.0 owner-fix pass (Claude Code)
+
+- Владелец вернул #022 (P0 Max Output, иконки, ADD/UPD/NEW, flicker, блок 24 ч, fresh research) и заранее разрешил Production именно #022 / `v0.19.0` только после полного PASS. Новый Release не создавался; candidate `7caa3e7` заменён.
+- **Инцидент Max Output:** карточку «Максимум на выходе» добавил commit `036de20` (2026-10-01, Codex, owner-fix #021, опубликован в `a03d501`) вместе с полем данных; требования владельца о публичной карточке для всех моделей не найдено (было только значение Argon 1M). Значение у 1 из 343 моделей, пусто у 207 применимых, неприменимо у 135. Карточка убрана на 22 локалях, сетка 3 колонки, данные сохранены. Решения: `D-2026-10-02-no-unrequested-public-ui`, `D-2026-10-02-catalog-freshness-add-upd-new`.
+- Иконки: Cloudflare (Simple Icons CC0), Strands (официальный favicon), AnythingLLM (официальная плитка из репозитория); Kev — fallback `JP`, официального логотипа нет.
+- Freshness: ADD/UPD в «Последнем обновлении» (Copilot = UPD через связанные строки), отдельный блок «Новые релизы за последние 24 часа», NEW только серверный по подтверждённой дате — flicker устранён.
+- Fresh research: +Tool Cloudflare Web Search API (#158, beta 2026-10-02); xAI `grok-voice-transcribe-1.0` EOL → факты у двух существующих Grok STT Tools; GLM-5.3-Flash остаётся 2026-08-26. Итог Local: **343 Models / 158 Tools**.
+- Release manifests пересобраны: `catalog_plan.json` `436b434b…597f` (create 9 / number 111 / platforms 1), `release_state.json` `76877793…09ff`. Trial и рабочий Local PASS (repeat 0, integrity ok, FK 0, check OK, qa PASS). Local QA-сервер — `127.0.0.1:18813` (launcher привязывается к чужому экземпляру на 18811, он не тронут).
+- **Не завершено на момент записи:** финальный locale gate, full suite после перевода карточки, commit/candidate, серверная фаза. **Следующим выполнить:** закрыть QA, записать Owner ✓, собрать archive и пройти `docs/RELEASE.md`.
+
 ## 02.10 — Release #022 / v0.19.0 LOCAL PASS, review — ожидает решения владельца о Production (Claude Code)
 
 - Владелец принял trial diff. Рабочий Local: backup `backups/daily-catalog-20261002-022/aipedia-before-sync-022.sqlite3`; release-plan на копии исходного снимка `data/release/daily-catalog-20261002/catalog_plan.json` (`bcdf3d75…2e47`, 128 writes: create 8 / number 111 / platforms 1), apply-plan на копии и `already applied` на рабочем Local; `sync-local --apply` 128 changes (план = trial), import, повторный plan 0. Итог **343 Models / 157 Tools**, номера непрерывны, integrity ok, FK 0, `check` OK, `qa` PASS (0 errors, queue 206). `release_state.json` `60bac509…da16` 343/157; `catalog_freshness.json` 7+1 NEW.

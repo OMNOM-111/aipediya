@@ -14,7 +14,7 @@ class MarkFileTests(SimpleTestCase):
             self.assertTrue(mark["svg"] or mark["file"], name)
 
     def test_published_developers_all_have_marks(self):
-        self.assertEqual(len(PUBLISHED_DEVELOPERS), 38)
+        self.assertEqual(len(PUBLISHED_DEVELOPERS), 40)
         for name in PUBLISHED_DEVELOPERS:
             mark = mark_for(name)
             self.assertIsNotNone(mark, name)
@@ -27,6 +27,14 @@ class MarkFileTests(SimpleTestCase):
         self.assertEqual(mark_for("xAI")["svg"] or mark_for("xAI")["file"],
                          mark_for("SpaceXAI / xAI (бренд документации)")["svg"]
                          or mark_for("SpaceXAI / xAI (бренд документации)")["file"])
+
+    def test_release_022_official_marks_and_kev_fallback(self):
+        self.assertIn('fill="#F38020"', str(mark_for("Cloudflare")["svg"]))
+        self.assertIn('#00cc60', str(mark_for("Strands Agents / AWS")["svg"]))
+        self.assertEqual(mark_for("Mintplex Labs Inc", "anythingllm-90d04ca3")["file"], "marks/anythingllm.png")
+        # Kev has no official logo; a personal avatar is not a brand mark.
+        self.assertIsNone(mark_for("Jared Palmer"))
+        self.assertIsNone(mark_for("Mintplex Labs Inc"))
 
     def test_unknown_developer_keeps_the_letter_fallback(self):
         self.assertIsNone(mark_for("No Such Lab"))
@@ -41,7 +49,7 @@ class MarkFileTests(SimpleTestCase):
         self.assertEqual(mark_for("ElevenLabs")["svg"], mark_for("ElevenLabs", "eleven-v4-turbo-6a02a110")["svg"])
         for slug in ("holo4-27b-62d1091f", "holo4-35b-a3b-b9f93a3e", "holotron4-30b-a3b-c0c87f8d"):
             self.assertEqual(mark_for("H Company", slug)["file"], "marks/hcompany.png")
-        self.assertEqual(RECORD_ALIASES, {"cue-77457549": "cue"})
+        self.assertEqual(RECORD_ALIASES, {"cue-77457549": "cue", "anythingllm-90d04ca3": "anythingllm"})
         self.assertIn("<title>Cue</title>", str(mark_for("Manus", "cue-77457549")["svg"]))
         self.assertEqual(mark_for("Manus", "manus-0214c7c8")["file"], "marks/manus.png")
         self.assertNotEqual(

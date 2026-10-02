@@ -1,6 +1,6 @@
 """Catalog freshness snapshot derived from real catalog release plans."""
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from django.conf import settings
@@ -27,31 +27,86 @@ def utc_stamp(value=None):
     return value.isoformat().replace("+00:00", "Z")
 
 
-def snapshot_from_plan(plan, updated_at_utc=None):
-    entries = []
+# Plan operations that change what an existing public card shows. Chronology
+# renumbering ("number") and shared-object metadata (service provider,
+# benchmark category) are not an update of one card; master-only Facts never
+# reach the plan.
+RELATION_KINDS = {"platforms", "offer", "offer_new", "access_new", "access_service", "origin_new",
+                  "evaluation", "evaluation_new", "reassign", "org_country"}
+
+
+def _legacy_tool_slug(slug):
+    try:
+        from .models import Tool
+        return Tool.objects.filter(legacy_version__slug=slug).values_list("slug", flat=True).first()
+    except Exception:  # no database (e.g. a plan read offline)
+        return None
+
+
+def _change_owner(change):
+    """(record_type, record_id) of the existing public card a change updates."""
+    kind = change.get("kind")
+    sheet = change.get("sheet")
+    if kind in {"update", "platforms"} and sheet in {"Models", "Tools"}:
+        return ("model" if sheet == "Models" else "tool", change.get("id", ""))
+    if kind == "org_country":
+        return ("tool" if sheet == "Tools" else "model", change.get("record", ""))
+    owner = (change.get("after") or {}).get("owner") if kind == "reassign" else change.get("owner")
+    if owner and ":" in owner:
+        record_type, _sep, record_id = owner.partition(":")
+        return (record_type, record_id)
+    slug = (change.get("identity") or {}).get("model") or ((change.get("locator") or {}).get("access") or {}).get("model")
+    if slug:
+        tool = _legacy_tool_slug(slug)
+        return ("tool", tool) if tool else ("model", slug)
+    return None
+
+
+def snapshot_from_plan(plan, updated_at_utc=None, rows=None):
+    """ADD/UPD snapshot of one real catalog update.
+
+    ``added``: a new catalog record. ``updated``: an existing public card whose
+    own fields or supported related rows (platforms, prices, access, origin
+    countries, evaluations) changed. It never claims that a product was
+    released now: release recency is :func:`is_recent_release`.
+    """
+    names = {}
+    for sheet, record_type in (("Models", "model"), ("Tools", "tool")):
+        for row in (rows or {}).get(sheet, []):
+            names[(record_type, row.get("Record ID"))] = row.get("Name") or ""
+    entries, seen = [], {}
     for change in plan.get("changes", []):
-        sheet = change.get("sheet")
-        if sheet not in {"Models", "Tools"}:
-            continue
         kind = change.get("kind")
-        if kind == "create":
-            action = "added"
-        elif kind == "update":
-            action = "updated"
+        if kind == "create" and change.get("sheet") in {"Models", "Tools"}:
+            key = ("model" if change["sheet"] == "Models" else "tool", change.get("id", ""))
+            row = change.get("row") or {}
+            exact_date = row.get("Exact Release Date") or ""
+            approx_date = str(row.get("Approx Date") or "").lstrip("\u2248").strip()
+            item = {
+                "record_type": key[0], "action": "added", "record_id": key[1],
+                "name": row.get("Name") or change.get("name") or key[1],
+                "release_date": exact_date or approx_date,
+                "release_date_approx": not bool(exact_date) and bool(approx_date),
+                "release_date_precision": row.get("Approx Precision") or ("day" if exact_date else ""),
+            }
+        elif kind == "update" or kind in RELATION_KINDS:
+            key = _change_owner(change)
+            if not key or not key[1]:
+                continue
+            row = change.get("row") if kind == "update" else None
+            item = {
+                "record_type": key[0], "action": "updated", "record_id": key[1],
+                "name": names.get(key) or (row or {}).get("Name") or change.get("name") or key[1],
+                "release_date": "", "release_date_approx": False, "release_date_precision": "",
+            }
         else:
             continue
-        row = change.get("row") or {}
-        exact_date = row.get("Exact Release Date") or ""
-        approx_date = str(row.get("Approx Date") or "").lstrip("≈").strip()
-        entries.append({
-            "record_type": "model" if sheet == "Models" else "tool",
-            "action": action,
-            "record_id": change.get("id", ""),
-            "name": row.get("Name") or change.get("name") or change.get("id", ""),
-            "release_date": exact_date or approx_date,
-            "release_date_approx": not bool(exact_date) and bool(approx_date),
-            "release_date_precision": row.get("Approx Precision") or ("day" if exact_date else ""),
-        })
+        if key in seen:
+            if seen[key]["action"] == "updated" and item["action"] == "added":
+                seen[key].update(item)
+            continue
+        seen[key] = item
+        entries.append(item)
     counts = {
         "added_models": sum(1 for item in entries if item["record_type"] == "model" and item["action"] == "added"),
         "added_tools": sum(1 for item in entries if item["record_type"] == "tool" and item["action"] == "added"),
@@ -66,6 +121,42 @@ def snapshot_from_plan(plan, updated_at_utc=None):
         "counts": counts,
         "entries": entries,
     }
+
+
+def release_today(now=None):
+    now = now or django_timezone.now()
+    if now.tzinfo is None:
+        now = now.replace(tzinfo=timezone.utc)
+    return now.astimezone(timezone.utc).date()
+
+
+def is_recent_release(released, today=None):
+    """The one predicate for the row NEW badge and the recent-releases list.
+
+    The catalog stores confirmed release *dates* (no times), so a release counts
+    as recent when its exact date is today or yesterday in UTC. Approximate
+    dates never qualify, and the date AIpediya added a record is never used.
+    """
+    if not released:
+        return False
+    today = today or release_today()
+    return 0 <= (today - released).days <= 1
+
+
+def recent_releases(today=None):
+    """Published Models and Tools whose confirmed release date is recent."""
+    from .models import ModelVersion, Tool
+    today = today or release_today()
+    window = (today - timedelta(days=1), today)
+    out = []
+    for record_type, qs in (
+            ("model", ModelVersion.objects.filter(published=True, entry_type="model", released__range=window)),
+            ("tool", Tool.objects.filter(published=True, released__range=window))):
+        for obj in qs.order_by("-released", "name").only("slug", "name", "released"):
+            out.append({"record_type": record_type, "record_id": obj.slug, "name": obj.name,
+                        "release_date": obj.released.isoformat(), "release_date_approx": False,
+                        "release_date_precision": "day"})
+    return out
 
 
 def write_snapshot(snapshot, path=None):
@@ -181,11 +272,12 @@ def context(lang):
         action = item.get("action")
         entries.append({
             **item,
-            "badge": "NEW" if action == "added" else "UPD",
+            "badge": "ADD" if action == "added" else "UPD",
             "action_label": t("catalog_action_added", lang) if action == "added" else t("catalog_action_updated", lang),
             "release_date_label": _release_date_label(item, lang),
         })
     counts = snapshot.get("counts", {})
+    recent = [{**item, "release_date_label": _release_date_label(item, lang)} for item in recent_releases()]
     relative = relative_label(updated_at, lang)
     aria = (f"{t('catalog_latest_update', lang)}. {t('catalog_updated', lang)} {relative}")
     return {
@@ -200,5 +292,6 @@ def context(lang):
         "entries": entries,
         "model_entries": [item for item in entries if item.get("record_type") == "model"],
         "tool_entries": [item for item in entries if item.get("record_type") == "tool"],
+        "recent_releases": recent,
         "aria_label": aria,
     }

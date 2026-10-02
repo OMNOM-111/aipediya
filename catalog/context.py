@@ -5,8 +5,6 @@ from .ui_translations import CATEGORY_TRANSLATIONS, TRANSLATIONS
 
 
 TEXT = {
-    "input_context": ("Входной контекст", "Input context"),
-    "max_output": ("Максимум на выходе", "Max output"),
     "released": ("Релиз", "Release"),
     "release_unknown": ("Дата выпуска не подтверждена", "Release date not verified"),
     "chronology_note": ("№ — порядок по дате выпуска: от старых к новым. При одинаковой дате — по названию. Без подтверждённой даты — без номера, в конце хронологии.", "Numbers follow release dates, oldest first; same-day releases use name order. Unverified dates have no number and appear last in chronology."),
@@ -160,8 +158,14 @@ TEXT = {
     "catalog_added_models": ("Добавлено моделей", "Models added"),
     "catalog_added_tools": ("Добавлено инструментов", "Tools added"),
     "catalog_updated_records": ("Обновлено записей", "Records updated"),
-    "catalog_action_added": ("Добавлена", "Added"),
-    "catalog_action_updated": ("Обновлена", "Updated"),
+    "catalog_action_added": ("Добавлено в каталог", "Added to the catalog"),
+    "catalog_action_updated": ("Обновлено в каталоге", "Updated in the catalog"),
+    "catalog_recent_releases": ("Новые релизы за последние 24 часа", "New releases in the last 24 hours"),
+    "catalog_recent_note": ("По подтверждённой дате релиза (UTC): сегодня или вчера; время релиза каталог не хранит.",
+                            "By confirmed release date (UTC): today or yesterday; release times are not stored."),
+    "catalog_recent_none": ("Нет подтверждённых релизов за эти даты.", "No confirmed releases for these dates."),
+    "catalog_recent_badge_title": ("Релиз по подтверждённой дате — сегодня или вчера (UTC)",
+                                   "Released today or yesterday by confirmed date (UTC)"),
     "catalog_latest_update": ("Последнее обновление", "Latest update"),
     "numbered_by_date": ("с датой выпуска (№)", "with release date (№)"),
     "undated_no_number": ("без подтверждённой даты, без №", "no confirmed date, no №"),

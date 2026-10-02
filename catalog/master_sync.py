@@ -1153,7 +1153,7 @@ def build_release_plan(workbook_rows, changes, master_sha256="", release=""):
     plan = {"schema": PLAN_SCHEMA, "release": release, "master_sha256": master_sha256,
             "changes": serial, "final_numbers": numbers, "final_published": published,
             "counts": {kind: sum(1 for c in serial if c["kind"] == kind) for kind in WRITE_KINDS}}
-    plan["catalog_update"] = freshness.snapshot_from_plan(plan)
+    plan["catalog_update"] = freshness.snapshot_from_plan(plan, rows=workbook_rows)
     return plan
 
 

@@ -3,7 +3,7 @@
 Дата: 2026-10-02. Исполнитель: Claude Code. Timeline: `DAILY-CATALOG-UPDATE-2026-10-02`,
 Release #022 / `v0.19.0`, tag `release-2026-10-02-daily-catalog-update` (зарезервирован, не создан).
 
-Состояние: `review` — Local ✓ (343 Models / 157 Tools), Owner — (trial diff принят, Production не разрешена), Production — (#021).
+Состояние: `review` — Local ✓ (343 Models / 158 Tools после owner-fix pass), Owner ✓ (Production заранее разрешена именно для #022 после полного PASS), Production — (#021) до серверной фазы.
 
 ## Baseline (2026-10-02, до изменений)
 
@@ -175,3 +175,126 @@ popover привязан к правому краю строки toolbar, а н�
   GSD/Production QA, public browser QA. Local SQLite на сервер не копируется.
 
 Production, серверная SQLite, Supervisor, tunnel и публичный HTML не изменялись.
+
+## Owner-fix pass (2026-10-02, после возврата владельцем)
+
+Владелец вернул #022 с замечаниями P0/P1 и заранее разрешил Production именно
+Release #022 / `v0.19.0` только после всех исправлений и полного PASS. Новый
+Release не создавался; карточка #022 возвращена из `review` в `in_progress`.
+Candidate `7caa3e7` из предыдущего раздела **заменён** — после него изменились
+код, данные и документы.
+
+### P0 — инцидент «Максимум на выходе» (forensic)
+
+Обнаружено новое обстоятельство: публичная summary card «Максимум на выходе» /
+`Max output` в Overview каждой Model, у большинства пустая (пример владельца —
+Gemini 3.8 Live).
+
+| Вопрос | Факт / evidence |
+|---|---|
+| Шаблон | `templates/panel.html`, `.stat-grid` в `#tab-overview`, 4-я `article.stat-card`, `{{ ui.max_output }}` |
+| Данные | `ModelVersion.max_output` (`catalog/models.py:48`, миграция `0020_modelversion_max_output`), master колонка `Max Output`, sync `catalog/master_sync.py`, dataset `max_output_tokens` (`catalog/datasets.py`) |
+| CSS / JS / i18n / тесты | `.stat-grid` `repeat(3)`→`repeat(4)` (`static/site.css`); JS нет; `TEXT["max_output"]` и `TEXT["input_context"]` только RU/EN (`catalog/context.py`) → на 20 локалях английские «Max output» / «Input context»; тест `test_model_panel_distinguishes_input_context_and_max_output` |
+| Первый commit | `036de2020bee8ce5859932bf9f9c1c96a9c46719`, 2026-10-01 11:26:16 -0700, «Fix Release 021 owner review defects» (`git log -S max_output`) |
+| Автор / исполнитель | git-автор `Dimon_pro`; исполнитель — Codex (Timeline #021 `executor`, статус «01.10 — Release #021 … owner-fix») |
+| Release / Timeline | Release #021 / `v0.18.0`, `DAILY-CATALOG-UPDATE-2026-10-01`; опубликован в Production в `a03d501` (`036de20` — предок) |
+| Исходное основание | Записанная исполнителем формулировка замечания владельца: «у Gemini 4 Argon отсутствует официальное значение Max Output `1,000,000` tokens в canonical master и Local» (`docs/EXECUTION_STATE.md`, checkpoint #021); Timeline `review_findings` #021 №3; решение `D-2026-10-01-separate-input-context-and-max-output` (о раздельных полях данных). Исходный текст сообщения владельца в репозитории не сохранён. |
+| Явное требование владельца | Значение Max Output для Argon — да (по записи исполнителя). Отдельная публичная summary card — **не найдено**. Показ для всех Model records — **не найдено**. |
+| Показ при Local acceptance | Владелец видел кадр `artifacts/daily-catalog-20261001-021/owner-fixes/browser/01-models-argon-logo-max-output.png` (карточка Argon с `1M`), перед разрешением #021. Что карточка появится и будет пустой у всех остальных моделей, отдельно не показывалось и не согласовывалось. |
+| Production | Да, опубликована побочно в составе #021. |
+| Охват (343 Models) | Значение: 1 (Gemini 4 Argon, 1 000 000); пусто, но понятие применимо (вывод — текст): 207; неприменимо (изображения, видео, аудио, эмбеддинги, решения): 135 |
+| Поле до UI | Поле и UI добавлены одним commit; ранее поля не было. |
+
+**Вывод:** неутверждённое UI-дополнение. **Решение по поручению владельца:**
+карточка удалена из публичного UI на всех 22 локалях (`templates/panel.html`),
+сетка возвращена к 3 колонкам, третий заголовок — к прежнему локализованному
+`context_window` («Контекстное окно» / «Context window» / 20 переводов), ключи
+`max_output` / `input_context` удалены. Сохранено: поле БД, колонка master,
+поле открытого dataset и значение Argon. Новый показ Max Output — только
+отдельным решением владельца (`D-2026-10-02-no-unrequested-public-ui`).
+Исторические отчёты #021 не переписывались. Регрессионный тест:
+`CatalogTests.test_model_panel_has_no_unapproved_max_output_card` (EN/RU/DE/AR,
+значение задано, но не выводится; ровно 3 карточки).
+
+### Иконки
+
+- Clef, Clef-flash, Cloudflare OS, Cloudflare Web Search API — developer mark
+  Cloudflare: CC0-путь Simple Icons `cloudflare` в фирменном `#F38020`
+  (`static/marks/cloudflare.svg`).
+- Strands Decider 2B — официальный `https://strandsagents.com/favicon.svg`
+  (`static/marks/strands.svg`, только добавлен `aria-hidden`).
+- AnythingLLM — product override официальным
+  `Mintplex-Labs/anything-llm/frontend/public/favicon.png` (тёмная плитка с
+  белым глифом, читается в обеих темах; прозрачный `anythingllm.com/icon.png`
+  отклонён: тёмный глиф пропадает на тёмной теме).
+- Kev — собственного логотипа нет: в `jaredpalmer/kev` только шаблонные
+  `next.svg`/`vercel.svg` playground, на Hugging Face — личная фотография
+  автора. Это не brand mark; политика `catalog/marks.py` допускает только
+  официальные марки, поэтому оставлен fallback `JP`.
+
+### Catalog Freshness
+
+- Popover «Последнее обновление»: `ADD` / «Добавлено в каталог» и `UPD` /
+  «Обновлено в каталоге». UPD теперь учитывает изменения связанных строк
+  (platforms, offers, access, origins, evaluations, reassign, org_country);
+  перенумерация, метаданные общих объектов и master-only Facts не дают UPD.
+  Итог #022: ADD — Clef, Clef-flash, Strands Decider 2B, Kev ×4, AnythingLLM,
+  Cloudflare Web Search API; UPD — GitHub Copilot.
+- Новый блок «Новые релизы за последние 24 часа»: по подтверждённой дате
+  релиза (UTC, сегодня или вчера), ≈ даты не участвуют; честная подпись, что
+  время релиза каталог не хранит. Сейчас: Clef, Clef-flash, Strands Decider 2B
+  (2026-10-01), Cloudflare Web Search API (2026-10-02).
+- `NEW` в строке решается один раз на сервере (`is_recent_release`), JS-guard и
+  ежесекундная перепроверка удалены. Причина flicker: сервер рендерил бейдж для
+  всех записей snapshot, а JS скрывал его по дате; строки, пришедшие при
+  навигации и подгрузке, оставались с NEW до следующего тика `setInterval(1000)`.
+- Тесты: `test_related_row_changes_update_the_existing_card_but_renumbering_does_not`,
+  `test_recent_release_predicate_uses_confirmed_dates_only`,
+  `test_row_new_badge_is_server_side_and_follows_the_release_date`.
+- Подписи popover, как и с #018, есть для RU/EN, остальные 20 локалей получают
+  английский fallback штатного `t()`; это существующее ограничение, не новое.
+
+### Fresh research (до 2026-10-02 ~21:00 UTC)
+
+- **Cloudflare Web Search API** — новый PUBLIC Tool `cloudflare-web-search-api-0bb0f08e`,
+  #158, 2026-10-02, beta. Источники:
+  [changelog](https://developers.cloudflare.com/changelog/post/2026-10-02-introducing-web-search-api/),
+  [docs](https://developers.cloudflare.com/web-search/),
+  [providers](https://developers.cloudflare.com/web-search/providers/). Самостоятельный
+  продукт (свой тег changelog, docs, REST `…/ai/websearch/`, binding
+  `env.AI.websearch`), работает через AI Gateway, BYOK; провайдеры Ceramic.ai
+  (по умолчанию, $0.25 / 1 000 запросов), Exa ($7.00), Linkup ($5.00) — прайс
+  провайдера без наценки Cloudflare. **Расхождение:** changelog — ZDR у всех
+  трёх; страница Providers — ZDR No у Exa (записаны оба). Дубля нет;
+  Cloudflare AI Search (RAG) — другая сущность.
+- **xAI** `grok-voice-transcribe-1.0` EOL 2026-10-02, запросы маршрутизируются
+  на `grok-voice-transcribe-2.0` по той же цене
+  ([release notes](https://docs.x.ai/developers/release-notes),
+  [STT docs](https://docs.x.ai/developers/model-capabilities/audio/speech-to-text)).
+  Отдельной Model-записи 1.0/2.0 нет; параметр `model` относится и к REST, и к
+  WebSocket, поэтому в существующие Tools `grok-speech-to-text-cfab200f` и
+  `grok-speech-to-text-streaming-1109f624` добавлен `Facts.release_update`.
+  Продукты активны, архивации нет.
+- **GLM-5.3-Flash** — Z.ai release notes по-прежнему датируют модель
+  2026-08-26; дата не менялась.
+
+### Master → trial → Local (owner-fix)
+
+- Backup: `backups/daily-catalog-20261002-022/owner-fix/master-before-owner-fix.xlsx`
+  (`adfa21e6…332f`), `aipedia-before-owner-fix.sqlite3` (`5665241…e55c`).
+- Master: +1 Tool, +1 Access, +3 Offers, +3 Facts; `refresh` — 1 новый номер
+  (Tool #158), сдвигов нет; `check` OK.
+- Release-plan заново от исходного снимка (= Production #021):
+  `data/release/daily-catalog-20261002/catalog_plan.json` SHA-256
+  `436b434b1d5fad042ddf85c0d53e816197f64ce2f7a5b993d88ec1620cbd597f` — create 9,
+  number 111, platforms 1; на копии 129 writes, «final state matches the plan»,
+  повтор `already applied`; повторный sync plan 0 writable / 0 unsupported;
+  trial `qa` PASS 343/158, 0 errors, queue 206; integrity ok, FK 0.
+- Рабочий Local: sync 1 create, import, повтор 0; `apply-plan` — `already applied`;
+  343 Models / 158 Tools, номера непрерывны; integrity ok, FK 0; `check` OK; `qa` PASS.
+- `release_state.json` SHA-256 `768777935f381e752fa8d4dc66a67167af635a281ef42fe438b0bfc5914409ff`
+  (343/158); `catalog_freshness.json` `356a2430…676f` (9 ADD + 1 UPD).
+- Local-сервер: launcher переиспользовал чужой экземпляр AIpedia на 18811
+  (321/143, другой worktree, `C:\Python312\python.exe tools\serve.py`), который
+  не останавливался; QA выполнен на сервере этого репозитория (`.venv`
+  `tools/serve.py --port 18813`, та же база `data/local/aipedia.sqlite3`).

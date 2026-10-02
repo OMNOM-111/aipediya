@@ -57,21 +57,28 @@ ALIASES = {
     "midjourney": "midjourney",
     "ollama": "ollama",
     "suno": "suno",
+    # Simple Icons CC0 path, Cloudflare orange: https://simpleicons.org/?q=cloudflare
+    "cloudflare": "cloudflare",
+    # Official project icon: https://strandsagents.com/favicon.svg
+    "strands agents / aws": "strands",
 }
 
 # Exact product override for an official product mark. All other entries keep
-# the developer mark. Source: https://cue.im/assets/cue/favicon.svg
+# the developer mark. Sources: https://cue.im/assets/cue/favicon.svg;
+# AnythingLLM https://github.com/Mintplex-Labs/anything-llm/blob/master/frontend/public/favicon.png
 RECORD_ALIASES = {
     "cue-77457549": "cue",
+    "anythingllm-90d04ca3": "anythingllm",
 }
 
-# Exact organization names of every published Local developer (38).
+# Exact organization names of published Local developers that have a mark (40).
 # Used by tests so a renamed Organization cannot silently drop its mark.
 PUBLISHED_DEVELOPERS = (
     "AI Singapore",
     "Anthropic",
     "Black Forest Labs",
     "ByteDance",
+    "Cloudflare",
     "Cohere Labs",
     "Cohere",
     "Cursor",
@@ -98,6 +105,7 @@ PUBLISHED_DEVELOPERS = (
     "Sarvam AI",
     "SpaceXAI / xAI (бренд документации)",
     "Stability AI",
+    "Strands Agents / AWS",
     "Suno",
     "Swiss AI Initiative",
     "Technology Innovation Institute",

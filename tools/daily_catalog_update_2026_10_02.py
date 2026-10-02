@@ -59,6 +59,15 @@ COPILOT_WORKFLOWS = "https://github.blog/changelog/2026-10-01-dynamic-workflows-
 COPILOT_RETIRED = "https://github.blog/changelog/2026-10-02-selected-models-in-github-copilot-deprecated"
 COPILOT_RETIRE_NOTICE = "https://github.blog/changelog/2026-09-16-upcoming-deprecation-of-selected-github-copilot-models"
 
+WEB_SEARCH_CHANGELOG = "https://developers.cloudflare.com/changelog/post/2026-10-02-introducing-web-search-api/"
+WEB_SEARCH_DOCS = "https://developers.cloudflare.com/web-search/"
+WEB_SEARCH_PROVIDERS = "https://developers.cloudflare.com/web-search/providers/"
+WEB_SEARCH_HOWTO = "https://developers.cloudflare.com/web-search/how-to-use/"
+XAI_RELEASE_NOTES = "https://docs.x.ai/developers/release-notes"
+XAI_STT_DOCS = "https://docs.x.ai/developers/model-capabilities/audio/speech-to-text"
+
+WEB_SEARCH_ID = "cloudflare-web-search-api-0bb0f08e"
+XAI_STT_IDS = ("grok-speech-to-text-cfab200f", "grok-speech-to-text-streaming-1109f624")
 CLEF_ID = "clef-bdc7df20"
 FLASH_ID = "clef-flash-4eaa2224"
 STRANDS_ID = "strands-decider-2b-81831af4"
@@ -448,8 +457,81 @@ class Update(BaseUpdate):
                 keep.append(row)
         self.rows["Tool Platforms"] = keep
 
+    # ------------------------------------------------------------ owner fix pass (2026-10-02)
+    def apply_web_search(self):
+        """Cloudflare Web Search API beta (2026-10-02): a standalone API product
+        with its own docs, endpoint and changelog product tag, like the xAI
+        Speech to Text API Tools; not a capability of an existing card."""
+        self.main("Tools", WEB_SEARCH_ID, {
+            "Status": "PUBLISHED", "Publication Decision": "PUBLIC", "Name": "Cloudflare Web Search API",
+            "Developer": "Cloudflare", "Exact Release Date": "2026-10-02",
+            "Reason": "Самостоятельный API-продукт Cloudflare (beta) с отдельной документацией, REST endpoint и продуктовым тегом changelog; не функция существующей карточки.",
+            "Decision Code": "CURRENT_RELEASE", "Decision Date": DAY,
+            "Decision Sources": " | ".join((WEB_SEARCH_CHANGELOG, WEB_SEARCH_DOCS, WEB_SEARCH_PROVIDERS)),
+            "Aliases": "Web Search API", "Official Source": WEB_SEARCH_CHANGELOG, "Secondary Source": WEB_SEARCH_DOCS,
+            "Last Verified": DAY, "On Local": "NO", "On Production": "NO",
+            "Notes": "%s Beta 2026-10-02. Работает через AI Gateway (логи, оплата кредитами AI Gateway по прайсу провайдера без наценки Cloudflare) или BYOK. "
+                     "Провайдеры Ceramic.ai (по умолчанию), Exa, Linkup. Расхождение официальных страниц: changelog утверждает ZDR у всех трёх провайдеров, "
+                     "страница Providers — ZDR Yes у Ceramic.ai и Linkup, No у Exa; в Facts записаны обе формулировки. Проверено Cloudflare AI Search (RAG) — другая сущность." % MARK,
+            "Version": "beta", "Category": "api_service", "Purposes": "search; retrieval; agents",
+            "Local Execution": "no", "Official URL": WEB_SEARCH_DOCS, "Platforms": "api", "Catalog Status": "active",
+            "Developer Country": "USA",
+            "Description EN": "Cloudflare Web Search API (beta) lets AI agents and applications search the web through AI Gateway and get structured results from Ceramic.ai, Exa or Linkup to ground model responses in live information.",
+            "Description RU": "Cloudflare Web Search API (beta) позволяет AI-агентам и приложениям искать в интернете через AI Gateway и получать структурированные результаты Ceramic.ai, Exa или Linkup, чтобы опирать ответы моделей на актуальные данные.",
+            "Ecosystem EN": "AI Gateway (logs, unified billing), Workers AI binding env.AI.websearch, REST API; providers Ceramic.ai, Exa and Linkup; bring your own provider key",
+            "Ecosystem RU": "AI Gateway (логи, единая оплата), Workers AI binding env.AI.websearch, REST API; провайдеры Ceramic.ai, Exa и Linkup; можно использовать собственный ключ провайдера",
+            "Source Title": "Introducing Web Search API", "Source URL": WEB_SEARCH_CHANGELOG, "Source Publisher": "Cloudflare",
+            "Checked (DB)": DAY,
+            "Release Evidence (JSON)": json_text({"checked": DAY, "date_text": "2026-10-02", "precision": "day", "date_kind": "beta_launch",
+                                                  "source_url": WEB_SEARCH_CHANGELOG, "docs": WEB_SEARCH_DOCS}),
+            "Research Date Hint": "2026-10-02 (day)",
+            "Import Sources (unverified)": " | ".join((WEB_SEARCH_CHANGELOG, WEB_SEARCH_DOCS, WEB_SEARCH_PROVIDERS)),
+            "Import Batch": BATCH,
+        })
+        self.access("access-022-web-search-rest", "tool", WEB_SEARCH_ID, "Cloudflare Web Search API", "api",
+                    WEB_SEARCH_HOWTO, "Cloudflare", "cloud", WEB_SEARCH_CHANGELOG)
+        for slug, provider, amount, primary in (("ceramic", "Ceramic.ai", "0.25", "YES"), ("exa", "Exa", "7.00", "NO"),
+                                                ("linkup", "Linkup", "5.00", "NO")):
+            key = "offer-022-web-search-%s" % slug
+            self.aux("Offers", key, {
+                "Key": key, "Record Type": "tool", "Record ID": WEB_SEARCH_ID, "Service": "Cloudflare Web Search API",
+                "Service Kind": "api", "Service URL": WEB_SEARCH_HOWTO, "Provider": "Cloudflare", "Compute Location": "cloud",
+                "Amount": amount, "Unit": "other", "Billing Unit": "1000 запросов",
+                "Conditions EN": "Beta; %s provider (provider=%s), list price per 1,000 requests billed to AI Gateway credits with no Cloudflare markup; with your own key the provider bills you directly." % (provider, slug),
+                "Conditions RU": "Beta; провайдер %s (provider=%s), прайс провайдера за 1 000 запросов из кредитов AI Gateway без наценки Cloudflare; с собственным ключом оплата напрямую провайдеру." % (provider, slug),
+                "Conditions Extra (JSON)": "", "Primary": primary, "Active": "YES", "Source URL": WEB_SEARCH_PROVIDERS,
+                "Checked": DAY, "Research Key": "release022:web-search:%s:1k-requests" % slug,
+            })
+        self.fact("fact-022-web-search-capabilities", "tool", WEB_SEARCH_ID, "release_update", {
+            "checked": DAY, "launched": "2026-10-02", "status": "beta",
+            "access": ["REST POST /client/v4/accounts/{account_id}/ai/websearch/", "Workers AI binding env.AI.websearch"],
+            "runs_through": "AI Gateway (logs, AI Gateway credits)", "byok": True, "default_provider": "Ceramic.ai",
+            "providers": {"ceramic": {"zdr": True, "usd_per_1k_requests": 0.25}, "exa": {"zdr": False, "usd_per_1k_requests": 7.0},
+                          "linkup": {"zdr": True, "usd_per_1k_requests": 5.0}},
+            "zdr_discrepancy": "Changelog: all three providers support ZDR for requests through Cloudflare; Providers page: Exa Zero Data Retention = No.",
+            "verified_bot_commitment": True, "not_ai_search": "Cloudflare AI Search (RAG) is a different product",
+        }, WEB_SEARCH_PROVIDERS)
+
+    def apply_xai_stt(self):
+        """grok-voice-transcribe-1.0 EOL (2026-10-02): the Speech to Text API
+        products continue; only their underlying model slug is retired."""
+        for record_id in XAI_STT_IDS:
+            row = next(r for r in self.rows["Tools"] if r.get("Record ID") == record_id)
+            self.main("Tools", record_id, {
+                "Last Verified": DAY,
+                "Notes": self.note(row, MARK, "%s 2026-10-02: grok-voice-transcribe-1.0 достиг EOL, запросы к этому slug маршрутизируются на grok-voice-transcribe-2.0 (по умолчанию с 2026-09-17) по той же цене. Продукт API активен; это не закрытие семейства и не новая карточка." % MARK),
+            })
+            self.fact("fact-022-%s-transcribe-eol" % record_id, "tool", record_id, "release_update", {
+                "checked": DAY, "effective_date": "2026-10-02", "retired_model": "grok-voice-transcribe-1.0",
+                "routed_to": "grok-voice-transcribe-2.0", "same_price": True, "default_since": "2026-09-17",
+                "applies_to": ["REST /v1/stt", "WebSocket wss://api.x.ai/v1/stt"],
+                "product_status_changed": False, "not_a_family_archive": True,
+            }, XAI_RELEASE_NOTES)
+
     def apply(self):
         self.drop_platform_rows()
+        self.apply_web_search()
+        self.apply_xai_stt()
         self.apply_clef()
         self.apply_strands()
         self.apply_kev()

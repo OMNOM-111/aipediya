@@ -1042,12 +1042,12 @@
       "title": "Daily Catalog Update — 2 October 2026",
       "environment": "local",
       "stage": "review",
-      "status": "LOCAL_QA_PASS",
+      "status": "OWNER_APPROVED",
       "started_utc": "2026-10-02T18:59:06Z",
       "executor": "Claude Code",
       "history": "docs/history/2026-10-02-daily-catalog-update-022.md",
       "release_tag": "release-2026-10-02-daily-catalog-update",
-      "summary": "Release #022 is Local-verified: 343 Models / 157 Tools after the owner-accepted master diff (3 current-window decision models, 4 Kev historical catch-ups, AnythingLLM historical catch-up, GitHub Copilot update) plus a mobile freshness-popover overflow fix. Production remains on Release #021 until the owner explicitly approves this exact release.",
+      "summary": "Release #022 is Local-verified and owner-approved: 343 Models / 158 Tools, owner-fix pass complete (unapproved Max output card removed, ADD/UPD/NEW freshness semantics, official marks, Cloudflare Web Search API, xAI STT EOL facts). Production runs only through docs/RELEASE.md.",
       "revision": "7caa3e7a0730b297eb0335ccbc1badd59cb66213"
     }
   ],
@@ -2491,7 +2491,7 @@
         "release_sequence": 22,
         "app_version": "v0.19.0",
         "local_verified": true,
-        "owner_approved": false,
+        "owner_approved": true,
         "production_released": false,
         "production_verified": false,
         "date": "2026-10-02",
@@ -2501,14 +2501,14 @@
         "tags_ru": [
           "Release #022",
           "v0.19.0",
-          "Local ✓ — 343 / 157",
-          "Ожидает решения о Production"
+          "Local ✓ — 343 / 158",
+          "Owner ✓ — Production разрешена"
         ],
         "tags_en": [
           "Release #022",
           "v0.19.0",
-          "Local ✓ — 343 / 157",
-          "Awaiting Production decision"
+          "Local ✓ — 343 / 158",
+          "Owner ✓ — Production authorized"
         ],
         "capabilities_ru": [
           "Добавить decision-модели текущего окна Clef, Clef-flash и Strands Decider 2B без ложного генеративного Max Output и без выдачи vendor/self-reported результатов за независимые",
@@ -2524,24 +2524,32 @@
         "open": true,
         "progress": "review",
         "release_tag": "release-2026-10-02-daily-catalog-update",
-        "revision": "7caa3e7a0730b297eb0335ccbc1badd59cb66213",
+        "revision": null,
         "executor": "Claude Code",
         "started_utc": "2026-10-02T18:59:06Z",
         "changes": [
-          "Added Clef, Clef-flash and Strands Decider 2B (2026-10-01 decision models): no generative Max Output, vendor/self-reported results kept as developer_reported facts, Workers AI prices $0.24 and $0.09 per 1M input tokens",
-          "Historical catch-ups: Kev-0.8B and Kev-4B (2026-09-24), Kev-27B v2 and Kev-9B v2 (2026-09-30) as Models #323/#324/#338/#339, and AnythingLLM (≈2023-06-07) as Tool #60; 14 Model and 97 Tool numbers shifted chronologically with Record IDs and URLs unchanged",
-          "Updated the existing GitHub Copilot record with desktop/windows/macos platforms, Computer Use and Dynamic Workflows facts and Copilot-only model retirements, without new cards or global archiving",
-          "Fixed the pre-existing mobile (≤480 px) Catalog Freshness popover overflow by anchoring it to the toolbar row end; desktop unchanged",
-          "Repaired the locale-switch browser gate outside-click step, stale since the Release #021 sr-only counter; N/A on the full-screen 375 px panel"
+          "Added Clef, Clef-flash and Strands Decider 2B (2026-10-01 decision models) and Cloudflare Web Search API (2026-10-02 beta, Tool #158) with official sources, prices and no invented generative Max Output",
+          "Historical catch-ups: Kev-0.8B and Kev-4B (2026-09-24), Kev-27B v2 and Kev-9B v2 (2026-09-30) as Models #323/#324/#338/#339 and AnythingLLM (≈2023-06-07) as Tool #60; 14 Model and 97 Tool numbers shifted chronologically with Record IDs and URLs unchanged",
+          "Updated GitHub Copilot (desktop/windows/macos platforms, Computer Use, Dynamic Workflows, Copilot-only retirements) and recorded the xAI grok-voice-transcribe-1.0 EOL on both Grok Speech to Text Tools without archiving",
+          "Removed the unapproved 'Max output' summary card added in 036de20 (Release #021) from every locale, restored the localized three-card Overview and kept the data field (D-2026-10-02-no-unrequested-public-ui)",
+          "Catalog Freshness: ADD/UPD for the catalog update including related-row updates, a separate 'New releases in the last 24 hours' block by confirmed release date, and a single server-side NEW predicate without flicker (D-2026-10-02-catalog-freshness-add-upd-new)",
+          "Official marks for Cloudflare, Strands and AnythingLLM (Kev keeps the letter fallback: no official logo); mobile freshness popover kept inside 320–480 px; locale gate outside-click step repaired"
         ],
         "qa": {
-          "local": "PASS: owner-accepted trial diff applied to working Local via release-plan/apply-plan copy and sync-local (128 writes, identical to trial); repeat plan 0; 343 Models / 157 Tools with contiguous numbers; SQLite integrity ok, FK 0; catalog_master check OK, qa PASS (0 errors, queue 206); release_state 343/157 dry-run 0 changes; Django 368 tests OK (1 Windows skip); manage.py check, makemigrations --check, node --check, git diff --check PASS; Release #022 browser QA 44 checks PASS (RU/EN desktop, RU/EN 375, dark/light, new/changed cards, search, newest/oldest, prices, flags, checks, 8 NEW popover, row badges date-guarded, 0 overflow, 0 JS/HTTP errors); locale-switch gate 88/88 PASS, 0 console/network/HTTP errors."
+          "local": "PASS: master check OK, qa PASS (0 errors, queue 206); release-plan from the Production-equivalent snapshot (create 9 / number 111 / platforms 1) applied on a copy, repeat 0 writable / 0 unsupported, integrity ok, FK 0; working Local 343 Models / 158 Tools, apply-plan already applied; release_state 343/158 dry-run 0; Django 372 tests; Release #022 browser QA 59 checks + 44 flicker steps PASS (RU/EN, desktop/tablet/ultrawide/375, dark/light, AR RTL, new/changed cards, marks, no Max output, ADD/UPD/NEW, 24h block, popover 320–1440); locale-switch gate 88/88 PASS; 0 console/network/HTTP errors."
         },
-        "owner_decision": "Owner accepted the Release #022 trial diff on 2026-10-02 and asked for working Local sync, QA and an exact Production candidate. Production is not yet authorized.",
-        "owner_decision_ru": "Владелец принял trial diff Release #022 02.10.2026 и поручил sync рабочего Local, QA и точный Production candidate. Production пока не разрешена.",
-        "owner_decision_en": "The owner accepted the Release #022 trial diff on Oct 2, 2026 and requested working Local sync, QA and an exact Production candidate. Production is not yet authorized.",
-        "next_ru": "Ждать явной команды владельца «Публикуем Release #022 / v0.19.0 в Production.»; затем owner_approved, сборка архива и серверная фаза по docs/RELEASE.md.",
-        "next_en": "Wait for the owner's explicit command to publish Release #022 / v0.19.0; then owner_approved, archive build and the server phase per docs/RELEASE.md."
+        "owner_decision": "2026-10-02: the owner pre-authorized Production for exactly Release #022 / v0.19.0 after every listed fix and a complete Local/release PASS; all listed gates passed.",
+        "owner_decision_ru": "02.10.2026 владелец заранее разрешил Production именно Release #022 / v0.19.0 после всех исправлений и полного Local/release PASS; все перечисленные gates пройдены.",
+        "owner_decision_en": "On Oct 2, 2026 the owner pre-authorized Production for exactly Release #022 / v0.19.0 after every fix and a complete Local/release PASS; all listed gates passed.",
+        "next_ru": "Собрать archive из финального commit, пройти server preflight, backup, release-preflight, dry-run, deploy и public QA; закрыть карточку только при полном PASS.",
+        "next_en": "Build the archive from the final commit, run server preflight, backup, release-preflight, dry-run, deploy and public QA; close the card only after a complete PASS.",
+        "review_findings": [
+          "P0: unapproved public 'Max output' summary card on every Model panel (added in 036de20, Release #021); forensic audit, then remove from UI and keep the data field",
+          "Official icons for Clef, Clef-flash, Strands Decider 2B, AnythingLLM; verify Kev assets without inventing a logo",
+          "Catalog Freshness: ADD/UPD for the catalog update, Copilot relation update counted as UPD, single canonical NEW predicate without flicker, separate 'new releases in the last 24 hours' block",
+          "Fresh research to the current time: Cloudflare Web Search API beta, xAI grok-voice-transcribe-1.0 EOL, GLM-5.3-Flash date",
+          "Keep and re-verify the mobile freshness popover fix at 320–480 px, RU/EN/AR"
+        ]
       }
     ],
     "additional_tasks": [

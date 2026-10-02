@@ -53,25 +53,66 @@ class CatalogTests(TestCase):
             self.assertContains(response, "Обновлено")
             self.assertContains(response, "31 мин назад")
             self.assertContains(response, "Модели · 2")
-            self.assertContains(response, "NEW")
-            self.assertContains(response, "UPD")
+            self.assertContains(response, ">ADD<")
+            self.assertContains(response, ">UPD<")
             self.assertContains(response, "Qwen3-8B")
             self.assertContains(response, "catalog-update-row catalog-update-added")
+            self.assertContains(response, "Новые релизы за последние 24 часа")
             self.assertEqual(response.context["catalog_freshness"]["counts"]["updated_records"], 1)
             english = self.client.get("/")
             self.assertContains(english, "Updated")
             self.assertContains(english, "31 min ago")
             self.assertContains(english, f'datetime="{stamp}"')
 
-    def test_model_panel_distinguishes_input_context_and_max_output(self):
+    def test_row_new_badge_is_server_side_and_follows_the_release_date(self):
+        today = freshness.release_today()
+        recent = ModelVersion.objects.get(slug="qwen3-8b")
+        old = ModelVersion.objects.get(slug="flux-1-schnell")
+        recent.released, recent.approx_released = today - timedelta(days=1), None
+        old.released, old.approx_released = today - timedelta(days=8), None
+        recent.save(update_fields=["released", "approx_released"])
+        old.save(update_fields=["released", "approx_released"])
+        # A record added today but released long ago is in the ADD snapshot,
+        # yet it is never NEW; the server renders the final state (no JS hide).
+        stamp = freshness.utc_stamp(timezone.now() - timedelta(minutes=5))
+        snapshot = {"schema": freshness.SCHEMA, "release": "t", "updated_at_utc": stamp,
+                    "counts": {"added_models": 1, "added_tools": 0, "updated_models": 0, "updated_tools": 0, "updated_records": 0},
+                    "entries": [{"record_type": "model", "action": "added", "record_id": "flux-1-schnell", "name": "FLUX"}]}
+        with tempfile.TemporaryDirectory() as tmp, override_settings(
+            AIPEDIA_CATALOG_FRESHNESS_PATH=str(Path(tmp) / "freshness.json")
+        ):
+            freshness.write_snapshot(snapshot)
+            html = self.client.get("/?q=qwen3-8b").content.decode()
+            self.assertIn('catalog-update-badge catalog-update-badge-added', html)
+            self.assertNotIn('data-badge-release-date', html)
+            html = self.client.get("/?q=FLUX.1").content.decode()
+            self.assertNotIn('catalog-update-badge', html)
+            self.assertIn('catalog-update-row catalog-update-added', html)
+            page = self.client.get("/ru/").content.decode()
+            recent_block = page.split('freshness-recent-list', 1)[1].split('</ul>', 1)[0]
+            self.assertIn("Qwen3-8B", recent_block)
+            self.assertNotIn("FLUX", recent_block)
+
+    def test_model_panel_has_no_unapproved_max_output_card(self):
+        # Incident 2026-10-02 (D-2026-10-02-no-unrequested-public-ui): the
+        # "Max output" summary card was never requested by the owner. The data
+        # field stays in the catalog and open dataset, but no locale shows it.
         model = ModelVersion.objects.get(slug="qwen3-8b")
-        model.context = None
         model.max_output = 1_000_000
-        model.save(update_fields=["context", "max_output"])
-        response = self.client.get("/models/qwen3-8b")
-        self.assertContains(response, "Input context")
-        self.assertContains(response, "Max output")
-        self.assertContains(response, "1M")
+        model.save(update_fields=["max_output"])
+        model.refresh_from_db()
+        self.assertEqual(model.max_output, 1_000_000)
+        for path, heading in (("/models/qwen3-8b", "Context window"), ("/ru/models/qwen3-8b", "Контекстное окно"),
+                              ("/de/models/qwen3-8b", None), ("/ar/models/qwen3-8b", None)):
+            response = self.client.get(path)
+            self.assertEqual(response.status_code, 200)
+            html = response.content.decode()
+            for text in ("Max output", "Максимум на выходе", "Input context", "arrow-up-to-line"):
+                self.assertNotIn(text, html, path)
+            overview = html.split('id="tab-overview"', 1)[1].split('class="panel-block"', 1)[0]
+            self.assertEqual(overview.count('class="stat-card"'), 3, path)
+            if heading:
+                self.assertIn(heading, overview)
 
     def test_search_category_task_access(self):
         self.assertEqual(self.names({"q": "qWeN"}), ["qwen3-8b"])

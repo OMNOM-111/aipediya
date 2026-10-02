@@ -1,10 +1,10 @@
 {
  "counts": {
   "added_models": 7,
-  "added_tools": 1,
+  "added_tools": 2,
   "updated_models": 0,
-  "updated_records": 0,
-  "updated_tools": 0
+  "updated_records": 1,
+  "updated_tools": 1
  },
  "entries": [
   {
@@ -71,6 +71,15 @@
    "release_date_precision": "day"
   },
   {
+   "action": "updated",
+   "name": "GitHub Copilot",
+   "record_id": "github-copilot-179ab1d0",
+   "record_type": "tool",
+   "release_date": "",
+   "release_date_approx": false,
+   "release_date_precision": ""
+  },
+  {
    "action": "added",
    "name": "AnythingLLM",
    "record_id": "anythingllm-90d04ca3",
@@ -78,9 +87,18 @@
    "release_date": "2023-06-07",
    "release_date_approx": true,
    "release_date_precision": "day"
+  },
+  {
+   "action": "added",
+   "name": "Cloudflare Web Search API",
+   "record_id": "cloudflare-web-search-api-0bb0f08e",
+   "record_type": "tool",
+   "release_date": "2026-10-02",
+   "release_date_approx": false,
+   "release_date_precision": "day"
   }
  ],
  "release": "release-2026-10-02-daily-catalog-update",
  "schema": "aipedia-catalog-freshness/1",
- "updated_at_utc": "2026-10-02T19:41:58Z"
+ "updated_at_utc": "2026-10-02T21:23:35Z"
 }

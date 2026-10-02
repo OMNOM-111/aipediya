@@ -356,6 +356,11 @@ textarea { width: 100%; resize: vertical; }
 .freshness-section { margin-top: 7px; color: var(--muted); font-size: 11px; font-weight: 650; }
 .freshness-section:first-child { margin-top: 0; }
 .freshness-action { color: var(--mint-text); font-size: 10px; font-weight: 700; letter-spacing: 0; }
+.freshness-action-updated { color: var(--text-soft); }
+.freshness-recent { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); }
+.freshness-recent .freshness-list { max-height: min(150px, calc(100vh - 330px)); }
+.freshness-update-list { max-height: min(260px, calc(100vh - 330px)); }
+.freshness-empty { color: var(--muted); font-size: 12px; }
 .freshness-name { min-width: 0; line-height: 1.25; white-space: normal; overflow-wrap: normal; word-break: normal; }
 .freshness-release-date { justify-self: end; color: var(--muted); font-size: 11px; line-height: 1.25; text-align: end; white-space: nowrap; }
 .catalog-update-badge {
@@ -363,9 +368,6 @@ textarea { width: 100%; resize: vertical; }
   border: 1px solid rgba(126, 243, 222, .22); color: var(--mint-text);
   font-size: 7px; line-height: 1; font-weight: 700; opacity: .64; transform: translateY(-.18em);
 }
-.catalog-update-badge-updated { border-color: var(--line-strong); color: var(--text-soft); }
-.catalog-update-badge[hidden], .freshness-action[hidden] { display: none; }
-.freshness-entry:has(.freshness-action[hidden]) { grid-template-columns: minmax(0, 1fr) auto; }
 .catalog-page.is-catalog-freshness-open tr.catalog-update-row {
   background: linear-gradient(90deg, rgba(94, 234, 212, .08), transparent 42%);
 }
@@ -811,7 +813,7 @@ a.model-name:hover .model-title { color: var(--mint-text); }
   color: var(--text); box-shadow: inset 0 -2px 0 var(--mint);
 }
 
-.stat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
+.stat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
 .stat-card {
   display: flex; flex-direction: column; gap: 0;
   border: 1px solid var(--line); border-radius: var(--r-card); padding: 12px;

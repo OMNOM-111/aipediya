@@ -13,8 +13,15 @@ targeted public browser smoke; публичный каталог содержи�
 
 Release #022 · AIpediya v0.19.0 `Daily Catalog Update — 2 October 2026`
 зарезервирован 2026-10-02 до backup, research и изменений master; после приёмки
-владельцем trial diff применён к рабочему Local и находится в `review`: Local ✓
-(343 Models / 157 Tools), Owner — (Production не разрешена), Production —.
+владельцем trial diff применён к рабочему Local, затем возвращён владельцем с
+P0/P1 замечаниями и после owner-fix pass находится в `review`: Local ✓
+(343 Models / 158 Tools), Owner ✓ (Production заранее разрешена именно для #022
+после полного PASS), Production — до серверной фазы. Owner-fix pass выявил
+инцидент: публичная карточка «Максимум на выходе» была добавлена в #021 commit
+`036de20` без требования владельца; она удалена, данные сохранены
+(`D-2026-10-02-no-unrequested-public-ui`), семантика свежести разделена на
+ADD/UPD, NEW и «Новые релизы за последние 24 часа»
+(`D-2026-10-02-catalog-freshness-add-upd-new`).
 Production остаётся на закрытом Release #021 · v0.18.0 (336 Models / 156 Tools)
 до отдельного одобрения владельцем именно #022.
 

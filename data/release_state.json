@@ -3263,7 +3263,7 @@
  },
  "public": {
   "models": 343,
-  "tools": 157
+  "tools": 158
  },
  "release": "release-2026-10-02-daily-catalog-update",
  "schema": "aipedia-publication-state/1",
@@ -3366,6 +3366,10 @@
   },
   "cloudflare-os-038daad4": {
    "public_number": 147,
+   "published": true
+  },
+  "cloudflare-web-search-api-0bb0f08e": {
+   "public_number": 158,
    "published": true
   },
   "clova-studio-e224eeb3": {

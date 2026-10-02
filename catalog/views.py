@@ -251,18 +251,18 @@ def _catalog_freshness(lang):
 
 
 def _mark_catalog_update(items, catalog_freshness, record_type):
+    from . import freshness
     entries = catalog_freshness.get("entries", []) if catalog_freshness else []
     info = {item["record_id"]: item for item in entries if item.get("record_type") == record_type}
+    today = freshness.release_today()
     for item in items:
         entry = info.get(item.slug)
-        action = entry.get("action") if entry else ""
-        item.catalog_update_action = action or ""
-        item.catalog_update_badge = "NEW" if action == "added" else ("UPD" if action == "updated" else "")
-        # Badge lifetime is decided client-side from the record's own release
-        # date; recency is not when it entered AIpediya.
-        item.catalog_update_release_date = (entry or {}).get("release_date", "")
-        item.catalog_update_release_approx = bool((entry or {}).get("release_date_approx", False))
-        item.catalog_update_release_precision = (entry or {}).get("release_date_precision", "")
+        # ADD/UPD of the latest catalog update only highlights the row while
+        # the popover is open; it is never shown as a badge.
+        item.catalog_update_action = (entry or {}).get("action", "")
+        # NEW is decided once, on the server, from the record's own confirmed
+        # release date: no client-side re-evaluation, so no flicker.
+        item.is_recent_release = freshness.is_recent_release(getattr(item, "released", None), today)
 
 
 def _number_page(qs, number, descending=False):
