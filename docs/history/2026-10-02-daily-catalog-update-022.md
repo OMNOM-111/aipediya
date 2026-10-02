@@ -3,7 +3,7 @@
 Дата: 2026-10-02. Исполнитель: Claude Code. Timeline: `DAILY-CATALOG-UPDATE-2026-10-02`,
 Release #022 / `v0.19.0`, tag `release-2026-10-02-daily-catalog-update` (зарезервирован, не создан).
 
-Состояние: `review` — Local ✓ (343 Models / 158 Tools после owner-fix pass), Owner ✓ (Production заранее разрешена именно для #022 после полного PASS), Production — (#021) до серверной фазы.
+Состояние: `done` — Local ✓, Owner ✓, Production ✓ (343 Models / 158 Tools).
 
 ## Baseline (2026-10-02, до изменений)
 
@@ -298,3 +298,50 @@ Gemini 3.8 Live).
   (321/143, другой worktree, `C:\Python312\python.exe tools\serve.py`), который
   не останавливался; QA выполнен на сервере этого репозитория (`.venv`
   `tools/serve.py --port 18813`, та же база `data/local/aipedia.sqlite3`).
+
+### Local QA (финал owner-fix)
+
+- Django catalog suite: 372 tests OK (1 штатный Windows skip); `manage.py check`,
+  `makemigrations --check`, `node --check static/site.js`, `git diff --check` — PASS.
+- Browser QA #022 (`tools/daily_catalog_browser_qa_2026_10_02.py --base http://127.0.0.1:18813`):
+  PASS, 59 проверок + 44 шага NEW-flicker (Models ↔ Tools ×3, back/forward,
+  поиск, infinite load; 1440 и 375; MutationObserver до скриптов страницы — ни
+  одного NEW на несвежей записи и ни одного скрытия бейджа). Отсутствие
+  «Максимум на выходе» и ровно 3 stat cards на RU/EN/DE/AR, в том числе Gemini 3.8 Live
+  и Gemini 4 Argon; марки; цены; страны; Checks; popover 320–1440 RU/EN/AR без
+  overflow; tablet 768, ultrawide 2560; 0 JS/HTTP ошибок. Отчёт —
+  `artifacts/daily-catalog-20261002-022/owner-fix/browser-qa.json`.
+- Locale-switch gate 88/88 PASS (4 партиции), 0 console/network/HTTP ошибок.
+
+## Production release result (authoritative)
+
+Владелец заранее разрешил Production именно Release #022 / `v0.19.0` после всех
+исправлений и полного PASS; все условия выполнены.
+
+- Candidate `8a4fe86a75ebcb5d2548aa57fdd8f6517058407d`, ревизия записана в
+  `f46cc435c10effcf9b4815e689f22f07378093ca`; archive `aipedia-code-f46cc435c10e.zip`, SHA-256 `ed9e725f1852692165cb4c9b3507cb5670fc7d49757a0fb84b099a73d8b4cb14`, 415 файлов, без SQLite/секретов/backups/artifacts
+  (master XLSX — штатный tracked-файл, как в #021).
+- Server: preflight PASS (`/srv/aipedia`, сервис `aipedia`); upload в `/tmp/aipedia-*`
+  с проверкой SHA-256; release-preflight PASS — изолированный trial на снимке
+  Production: plan pending → 129 writes, final state matches the plan, 343/158,
+  integrity ok, FK 0, `production_database_untouched`; deploy dry-run PASS;
+  deploy PASS (`copied_sqlite: false`, backup
+  `/srv/aipedia/backups/aipedia-before-code-20261002T220728Z.sqlite3`).
+- После выпуска: `/healthz` 200, `environment=production`, release `f46cc435c10effcf9b4815e689f22f07378093ca`;
+  Supervisor `aipedia` RUNNING; `catalog` — 343 Models / 158 Tools, номера
+  непрерывны, integrity ok, FK 0; `verify-release` PASS, problems [], только
+  ожидаемые catalog-таблицы; `catalog_master qa --production` PASS (0 errors,
+  queue 206); GSD public 34/34; Production QA 1659/1659 (698 запросов,
+  `artifacts/daily-catalog-20261002-022/owner-fix/production-qa.json`); публичный
+  browser QA 59 проверок + 44 шага flicker PASS, 0 JS/network ошибок
+  (`…/owner-fix/production-browser/browser-qa.json`).
+- `tools/finalize_release_history.py` закрыл ту же карточку #022 (Production ✓,
+  `current_production`). StratForge, tunnel, DNS и секреты не затрагивались.
+
+### Остатки вне выпуска (реальные)
+
+- Подписи popover свежести (и прочие строки `catalog/context.py` `TEXT`) заданы для
+  RU/EN; 20 локалей получают английский fallback — так с #018. Следующий шаг —
+  отдельная задача перевода по решению владельца.
+- Max Output сохранён только как данные (1 значение — Gemini 4 Argon). Публичный
+  показ — только отдельным решением владельца.

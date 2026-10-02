@@ -1040,21 +1040,22 @@
       "release_sequence": 22,
       "app_version": "v0.19.0",
       "title": "Daily Catalog Update — 2 October 2026",
-      "environment": "local",
-      "stage": "review",
-      "status": "OWNER_APPROVED",
+      "environment": "production",
+      "stage": "released",
+      "status": "RELEASED",
       "started_utc": "2026-10-02T18:59:06Z",
       "executor": "Claude Code",
       "history": "docs/history/2026-10-02-daily-catalog-update-022.md",
       "release_tag": "release-2026-10-02-daily-catalog-update",
       "summary": "Release #022 is Local-verified and owner-approved: 343 Models / 158 Tools, owner-fix pass complete (unapproved Max output card removed, ADD/UPD/NEW freshness semantics, official marks, Cloudflare Web Search API, xAI STT EOL facts). Production runs only through docs/RELEASE.md.",
-      "revision": "8a4fe86a75ebcb5d2548aa57fdd8f6517058407d"
+      "revision": "f46cc435c10effcf9b4815e689f22f07378093ca",
+      "production_verified_at": "2026-10-02T22:13:18+00:00"
     }
   ],
   "product_history": {
     "visibility": "Local only; no owner authentication exists for this page on Production",
-    "production_evidence": "docs/history/2026-10-01-daily-catalog-update-021.md",
-    "production_verified_at": "2026-10-01T13:24:39-07:00",
+    "production_evidence": "docs/history/2026-10-02-daily-catalog-update-022.md",
+    "production_verified_at": "2026-10-02T22:13:18+00:00",
     "milestones": [
       {
         "release_id": "release-2026-09-20-chronology",
@@ -2492,8 +2493,8 @@
         "app_version": "v0.19.0",
         "local_verified": true,
         "owner_approved": true,
-        "production_released": false,
-        "production_verified": false,
+        "production_released": true,
+        "production_verified": true,
         "date": "2026-10-02",
         "title_ru": "Ежедневное обновление каталога — 2 октября 2026",
         "title_en": "Daily Catalog Update — 2 October 2026",
@@ -2501,14 +2502,14 @@
         "tags_ru": [
           "Release #022",
           "v0.19.0",
-          "Local ✓ — 343 / 158",
-          "Owner ✓ — Production разрешена"
+          "Local ✓ · Owner ✓ · Production ✓",
+          "343 Models / 158 Tools"
         ],
         "tags_en": [
           "Release #022",
           "v0.19.0",
-          "Local ✓ — 343 / 158",
-          "Owner ✓ — Production authorized"
+          "Local ✓ · Owner ✓ · Production ✓",
+          "343 Models / 158 Tools"
         ],
         "capabilities_ru": [
           "Добавить decision-модели текущего окна Clef, Clef-flash и Strands Decider 2B без ложного генеративного Max Output и без выдачи vendor/self-reported результатов за независимые",
@@ -2521,10 +2522,10 @@
           "Update the existing GitHub Copilot record (platforms, Computer Use, Dynamic Workflows, Copilot-only retirements) without new cards or global archiving, then run master → trial → Local sync → QA"
         ],
         "source": "2026-10-02-daily-catalog-update-022",
-        "open": true,
-        "progress": "review",
+        "open": false,
+        "progress": "done",
         "release_tag": "release-2026-10-02-daily-catalog-update",
-        "revision": "8a4fe86a75ebcb5d2548aa57fdd8f6517058407d",
+        "revision": "f46cc435c10effcf9b4815e689f22f07378093ca",
         "executor": "Claude Code",
         "started_utc": "2026-10-02T18:59:06Z",
         "changes": [
@@ -2536,20 +2537,24 @@
           "Official marks for Cloudflare, Strands and AnythingLLM (Kev keeps the letter fallback: no official logo); mobile freshness popover kept inside 320–480 px; locale gate outside-click step repaired"
         ],
         "qa": {
-          "local": "PASS: master check OK, qa PASS (0 errors, queue 206); release-plan from the Production-equivalent snapshot (create 9 / number 111 / platforms 1) applied on a copy, repeat 0 writable / 0 unsupported, integrity ok, FK 0; working Local 343 Models / 158 Tools, apply-plan already applied; release_state 343/158 dry-run 0; Django 372 tests; Release #022 browser QA 59 checks + 44 flicker steps PASS (RU/EN, desktop/tablet/ultrawide/375, dark/light, AR RTL, new/changed cards, marks, no Max output, ADD/UPD/NEW, 24h block, popover 320–1440); locale-switch gate 88/88 PASS; 0 console/network/HTTP errors."
+          "local": "PASS: master check OK, qa PASS (0 errors, queue 206); release-plan from the Production-equivalent snapshot (create 9 / number 111 / platforms 1) applied on a copy, repeat 0 writable / 0 unsupported, integrity ok, FK 0; working Local 343 Models / 158 Tools, apply-plan already applied; release_state 343/158 dry-run 0; Django 372 tests; Release #022 browser QA 59 checks + 44 flicker steps PASS (RU/EN, desktop/tablet/ultrawide/375, dark/light, AR RTL, new/changed cards, marks, no Max output, ADD/UPD/NEW, 24h block, popover 320–1440); locale-switch gate 88/88 PASS; 0 console/network/HTTP errors.",
+          "production": "PASS: /healthz f46cc43, service RUNNING, integrity ok, FK 0, 343/158 continuous; verify-release PASS; catalog_master qa --production PASS; GSD public 34/34; Production QA 1659/1659; public browser QA 59 checks + 44 flicker steps PASS; artifacts/daily-catalog-20261002-022/owner-fix/production-qa.json"
         },
         "owner_decision": "2026-10-02: the owner pre-authorized Production for exactly Release #022 / v0.19.0 after every listed fix and a complete Local/release PASS; all listed gates passed.",
         "owner_decision_ru": "02.10.2026 владелец заранее разрешил Production именно Release #022 / v0.19.0 после всех исправлений и полного Local/release PASS; все перечисленные gates пройдены.",
         "owner_decision_en": "On Oct 2, 2026 the owner pre-authorized Production for exactly Release #022 / v0.19.0 after every fix and a complete Local/release PASS; all listed gates passed.",
-        "next_ru": "Собрать archive из финального commit, пройти server preflight, backup, release-preflight, dry-run, deploy и public QA; закрыть карточку только при полном PASS.",
-        "next_en": "Build the archive from the final commit, run server preflight, backup, release-preflight, dry-run, deploy and public QA; close the card only after a complete PASS.",
+        "next_ru": "Выпуск закрыт; следующий пакет — только по новой задаче владельца.",
+        "next_en": "Release closed; the next package only on a new owner task.",
         "review_findings": [
           "P0: unapproved public 'Max output' summary card on every Model panel (added in 036de20, Release #021); forensic audit, then remove from UI and keep the data field",
           "Official icons for Clef, Clef-flash, Strands Decider 2B, AnythingLLM; verify Kev assets without inventing a logo",
           "Catalog Freshness: ADD/UPD for the catalog update, Copilot relation update counted as UPD, single canonical NEW predicate without flicker, separate 'new releases in the last 24 hours' block",
           "Fresh research to the current time: Cloudflare Web Search API beta, xAI grok-voice-transcribe-1.0 EOL, GLM-5.3-Flash date",
           "Keep and re-verify the mobile freshness popover fix at 320–480 px, RU/EN/AR"
-        ]
+        ],
+        "production_verified_at": "2026-10-02T22:13:18+00:00",
+        "release_report": "docs/history/2026-10-02-daily-catalog-update-022.md",
+        "backup": "aipedia-before-code-20261002T220728Z.sqlite3"
       }
     ],
     "additional_tasks": [
@@ -2728,14 +2733,14 @@
       "started_utc": "2026-10-02T18:59:06Z"
     },
     "current_production": {
-      "release_id": "DAILY-CATALOG-UPDATE-2026-10-01",
-      "release_sequence": 21,
-      "app_version": "v0.18.0",
-      "release_tag": "release-2026-10-01-daily-catalog-update",
-      "revision": "a03d501b9ed25699c97e336188bd28215d3f1bd2",
-      "confirmed_at": "2026-10-01T20:24:39+00:00",
-      "evidence": "1659/1659 PASS; artifacts/daily-catalog-20261001-021/production-qa.json",
-      "source": "docs/history/2026-10-01-daily-catalog-update-021.md"
+      "release_id": "DAILY-CATALOG-UPDATE-2026-10-02",
+      "release_sequence": 22,
+      "app_version": "v0.19.0",
+      "release_tag": "release-2026-10-02-daily-catalog-update",
+      "revision": "f46cc435c10effcf9b4815e689f22f07378093ca",
+      "confirmed_at": "2026-10-02T22:13:18+00:00",
+      "evidence": "1659/1659 PASS; artifacts/daily-catalog-20261002-022/owner-fix/production-qa.json",
+      "source": "docs/history/2026-10-02-daily-catalog-update-022.md"
     }
   }
 }

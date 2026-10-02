@@ -1,5 +1,25 @@
 # Current published release
 
+**Daily Catalog Update, Release #022 / v0.19.0** was published on 2026-10-02.
+Verified Production release commit:
+`f46cc435c10effcf9b4815e689f22f07378093ca`; tag
+`release-2026-10-02-daily-catalog-update`. Archive `aipedia-code-f46cc435c10e.zip`, SHA-256
+`ed9e725f1852692165cb4c9b3507cb5670fc7d49757a0fb84b099a73d8b4cb14`. Server preflight, release-preflight
+(isolated trial on the Production snapshot: 129 writes, final state matches the
+plan), dry-run, deploy, `/healthz`, service/catalog, `verify-release`,
+`catalog_master qa --production`, GSD Public 34/34, Production QA 1659/1659 and
+the Release #022 public browser QA (59 checks + 44 NEW-flicker steps, RU/EN,
+desktop/tablet/ultrawide/375, dark/light, AR RTL) all PASS. Production contains
+343 Models / 158 Tools. Rollback backup for the catalog change:
+`/srv/aipedia/backups/aipedia-before-code-20261002T220728Z.sqlite3`. Report:
+`docs/history/2026-10-02-daily-catalog-update-022.md`; Timeline #022 is closed.
+The Release includes the owner-fix pass: the unapproved Max output card from
+#021 was removed (`D-2026-10-02-no-unrequested-public-ui`) and Catalog Freshness
+uses ADD/UPD, NEW and a recent-releases block
+(`D-2026-10-02-catalog-freshness-add-upd-new`).
+
+## Previous published release — Release #021 / v0.18.0
+
 **Daily Catalog Update, Release #021 / v0.18.0** was published on 2026-10-01.
 Verified Production release commit:
 `a03d501b9ed25699c97e336188bd28215d3f1bd2`; tag

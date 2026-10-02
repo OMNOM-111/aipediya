@@ -1,5 +1,12 @@
 # Текущее состояние AIpedia
 
+## 02.10 — Release #022 / v0.19.0 DONE, Production PASS (Claude Code)
+
+- Опубликовано https://aipediya.com/ на commit `f46cc435c10effcf9b4815e689f22f07378093ca` (candidate `8a4fe86` + запись ревизии); archive `aipedia-code-f46cc435c10e.zip`, SHA-256 `ed9e725f1852692165cb4c9b3507cb5670fc7d49757a0fb84b099a73d8b4cb14`. `/healthz` 200 подтверждает этот release, программа `aipedia` RUNNING. Local SQLite не копировалась.
+- Production: 343 Models / 158 Tools, номера непрерывны, integrity ok, FK 0; release-preflight trial на снимке Production PASS (129 writes); `verify-release` против `aipedia-before-code-20261002T220728Z.sqlite3` PASS без problems. `catalog_master qa --production` PASS (queue 206); GSD public 34/34; Production QA 1659/1659; публичный browser QA #022 59 проверок + 44 шага flicker PASS, 0 JS/network ошибок.
+- Master: наблюдение Production обновлено read-only — `Production Checked 2026-10-02T22:13:53Z`, release `f46cc43`, sitemap 343/158; все PUBLISHED YES/YES.
+- **Local / GitHub / Production:** Local `data/local/aipedia.sqlite3` 343/158 (QA-сервер этого репозитория на 18813; чужой экземпляр на 18811 не тронут); GitHub `main` и tag `release-2026-10-02-daily-catalog-update` на опубликованном commit; Production = #022. **Не завершено:** по #022 ничего. Реальные остатки вне выпуска: подписи popover свежести и прочие строки `TEXT` только RU/EN (английский fallback на 20 локалях, существовало с #018) — отдельная задача перевода по решению владельца; публичный показ Max Output для моделей с официальным значением — только отдельным решением владельца. **Следующим выполнить:** только новые поручения владельца.
+
 ## 02.10 — Release #022 / v0.19.0 owner-fix pass (Claude Code)
 
 - Владелец вернул #022 (P0 Max Output, иконки, ADD/UPD/NEW, flicker, блок 24 ч, fresh research) и заранее разрешил Production именно #022 / `v0.19.0` только после полного PASS. Новый Release не создавался; candidate `7caa3e7` заменён.

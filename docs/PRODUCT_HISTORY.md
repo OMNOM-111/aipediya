@@ -3,7 +3,9 @@
 ## Версии и обязательный выпускной шлюз
 
 **No Timeline → No Release.** Подтверждённые Production-вехи получили
-Release #001–#020; текущий опубликованный baseline — Release #020 · AIpediya
+Release #001–#022; текущий опубликованный baseline — Release #022 · AIpediya
+v0.19.0 (`release-2026-10-02-daily-catalog-update`, `f46cc435c10e`, 343 Models /
+158 Tools). Предыдущий baseline — Release #020 · AIpediya
 v0.17.0, `release-2026-09-30-daily-catalog-update`, deployed release id
 `1f412c70634713f8dbf2ea10ee47115fef997450`. Daily Catalog Update прошёл
 Local/owner gates, server preflight, release-preflight, dry-run, deploy,
@@ -15,8 +17,8 @@ Release #022 · AIpediya v0.19.0 `Daily Catalog Update — 2 October 2026`
 зарезервирован 2026-10-02 до backup, research и изменений master; после приёмки
 владельцем trial diff применён к рабочему Local, затем возвращён владельцем с
 P0/P1 замечаниями и после owner-fix pass находится в `review`: Local ✓
-(343 Models / 158 Tools), Owner ✓ (Production заранее разрешена именно для #022
-после полного PASS), Production — до серверной фазы. Owner-fix pass выявил
+(343 Models / 158 Tools), Owner ✓, Production ✓ — закрыт как `done` после
+полного Public QA (1659/1659, GSD 34/34, browser QA PASS). Owner-fix pass выявил
 инцидент: публичная карточка «Максимум на выходе» была добавлена в #021 commit
 `036de20` без требования владельца; она удалена, данные сохранены
 (`D-2026-10-02-no-unrequested-public-ui`), семантика свежести разделена на
@@ -86,8 +88,8 @@ Production и автономный HTML. Исторические Local-only з�
 открытии. Для английского маршрута меняется лишь начальная редакция RU/EN.
 Local-only CSP разрешает встроенные CSS/JS при запрете сетевых соединений;
 Production по-прежнему отвечает 404. На горизонтальной ленте видны только
-пронумерованные Release #001–#022, все по порядку; #018–#021 закрыты с
-Local ✓, Owner ✓ и Production ✓, #022 находится в `review`.
+пронумерованные Release #001–#022, все по порядку; #018–#022 закрыты с
+Local ✓, Owner ✓ и Production ✓; #022 закрыт так же.
 Ненумерованные Local-only и
 плановые записи сохранены в реестре и документах, но не перемежают выпуски.
 
