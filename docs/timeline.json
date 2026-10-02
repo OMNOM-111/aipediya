@@ -1048,7 +1048,7 @@
       "history": "docs/history/2026-10-02-daily-catalog-update-022.md",
       "release_tag": "release-2026-10-02-daily-catalog-update",
       "summary": "Release #022 is Local-verified and owner-approved: 343 Models / 158 Tools, owner-fix pass complete (unapproved Max output card removed, ADD/UPD/NEW freshness semantics, official marks, Cloudflare Web Search API, xAI STT EOL facts). Production runs only through docs/RELEASE.md.",
-      "revision": "7caa3e7a0730b297eb0335ccbc1badd59cb66213"
+      "revision": "8a4fe86a75ebcb5d2548aa57fdd8f6517058407d"
     }
   ],
   "product_history": {
@@ -2524,7 +2524,7 @@
         "open": true,
         "progress": "review",
         "release_tag": "release-2026-10-02-daily-catalog-update",
-        "revision": null,
+        "revision": "8a4fe86a75ebcb5d2548aa57fdd8f6517058407d",
         "executor": "Claude Code",
         "started_utc": "2026-10-02T18:59:06Z",
         "changes": [
@@ -2724,7 +2724,7 @@
       "release_sequence": 22,
       "app_version": "v0.19.0",
       "release_tag": "release-2026-10-02-daily-catalog-update",
-      "revision": "7caa3e7a0730b297eb0335ccbc1badd59cb66213",
+      "revision": "8a4fe86a75ebcb5d2548aa57fdd8f6517058407d",
       "started_utc": "2026-10-02T18:59:06Z"
     },
     "current_production": {
