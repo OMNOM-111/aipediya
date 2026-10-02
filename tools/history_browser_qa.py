@@ -77,7 +77,7 @@ def check_page(browser, url, width, screenshot):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--base", default="http://127.0.0.1:18811")
+    parser.add_argument("--base", default="http://127.0.0.1:18810")
     parser.add_argument("--out", default="artifacts/history-015-browser-qa.json")
     args = parser.parse_args()
     targets = [("live", args.base.rstrip("/") + "/ru/history/"),

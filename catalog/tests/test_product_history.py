@@ -13,7 +13,7 @@ class ProductHistoryTests(SimpleTestCase):
         cards = product["milestones"]
         by_id = {row["release_id"]: row for row in cards}
         self.assertEqual(len(by_id), len(cards))
-        self.assertEqual(len(cards), 30)
+        self.assertEqual(len(cards), 31)
         self.assertEqual(product["current_production"]["release_sequence"], 22)
         self.assertEqual(product["current_production"]["app_version"], "v0.19.0")
         self.assertEqual(by_id["release-2026-09-28-reconciliation-cleanup"]["revision"],
@@ -251,6 +251,7 @@ class ProductHistoryTests(SimpleTestCase):
         self.assertNotIn('data-history-open="ORGANIC-SEARCH-FOLLOWUP-2026-09-30"', page)
         self.assertIn('data-history-open="ORGANIC-SEARCH-GROWTH-CHECK-2026-10-07"', page)
         self.assertNotIn('data-history-open="HISTORY-LOCAL-SHELL-2026-09-29"', page)
+        self.assertNotIn('data-history-open="LOCAL-CANONICAL-2026-10-02"', page)
         self.assertEqual(page.count('data-history-source-template='), 32)
         self.assertEqual(page.count('class="ph-environment ph-local"'), 2)
         self.assertEqual(page.count('class="ph-environment ph-production"'), 2)

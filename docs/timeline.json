@@ -1050,6 +1050,15 @@
       "summary": "Release #022 is Local-verified and owner-approved: 343 Models / 158 Tools, owner-fix pass complete (unapproved Max output card removed, ADD/UPD/NEW freshness semantics, official marks, Cloudflare Web Search API, xAI STT EOL facts). Production runs only through docs/RELEASE.md.",
       "revision": "f46cc435c10effcf9b4815e689f22f07378093ca",
       "production_verified_at": "2026-10-02T22:13:18+00:00"
+    },
+    {
+      "release_id": "LOCAL-CANONICAL-2026-10-02",
+      "title": "One canonical Local on 127.0.0.1:18810",
+      "environment": "local",
+      "stage": "local",
+      "status": "COMPLETED_LOCAL",
+      "revision": null,
+      "history": "docs/history/2026-10-02-daily-catalog-update-022.md"
     }
   ],
   "product_history": {
@@ -2555,6 +2564,45 @@
         "production_verified_at": "2026-10-02T22:13:18+00:00",
         "release_report": "docs/history/2026-10-02-daily-catalog-update-022.md",
         "backup": "aipedia-before-code-20261002T220728Z.sqlite3"
+      },
+      {
+        "release_id": "LOCAL-CANONICAL-2026-10-02",
+        "local_verified": true,
+        "owner_approved": false,
+        "production_released": false,
+        "production_verified": false,
+        "date": "2026-10-02",
+        "title_ru": "Один канонический Local",
+        "title_en": "One canonical Local",
+        "icon": "monitor-check",
+        "tags_ru": [
+          "Local-only",
+          "127.0.0.1:18810",
+          "Без Release #"
+        ],
+        "tags_en": [
+          "Local-only",
+          "127.0.0.1:18810",
+          "No Release #"
+        ],
+        "capabilities_ru": [
+          "Идентифицировать и остановить только временные AIpedia-серверы 18811/18813 этой сессии",
+          "Launcher открывает только Local этого репозитория на 18810, без отката на другой порт",
+          "Smoke canonical Local и read-only проверка Production #022"
+        ],
+        "capabilities_en": [
+          "Identify and stop only this session's temporary AIpedia servers on 18811/18813",
+          "The launcher opens only this repository's Local on 18810, with no port fallback",
+          "Smoke the canonical Local and read-only check Production #022"
+        ],
+        "revision": null,
+        "source": "2026-10-02-daily-catalog-update-022",
+        "open": false,
+        "progress": "done",
+        "executor": "Claude Code",
+        "qa": {
+          "local": "Canonical Local 127.0.0.1:18810 (main, data/local/aipedia.sqlite3): 343 Models / 158 Tools, integrity ok, FK 0; Release #022 browser smoke 59 checks + 44 NEW-flicker steps PASS, 0 console/network errors; launcher negative test with a temporary foreign instance on 18811 PASS (ignored, not stopped by the launcher); Production read-only f46cc43, 343/158, GSD 34/34."
+        }
       }
     ],
     "additional_tasks": [

@@ -16,8 +16,12 @@ $DbFile = Join-Path $LocalDir 'aipedia.sqlite3'
 $SecretFile = Join-Path $LocalDir 'secret.key'
 $Python = Join-Path $Root '.venv\Scripts\python.exe'
 $LockFile = Join-Path $Root 'requirements.lock'
-$PreferredPort = 18810
-if ($env:AIPEDIA_LOCAL_PORT -match '^\d+$') { $PreferredPort = [int]$env:AIPEDIA_LOCAL_PORT}
+# One canonical Local: this repository, its data\local SQLite, 127.0.0.1:18810.
+# AIPEDIA_LOCAL_PORT is only for an explicit temporary QA run (18810-18819);
+# the launcher never adopts or falls back to another port or worktree.
+$CanonicalPort = 18810
+$Port = $CanonicalPort
+if ($env:AIPEDIA_LOCAL_PORT -match '^\d+$') { $Port = [int]$env:AIPEDIA_LOCAL_PORT }
 
 New-Item -ItemType Directory -Force -Path $LocalDir, $LogDir | Out-Null
 
@@ -54,32 +58,53 @@ function Read-Health([int]$Port) {
     } catch { return $null }
 }
 
-function Test-OurLocal([int]$Port) {
+function Test-AIpediaLocal([int]$Port) {
     $health = Read-Health $Port
     return [bool]($health -and $health.service -eq 'aipedia' -and $health.environment -eq 'local')
 }
 
+function Get-ServeCommands([int]$ProcessId) {
+    # The listener may be the base interpreter started by the .venv shim, so
+    # check the process and its parent.
+    $commands = @()
+    try {
+        $p = Get-CimInstance Win32_Process -Filter "ProcessId=$ProcessId"
+        if ($p) {
+            $commands += [string]$p.CommandLine
+            $parent = Get-CimInstance Win32_Process -Filter "ProcessId=$($p.ParentProcessId)" -ErrorAction SilentlyContinue
+            if ($parent) { $commands += [string]$parent.CommandLine }
+        }
+    } catch {}
+    return $commands
+}
+
+function Test-ThisProjectLocal([int]$Port) {
+    # Ours only when /healthz is an AIpedia Local AND the listening process runs
+    # this repository's tools\serve.py; a Local of another worktree is not ours.
+    if (-not (Test-AIpediaLocal $Port)) { return $false }
+    $owner = Get-PortOwner $Port
+    if (-not $owner) { return $false }
+    $serve = [regex]::Escape((Join-Path $Root 'tools\serve.py'))
+    foreach ($cmd in (Get-ServeCommands ([int]$owner.OwningProcess))) {
+        if ($cmd -match $serve) { return $true }
+    }
+    return $false
+}
+
 function Choose-Port {
+    if ($Port -lt 18810 -or $Port -gt 18819) { throw "Local port must be 18810-18819 (got $Port)" }
     for ($p = 18810; $p -le 18819; $p++) {
-        if (Test-OurLocal $p) { return @{ Port = $p; Existing = $true } }
+        if ($p -ne $Port -and (Test-AIpediaLocal $p) -and -not (Test-ThisProjectLocal $p)) {
+            Write-Log "Note: another AIpedia Local (other worktree or temporary QA) answers on port $p. It is not this Local and was not used or stopped."
+        }
     }
-    $candidates = @($PreferredPort)
-    if (Test-Path -LiteralPath $PortFile) {
-        $raw = (Get-Content -LiteralPath $PortFile -Raw).Trim()
-        if ($raw -match '^\d+$') { $candidates = @([int]$raw) + $candidates }
+    if (Test-ThisProjectLocal $Port) { return @{ Port = $Port; Existing = $true } }
+    $owner = Get-PortOwner $Port
+    if ($owner) {
+        $cmd = (Get-ServeCommands ([int]$owner.OwningProcess)) -join ' <- '
+        throw "Port $Port is used by PID $($owner.OwningProcess) ($cmd), which is not this repository's Local. It was not stopped; free the port and run the shortcut again."
     }
-    for ($p = 18810; $p -le 18819; $p++) { $candidates += $p }
-    $seen = @{}
-    foreach ($port in $candidates) {
-        if ($port -lt 18810 -or $port -gt 18819) { continue }
-        if ($seen.ContainsKey($port)) { continue }
-        $seen[$port] = $true
-        if (Test-OurLocal $port) { return @{ Port = $port; Existing = $true } }
-        $owner = Get-PortOwner $port
-        if (-not $owner) { return @{ Port = $port; Existing = $false } }
-        Write-Log "Port $port is in use by PID $($owner.OwningProcess). That process will not be stopped."
-    }
-    throw "No free loopback port from 18810 to 18819"
+    return @{ Port = $Port; Existing = $false }
 }
 
 try {
@@ -148,7 +173,7 @@ try {
     $ready = $false
     for ($i = 0; $i -lt 45; $i++) {
         if ($proc.HasExited) { throw "Local server exited with code $($proc.ExitCode)" }
-        if (Test-OurLocal $port) { $ready = $true; break }
+        if (Test-ThisProjectLocal $port) { $ready = $true; break }
         Start-Sleep -Seconds 1
     }
     if (-not $ready) { throw "Local did not become ready on $url" }

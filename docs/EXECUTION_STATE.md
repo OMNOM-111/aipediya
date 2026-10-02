@@ -1,5 +1,12 @@
 # Текущее состояние AIpedia
 
+## 02.10 — Один канонический Local восстановлен (Claude Code, Local-only, без Release #)
+
+- Идентификация 18810–18819: на 18811 работал временный preview worktree `C:\Users\dimon\.claude\worktrees\aipedia-adaptive-ui` (`feature/adaptive-ui`, `e08112c`, влит в main; своя SQLite от 26.09, 321/143; PID 35760/27432, запущен приложением Claude по конфигурации `aipedia-adaptive-ui` через `run-local.ps1`); на 18813 — временный QA-сервер этого репозитория. Оба — preview-серверы этой сессии; остановлены штатно `preview_stop`. Других listener не было.
+- Причина: `start-local.ps1` считал «своим» любой AIpedia Local на 18810–18819 и откатывался на другой порт. Исправлено: только `tools\serve.py` этого репозитория, фиксированный 18810, без отката; чужие экземпляры только отмечаются. Негативный тест с временным чужим 18811 PASS (ярлык открыл 18810, чужой не тронул; временный экземпляр затем остановлен). `tools/history_browser_qa.py` по умолчанию 18810.
+- Canonical Local: `http://127.0.0.1:18810/` из `C:\Users\dimon\Documents\AIpedia` (`main`), `data/local/aipedia.sqlite3`, 343 Models / 158 Tools, integrity ok, FK 0; smoke #022 59 проверок + 44 шага flicker PASS, 0 console/network ошибок. Production read-only: `f46cc43`, 343/158, GSD 34/34 — не менялся.
+- Правило: `AGENTS.md` (раздел Local), `D-2026-10-02-one-canonical-local`, Timeline `LOCAL-CANONICAL-2026-10-02` (Local-only, без Release #). Остаток: в пользовательском `.claude/launch.json` остаются конфигурации временных серверов (`aipedia-adaptive-ui` → 18811, `aipedia-main-verify`, `aipedia-local-stage2-qa`); файл пользовательский и не менялся — удалить устаревшие записи может владелец. Код launcher уйдёт в Production только со следующим code release (на Production он не используется).
+
 ## 02.10 — Release #022 / v0.19.0 DONE, Production PASS (Claude Code)
 
 - Опубликовано https://aipediya.com/ на commit `f46cc435c10effcf9b4815e689f22f07378093ca` (candidate `8a4fe86` + запись ревизии); archive `aipedia-code-f46cc435c10e.zip`, SHA-256 `ed9e725f1852692165cb4c9b3507cb5670fc7d49757a0fb84b099a73d8b4cb14`. `/healthz` 200 подтверждает этот release, программа `aipedia` RUNNING. Local SQLite не копировалась.
