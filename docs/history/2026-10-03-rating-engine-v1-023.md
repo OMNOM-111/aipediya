@@ -165,7 +165,11 @@ The lower Russian current-release block in RELEASE.md still labelled #020,
 although its leading English block correctly recorded #022. The stale caption
 was retained as historical #020 and a matching #022 current pointer added;
 AI_CONTEXT now reports the already-documented #022, with no live verification.
-GitHub commit/tag and final clean state are recorded in EXECUTION_STATE.
+Tested implementation `a657b4fd9afee980b83b5fbd7d6510a2e39c9a65` was pushed
+to origin/main and verified equal to local HEAD. Handoff metadata is a subsequent
+commit; review tag `release-2026-10-03-rating-engine-v1` identifies the final
+review state, without deployment approval. Final Git HEAD/clean state is emitted
+by AI_CONTEXT and checked after push. No runtime code changes follow this QA.
 
 ## Remaining tasks
 
