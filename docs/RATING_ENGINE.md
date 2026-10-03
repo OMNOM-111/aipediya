@@ -2,7 +2,7 @@
 
 The canonical catalog master is the sole evidence source. Reference spreadsheets
 are launch research/reference materials, not a second editable result database.
-The five original configuration files in data/rating/v1.0 are immutable and
+The five original configuration files and the additive owner_estimation_priors.json in data/rating/v1.0 are immutable and
 checked by frozen-manifest.json. Scientific/Excel dependencies are Local-only.
 
 ## Commands (canonical Local)
@@ -28,8 +28,11 @@ Unknown items never influence configuration choice or caps. New observations
 must be reviewed in master first. A new item does not join the frozen Q basket.
 For a binding decision, archive the evidence and review the mapping. Daily
 scoring must never call calibrate. Run master check/QA and all rating gates before
-accepting rebuilt snapshots; a changed master should invalidate deterministic
-check until a new snapshot is deliberately built.
+accepting rebuilt snapshots. Canonical write_workbook (import/refresh/editor) and
+applied sync-local automatically rebuild all three profiles offline, validate
+each, then atomically replace current.json. Editing XLSX externally requires the
+ordinary refresh/sync pipeline; release QA blocks a stale master hash or missing
+Model. Temporary research workbooks do not update the canonical snapshots.
 
 ## Runtime
 
@@ -43,8 +46,43 @@ Snapshots contain only structured tooltip codes and parameters. RU/EN source
 text lives in the original tooltip templates and rating/content.py; other
 languages use data/rating/ui_translations.json through the existing context t().
 Numeric intervals/dates are isolated in RTL. Benchmark names and technical IDs
-are retained. Missing values are None, not zero. Only LLM.OVERALL shows numerical
-ratings; all 24 context states are computed on every build.
+are retained. Missing facts are None, not zero. Every PUBLISHED Model, regardless
+of catalog status, has a numeric contextual rating and verified/partial/estimated
+state. Tools never receive Model ratings. Qualified exact LLM reference records
+retain their original context ranks; no cross-context rank is generated. The 24
+original context states plus five additive specialist contexts are present.
+
+## Owner Fix within Release #023
+
+The original reference calculator is build_reference_snapshot; its 59 capability
+calculations and 27 exact Overall results remain unchanged. Legacy NR/Provisional
+and bounded fields are internal evidence diagnostics. The public aipediya_rating
+is always numeric. The other 32 former bounded reference estimates stay within
+their old bounds. Runtime never calculates a prior or reads Excel.
+
+The additive frozen prior file records calibration master/reference hashes,
+contextual means/SD, family anchors and source IDs. It was created once for the
+owner correction, not by ordinary builds. Family predictions shrink towards the
+context distribution and include predictive variance; they do not copy a parent
+version's score. Contextual/global priors for missing capability, comparable price
+or declared resource carry uncertainty, while facts remain unknown. The displayed
+number is the tenth percentile with no extra missing-data penalty. All profile
+weights and the five original reference artifacts are unchanged. Changing this
+prior file requires a new explicitly versioned calibration decision.
+
+Context routing uses canonical output modalities/tasks/model type before evidence.
+Video with an audio track remains video. Specialized contexts without sufficient
+gates stay Insufficient Data even though their Model estimates are numeric. These
+fallbacks must not be interpreted as measured task performance. No Ready gate or
+independent evidence is fabricated. Public independent records excluded from the
+frozen scale remain visible as catalog evidence and do not become scoring inputs.
+
+Release QA checks all three profile snapshots against actual published Model IDs,
+excludes Tool IDs, checks master/parameter hashes, finite scores, confidence/gaps,
+contexts and record snapshot IDs. An unknown model type fails the build. The
+automatic-update regression adds a zero-evidence Model to an isolated copy through
+the canonical writer: 344 numeric records, all three profiles, stable old scores
+and unchanged prior bytes. No synthetic record enters the real master or Local DB.
 
 ## Provenance and QA
 

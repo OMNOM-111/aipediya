@@ -1199,6 +1199,8 @@ def write_workbook(workbook_rows, meta, path=WORKBOOK_PATH, extra=None):
     try:
         workbook.save(temp)
         os.replace(temp, path)
+        from .rating.pipeline import canonical_update
+        canonical_update(path)
     except PermissionError as exc:
         raise PermissionError("%s is locked (close it in Excel and retry)" % path) from exc
     finally:

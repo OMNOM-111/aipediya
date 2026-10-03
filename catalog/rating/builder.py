@@ -12,7 +12,7 @@ import pandas as pd
 from scipy.special import expit
 from . import evidence as R
 
-def build_snapshot(master, profile='BALANCED', seed=None, config=None, ledger=None):
+def build_reference_snapshot(master, profile='BALANCED', seed=None, config=None, ledger=None):
     config = Path(config or Path(__file__).resolve().parents[2]/'data/rating/v1.0')
     ledger = ledger if ledger is not None else R.load_json(config/'rating_item_ledger.json')
     METH=R.load_json(f'{config}/methodology_v1.0.json'); MAP=R.load_json(f'{config}/mappings_v1.0.json'); CAL=R.load_json(f'{config}/calibration_v1.0.json')
@@ -267,3 +267,10 @@ def build_snapshot(master, profile='BALANCED', seed=None, config=None, ledger=No
     snap['snapshot']['content_sha256']=content_sha
     snap['snapshot']['created_at']=datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat()
     return snap,CTX,D,RAW
+
+
+def build_snapshot(master, profile='BALANCED', seed=None, config=None, ledger=None):
+    """Owner correction: evidence gates never suppress a published Model's estimate."""
+    from .estimation import extend_snapshot
+    snap, contexts, used, raw = build_reference_snapshot(master, profile, seed, config, ledger)
+    return extend_snapshot(master, snap, contexts, used, config), contexts, used, raw

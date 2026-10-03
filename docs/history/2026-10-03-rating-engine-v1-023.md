@@ -1,3 +1,97 @@
+# Release #023 · v0.20.0 — Owner Fix
+
+LOCAL QA PASS; Git handoff in progress. Owner Review pending; Production forbidden.
+Continues the same `RATING-ENGINE-V1-2026-10-03` card. Initial clean
+HEAD/origin/main: `3ecc5d4125c991b7858bedcf20a4d67204eb6973`.
+The original review tag and its snapshots remain in history.
+
+## Corrected result
+
+- All **343 PUBLISHED Models**, including inactive/historical models, have a
+  numeric rating in all three profiles. **158 Tools** have no Model rating.
+- States: **verified 0 / partial 36 / estimated 307**. Estimated values explicitly
+  show `!`, missing inputs and uncertainty. Facts stay unknown when unconfirmed;
+  an empirical frozen prior supplies an estimate rather than a fictitious $0.
+- Missing usable independent tests: **235**; missing comparable price: **228**;
+  missing confirmed resource/context: **229**. Separately, **184** have no raw
+  Public independent non-composite rows at all. Raw catalog evidence can be
+  unsuitable for a frozen scale, unit or protocol; these counts are distinct.
+- Primary contexts are deterministic by model type; the original 24-context
+  registry is preserved with five explicit specialist additions. Context rank
+  appears only for an eligible compatible cohort. No invented Ready/#1 gate.
+- The original **59** valid capability/uncertainty/P(#1) calculations are
+  preserved; **27 exact Overall values are unchanged**, and the new numbers for
+  **32 bounded records stay within the old intervals**. Five original frozen
+  source hashes remain unchanged; a sixth, additive prior file freezes estimates.
+- Canonical master writer/import/refresh and applied sync-local rebuild all
+  profiles offline; the current index changes only after all profiles validate.
+  A manual external workbook edit requires the ordinary refresh/sync procedure;
+  release QA rejects a stale master hash or incomplete numeric coverage.
+- Existing catalog/panel now use a compact tooltip and header help; essential
+  components, considered/missing evidence and methodology link are visible.
+  Full audit remains on methodology. The large leaderboard banner is removed.
+  All rating labels use the existing 22-locale system.
+
+## Frozen current snapshots
+
+Cutoff: `2026-10-02`. Each profile contains 343 numeric records.
+
+| Profile | Snapshot | Content SHA256 |
+| --- | --- | --- |
+| BALANCED | MODELS@BALANCED-v1.0-2026-10-02-509f998a31e5 | 509f998a31e5a17fae91ceae9af594068ba9a2423fd09d357b93dd2a8a4526d9 |
+| QUALITY_FIRST | MODELS@QUALITY_FIRST-v1.0-2026-10-02-aded66f0298d | aded66f0298d9f373356433c769ca93d9b2fabdbc28a0c7858ad3be34fed64c1 |
+| ECONOMY | MODELS@ECONOMY-v1.0-2026-10-02-b1b51f247293 | b1b51f247293993214832c58a9a8a6c0b8903ccd63a0eed6216d3f338ec039ff |
+
+Master unchanged: `5174bce98bb5578868f9e0c41cfbb05c2940c3465b3247e2a81062becdd2382e`.
+No real catalog sync, renumbering or synthetic model insertion was performed.
+
+## Final QA and panel incident
+
+- Full Django catalog suite: **402 tests OK, one existing Windows skip**;
+  targeted owner-fix suite: **7 OK**. Three deterministic profile checks PASS;
+  master check OK, catalog QA PASS with 17 pre-existing provenance warnings;
+  SQLite read-only integrity `ok`; Django check, migration check and JS syntax PASS.
+- A synthetic zero-evidence Model entered through the canonical writer in an
+  isolated temporary workbook produces **344 numeric records in all profiles**.
+  Old scores and frozen priors stay unchanged; temporary outputs were cleaned
+  by TemporaryDirectory. The real master and Local DB were not modified.
+- All published partial routes: **686 Model panels + 316 Tool panels** across
+  RU/EN, all HTTP 200, no errors; no rating section on Tools.
+- Real browser: row/direct entry, model change, three-profile selection, X,
+  Escape, outside click, Back/Forward, keyboard open, compact tooltip, More/full
+  audit and header help PASS. RU/EN/zh-Hans/ar × 1440/375 × dark/light: 16
+  combinations, table+panel (32 states), plus 32 type/historical cases. No
+  overflow or raw rating keys. Final CDP series: no console/network errors,
+  untruncated events. Mobile evidence is responsive browser clicking, not a
+  physical touch-device test.
+- Original panel failure is **not reproducible now**. At initial inspection no
+  canonical 18810 listener was running; the normal launcher started it. The
+  owner replied **«уже работает»**. The incident's root cause is unproven and
+  is not asserted. No speculative panel rewrite was made.
+- QA discrepancies fixed: video+audio context routing, Arena counted separately
+  from non-Arena support, correct Tools master reader, and regenerated history
+  after a stale timeline. Earlier incomplete runs are superseded by the final
+  stable PASS, with their evidence retained.
+
+Evidence: `artifacts/rating-v1-023/owner-fix/` contains final test logs,
+catalog/route checks, deterministic checks, browser matrices, network events and
+screenshots. These Local-only artifacts, logs and backups are ignored. Six early
+derived snapshots were retained in `intermediate-snapshots/`; original tracked
+snapshots and unknown user files were preserved. All tracked changes belong to
+this Owner Fix: engine/pipeline/context mapping, tests, UI/translations, frozen
+priors/current snapshots, documentation and generated timeline.
+
+Changed: the requested numeric contract, automation and compact UI are verified.
+Not complete: Git handoff and owner visual acceptance. Next: commit/push the
+checked paths, set this card to review, rebuild Timeline/AI_CONTEXT, and leave
+`RATING-023-OWNER-REVIEW` pending. The existing evidence-expansion task and
+research-only/master-only quality queue remain intentional. Production was not
+accessed, tested or deployed.
+
+---
+
+# Original first review — superseded by Owner Fix above
+
 # Release #023 · v0.20.0 — AIpediya Rating Engine v1.0
 
 READY FOR OWNER REVIEW — PRODUCTION NOT TOUCHED.

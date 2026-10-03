@@ -165,6 +165,8 @@ class Command(BaseCommand):
         except ValueError as exc:
             raise CommandError(str(exc))
         self.stdout.write("applied: %d changes" % written)
+        from catalog.rating.pipeline import canonical_update
+        canonical_update(path)
 
     def run_release_plan(self, path, plan_out, release):
         import hashlib
@@ -225,6 +227,10 @@ class Command(BaseCommand):
             except OSError as exc:
                 raise CommandError("Production sitemap unavailable: %s" % exc)
         result = catalog_qa.run(rows, live)
+        if path.resolve()==cm.WORKBOOK_PATH.resolve():
+            from catalog.rating.pipeline import coverage_errors
+            from catalog.models import ModelVersion,Tool
+            result['errors'].extend(coverage_errors(path,ModelVersion.objects.filter(published=True,entry_type='model').values_list('slug',flat=True),Tool.objects.filter(published=True).values_list('slug',flat=True)))
         if report:
             Path(report).write_text(json.dumps(result, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
         stats = result["stats"]

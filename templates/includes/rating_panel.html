@@ -1,22 +1,24 @@
-{% load catalog_tags %}<section class="panel-block rating-panel" aria-labelledby="rating-panel-title">
+{% load catalog_tags %}<section class="panel-block rating-panel" id="rating-section" aria-labelledby="rating-panel-title">
 <h2 id="rating-panel-title">AIpediya Rating</h2>
-<p>{{ ui.rating_context }}: <bdi dir="ltr">LLM.OVERALL</bdi></p>
+{% if model.rating %}
+<p class="rating-panel-score"><bdi dir="ltr">{{ model.rating.value }} {{ model.rating.icon }}</bdi></p>
+<p class="rating-caption">{% if model.rating.public_context_rank %}<bdi dir="ltr">#{{ model.rating.public_context_rank }}</bdi> · {% endif %}{{ model.rating.context_label }}</p>
+<p><bdi dir="ltr">Precision {{ model.rating.precision_grade }} · Support {{ model.rating.support_grade }}</bdi></p>
 <nav class="rating-profiles" aria-label="{{ ui.rating_profile }}">
 <a href="{% query rating_profile='BALANCED' %}"{% if rating_profile == 'BALANCED' %} aria-current="true"{% endif %}>{{ ui.rating_balanced }}</a>
 <a href="{% query rating_profile='QUALITY_FIRST' %}"{% if rating_profile == 'QUALITY_FIRST' %} aria-current="true"{% endif %}>{{ ui.rating_quality_first }}</a>
 <a href="{% query rating_profile='ECONOMY' %}"{% if rating_profile == 'ECONOMY' %} aria-current="true"{% endif %}>{{ ui.rating_economy }}</a>
 </nav>
-{% if model.rating %}{% include 'includes/rating_value.html' with rating=model.rating %}
-{% if model.rating.status == 'Rated' %}<dl class="essentials rating-components">
-<dt>{{ ui.rating_basket }}</dt><dd><bdi dir="ltr">{{ model.rating.q_pct }}%</bdi></dd>
-<dt>{{ ui.rating_price_efficiency }}</dt><dd>{% if model.rating.c_pct != None %}{{ model.rating.c_pct }}%{% else %}{{ ui.rating_unknown }}{% endif %}</dd>
-<dt>{{ ui.rating_resource }}</dt><dd>{% if model.rating.k_pct != None %}{{ model.rating.k_pct }}%{% else %}{{ ui.rating_unknown }}{% endif %}</dd>
-<dt>{{ ui.rating_precision }}</dt><dd>{{ model.rating.precision_grade }}</dd>
-<dt>{{ ui.rating_support }}</dt><dd>{{ model.rating.support_grade }}</dd>
-<dt>{{ ui.rating_coverage }}</dt><dd>{{ model.rating.rating_coverage_pct }}%</dd>
+<dl class="essentials rating-components">
+<dt>{{ ui.rating_capability }}</dt><dd><bdi dir="ltr">{{ model.rating.q_pct }}%</bdi></dd>
+<dt>{{ ui.rating_price_efficiency }}</dt><dd><bdi dir="ltr">{{ model.rating.c_pct }}%</bdi>{% if model.rating.component_facts.price == None %} !{% endif %}</dd>
+<dt>{{ ui.rating_resource }}</dt><dd><bdi dir="ltr">{{ model.rating.k_pct }}%</bdi>{% if model.rating.component_facts.resource == None %} !{% endif %}</dd>
+<dt>{{ ui.rating_coverage }}</dt><dd><bdi dir="ltr">{{ model.rating.rating_coverage_pct }}%</bdi></dd>
 <dt>{{ ui.rating_configuration }}</dt><dd><bdi dir="ltr">{{ model.rating.configuration }}</bdi></dd>
-</dl>{% endif %}
-<details class="rating-panel-audit"><summary>{{ ui.rating_audit }}</summary>{% include 'includes/rating_audit.html' with rating=model.rating %}</details>
-{% else %}<p>{{ ui.rating_unrated }}</p>{% endif %}
-<p class="secondary">{{ ui.rating_date }} {{ rating_summary.data_cutoff }} · v1.0</p>
+</dl>
+<p><strong>{{ ui.rating_considered }}</strong>: {{ model.rating.considered_text }}</p>
+<p><strong>{{ ui.rating_missing_short }}</strong>: {{ model.rating.missing_text }}</p>
+<a href="{{ nav.methodology }}?rating_model={{ model.slug }}#rating-detail">{{ ui.rating_how }}</a>
+<p class="secondary">{{ ui.rating_date }} {{ model.rating.metadata.data_cutoff }} · v1.0</p>
+{% endif %}
 </section>

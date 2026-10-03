@@ -1,15 +1,16 @@
-<div class="rating-audit-content">
-<strong>{{ rating.name }} · AIpediya Rating</strong>
-<p class="secondary"><bdi dir="ltr">LLM.OVERALL@{{ rating.profile }}</bdi> · {{ ui.rating_date }} {{ rating.metadata.data_cutoff }}</p>
-{% if rating.status == 'Rated' %}<p><bdi dir="ltr">{{ rating.value }} · {% if rating.overall_rank %}#{{ rating.overall_rank }}{% else %}{{ ui.rating_rank }} {{ rating.overall_rank_range }}{% endif %} · {{ ui.rating_tier }} {{ rating.tier }}</bdi></p>{% endif %}
-<ul>{% for item in rating.audit %}<li><span aria-hidden="true">{{ item.icon }}</span> {{ item.text }}</li>{% endfor %}</ul>
-{% for text in rating.audit_text %}<p>{{ text }}</p>{% endfor %}
-{% if rating.status == 'Rated' %}
-<p>{{ ui.rating_families }}: <bdi dir="ltr">{{ rating.evidence.families|join:', ' }}</bdi></p>
-<p>{{ ui.rating_domains }}: <bdi dir="ltr">{{ rating.evidence.domains|join:', ' }}</bdi></p>
-<p>{{ ui.rating_runners }}: <bdi dir="ltr">{{ rating.evidence.runners|join:', ' }}</bdi></p>
-<p>{{ ui.rating_no1 }}: {% if rating.no1_eligible %}{{ ui.rating_eligible }}{% else %}{{ ui.rating_ineligible }}{% endif %} · <bdi dir="ltr">P(№1) {{ rating.probability_pct }}% · MCSE {{ rating.mcse_pct }}%</bdi></p>
-{% endif %}
-<dl class="rating-freshness">{% for item in rating.freshness_rows %}<dt>{{ item.label }}</dt><dd>{{ item.state }}{% if item.checked %} · {{ item.checked }}{% endif %}</dd>{% endfor %}</dl>
-<a href="{{ nav.methodology }}#rating-v1">{{ ui.methodology }} · v1.0</a>
+<div class="rating-audit-content" id="rating-detail">
+<h3>{{ rating.name }} · AIpediya Rating <bdi dir="ltr">{{ rating.value }} {{ rating.icon }}</bdi></h3>
+<p>{{ rating.context_label }} · <bdi dir="ltr">{{ rating.primary_rating_context }}@{{ rating.profile }}</bdi> · {{ rating.status_label }}</p>
+<p>{{ ui.rating_considered }}: {{ rating.considered_text }}</p>
+<p>{{ ui.rating_missing_short }}: {{ rating.missing_text }}</p>
+<p><bdi dir="ltr">Precision {{ rating.precision_grade }} · Support {{ rating.support_grade }}</bdi> · {{ ui.rating_coverage }} {{ rating.rating_coverage_pct }}%</p>
+<p>{{ ui.rating_uncertainty }}: <bdi dir="ltr">{{ rating.interval_label }}</bdi></p>
+{% if rating.rating_state == 'estimated' %}<p>{{ ui.rating_prior_note }}</p>{% endif %}
+{% if rating.price_ref %}<p>{{ ui.rating_price }}: <bdi dir="ltr">${{ rating.price_ref.input }} / ${{ rating.price_ref.output }} · {{ rating.price_ref.service }} · {{ rating.price_ref.checked }}</bdi></p>{% endif %}
+{% if rating.evidence.families %}<p>{{ ui.rating_families }}: <bdi dir="ltr">{{ rating.evidence.families|join:', ' }}</bdi></p>{% endif %}
+{% if rating.evidence.runners %}<p>{{ ui.rating_runners }}: <bdi dir="ltr">{{ rating.evidence.runners|join:', ' }}</bdi></p>{% endif %}
+{% if rating.status == 'Rated' %}<p><bdi dir="ltr">P(№1) {{ rating.probability_pct }}% · MCSE {{ rating.mcse_pct }}%</bdi></p>{% endif %}
+{% if rating.prior_source_models %}<p>{{ ui.rating_considered }}: <bdi dir="ltr">{{ rating.prior_source_models|join:', ' }}</bdi></p>{% endif %}
+<p class="rating-snapshot-id"><bdi dir="ltr">{{ rating.rating_snapshot_id }}</bdi></p>
+<p>{{ ui.rating_date }} {{ rating.metadata.data_cutoff }}</p>
 </div>

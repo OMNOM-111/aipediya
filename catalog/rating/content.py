@@ -4,6 +4,34 @@ All other locales use the application's source-hash translation provider.
 Technical context IDs, benchmark names and configuration IDs are preserved.
 """
 LABELS={
+ 'rating_verified':('Подтверждён','Verified'),
+ 'rating_partial':('Частично подтверждён','Partially verified'),
+ 'rating_estimated':('Оценён по неполным данным','Estimated'),
+ 'rating_considered':('Учтено','Included'),
+ 'rating_missing_short':('Не хватает','Missing'),
+ 'rating_reliability':('Надёжность','Reliability'),
+ 'rating_more':('Подробнее →','Details →'),
+ 'rating_how':('Как считается рейтинг →','How the rating works →'),
+ 'rating_capability':('Capability','Capability'),
+ 'rating_independent_n':('{n} независимых тестов','{n} independent tests'),
+ 'rating_developer_evidence':('результаты разработчика','developer results'),
+ 'rating_fact_price':('цена','price'),
+ 'rating_fact_resource':('контекст / ресурс','context / resource'),
+ 'rating_basis_family':('оценка семейства','family prior'),
+ 'rating_basis_context':('оценка типа модели','context prior'),
+ 'rating_basis_global':('общая базовая оценка','global prior'),
+ 'rating_basis_developer':('слабый сигнал разработчика','weak developer signal'),
+ 'rating_gap_independent':('независимой проверки','independent verification'),
+ 'rating_gap_price':('подтверждённой цены','confirmed price'),
+ 'rating_gap_resource':('подтверждённого контекста / ресурса','confirmed context / resource'),
+ 'rating_gap_direct_evidence':('прямых данных','direct evidence'),
+ 'rating_gap_configuration':('конфигурации','configuration'),
+ 'rating_gap_aipediya':('собственного теста AIpediya','AIpediya test'),
+ 'rating_gap_runners':('второго независимого раннера','second independent runner'),
+ 'rating_no_gaps':('значимых пробелов нет','no material gaps'),
+ 'rating_prior_note':('Неизвестные факты заменены оценкой для расчёта, но не записаны как подтверждённые данные.','Unknown facts use a prior for calculation and remain unconfirmed in the catalog.'),
+ 'rating_uncertainty':('Интервал неопределённости','Uncertainty interval'),
+ 'rating_header_help':('Рейтинг 0–100 для соответствующего типа модели. Учитывает доступные данные о качестве, стоимости и ресурсах. Значок рядом с оценкой показывает полноту подтверждения.','A 0–100 rating for this model type. It uses available quality, cost and resource data. The symbol beside the score shows how fully it is supported.'),
  'rating_snapshot_stale': ('Снимок старше 7 дней; смотрите дату данных.', 'Snapshot is over 7 days old; check its data date.'),
  'rating_snapshot_old': ('Данные на указанную дату; снимок старше 14 дней.', 'Data as of the stated date; snapshot is over 14 days old.'),
  'rating_source_note':('Сравнимы только результаты одного теста с одинаковым протоколом. У каждого результата указаны автор оценки, тест, конфигурация, снимок и дата проверки. Результаты разработчика отделены от независимых прогонов и сводных индексов. Сторонние результаты показываются после проверки точной версии модели и права на публикацию. AIpediya Rating v1.0 рассчитывается отдельно по разрешённым доказательствам; его контексты и ограничения описаны ниже.',
@@ -54,6 +82,23 @@ LABELS={
  'rating_not_winner':('Место в таблице не означает значок №1','Table rank does not imply a #1 badge'),
 }
 
+CONTEXT_NAMES={
+ 'LLM.OVERALL':('LLM Overall','LLM Overall'), 'LLM.MATH':('Математика LLM','LLM mathematics'),
+ 'LLM.LOGIC':('Логика LLM','LLM logic'),'LLM.CODE':('Программирование LLM','LLM coding'),
+ 'LLM.AGENTS':('Агенты LLM','LLM agents'),'LLM.LONGDOC':('Длинные документы','Long documents'),
+ 'LLM.KNOWLEDGE':('Знания LLM','LLM knowledge'),'LLM.SCIENCE':('Наука LLM','LLM science'),
+ 'LLM.VISION':('Зрение LLM','LLM vision'),'LLM.CHAT':('Диалог LLM','LLM chat'),
+ 'LLM.FORECAST':('Прогнозы LLM','LLM forecasting'),'LLM.MULTILINGUAL':('Многоязычные LLM','Multilingual LLM'),
+ 'STT.TRANSCRIBE':('Распознавание речи','Speech recognition'),'STT.STREAMING':('Потоковое распознавание речи','Streaming speech recognition'),
+ 'TTS.NARRATION':('Синтез речи','Speech synthesis'),'TTS.REALTIME':('Синтез речи в реальном времени','Realtime speech synthesis'),
+ 'VOICE.AGENT':('Голосовые модели','Voice models'),'IMG.GEN':('Создание изображений','Image generation'),
+ 'IMG.EDIT':('Редактирование изображений','Image editing'),'VID.GEN':('Создание и обработка видео','Video generation and editing'),
+ 'EMB.RETRIEVAL':('Эмбеддинги и поиск','Embeddings and retrieval'),'DOC.OCR':('Распознавание документов','Document recognition'),
+ 'AUD.MUSIC':('Музыка и звук','Music and sound'),'SAFETY.CLASSIFIER':('Модерация и безопасность','Moderation and safety'),
+ 'SCI.STRUCTURE':('Научные структуры','Scientific structures'),'SCI.FORECAST':('Прогнозирование временных рядов','Time-series forecasting'),
+ 'ROBOT.ACTION':('Робототехника','Robotics'),'3D.GEN':('Создание 3D','3D generation'),'MOTION.GEN':('Создание движения','Motion generation')}
+LABELS.update({'rating_context_'+key.replace('.','_').lower():value for key,value in CONTEXT_NAMES.items()})
+
 # (heading English, heading Russian, paragraph English, paragraph Russian).
 METHOD=[
  ('Contexts and usage profiles','Контексты и профили использования',
@@ -99,6 +144,17 @@ METHOD=[
   'The launch evidence depends heavily on Epoch AI and on Arena for #1 organization diversity. A single latent factor cannot capture every task. Per-token price is not cost per completed task, especially for reasoning configurations. Arena is a frozen z approximation, not a joint preference model. Some benchmarks saturate and many models lack resource facts. AIpediya reproducible tests have not started. Voice, media, embedding and CODE numerical ratings are not available at launch; future source acceptance and gates are required.',
   'Доказательства на запуске сильно зависят от Epoch AI и от Arena для разнообразия организаций №1. Один латентный фактор не охватывает каждую задачу. Цена за токен не равна стоимости выполненной задачи, особенно для reasoning-конфигураций. Arena — замороженная z-аппроксимация, не совместная модель предпочтений. Часть тестов насыщается, у многих моделей нет ресурсных фактов. Воспроизводимые тесты AIpediya ещё не начаты. Численные рейтинги голоса, медиа, embeddings и CODE на запуске недоступны; нужны принятие будущих источников и gates.'),
 ]
+
+# Owner-approved correction of the presentation contract within Release #023.
+METHOD[8]=('Numeric estimates and missing facts','Числовые оценки и неизвестные факты',
+ 'Every published Model has a numeric rating in its primary context, including archived, inactive and zero-evidence models. Evidence is used in order: permitted independent results, reproducible AIpediya runs, weak developer signals, a family posterior shrunk towards a frozen context prior, then a frozen global fallback. Priors were frozen once from the accepted reference cohort and permitted contextual observations. The parent model score is never copied. Missing price or resource uses an empirical prior with uncertainty; the factual field remains unknown. The displayed number is the conservative tenth percentile, without a separate missing-data point penalty. Legacy Rated/Provisional/NR gates remain internal evidence diagnostics and do not suppress the number.',
+ 'Каждая опубликованная Model имеет числовой рейтинг в основном контексте, включая архивные, неактивные модели и модели без evidence. Порядок доказательств: разрешённые независимые результаты, воспроизводимые прогоны AIpediya, слабые сигналы разработчика, posterior семейства со shrinkage к замороженному prior контекста, затем замороженная общая оценка. Priors однократно зафиксированы по принятой эталонной группе и разрешённым наблюдениям контекстов. Балл родительской модели не копируется. Для неизвестной цены или ресурса используется эмпирический prior с неопределённостью; фактическое поле остаётся неизвестным. Число — консервативный десятый перцентиль без отдельного штрафа за пропуски. Прежние gates Rated/Provisional/NR остаются внутренней диагностикой evidence и не скрывают число.')
+METHOD[13]=('Known limitations and visible confidence','Ограничения и видимая достоверность',
+ 'Verified ✓ means all material and confidence-enhancing inputs are present. Partial ◐ means material inputs exist but supporting evidence is incomplete. Estimated ! means a critical input is missing or a prior supplies capability, price or resource. A numeric estimate does not make a context Ready. Only the qualified LLM reference cohort has a public context rank and #1 eligibility; scores from different model types are never ranked together. Media, audio, embeddings and scientific models have numeric contextual estimates with explicit uncertainty, often global fallbacks when comparable data is absent. These estimates are not proof of tested performance. The original 59 LLM capability calculations and 27 exact Overall scores are preserved. AIpediya reproducible tests have not started. Tools have no Model rating.',
+ 'Подтверждён ✓ означает наличие всех значимых и усиливающих достоверность данных. Частично подтверждён ◐ означает наличие основных данных при неполном дополнительном подтверждении. Оценочный ! означает пропуск критического факта либо использование prior для capability, цены или ресурса. Число не делает контекст Ready. Публичное место внутри контекста и допуск к №1 имеет только прошедшая gates эталонная группа LLM; разные типы моделей вместе не ранжируются. Медиа, аудио, embeddings и научные модели получают числовую оценку в своём контексте с явной неопределённостью, часто с общей базовой оценкой при отсутствии сравнимых данных. Это не доказательство измеренной производительности. Исходные 59 расчётов capability LLM и 27 точных Overall сохранены. Собственные воспроизводимые тесты AIpediya ещё не начаты. У Tools рейтинга Model нет.')
+METHOD.append(('Frozen priors and catalog updates','Замороженные priors и обновления каталога',
+ 'The versioned owner_estimation_priors file records the calibration master hash, reference snapshot hash, source models, context anchors and distributions. It is never regenerated by ordinary catalog updates. Adding or updating canonical Models rebuilds all three profile snapshots offline and validates coverage before atomically publishing the index. Per-model Monte Carlo seeds are derived from the fixed seed and stable Record ID. New zero-evidence Models get an Estimated rating automatically. An unmapped type blocks release QA. Changing the prior scale requires a separately versioned calibration decision.',
+ 'Версионный файл owner_estimation_priors содержит hash master калибровки, hash эталонного снимка, исходные модели, якоря и распределения контекстов. Обычное обновление каталога его не пересоздаёт. Добавление или изменение канонических Models пересобирает три профиля offline и проверяет покрытие до атомарной публикации индекса. Seed Monte Carlo модели зависит от фиксированного seed и стабильного Record ID. Новая Model без evidence автоматически получает оценочный рейтинг. Неизвестный тип блокирует QA выпуска. Изменение шкалы priors требует отдельного версионного решения калибровки.'))
 
 def source_labels(config):
     import json

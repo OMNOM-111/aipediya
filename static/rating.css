@@ -21,6 +21,12 @@
 .rating-profiles a { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; font-size: 11px; }
 .rating-profiles a[aria-current] { background: var(--mint-dim); border-color: var(--mint-line); color: var(--text); }
 .rating-panel .rating-trigger { font-size: 22px; }
+.rating-panel-score { font-size: 26px; margin: 10px 0 5px; }
+.rating-header-info { border: 0; padding: 1px 3px; background: transparent; color: var(--muted); cursor: pointer; }
+.rating-header-info:hover, .rating-header-info:focus-visible { color: var(--mint); }
+.rating-compact-tip { line-height: 1.45; overflow-wrap: anywhere; }
+.rating-compact-tip p { margin: 7px 0; }
+.rating-compact-tip a { color: var(--mint); }
 .rating-panel .rating-caption, .rating-panel .rating-grades { font-size: 12px; }
 .rating-components { margin: 14px 0; }
 .rating-components dt, .rating-components dd { overflow-wrap: anywhere; min-width: 0; }

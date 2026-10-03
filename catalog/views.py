@@ -990,10 +990,11 @@ def methodology(request):
     seo = page_signals("/methodology", lang, title=f"{title} | AIpediya",
                        description=label_text("methodology_description", lang), ready_langs=ready,
                        breadcrumbs=[("AIpediya", "/"), (title, "/methodology")])
-    from .rating.presentation import methodology_blocks,summary
+    from .rating.presentation import methodology_blocks,summary,model_rating
     return render(request, "methodology.html", {
         "seo": seo, "title": title, "blocks": localized_blocks("methodology", lang),
         "rating_blocks": methodology_blocks(lang), "rating_summary": summary(lang),
+        "rating_detail": model_rating(request.GET.get('rating_model',''),lang),
         "counts": _catalog_counts(),
     })
 

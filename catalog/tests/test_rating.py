@@ -9,7 +9,7 @@ import pandas as pd
 from django.conf import settings
 from django.test import SimpleTestCase
 from catalog.rating import evidence as R
-from catalog.rating.builder import build_snapshot
+from catalog.rating.builder import build_reference_snapshot as build_snapshot
 from catalog.rating.checks import CONFIG,check_frozen,check_snapshot,content_hash
 from catalog.rating.ledger import bind_item,merged_calibration,validate_ledger
 from catalog.rating.policy import fact_state,permission_valid

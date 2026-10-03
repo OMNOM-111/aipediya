@@ -7,7 +7,7 @@ from .checks import check_snapshot
 DIRECTORY=Path(__file__).resolve().parents[2]/'data/rating/snapshots'
 PROFILES=('BALANCED','QUALITY_FIRST','ECONOMY')
 STATES={'Ready':'ready','Ready (условно)':'conditional','Beta':'beta','Insufficient Data':'insufficient','Out of scope v1':'out_of_scope'}
-ICONS={'complete':'✓','minor':'◐','material':'!','provisional':'—'}
+ICONS={'verified':'✓','partial':'◐','estimated':'!'}
 
 @lru_cache(maxsize=12)
 def _read(path,stamp):return json.loads(Path(path).read_text(encoding='utf-8'))
@@ -48,21 +48,27 @@ def model_rating(model_id,lang,profile='BALANCED'):
     if not data:return None
     record=next((m for m in data['models'] if m['model_id']==model_id),None)
     if not record:return None
-    result=dict(record);result['metadata']=data['snapshot'];result['icon']=ICONS[record['ui_state']]
-    if record['status']!='Rated':
-        result['value']='—';result['status_label']=t('rating_'+record['status'].lower(),lang)
-    elif record['score_type']=='exact':result['value']=f"{record['overall_cons']:.1f}"
-    else:result['value']=f"{record['overall_min']:.1f}–{record['overall_max']:.1f}"
-    result['audit']=[{'icon':{'ok':'✓','gap':'—','stale':'!','info':'·','none':'—'}.get(x['icon'],'·'),
-                      'text':template_text(x['code'],lang,x.get('params'),'checklist')} for x in record['tooltip']['checklist']]
-    text=[]
-    for item in record['tooltip']['text']:
-        if item['code']=='text_not_eligible':
-            text.append(t('rating_tpl_text_text_not_eligible',lang).format(reasons=', '.join(
-                template_text(x['code'],lang,x.get('params'),'no1_reason_labels') for x in record.get('no1_reasons',[]))))
-        else:text.append(template_text(item['code'],lang,item.get('params')))
-    result['audit_text']=text
-    for key,source in [('q_pct','Q_cons'),('c_pct','C'),('k_pct','K')]:result[key]=None if record.get(source) is None else round(record[source]*100,1)
+    result=dict(record);result['metadata']=data['snapshot'];result['icon']=ICONS[record['rating_state']]
+    result['value']=f"{record['aipediya_rating']:.1f}";result['status_label']=t('rating_'+record['rating_state'],lang)
+    result['context_label']=t('rating_context_'+record['primary_rating_context'].replace('.','_').lower(),lang)
+    ev=record['numeric_evidence'];considered=[]
+    if ev['independent']:considered.append(t('rating_independent_n',lang).format(n=ev['independent']))
+    if ev['developer']:considered.append(t('rating_developer_evidence',lang))
+    for fact in ('price','resource'):
+        if record['component_facts'][fact] is not None:considered.append(t('rating_fact_'+fact,lang))
+    if record['capability_basis']!='direct':considered.append(t('rating_basis_'+record['capability_basis'],lang))
+    missing=[t('rating_gap_'+key,lang) for key in record['missing_estimate_inputs']+record['missing_enhancers']]
+    result['considered']=considered;result['missing']=missing
+    result['considered_text']=' · '.join(considered);result['missing_text']=' · '.join(missing) or t('rating_no_gaps',lang)
+    result['audit']=[{'icon':'✓','text':text} for text in considered]+[{'icon':'!','text':text} for text in missing]
+    for item in record['tooltip']['checklist']:
+        if item.get('code')=='price':result['audit'].append({'icon':'✓','text':template_text('price',lang,item.get('params'),section='checklist')})
+    tip_keys=[key for key in record['missing_estimate_inputs'] if key not in ('direct_evidence','configuration')]
+    if 'aipediya' in record['missing_enhancers']:tip_keys.append('aipediya')
+    result['tip_missing_text']=' · '.join(t('rating_gap_'+key,lang) for key in tip_keys) or t('rating_no_gaps',lang)
+    result['audit_text']=[]
+    for key,source in [('q_pct','capability'),('c_pct','price'),('k_pct','resource')]:result[key]=round(record['component_estimates'][source]*100,1)
+    result['interval_label']='–'.join(f'{n:.1f}' for n in record['rating_interval'])
     result['probability_pct']=round(record.get('P_no1',0)*100,2);result['mcse_pct']=round(record.get('P_no1_mcse',0)*100,2)
     result['freshness_rows']=[{'label':t({'price':'rating_price','resource':'rating_resource','config':'rating_configuration','availability':'rating_available','licence':'rating_licence'}[key],lang),
                              'state':t('rating_'+value['state'],lang),'checked':value.get('checked')} for key,value in record['freshness'].items()]

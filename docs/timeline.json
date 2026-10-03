@@ -1066,8 +1066,8 @@
       "app_version": "v0.20.0",
       "title": "AIpediya Rating Engine v1.0",
       "environment": "local",
-      "stage": "review",
-      "status": "LOCAL_QA_PASS",
+      "stage": "in_progress",
+      "status": "OWNER_FIX_IN_PROGRESS",
       "started_utc": "2026-10-03T09:21:08.628060+00:00",
       "executor": "Codex",
       "history": "docs/history/2026-10-03-rating-engine-v1-023.md",
@@ -2646,12 +2646,12 @@
           "Offline rating with frozen calibration",
           "Snapshot, audit, methodology and 22 locales"
         ],
-        "local_verified": true,
+        "local_verified": false,
         "owner_approved": false,
         "production_released": false,
         "production_verified": false,
         "open": true,
-        "progress": "review",
+        "progress": "in_progress",
         "executor": "Codex",
         "revision": "a657b4fd9afee980b83b5fbd7d6510a2e39c9a65",
         "release_tag": "release-2026-10-03-rating-engine-v1",
@@ -2671,7 +2671,7 @@
           }
         ],
         "qa": {
-          "local": "PASS: 397 tests (1 skip), reference/invariants, master/catalog/migrations, deterministic 3 profiles, 32 browser scenarios + interactions; 0 console/critical network errors."
+          "local": "Previous Local QA superseded by Owner Fix: numeric rating for every published Model, contextual priors, compact UI, panel regression. Full QA pending."
         },
         "next_ru": "Владелец проверяет Local #023. Production не разрешён.",
         "next_en": "Owner reviews Local #023. Production is not authorized."

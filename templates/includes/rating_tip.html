@@ -1,0 +1,7 @@
+<div class="rating-compact-tip">
+<strong>AIpediya Rating <bdi dir="ltr">{{ rating.value }} {{ rating.icon }}</bdi> · {{ rating.context_label }}</strong>
+<p>{{ ui.rating_considered }}: {{ rating.considered_text }}</p>
+<p>{{ ui.rating_missing_short }}: {{ rating.tip_missing_text }}</p>
+<p>{{ ui.rating_reliability }}: <bdi dir="ltr">Precision {{ rating.precision_grade }} · Support {{ rating.support_grade }} · {{ rating.rating_coverage_pct }}%</bdi></p>
+<a href="{{ nav.methodology }}?rating_model={{ rating.model_id }}#rating-detail" data-rating-detail>{{ ui.rating_more }}</a>
+</div>

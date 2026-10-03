@@ -1,7 +1,8 @@
 {
-  "calibration_v1.0.json": "6d33407df9c70c4f5286215d2643bb7cf0eddd995c8fbc5cfedf279bcfb1d8df",
-  "context_registry_v1.0.json": "a285248e0d46d160bc708c4bd2bc2f9139b289b1424efa96beeef1a4d84b2fad",
-  "mappings_v1.0.json": "d9d1b418a935aa3b2b7e888fd166294bb739e378b41f52d179de42f5a076df53",
-  "methodology_v1.0.json": "2de794f56f6342e68b6988e54005a2a7919a555b180dfc9d4e0d794b977c1b00",
-  "tooltip_templates_v1.0.json": "bbd62dd0fe31e6330cdaa2a2145c65e397903c25e5cfe333d2d0a7bd4734e82e"
+ "calibration_v1.0.json": "6d33407df9c70c4f5286215d2643bb7cf0eddd995c8fbc5cfedf279bcfb1d8df",
+ "context_registry_v1.0.json": "a285248e0d46d160bc708c4bd2bc2f9139b289b1424efa96beeef1a4d84b2fad",
+ "mappings_v1.0.json": "d9d1b418a935aa3b2b7e888fd166294bb739e378b41f52d179de42f5a076df53",
+ "methodology_v1.0.json": "2de794f56f6342e68b6988e54005a2a7919a555b180dfc9d4e0d794b977c1b00",
+ "tooltip_templates_v1.0.json": "bbd62dd0fe31e6330cdaa2a2145c65e397903c25e5cfe333d2d0a7bd4734e82e",
+ "owner_estimation_priors.json": "6b1c191518f0f4d0e988339c669e98d9e78a063710ff3496f4526afc0e3be216"
 }

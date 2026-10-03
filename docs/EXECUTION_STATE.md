@@ -1,6 +1,20 @@
 # Текущее состояние AIpedia
 
-Обновлено (UTC): 2026-10-03T10:25:43Z
+Обновлено (UTC): 2026-10-03 — Owner Fix
+## 03.10 — #023 Owner Fix — LOCAL QA PASS / Git handoff in progress
+
+- Прямое Owner Fix продолжает RATING-ENGINE-V1-2026-10-03 / #023 / v0.20.0, без нового номера. Предыдущая review-редакция и tag сохранены. Production запрещён и не тронут.
+- Старт: main HEAD/origin/main 3ecc5d4125c991b7858bedcf20a4d67204eb6973, tracked tree clean.
+- Изменено: числовые контекстные оценки 343/343 PUBLISHED Models (все catalog statuses), additive frozen priors и автоматический rebuild трёх профилей через canonical writer/sync-local; release QA проверяет coverage/hash/context/state/snapshot ID. Tools 158 без Model rating. Компактная подсказка, справка ⓘ, панель и полный аудит/методика, 22 локали.
+- Числа: verified 0 / partial 36 / estimated 307; 184 без каких-либо Public independent rows, 235 без пригодной independent проверки на шкале расчёта; 228 без пригодной сопоставимой цены, 229 без подтверждённого ресурса/контекста. Наличие каталожного результата не означает пригодность его единицы/протокола для frozen scale.
+- Regression: прежние 59 capability/uncertainty/P(#1) расчётов и 27 exact Overall сохранены, 32 новые числовые оценки остаются в прежних bounded intervals. Original five frozen hashes неизменны; шестой — отдельный prior-файл. Master SHA 5174bce98bb5578868f9e0c41cfbb05c2940c3465b3247e2a81062becdd2382e неизменен.
+- QA: полный catalog suite 402 tests OK, 1 existing Windows skip; targeted 7 OK; deterministic checks трёх профилей PASS; catalog QA PASS, master check OK, DB integrity ok, check/migrations/node PASS. Синтетическая Model без evidence через canonical writer даёт 344 записи во всех профилях, estimated число, unchanged old scores/priors; temp workbook/output удалены штатным TemporaryDirectory.
+- P0: при старте не было работающего 18810; canonical launcher поднят. Исходная ошибка панели сейчас не воспроизводится; владелец ответил «уже работает». Фиктивная root cause не заявлена, панель не рефакторилась. Все 343 Model + 158 Tool panels RU/EN: 686 + 316 HTTP 200 без ошибок; реальные browser row/direct/X/Escape/outside/Back/Forward/model-change/profile проверки PASS.
+- Browser: RU/EN/zh-Hans/ar × 1440/375 × dark/light — 16 сочетаний, table+panel (32 состояния); ещё 32 type/historical cases RU/EN desktop/mobile. Без overflow/raw rating keys; итоговая CDP серия без ошибок сети/console, без потери events. 375 — responsive browser click, не физический touch-device. Скриншоты и JSON сохранены в artifacts/rating-v1-023/owner-fix.
+- Файлы: все dirty/untracked происходят из этого Owner Fix (engine/pipeline/contexts/tests/UI/translations/current immutable snapshots/priors/docs/generated timeline). Шесть ранних производных snapshot files перенесены в ignored artifacts/.../intermediate-snapshots; исторические tracked snapshots сохранены. Пользовательские исходники/reference/master/SQLite не удалялись, каталог не синхронизировался. Backups/logs/runtime остаются ignored.
+- Расхождения QA устранены: video+audio routing priority; Arena не второй non-Arena support path, прежний coverage/rank восстановлен; тест Tools использует правильный master reader; stale history 503 устранён штатной сборкой. Первый запуск suite во время незаконченной правки priors superseded финальным стабильным PASS.
+- Не завершено: Git commit/push/tag и перевод этой же карточки в review. Следующим выполнить: зафиксировать проверенные пути, обновить revision/state, пересобрать Timeline/AI_CONTEXT и оставить Owner Review pending. Отдельный остаток RATING-023-OWNER-REVIEW: причина — обязательная визуальная приёмка владельца; следующий шаг открыть http://127.0.0.1:18810/ru/ и проверить #023. Research-only/master-only и 17 исходных provenance warnings остаются намеренными по предыдущему отчёту, не расширяются этим поручением.
+
 ## 03.10 — Release #023 · v0.20.0 · Rating Engine v1.0 — LOCAL PASS / OWNER REVIEW
 
 - Timeline: `RATING-ENGINE-V1-2026-10-03`, зарегистрирован до реализации на clean main `51a48075a7be2ba62d2c47d208c8c6d1ba7c00a7`; reserved tag `release-2026-10-03-rating-engine-v1`.
