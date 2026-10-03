@@ -803,6 +803,16 @@ def _page_guard(request, context):
 
 
 def _render_catalog(request, context, listing=False):
+    if context.get('entity_kind') == 'model':
+        from .rating.presentation import model_rating, summary, PROFILES
+        profile=request.GET.get('rating_profile','BALANCED')
+        if profile not in PROFILES:profile='BALANCED'
+        context['rating_profile']=profile
+        context['rating_summary']=summary(request.aipedia_lang,profile)
+        for model in context['page'].object_list:
+            model.rating=model_rating(model.slug,request.aipedia_lang,profile)
+        if context.get('model'):
+            context['model'].rating=model_rating(context['model'].slug,request.aipedia_lang,profile)
     partial = request.GET.get("partial")
     if listing:
         guard = _page_guard(request, context)
@@ -980,8 +990,10 @@ def methodology(request):
     seo = page_signals("/methodology", lang, title=f"{title} | AIpediya",
                        description=label_text("methodology_description", lang), ready_langs=ready,
                        breadcrumbs=[("AIpediya", "/"), (title, "/methodology")])
+    from .rating.presentation import methodology_blocks,summary
     return render(request, "methodology.html", {
         "seo": seo, "title": title, "blocks": localized_blocks("methodology", lang),
+        "rating_blocks": methodology_blocks(lang), "rating_summary": summary(lang),
         "counts": _catalog_counts(),
     })
 

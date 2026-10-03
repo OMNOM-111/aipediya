@@ -24,8 +24,15 @@ P0/P1 замечаниями и после owner-fix pass находится в 
 (`D-2026-10-02-no-unrequested-public-ui`), семантика свежести разделена на
 ADD/UPD, NEW и «Новые релизы за последние 24 часа»
 (`D-2026-10-02-catalog-freshness-add-upd-new`).
-Production остаётся на закрытом Release #021 · v0.18.0 (336 Models / 156 Tools)
-до отдельного одобрения владельцем именно #022.
+Запись выше относится к завершённому #022; Production baseline по документам —
+#022 · v0.19.0 (343 Models / 158 Tools). Прежняя строка о текущем #021 была
+устаревшей и исправлена 03.10 по существующим Timeline/Execution State.
+
+Release #023 · v0.20.0 `AIpediya Rating Engine v1.0` создан 03.10 до реализации.
+Local QA PASS; этап — Owner Review: Local ✓ / Owner — / Production —.
+Численные рейтинги, audit и методика готовы в canonical Local 18810;
+Production для этого поручения явно запрещён.
+Отчёт — `docs/history/2026-10-03-rating-engine-v1-023.md`.
 
 Release #020 · AIpediya v0.17.0 `Daily Catalog Update — 30 September 2026`
 закрыт как `done`: Local ✓, Owner ✓, Production ✓. Из текущего canonical master

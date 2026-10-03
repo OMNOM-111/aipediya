@@ -1,1 +1,12 @@
-{% extends 'base.html' %}{% block content %}<article class="policy">{% include 'includes/breadcrumbs.html' %}<h1>{{ title }}</h1>{% for tag, text, fallback in blocks %}{% if tag == 'h2' %}<h2{% if fallback %} lang="en"{% endif %}>{{ text }}</h2>{% else %}<p{% if fallback %} lang="en"{% endif %}>{{ text }}</p>{% endif %}{% endfor %}<p class="secondary">{{ ui.models_tab }}: {{ counts.models }} · {{ ui.tools_tab }}: {{ counts.tools }}</p><p><a href="{{ nav.collections }}">{{ nav.collections_label }}</a>{% if nav.datasets_enabled %} · <a href="{{ nav.datasets }}">{{ nav.datasets_label }}</a>{% endif %}</p></article>{% endblock %}
+{% extends 'base.html' %}{% block content %}<article class="policy">
+{% include 'includes/breadcrumbs.html' %}<h1>{{ title }}</h1>
+{% for tag,text,fallback in blocks %}{% if tag == 'h2' %}<h2{% if fallback %} lang="en"{% endif %}>{{ text }}</h2>{% else %}<p{% if fallback %} lang="en"{% endif %}>{{ text }}</p>{% endif %}{% endfor %}
+<section id="rating-v1"><h2>AIpediya Rating v1.0</h2>
+{% if rating_summary %}<p class="secondary">{{ ui.rating_date }} {{ rating_summary.data_cutoff }} · {{ ui.rating_text_version }} v1.0</p>
+{% include 'includes/rating_leader.html' %}{% endif %}
+{% for heading,text in rating_blocks %}<h3>{{ heading }}</h3><p>{{ text }}</p>{% endfor %}
+{% if rating_summary %}<h3>{{ ui.rating_contexts }}</h3>
+<div class="rating-context-grid">{% for item in rating_summary.contexts %}<div><bdi dir="ltr">{{ item.context_id }}</bdi><span>{{ item.status_label }}</span><small>{{ ui.models_tab }}: {% if item.models_passing != None %}{{ item.models_passing }}{% elif item.models_passing_model_gate != None %}{{ item.models_passing_model_gate }}{% else %}—{% endif %}</small></div>{% endfor %}</div>
+<details><summary>{{ ui.snapshot }}</summary><p class="rating-snapshot-id"><bdi dir="ltr">{{ rating_summary.snapshot_id }}</bdi></p><p class="rating-snapshot-id"><bdi dir="ltr">SHA-256 {{ rating_summary.content_sha256 }}</bdi></p></details>{% endif %}
+</section>
+<p class="secondary">{{ ui.models_tab }}: {{ counts.models }} · {{ ui.tools_tab }}: {{ counts.tools }}</p><p><a href="{{ nav.collections }}">{{ nav.collections_label }}</a>{% if nav.datasets_enabled %} · <a href="{{ nav.datasets }}">{{ nav.datasets_label }}</a>{% endif %}</p></article>{% endblock %}

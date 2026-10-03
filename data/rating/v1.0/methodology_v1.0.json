@@ -1,0 +1,230 @@
+{
+ "methodology_version": "AIpediya Rating v1.0",
+ "source_of_truth": "AIpediya_Research_Closure_Report_v1.0_2026-10-03.xlsx + Reference Pack v1.0 (дополнение: замороженная калибровка, z-параметры Arena, правило пороговой зоны значка)",
+ "engine": {
+  "model": "1-factor IRT: y = a_b*theta + c_b + eps",
+  "logit_clip": [
+   0.01,
+   0.99
+  ],
+  "sigma": {
+   "independent": 0.9,
+   "arena": 0.675,
+   "developer": 1.8,
+   "aipediya_multiplier": 1.25
+  },
+  "theta_prior_precision": 1.0,
+  "prior_a_mean": 1.0,
+  "prior_a_sd": 0.5,
+  "prior_c_sd": 3.0,
+  "a_bounds": [
+   0.1,
+   4.0
+  ],
+  "calibration_iterations": 150,
+  "misfit_min_dof": 2,
+  "early_evidence": {
+   "k_new": 1.29,
+   "single_batch_span_days": 14,
+   "max_age_days": 90,
+   "reference_date": "data_cutoff"
+  },
+  "sigma_runner": 0.0,
+  "conservative_z": 1.2816
+ },
+ "caps": {
+  "family": 1.5,
+  "runner": {
+   "Epoch AI": 6.0
+  },
+  "runner_default": 2.0,
+  "arena_eff_obs": 1.0,
+  "arena_share": 0.25,
+  "developer_per_test": 1.0,
+  "developer_min_models_per_test": 3,
+  "developer_share": 0.2
+ },
+ "evidence": {
+  "excluded_families_llm_overall": [
+   "swebench"
+  ],
+  "legacy_display_families": [
+   "swebench"
+  ],
+  "public_only": true,
+  "exclude_result_kinds": [
+   "composite"
+  ],
+  "exclude_superseded_duplicates": true
+ },
+ "q_scale": {
+  "definition": "Q(theta)=mean_b sigmoid(a_b*theta+c_b) over frozen basket",
+  "basket_source": "calibration_v1.0.json:q_basket"
+ },
+ "price": {
+  "LLM": {
+   "workload_default": {
+    "input": 3,
+    "output": 1
+   },
+   "anchor_low_usd": 0.2,
+   "anchor_high_usd": 20.0,
+   "profiles_workload": {
+    "documents": {
+     "input": 10,
+     "output": 1
+    },
+    "default_v1": {
+     "input": 3,
+     "output": 1
+    },
+    "generation": {
+     "input": 1,
+     "output": 3
+    }
+   }
+  },
+  "other_segments_rule": "anchors fixed at first Ready snapshot: p5/p95 of reference tariffs rounded to 1-2-5 series; frozen per version"
+ },
+ "resource": {
+  "LLM": {
+   "ctx_low": 8000,
+   "ctx_high": 1000000
+  }
+ },
+ "overall": {
+  "formula": "100*Q^wq*(0.2+0.8C)^wc*(0.3+0.7K)^wk, weights normalized",
+  "profiles": {
+   "BALANCED": [
+    0.78,
+    0.16,
+    0.06
+   ],
+   "QUALITY_FIRST": [
+    0.9,
+    0.07,
+    0.03
+   ],
+   "ECONOMY": [
+    0.55,
+    0.37,
+    0.08
+   ]
+  },
+  "conservative_percentile": 10
+ },
+ "frontier": {
+  "delta_theta": 0.28,
+  "tier": "median_s floor((max_{A/B} theta^s - theta^s)/delta)+1",
+  "no1_static": {
+   "precision_grades": [
+    "A",
+    "B"
+   ],
+   "exact_price": true,
+   "exact_resource": true,
+   "min_independent_orgs": 2
+  },
+  "monte_carlo": {
+   "draws": 6000,
+   "weight_jitter": [
+    0.8,
+    1.2
+   ],
+   "rng": "numpy.random.default_rng(seed) (PCG64)",
+   "seed": 20261003
+  },
+  "badge_threshold": 0.5,
+  "badge_borderline_rule": {
+   "band_mcse_multiplier": 2.0,
+   "action": "if |P_max-0.5| < 2*MCSE: rerun with draws*2 (same seed, new generator instance); if still within band -> no badge",
+   "max_draws": 12000
+  }
+ },
+ "grades": {
+  "precision": {
+   "basis": "sigma_stat incl. misfit and k_new, WITHOUT sigma_support",
+   "A": {
+    "fam_non_arena_min": 5,
+    "dom_non_arena_min": 4,
+    "independent_orgs_min": 2,
+    "sigma_stat_max": 0.3
+   },
+   "B": {
+    "fam_non_arena_min": 3,
+    "dom_non_arena_min": 3,
+    "sigma_stat_max": 0.45
+   }
+  },
+  "support": {
+   "A_paths_min": 3,
+   "B_paths": 2,
+   "paths": "non-Arena independent runners + AIpediya reproducible"
+  }
+ },
+ "gates": {
+  "LLM.OVERALL": {
+   "model": {
+    "fam_non_arena_min": 2,
+    "dom_non_arena_min": 2
+   },
+   "publish": {
+    "models_min": 10,
+    "families_min": 2,
+    "runners_min": 2,
+    "external_runners_min": 1
+   },
+   "conditional_flag": "Ready (условно) if share of Rated models with Support C > 0.5"
+  },
+  "scenario_default": {
+   "model": {
+    "fam_in_scenario_min": 2
+   },
+   "publish": {
+    "models_min": 10,
+    "families_min": 2,
+    "runners_min_for_ready": 2
+   }
+  },
+  "distinctiveness": {
+   "D1": "heterogeneity p<0.05 OR OOS improvement>=5% with bootstrap 95% CI(ΔMSE)>0",
+   "D2": "Spearman vs parent <0.95 OR >=3 changes in Top-10 OR different #1 with P>=0.5",
+   "rule": "D1 AND D2 -> Ready-eligible; else max Beta"
+  }
+ },
+ "coverage_weights": {
+  "A_gate": 40,
+  "B_price": 20,
+  "B_resource": 10,
+  "B_config": 5,
+  "C_runners": 12,
+  "C_aipediya": 8,
+  "C_breadth": 5
+ },
+ "freshness": {
+  "price": {
+   "fresh": 30,
+   "stale": 60
+  },
+  "resource": {
+   "fresh": 180,
+   "stale": 365
+  },
+  "config": {
+   "fresh": 90,
+   "stale": 180
+  },
+  "availability": {
+   "fresh": 30,
+   "stale": 60
+  },
+  "benchmark_source_recheck": 90,
+  "licence_open_recheck": 365,
+  "snapshot": {
+   "fresh": 7,
+   "stale": 14
+  },
+  "reference_date": "data_cutoff"
+ },
+ "early_evidence_note": "все сравнения дат — с data_cutoff снимка, не с системным временем"
+}

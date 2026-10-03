@@ -1,0 +1,5 @@
+{% if rating %}<span class="rating-value-wrap" data-rating-model="{{ rating.model_id }}" data-score-type="{{ rating.score_type }}">
+<button type="button" class="rating-trigger" data-rating-audit aria-label="{{ ui.rating_audit }}: {{ rating.name }}" aria-expanded="false"><bdi dir="ltr">{{ rating.value }}</bdi> <span aria-hidden="true">{% if rating.status == 'Rated' %}{{ rating.icon }}{% endif %}</span></button>
+{% if rating.status == 'Rated' %}<span class="rating-caption"><bdi dir="ltr">{% if rating.overall_rank %}#{{ rating.overall_rank }}{% else %}{{ ui.rating_rank }} {{ rating.overall_rank_range }}{% endif %} · {{ ui.rating_tier }} {{ rating.tier }}</bdi></span><span class="rating-grades" title="{{ ui.rating_precision }} · {{ ui.rating_support }}"><bdi dir="ltr">Precision {{ rating.precision_grade }} · Support {{ rating.support_grade }}</bdi></span>{% else %}<span class="rating-caption">{{ rating.status_label }}</span>{% endif %}
+<template data-rating-tip>{% include 'includes/rating_audit.html' %}</template>
+</span>{% else %}<span class="rating-caption">—</span>{% endif %}

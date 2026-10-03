@@ -1,0 +1,6 @@
+<details class="rating-leader"><summary><span>AIpediya Overall LLM</span> · <span>{{ rating_summary.leader_label }}</span></summary>
+<div><p class="secondary">{{ rating_summary.status_label }} · {{ ui.rating_date }} {{ rating_summary.data_cutoff }}</p>
+{% if rating_summary.snapshot_stale %}<p class="rating-warning">{{ rating_summary.snapshot_age_label }}</p>{% endif %}
+{% for item in rating_summary.candidates %}<p><a href="{{ nav.models }}?model={{ item.model_id }}"><bdi dir="ltr">{{ item.name }}</bdi></a> · <bdi dir="ltr">P(№1) {{ item.probability_pct }}% · MCSE {{ item.mcse_pct }}%</bdi></p>{% endfor %}
+<p>{{ ui.rating_not_winner }}</p><a href="{{ nav.methodology }}#rating-v1">{{ ui.methodology }} · v1.0</a></div>
+</details>

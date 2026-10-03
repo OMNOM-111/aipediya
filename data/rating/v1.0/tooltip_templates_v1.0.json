@@ -1,0 +1,179 @@
+{
+ "note": "Ключи i18n. RU и EN — эталонные формулировки; остальные языки — штатной системой локализации. Технические идентификаторы (Context ID, названия бенчмарков, конфигурации) не переводятся.",
+ "icons": {
+  "ok": "✓",
+  "gap": "—",
+  "stale": "!",
+  "info": "·",
+  "none": "—"
+ },
+ "ui_state": {
+  "complete": {
+   "icon": "✓",
+   "ru": "Полные данные",
+   "en": "Complete"
+  },
+  "minor": {
+   "icon": "◐",
+   "ru": "Незначительные пробелы",
+   "en": "Minor gaps"
+  },
+  "material": {
+   "icon": "!",
+   "ru": "Существенные пробелы",
+   "en": "Material gaps"
+  },
+  "provisional": {
+   "icon": "—",
+   "ru": "Предварительно / нет рейтинга",
+   "en": "Provisional / NR"
+  }
+ },
+ "checklist": {
+  "evidence": {
+   "ru": "Независимые доказательства: {families} семейств тестов, {domains} доменов",
+   "en": "Independent evidence: {families} benchmark families, {domains} domains",
+   "plural": true
+  },
+  "runners": {
+   "ru": "Независимые раннеры (не Arena): {n}",
+   "en": "Independent non-Arena runners: {n}"
+  },
+  "aipediya_test_absent_systemic": {
+   "ru": "Собственный воспроизводимый тест AIpediya: пока не проводится ни для одной модели",
+   "en": "AIpediya reproducible test: not yet run for any model"
+  },
+  "price": {
+   "ru": "Стандартная API-цена: ${input} / ${output} за 1M токенов ({service}), проверено {checked}",
+   "en": "Standard API price: ${input} / ${output} per 1M tokens ({service}), checked {checked}"
+  },
+  "price_unknown": {
+   "ru": "Стандартная API-цена: неизвестна",
+   "en": "Standard API price: unknown"
+  },
+  "context": {
+   "ru": "Контекстное окно: {ctx} токенов",
+   "en": "Context window: {ctx} tokens"
+  },
+  "context_unknown": {
+   "ru": "Контекстное окно: неизвестно",
+   "en": "Context window: unknown"
+  },
+  "config_match": {
+   "ru": "Конфигурация: capability измерена на «{config}»; цена — тариф этой модели за токен",
+   "en": "Configuration: capability measured at “{config}”; price is this model's per-token tariff"
+  },
+  "config_unconfirmed": {
+   "ru": "Соответствие конфигурации и тарифа: не подтверждено",
+   "en": "Configuration-to-tariff match: unconfirmed"
+  },
+  "grades": {
+   "ru": "Precision {precision} · Support {support}",
+   "en": "Precision {precision} · Support {support}"
+  },
+  "provisional": {
+   "ru": "Недостаточно независимых доказательств для рейтинга",
+   "en": "Not enough independent evidence for a rating"
+  },
+  "nr": {
+   "ru": "Нет независимых доказательств в этом контексте",
+   "en": "No independent evidence in this context"
+  }
+ },
+ "text": {
+  "text_no_aipediya_test": {
+   "ru": "Оценка рассчитана без собственного воспроизводимого теста AIpediya. Центральная оценка не изменена; по калибровке методики v1.0 отсутствие дополнительного подтверждения не снижает оценку (эффект {dq_pp} п.п.), но отражается в Evidence Support.",
+   "en": "Computed without an AIpediya reproducible test. The central estimate is unchanged; under methodology v1.0 calibration a missing extra confirmation does not lower the score (effect {dq_pp} pp) but is shown in Evidence Support."
+  },
+  "text_bounded": {
+   "ru": "Не подтверждено: {missing}. Overall показан диапазоном {min}–{max} (возможное место {range}); до подтверждения модель не допускается к №1.",
+   "en": "Not confirmed: {missing}. Overall is shown as a range {min}–{max} (possible rank {range}); the model cannot be #1 until confirmed."
+  },
+  "text_tier_order": {
+   "ru": "Место определяется сначала ступенью доказанной capability, затем Overall внутри ступени — поэтому модель с большим Overall может стоять ниже.",
+   "en": "Rank is set first by the proven-capability tier, then by Overall within the tier — so a model with a higher Overall can rank lower."
+  },
+  "text_early_evidence": {
+   "ru": "Все независимые результаты получены одной недавней партией — неопределённость увеличена (×{k_new}).",
+   "en": "All independent results come from one recent batch — uncertainty is widened (×{k_new})."
+  },
+  "text_stale": {
+   "ru": "{fact}: значение устарело / требует перепроверки (последняя проверка {since}).",
+   "en": "{fact}: value is stale / needs re-check (last checked {since})."
+  },
+  "text_not_eligible": {
+   "ru": "К №1 не допускается: {reasons}.",
+   "en": "Not eligible for #1: {reasons}."
+  },
+  "text_provisional": {
+   "ru": "Рейтинг не рассчитан: {missing}. Это не оценка качества модели.",
+   "en": "No rating computed: {missing}. This is not a judgement of model quality."
+  },
+  "text_nr": {
+   "ru": "В этом контексте нет независимых доказательств.",
+   "en": "No independent evidence in this context."
+  }
+ },
+ "leader": {
+  "badge": {
+   "ru": "№1 AIpediya Overall LLM",
+   "en": "#1 AIpediya Overall LLM"
+  },
+  "indistinguishable": {
+   "ru": "Лидеры статистически неразличимы",
+   "en": "Leaders are statistically indistinguishable"
+  }
+ },
+ "missing_fact_labels": {
+  "price": {
+   "ru": "стандартная цена",
+   "en": "standard price"
+  },
+  "resource": {
+   "ru": "контекстное окно",
+   "en": "context window"
+  },
+  "config_match": {
+   "ru": "соответствие конфигурации",
+   "en": "configuration match"
+  },
+  "evidence_gate": {
+   "ru": "Evidence Gate (нужно ≥2 семейства и ≥2 домена без Arena)",
+   "en": "Evidence Gate (needs ≥2 non-Arena families and ≥2 domains)"
+  },
+  "independent_non_arena_evidence": {
+   "ru": "независимые не-Arena тесты",
+   "en": "independent non-Arena benchmarks"
+  },
+  "context_not_applicable": {
+   "ru": "контекст не применим к сегменту модели",
+   "en": "context does not apply to this model segment"
+  }
+ },
+ "no1_reason_labels": {
+  "precision_grade": {
+   "ru": "Precision {grade}",
+   "en": "Precision {grade}"
+  },
+  "independent_orgs": {
+   "ru": "меньше 2 независимых организаций",
+   "en": "fewer than 2 independent organizations"
+  },
+  "unconfirmed_price": {
+   "ru": "цена не подтверждена",
+   "en": "price unconfirmed"
+  },
+  "unconfirmed_resource": {
+   "ru": "контекст не подтверждён",
+   "en": "context unconfirmed"
+  },
+  "unconfirmed_config_match": {
+   "ru": "конфигурация не подтверждена",
+   "en": "configuration unconfirmed"
+  },
+  "outside_frontier_mostly": {
+   "ru": "чаще вне эшелона лидера",
+   "en": "mostly outside the leader tier"
+  }
+ }
+}

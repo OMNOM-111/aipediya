@@ -1,0 +1,161 @@
+{
+ "llm_families": [
+  {
+   "regex": "^LMArena Text \\(",
+   "family": "arena_text",
+   "domain": "preference"
+  },
+  {
+   "regex": "^LMArena WebDev",
+   "family": "arena_webdev",
+   "domain": "preference"
+  },
+  {
+   "regex": "^LMArena Vision",
+   "family": "arena_vision",
+   "domain": "preference"
+  },
+  {
+   "regex": "^LMArena Document",
+   "family": "arena_document",
+   "domain": "preference"
+  },
+  {
+   "regex": "^FrontierMath",
+   "family": "frontiermath",
+   "domain": "math"
+  },
+  {
+   "regex": "^Mock AIME",
+   "family": "aime",
+   "domain": "math"
+  },
+  {
+   "regex": "^MATH level 5",
+   "family": "math_l5",
+   "domain": "math"
+  },
+  {
+   "regex": "^GPQA Diamond",
+   "family": "gpqa",
+   "domain": "science"
+  },
+  {
+   "regex": "^SimpleQA",
+   "family": "simpleqa",
+   "domain": "knowledge"
+  },
+  {
+   "regex": "^Chess Puzzles",
+   "family": "chess",
+   "domain": "reasoning_games"
+  },
+  {
+   "regex": "^Mystery Game",
+   "family": "mystery",
+   "domain": "reasoning_games"
+  },
+  {
+   "regex": "^Furniture Assembly",
+   "family": "furniture",
+   "domain": "spatial"
+  },
+  {
+   "regex": "^SWE-bench Verified",
+   "family": "swebench",
+   "domain": "coding"
+  },
+  {
+   "regex": "^MirrorCode",
+   "family": "mirrorcode",
+   "domain": "coding"
+  },
+  {
+   "regex": "^Aider",
+   "family": "aider",
+   "domain": "coding"
+  },
+  {
+   "regex": "^ForecastBench",
+   "family": "forecastbench",
+   "domain": "forecasting"
+  },
+  {
+   "regex": "^Surface Evolver",
+   "family": "surface_evolver",
+   "domain": "engineering"
+  },
+  {
+   "regex": "^EBR-bench",
+   "family": "ebr_bench",
+   "domain": "unclassified"
+  }
+ ],
+ "generation_families": [
+  {
+   "benchmark": "LMArena Text-to-Image",
+   "family": "arena_t2i",
+   "segment": "image_gen",
+   "domain": "generation"
+  },
+  {
+   "benchmark": "LMArena Image Edit",
+   "family": "arena_imgedit",
+   "segment": "image_gen",
+   "domain": "generation"
+  },
+  {
+   "benchmark": "LMArena Text-to-Video",
+   "family": "arena_t2v",
+   "segment": "video_gen",
+   "domain": "generation"
+  },
+  {
+   "benchmark": "LMArena Image-to-Video",
+   "family": "arena_i2v",
+   "segment": "video_gen",
+   "domain": "generation"
+  }
+ ],
+ "effort_order": {
+  "max": 9,
+  "xhigh": 8,
+  "xhigh; codex-harness": 8,
+  "high": 7,
+  "thinking budget 32K": 6,
+  "medium": 5,
+  "default": 4,
+  "default (effort unspecified by source)": 4,
+  "low": 2,
+  "none": 1
+ },
+ "effort_default_rank": 3,
+ "arena_family_prefix": "arena_",
+ "segment_rules": {
+  "audio_gen_tasks": "music|audio_generation",
+  "speech_llm_tasks": "reasoning|agents",
+  "video_tasks": "video_(generation|editing)|character_animation",
+  "image_tasks": "image_(generation|editing)",
+  "specialized_tasks": "safety|moderation|jailbreak|ocr",
+  "llm_tasks": "\\btext\\b|reasoning|vision|agent|document"
+ },
+ "reference_offer": {
+  "record_type": "model",
+  "active": "YES",
+  "units": [
+   "input",
+   "output"
+  ],
+  "exclude_conditions_regex": "batch|flex|off-?peak|promo|акци|fast|priority|long context|discount|temporary|временн|free tier",
+  "regex_flags": "IGNORECASE",
+  "service_order": "services of rows with Primary=YES first, then remaining services in master order",
+  "pairing": "within a service: first Conditions EN group (master order) having both input and output -> min amount of each; fallback: if the service has exactly one distinct input amount and one distinct output amount (conditions text differs) -> pair them",
+  "config_specific_tariffs": "none in master v1.0; if present, capability configuration must map to the matching tariff, otherwise configuration match = unconfirmed"
+ },
+ "runner_rules": {
+  "runner": "Evaluations.Evaluator for independent rows",
+  "channel": "'Epoch AI hub' if Conditions Extra.retrieved_via mentions Epoch, else Evaluator (channel is not a runner)",
+  "independent_orgs": "distinct runners incl. LMArena",
+  "non_arena_runners": "distinct runners of non-Arena independent rows"
+ }
+}

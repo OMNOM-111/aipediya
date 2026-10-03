@@ -1,5 +1,77 @@
 # Текущее состояние AIpedia
 
+Обновлено (UTC): 2026-10-03T10:25:43Z
+## 03.10 — Release #023 · v0.20.0 · Rating Engine v1.0 — LOCAL PASS / OWNER REVIEW
+
+- Timeline: `RATING-ENGINE-V1-2026-10-03`, зарегистрирован до реализации на clean main `51a48075a7be2ba62d2c47d208c8c6d1ba7c00a7`; reserved tag `release-2026-10-03-rating-engine-v1`.
+- Изменено: frozen offline score engine + append-only item binding, 3 immutable profile snapshots, существующие rating cell/model panel, structured audit popover, 22 локали и методика. Catalog/publication/Record IDs/numbers сохранены; master refresh изменил только Meta Computed UTC.
+- Snapshot `LLM.OVERALL@BALANCED-v1.0-2026-10-02-66c30305a6d9`; methodology `AIpediya Rating v1.0`; cutoff 2026-10-02; counts 59 Rated / 27 exact / 32 bounded / 66 Provisional / 162 NR. Badge отсутствует: `leaders_statistically_indistinguishable`; P Astra .4363 ± .0064 MCSE.
+- Master SHA `5174bce98bb5578868f9e0c41cfbb05c2940c3465b3247e2a81062becdd2382e`; content SHA `66c30305a6d9e7b4cfbaf358e7b62af5fbb134bcb36aed20bd8a8dad6c811c6e`. Math/Logic Beta; CODE и 18 остальных — Insufficient Data; AUD.MUSIC/SAFETY.CLASSIFIER Out of scope v1. Все 24 состояния вычислены.
+- QA: master refresh/check OK, renumbered 0; catalog QA PASS (17 существующих provenance warnings в canonical queue); intentional master-only/research-only plan документирован, sync apply не выполнялся. Django **397 OK, 1 Windows skip**, rating 25; reference 6 invariants и acceptance ≤1.421e-14 PASS; deterministic all 3 profiles PASS; check/migrations/node/diff PASS. Browser 32 RU/EN/CJK/AR combinations, themes 1440/375, four states + focus/hover/mobile click, profiles/Back/Forward/RTL methodology PASS; overflow 0, console 0, critical network 0.
+
+| Local | GitHub | Production |
+| --- | --- | --- |
+| Canonical root/main `127.0.0.1:18810`, Local ✓, Owner —. DB 343 Models / 158 Tools, active 287/153; integrity ok. | Implementation and handoff are being recorded; final commit/tag verification follows below. | Не тронут; recorded baseline #022 / v0.19.0 / `f46cc435c10e`, без нового live audit. |
+
+- Все modified/untracked файлы происходят из #023: engine/config/snapshots/translations/UI/tests/docs, master refresh metadata и .gitattributes для сохранения LF/hash frozen JSON на Windows. Реальный checkout-index с core.autocrlf=true сохранил все 5 reference hashes. Начальное дерево было clean. Временные authored bootstrap/integration/preflight helpers и ранние derived snapshots сохранены в ignored artifacts; неизвестные пользовательские файлы не удалялись. Итоговый Git state проверяется после commit/push.
+- Расхождение устранено: устаревшая текущая строка Production #021 в PRODUCT_HISTORY и подпись current #020 ниже нового #022 в RELEASE.md согласованы с уже записанным закрытием #022. Без этой коррекции AI_CONTEXT parser ошибочно выбирал #020; сервер не проверялся. Reference object None/NaN подавлял 7 display-only developer records; explicit numeric dtype исправлен, numerical expected совпадает в допусках. Три developer Cybench observations сохраняют sigma/cap reference, не становятся independent evidence. Tooltip namespace collision, Escape/hit-test reopen и RTL numeric direction исправлены и проверены.
+- **Не завершено:** `RATING-023-OWNER-REVIEW` — визуальная приёмка владельцем; причина — задачу предписано закончить на Owner Review, её нельзя объявить принятой. Следующим выполнить: открыть canonical Local и принять #023 или назвать конкретные замечания. Production — только после отдельной явной команды на этот commit/tag по RELEASE.md.
+- **Намеренные остатки:** `RATING-V1-EVIDENCE-EXPANSION` — отдельное будущие research поручение для CODE permissions / второго independent runner / AIpediya reproducible tests; следующий шаг — принять разрешённые источники в master, bind-items/rebuild и gates. 17 исходных предупреждений dates/provenance остаются в существующей catalog quality queue. Старые unlocalized freshness strings/Max Output очередь #022 не расширялись этим поручением.
+- Отчёт: `docs/history/2026-10-03-rating-engine-v1-023.md`; инструкция: `docs/RATING_ENGINE.md`. Один canonical Local оставлен работающим, task preview на 18811–18819 не запускался.
+
+## Доказательства для архива
+
+- docs/history/2026-10-03-rating-engine-v1-023.md
+- docs/RATING_ENGINE.md
+- artifacts/rating-v1-023/reference-acceptance.json
+- artifacts/rating-v1-023/source-hashes.json
+- artifacts/rating-v1-023/master-refresh-diff.json
+- artifacts/rating-v1-023/windows-checkout-frozen.json
+- .gitattributes
+- artifacts/rating-v1-023/browser/qa-final.json
+- artifacts/rating-v1-023/browser/network.json
+- artifacts/rating-v1-023/full-tests-closeout.log
+- artifacts/rating-v1-023/catalog-qa.json
+- artifacts/rating-v1-023/master-local-plan.json
+- data/rating/snapshots/current.json
+
+
+- tools/pack_ai_context.py
+- catalog/rating/builder.py
+- catalog/rating/checks.py
+- catalog/rating/content.py
+- catalog/rating/contexts.py
+- catalog/rating/evidence.py
+- catalog/rating/ledger.py
+- catalog/rating/monte_carlo.py
+- catalog/rating/policy.py
+- catalog/rating/presentation.py
+- catalog/rating/translations.py
+- catalog/rating/__init__.py
+- catalog/management/commands/rating.py
+- catalog/management/commands/translate_rating.py
+- data/rating/v1.0/calibration_v1.0.json
+- data/rating/v1.0/context_registry_v1.0.json
+- data/rating/v1.0/frozen-manifest.json
+- data/rating/v1.0/mappings_v1.0.json
+- data/rating/v1.0/methodology_v1.0.json
+- data/rating/v1.0/rating_item_ledger.json
+- data/rating/v1.0/tooltip_templates_v1.0.json
+- data/rating/snapshots/LLM.OVERALL@BALANCED-v1.0-2026-10-02-66c30305a6d9.contexts.json
+- data/rating/snapshots/LLM.OVERALL@BALANCED-v1.0-2026-10-02-66c30305a6d9.json
+- data/rating/snapshots/LLM.OVERALL@ECONOMY-v1.0-2026-10-02-766387eeaa06.contexts.json
+- data/rating/snapshots/LLM.OVERALL@ECONOMY-v1.0-2026-10-02-766387eeaa06.json
+- data/rating/snapshots/LLM.OVERALL@QUALITY_FIRST-v1.0-2026-10-02-6846641be669.contexts.json
+- data/rating/snapshots/LLM.OVERALL@QUALITY_FIRST-v1.0-2026-10-02-6846641be669.json
+- data/rating/ui_translations.json
+- templates/includes/rating_audit.html
+- templates/includes/rating_leader.html
+- templates/includes/rating_panel.html
+- templates/includes/rating_value.html
+- static/rating.css
+- static/rating.js
+- catalog/tests/test_rating.py
+
 ## 02.10 — Один канонический Local восстановлен (Claude Code, Local-only, без Release #)
 
 - Идентификация 18810–18819: на 18811 работал временный preview worktree `C:\Users\dimon\.claude\worktrees\aipedia-adaptive-ui` (`feature/adaptive-ui`, `e08112c`, влит в main; своя SQLite от 26.09, 321/143; PID 35760/27432, запущен приложением Claude по конфигурации `aipedia-adaptive-ui` через `run-local.ps1`); на 18813 — временный QA-сервер этого репозитория. Оба — preview-серверы этой сессии; остановлены штатно `preview_stop`. Других listener не было.

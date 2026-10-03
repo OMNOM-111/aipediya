@@ -368,7 +368,9 @@ class ReadinessAndSignalsTests(TestCase):
                 self.assertNotRegex(response.content.decode(), r'<(p|h2) lang="en">', msg=code)
             self.assertContains(response, 'rel="canonical"', msg_prefix=code)
         body = self.client.get("/methodology").content.decode()
-        self.assertIn("does not calculate its own rating", body)
+        self.assertNotIn("does not calculate its own rating", body)
+        self.assertIn("AIpediya Rating v1.0", body)
+        self.assertIn("Runtime reads a built JSON snapshot", body)
         self.assertIn("no automatic daily monitoring", body)
 
 

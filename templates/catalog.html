@@ -6,6 +6,7 @@
 <div class="catalog-column">
 {% include 'includes/site_header.html' with catalog_search=True %}
 <main id="main" data-listing-title="{{ listing_title|default:seo.title }}">
+{% if entity_kind == 'model' and rating_summary %}{% include 'includes/rating_leader.html' %}{% endif %}
 {% if hub %}<header class="hub-header">{% include 'includes/breadcrumbs.html' %}<h1{% if hub_blocks.title.1 %} lang="en"{% endif %}>{{ hub_blocks.title.0 }}</h1><p class="hub-intro"{% if hub_blocks.intro.1 %} lang="en"{% endif %}>{{ hub_blocks.intro.0 }}</p><p class="hub-criterion secondary"{% if hub_blocks.criterion.1 %} lang="en"{% endif %}>{{ hub_blocks.criterion.0 }}</p></header>{% elif selected_entity %}<h2 class="sr-only">{{ seo.h1|default:ui.catalog }}</h2>{% else %}<h1 class="sr-only">{{ seo.h1|default:ui.catalog }}</h1>{% endif %}
 <form method="get" id="catalog-filters" class="sr-submit" action="{{ request.path }}" role="search">
 <input type="hidden" name="sort" value="{{ sort }}">

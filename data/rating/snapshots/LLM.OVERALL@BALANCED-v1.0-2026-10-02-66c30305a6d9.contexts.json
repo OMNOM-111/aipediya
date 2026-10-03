@@ -1,0 +1,218 @@
+{
+ "LLM.OVERALL": {
+  "context_id": "LLM.OVERALL",
+  "status": "Ready (условно)",
+  "models_passing": 59,
+  "families": 11,
+  "runners": 3,
+  "share_support_C": 0.831
+ },
+ "LLM.MATH": {
+  "context_id": "LLM.MATH",
+  "status": "Beta",
+  "distinctiveness": {
+   "p_heterogeneity": 0.9956,
+   "tau": 0.0,
+   "oos_improvement": 0.0,
+   "oos_ci95_dmse": [
+    0.0,
+    0.0
+   ],
+   "spearman_vs_parent": 1.0,
+   "top10_changes": 0,
+   "same_no1": true,
+   "D1": false,
+   "D2": false,
+   "passed": false
+  },
+  "models_passing_model_gate": 46,
+  "families_present": 3,
+  "runners": 1,
+  "next_step": "второй раннер; повтор Distinctiveness"
+ },
+ "LLM.LOGIC": {
+  "context_id": "LLM.LOGIC",
+  "status": "Beta",
+  "distinctiveness": {
+   "p_heterogeneity": 0.9977,
+   "tau": 0.0,
+   "oos_improvement": 0.0,
+   "oos_ci95_dmse": [
+    0.0,
+    0.0
+   ],
+   "spearman_vs_parent": 1.0,
+   "top10_changes": 0,
+   "same_no1": true,
+   "D1": false,
+   "D2": false,
+   "passed": false
+  },
+  "models_passing_model_gate": 26,
+  "families_present": 2,
+  "runners": 1,
+  "next_step": "пересмотр границ сценария"
+ },
+ "LLM.CODE": {
+  "context_id": "LLM.CODE",
+  "status": "Insufficient Data",
+  "models_passing_model_gate": 0,
+  "families_present": 0,
+  "runners": 0,
+  "next_step": "разрешения TB / SWE-rebench / DeepSWE / GSO → импорт"
+ },
+ "LLM.AGENTS": {
+  "context_id": "LLM.AGENTS",
+  "status": "Insufficient Data",
+  "models_passing_model_gate": 0,
+  "families_present": 0,
+  "runners": 0,
+  "next_step": "разрешения Andon Labs, XLANG, CMU, Sierra"
+ },
+ "LLM.LONGDOC": {
+  "context_id": "LLM.LONGDOC",
+  "status": "Insufficient Data",
+  "models_passing_model_gate": 0,
+  "families_present": 0,
+  "runners": 0,
+  "next_step": "разрешение Fiction.live; протокол AIpediya"
+ },
+ "LLM.KNOWLEDGE": {
+  "context_id": "LLM.KNOWLEDGE",
+  "status": "Insufficient Data",
+  "models_passing_model_gate": 0,
+  "families_present": 1,
+  "runners": 1,
+  "next_step": "разрешение HLE"
+ },
+ "LLM.SCIENCE": {
+  "context_id": "LLM.SCIENCE",
+  "status": "Insufficient Data",
+  "models_passing_model_gate": 0,
+  "families_present": 1,
+  "runners": 1,
+  "next_step": "разрешение HLE"
+ },
+ "LLM.VISION": {
+  "context_id": "LLM.VISION",
+  "status": "Insufficient Data",
+  "models_passing_model_gate": 0,
+  "families_present": 0,
+  "runners": 0,
+  "next_step": "независимый vision-раннер / протокол AIpediya"
+ },
+ "LLM.CHAT": {
+  "context_id": "LLM.CHAT",
+  "status": "Insufficient Data",
+  "models_passing_model_gate": 0,
+  "families_present": 0,
+  "runners": 0,
+  "next_step": "второй источник предпочтений"
+ },
+ "LLM.FORECAST": {
+  "context_id": "LLM.FORECAST",
+  "status": "Insufficient Data",
+  "models_passing_model_gate": 0,
+  "families_present": 1,
+  "runners": 1,
+  "next_step": "мониторинг"
+ },
+ "LLM.MULTILINGUAL": {
+  "context_id": "LLM.MULTILINGUAL",
+  "status": "Insufficient Data",
+  "models_passing_model_gate": 0,
+  "families_present": 0,
+  "runners": 0,
+  "next_step": "протокол AIpediya (RU первым)"
+ },
+ "STT.TRANSCRIBE": {
+  "context_id": "STT.TRANSCRIBE",
+  "status": "Insufficient Data",
+  "models_passing_model_gate": 0,
+  "families_present": 0,
+  "runners": 0,
+  "next_step": "AVP v1.0 + разрешения Coval / Open ASR"
+ },
+ "STT.STREAMING": {
+  "context_id": "STT.STREAMING",
+  "status": "Insufficient Data",
+  "models_passing_model_gate": 0,
+  "families_present": 0,
+  "runners": 0,
+  "next_step": "AVP v1.0 (задержка)"
+ },
+ "TTS.NARRATION": {
+  "context_id": "TTS.NARRATION",
+  "status": "Insufficient Data",
+  "models_passing_model_gate": 0,
+  "families_present": 0,
+  "runners": 0,
+  "next_step": "AVP v1.0"
+ },
+ "TTS.REALTIME": {
+  "context_id": "TTS.REALTIME",
+  "status": "Insufficient Data",
+  "models_passing_model_gate": 0,
+  "families_present": 0,
+  "runners": 0,
+  "next_step": "AVP v1.0"
+ },
+ "VOICE.AGENT": {
+  "context_id": "VOICE.AGENT",
+  "status": "Insufficient Data",
+  "models_passing_model_gate": 0,
+  "families_present": 0,
+  "runners": 0,
+  "next_step": "AVP v1.0 (τ-Voice, Full-Duplex-Bench)"
+ },
+ "IMG.GEN": {
+  "context_id": "IMG.GEN",
+  "status": "Insufficient Data",
+  "models_passing_model_gate": 0,
+  "families_present": 1,
+  "runners": 1,
+  "next_step": "второе семейство (соответствие запросу)"
+ },
+ "IMG.EDIT": {
+  "context_id": "IMG.EDIT",
+  "status": "Insufficient Data",
+  "models_passing_model_gate": 0,
+  "families_present": 1,
+  "runners": 1,
+  "next_step": "второе семейство"
+ },
+ "VID.GEN": {
+  "context_id": "VID.GEN",
+  "status": "Insufficient Data",
+  "models_passing_model_gate": 3,
+  "families_present": 2,
+  "runners": 1,
+  "next_step": "VBench или аналог"
+ },
+ "EMB.RETRIEVAL": {
+  "context_id": "EMB.RETRIEVAL",
+  "status": "Insufficient Data",
+  "models_passing_model_gate": 0,
+  "families_present": 1,
+  "runners": 2,
+  "next_step": "больше embedding-моделей; MTEB по языкам"
+ },
+ "DOC.OCR": {
+  "context_id": "DOC.OCR",
+  "status": "Insufficient Data",
+  "models_passing_model_gate": 0,
+  "families_present": 0,
+  "runners": 0,
+  "next_step": "протокол AIpediya"
+ },
+ "AUD.MUSIC": {
+  "context_id": "AUD.MUSIC",
+  "status": "Out of scope v1",
+  "reason": "нет независимых источников"
+ },
+ "SAFETY.CLASSIFIER": {
+  "context_id": "SAFETY.CLASSIFIER",
+  "status": "Out of scope v1",
+  "reason": "узкий класс"
+ }
+}

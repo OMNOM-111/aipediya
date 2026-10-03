@@ -234,6 +234,9 @@ TEXT = {
     "Evaluation": ("Результат теста", "Evaluation"), "Fact": ("Характеристика", "Fact"), "Access": ("Способ доступа", "Access method"),
 }
 
+from .rating.translations import register as _register_rating
+_register_rating(TEXT, TRANSLATIONS)
+
 def t(key, lang):
     """Resolve one interface string for a language with English fallback.
 

@@ -14,6 +14,8 @@ The methodology describes rules that are implemented today. Plans are listed
 separately and never presented as existing practice.
 """
 
+from .rating.content import LABELS as RATING_LABELS
+
 METHODOLOGY = [
     ("p",
      "AIpediya is an editorial reference catalog of AI models and AI tools. Models and tools are separate catalogs with their own numbering, filters and cards. It is a curated selection, not a complete registry of every model that exists.",
@@ -40,8 +42,8 @@ METHODOLOGY = [
      "Страна происхождения отражает документально подтверждённое местонахождение организации-разработчика и записывается с источником. У записи может быть несколько стран."),
     ("h2", "Independent evaluations", "Независимые оценки"),
     ("p",
-     "Only results of the same benchmark and protocol are comparable. Each result names the evaluator, benchmark, configuration, snapshot and check date. Developer-reported results are labelled separately from independent runs and composite indices. Third-party results are shown only after the identity of the model and permission to reuse the source have been verified. AIpediya does not calculate its own rating or a universal intelligence score.",
-     "Сравнимы только результаты одного теста с одинаковым протоколом. У каждого результата указаны автор оценки, тест, конфигурация, снимок и дата проверки. Результаты, заявленные разработчиком, отделены от независимых прогонов и сводных индексов. Сторонние результаты показываются только после проверки соответствия модели и права на повторное использование источника. AIpediya не рассчитывает собственный рейтинг или универсальный «балл интеллекта»."),
+     RATING_LABELS['rating_source_note'][1],
+     RATING_LABELS['rating_source_note'][0]),
     ("h2", "Open weights and licenses", "Открытые веса и лицензии"),
     ("p",
      "Open weights means the weights can be downloaded under the license stated by the developer. It is not the same as open source, and running a model locally still requires hardware and energy.",

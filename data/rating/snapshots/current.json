@@ -1,0 +1,8 @@
+{
+ "schema_version": "aipediya-rating-index/1",
+ "profiles": {
+  "BALANCED": "LLM.OVERALL@BALANCED-v1.0-2026-10-02-66c30305a6d9.json",
+  "QUALITY_FIRST": "LLM.OVERALL@QUALITY_FIRST-v1.0-2026-10-02-6846641be669.json",
+  "ECONOMY": "LLM.OVERALL@ECONOMY-v1.0-2026-10-02-766387eeaa06.json"
+ }
+}

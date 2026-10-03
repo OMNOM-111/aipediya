@@ -1,0 +1,256 @@
+{
+ "registry_version": "v1.0",
+ "source": "Research Closure Report v1.0 (лист 1) + Context Registry v1.2",
+ "profiles": [
+  "BALANCED",
+  "QUALITY_FIRST",
+  "ECONOMY",
+  "LOW_LATENCY"
+ ],
+ "profile_rule": "Usage Profile меняет только веса цены/ресурса, workload и эталонный тариф; Q, evidence и gates не меняет",
+ "public_position_rule": "позиция #N на карточке модели — только для контекстов Ready / Ready (условно) и моделей со status Rated",
+ "contexts": [
+  {
+   "context_id": "LLM.OVERALL",
+   "segment": "LLM",
+   "scenario": "OVERALL",
+   "public_name": "AIpediya Overall LLM"
+  },
+  {
+   "context_id": "LLM.MATH",
+   "segment": "LLM",
+   "scenario": "MATH",
+   "parent": "LLM.OVERALL",
+   "families": [
+    "aime",
+    "frontiermath",
+    "math_l5"
+   ],
+   "next_step": "второй раннер; повтор Distinctiveness"
+  },
+  {
+   "context_id": "LLM.LOGIC",
+   "segment": "LLM",
+   "scenario": "LOGIC",
+   "parent": "LLM.OVERALL",
+   "families": [
+    "chess",
+    "mystery"
+   ],
+   "next_step": "пересмотр границ сценария"
+  },
+  {
+   "context_id": "LLM.CODE",
+   "segment": "LLM",
+   "scenario": "CODE",
+   "parent": "LLM.OVERALL",
+   "families": [
+    "mirrorcode",
+    "aider",
+    "swe_rebench",
+    "terminal_bench",
+    "deepswe",
+    "gso"
+   ],
+   "auxiliary": [
+    "arena_webdev",
+    "swebench (legacy)"
+   ],
+   "next_step": "разрешения TB / SWE-rebench / DeepSWE / GSO → импорт"
+  },
+  {
+   "context_id": "LLM.AGENTS",
+   "segment": "LLM",
+   "scenario": "AGENTS",
+   "parent": "LLM.OVERALL",
+   "families": [
+    "vending_bench",
+    "osworld",
+    "theagentcompany",
+    "tau_bench",
+    "terminal_bench"
+   ],
+   "next_step": "разрешения Andon Labs, XLANG, CMU, Sierra"
+  },
+  {
+   "context_id": "LLM.LONGDOC",
+   "segment": "LLM",
+   "scenario": "LONGDOC",
+   "parent": "LLM.OVERALL",
+   "families": [
+    "fiction_livebench"
+   ],
+   "next_step": "разрешение Fiction.live; протокол AIpediya"
+  },
+  {
+   "context_id": "LLM.KNOWLEDGE",
+   "segment": "LLM",
+   "scenario": "KNOWLEDGE",
+   "parent": "LLM.OVERALL",
+   "families": [
+    "simpleqa",
+    "hle"
+   ],
+   "next_step": "разрешение HLE"
+  },
+  {
+   "context_id": "LLM.SCIENCE",
+   "segment": "LLM",
+   "scenario": "SCIENCE",
+   "parent": "LLM.OVERALL",
+   "families": [
+    "gpqa",
+    "hle"
+   ],
+   "next_step": "разрешение HLE"
+  },
+  {
+   "context_id": "LLM.VISION",
+   "segment": "LLM",
+   "scenario": "VISION",
+   "parent": "LLM.OVERALL",
+   "families": [],
+   "auxiliary": [
+    "arena_vision"
+   ],
+   "next_step": "независимый vision-раннер / протокол AIpediya"
+  },
+  {
+   "context_id": "LLM.CHAT",
+   "segment": "LLM",
+   "scenario": "CHAT",
+   "parent": "LLM.OVERALL",
+   "families": [
+    "arena_text"
+   ],
+   "next_step": "второй источник предпочтений"
+  },
+  {
+   "context_id": "LLM.FORECAST",
+   "segment": "LLM",
+   "scenario": "FORECAST",
+   "parent": "LLM.OVERALL",
+   "families": [
+    "forecastbench"
+   ],
+   "next_step": "мониторинг"
+  },
+  {
+   "context_id": "LLM.MULTILINGUAL",
+   "segment": "LLM",
+   "scenario": "MULTILINGUAL",
+   "parent": "LLM.OVERALL",
+   "families": [],
+   "next_step": "протокол AIpediya (RU первым)"
+  },
+  {
+   "context_id": "STT.TRANSCRIBE",
+   "segment": "STT",
+   "scenario": "TRANSCRIBE",
+   "variants": [
+    "EN",
+    "RU"
+   ],
+   "families": [],
+   "publish_models_min": 8,
+   "next_step": "AVP v1.0 + разрешения Coval / Open ASR"
+  },
+  {
+   "context_id": "STT.STREAMING",
+   "segment": "STT",
+   "scenario": "STREAMING",
+   "families": [],
+   "publish_models_min": 8,
+   "next_step": "AVP v1.0 (задержка)"
+  },
+  {
+   "context_id": "TTS.NARRATION",
+   "segment": "TTS",
+   "scenario": "NARRATION",
+   "variants": [
+    "EN",
+    "RU"
+   ],
+   "families": [],
+   "publish_models_min": 8,
+   "next_step": "AVP v1.0"
+  },
+  {
+   "context_id": "TTS.REALTIME",
+   "segment": "TTS",
+   "scenario": "REALTIME",
+   "families": [],
+   "publish_models_min": 8,
+   "next_step": "AVP v1.0"
+  },
+  {
+   "context_id": "VOICE.AGENT",
+   "segment": "VOICE",
+   "scenario": "AGENT",
+   "families": [],
+   "publish_models_min": 6,
+   "next_step": "AVP v1.0 (τ-Voice, Full-Duplex-Bench)"
+  },
+  {
+   "context_id": "IMG.GEN",
+   "segment": "IMG",
+   "scenario": "GEN",
+   "families": [
+    "arena_t2i"
+   ],
+   "next_step": "второе семейство (соответствие запросу)"
+  },
+  {
+   "context_id": "IMG.EDIT",
+   "segment": "IMG",
+   "scenario": "EDIT",
+   "families": [
+    "arena_imgedit"
+   ],
+   "next_step": "второе семейство"
+  },
+  {
+   "context_id": "VID.GEN",
+   "segment": "VID",
+   "scenario": "GEN",
+   "families": [
+    "arena_t2v",
+    "arena_i2v"
+   ],
+   "publish_models_min": 8,
+   "next_step": "VBench или аналог"
+  },
+  {
+   "context_id": "EMB.RETRIEVAL",
+   "segment": "EMB",
+   "scenario": "RETRIEVAL",
+   "families": [
+    "mteb"
+   ],
+   "publish_models_min": 8,
+   "next_step": "больше embedding-моделей; MTEB по языкам"
+  },
+  {
+   "context_id": "DOC.OCR",
+   "segment": "DOC",
+   "scenario": "OCR",
+   "families": [],
+   "publish_models_min": 8,
+   "next_step": "протокол AIpediya"
+  },
+  {
+   "context_id": "AUD.MUSIC",
+   "segment": "AUD",
+   "scenario": "MUSIC",
+   "fixed_status": "Out of scope v1",
+   "reason": "нет независимых источников"
+  },
+  {
+   "context_id": "SAFETY.CLASSIFIER",
+   "segment": "SAFETY",
+   "scenario": "CLASSIFIER",
+   "fixed_status": "Out of scope v1",
+   "reason": "узкий класс"
+  }
+ ]
+}

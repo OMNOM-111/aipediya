@@ -1,5 +1,21 @@
 # Решения AIpedia
 
+## D-2026-10-03-rating-v1-frozen-offline
+
+- Статус: подтверждено поручением владельца Rating Engine v1.0; визуальная
+  приёмка реализации ещё не состоялась.
+- Frozen executable Reference Pack задаёт численные правила и expected gate;
+  Closure/Context Registry/CODE Audit — provenance и ограничения. Daily build
+  score-only, item/Q/Arena калибровка неизменяемая; новые items через append-only
+  ridge ledger ≥5 frozen-theta anchors. Master — единственный источник evidence.
+- Runtime получает только версионированный JSON. На запуске numerical rating
+  только LLM.OVERALL; Math/Logic Beta, CODE Insufficient Data. Public=NO,
+  запрещённые/revoked источники не повышаются автоматически до public.
+- #023 · v0.20.0 завершает Local PASS → Owner Review; Production не трогать.
+- Совместимость pandas None/NaN и отличие Windows в последнем разряде объяснены
+  и проверены; expected numeric outputs не подгонялись вручную.
+- Источник и проверки: docs/history/2026-10-03-rating-engine-v1-023.md.
+
 ## D-2026-10-02-one-canonical-local
 
 - Статус: подтверждено владельцем поручением 2026-10-02 после Release #022.

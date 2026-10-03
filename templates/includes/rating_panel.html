@@ -1,0 +1,22 @@
+{% load catalog_tags %}<section class="panel-block rating-panel" aria-labelledby="rating-panel-title">
+<h2 id="rating-panel-title">AIpediya Rating</h2>
+<p>{{ ui.rating_context }}: <bdi dir="ltr">LLM.OVERALL</bdi></p>
+<nav class="rating-profiles" aria-label="{{ ui.rating_profile }}">
+<a href="{% query rating_profile='BALANCED' %}"{% if rating_profile == 'BALANCED' %} aria-current="true"{% endif %}>{{ ui.rating_balanced }}</a>
+<a href="{% query rating_profile='QUALITY_FIRST' %}"{% if rating_profile == 'QUALITY_FIRST' %} aria-current="true"{% endif %}>{{ ui.rating_quality_first }}</a>
+<a href="{% query rating_profile='ECONOMY' %}"{% if rating_profile == 'ECONOMY' %} aria-current="true"{% endif %}>{{ ui.rating_economy }}</a>
+</nav>
+{% if model.rating %}{% include 'includes/rating_value.html' with rating=model.rating %}
+{% if model.rating.status == 'Rated' %}<dl class="essentials rating-components">
+<dt>{{ ui.rating_basket }}</dt><dd><bdi dir="ltr">{{ model.rating.q_pct }}%</bdi></dd>
+<dt>{{ ui.rating_price_efficiency }}</dt><dd>{% if model.rating.c_pct != None %}{{ model.rating.c_pct }}%{% else %}{{ ui.rating_unknown }}{% endif %}</dd>
+<dt>{{ ui.rating_resource }}</dt><dd>{% if model.rating.k_pct != None %}{{ model.rating.k_pct }}%{% else %}{{ ui.rating_unknown }}{% endif %}</dd>
+<dt>{{ ui.rating_precision }}</dt><dd>{{ model.rating.precision_grade }}</dd>
+<dt>{{ ui.rating_support }}</dt><dd>{{ model.rating.support_grade }}</dd>
+<dt>{{ ui.rating_coverage }}</dt><dd>{{ model.rating.rating_coverage_pct }}%</dd>
+<dt>{{ ui.rating_configuration }}</dt><dd><bdi dir="ltr">{{ model.rating.configuration }}</bdi></dd>
+</dl>{% endif %}
+<details class="rating-panel-audit"><summary>{{ ui.rating_audit }}</summary>{% include 'includes/rating_audit.html' with rating=model.rating %}</details>
+{% else %}<p>{{ ui.rating_unrated }}</p>{% endif %}
+<p class="secondary">{{ ui.rating_date }} {{ rating_summary.data_cutoff }} · v1.0</p>
+</section>

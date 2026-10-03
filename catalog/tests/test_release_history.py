@@ -6,20 +6,22 @@ from tools.finalize_release_history import finalize
 
 
 class ReleaseHistoryTests(SimpleTestCase):
-    def test_twenty_two_is_current_local_and_production(self):
+    def test_rating_is_local_review_and_twenty_two_remains_production(self):
         registry = load()
         self.assertEqual(validate(registry), [])
         cards = [row for row in registry["product_history"]["milestones"] if row.get("release_sequence")]
-        self.assertEqual([row["release_sequence"] for row in cards], list(range(1, 23)))
-        self.assertEqual(cards[-1]["app_version"], "v0.19.0")
-        self.assertEqual(registry["product_history"]["current_local"]["release_sequence"], 22)
+        self.assertEqual([row["release_sequence"] for row in cards], list(range(1, 24)))
+        self.assertEqual(cards[-1]["app_version"], "v0.20.0")
+        self.assertEqual(registry["product_history"]["current_local"]["release_sequence"], 23)
         self.assertEqual(registry["product_history"]["current_production"]["release_sequence"], 22)
         self.assertTrue(next(row for row in cards if row["release_sequence"] == 18)["production_verified"])
         self.assertFalse(next(row for row in cards if row["release_sequence"] == 17)["production_verified"])
         self.assertTrue(next(row for row in cards if row["release_sequence"] == 20)["production_verified"])
         self.assertTrue(next(row for row in cards if row["release_sequence"] == 21)["production_verified"])
-        self.assertTrue(cards[-1]["production_verified"])
-        self.assertEqual((cards[-1]["progress"], cards[-1]["local_verified"], cards[-1]["owner_approved"]),
+        self.assertTrue(cards[-2]["production_verified"])
+        self.assertFalse(cards[-1]["production_verified"])
+        self.assertFalse(cards[-1]["owner_approved"])
+        self.assertEqual((cards[-2]["progress"], cards[-2]["local_verified"], cards[-2]["owner_approved"]),
                ("done", True, True))
 
     def test_gate_rejects_missing_review_qa_owner_and_stale_html(self):
@@ -44,6 +46,11 @@ class ReleaseHistoryTests(SimpleTestCase):
         registry = load()
         prior = next(row for row in registry["product_history"]["milestones"]
                      if row.get("release_sequence") == 22)
+        # Isolate the historical finalization fixture from a newer Local-only release.
+        registry["product_history"]["milestones"] = [row for row in registry["product_history"]["milestones"]
+            if not row.get("release_sequence") or row["release_sequence"] <= 22]
+        registry["entries"] = [row for row in registry["entries"]
+            if not row.get("release_sequence") or row["release_sequence"] <= 22]
         card = copy.deepcopy(prior)
         card.update(release_id="TEST-RELEASE-23", release_sequence=23,
                     app_version="v0.19.1", release_tag="test-release-23")

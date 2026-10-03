@@ -44,7 +44,18 @@ closed. The older #020 section below is preserved as release history.
 Push в GitHub **не** публикует сайт. Ярлык Local, кнопка Production, commit и push
 сами по себе не выполняют deploy.
 
-Текущий публичный выпуск — **Daily Catalog Update, Release #020 · v0.17.0**,
+Текущий публичный выпуск — **Daily Catalog Update, Release #022 · v0.19.0**,
+2026-10-02: проверенный release id
+`f46cc435c10effcf9b4815e689f22f07378093ca`, tag
+`release-2026-10-02-daily-catalog-update`; 343 Models / 158 Tools.
+Подтверждения выпуска — в Current published release выше и
+`docs/history/2026-10-02-daily-catalog-update-022.md`.
+03.10 при Local-only #023 сервер не запрашивался. Устаревшая текущая подпись
+#020 переименована в историческую; данные и порядок выпуска сохранены.
+
+### Предыдущий публичный выпуск — Daily Catalog Update #020
+
+Daily Catalog Update, Release #020 · v0.17.0,
 2026-09-30: проверенный release id
 `1f412c70634713f8dbf2ea10ee47115fef997450`, tag
 `release-2026-09-30-daily-catalog-update`. Архив

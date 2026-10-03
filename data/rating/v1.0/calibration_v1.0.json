@@ -1,0 +1,555 @@
+{
+ "calibration_id": "AIpediya-Rating-v1.0-calibration",
+ "methodology_version": "AIpediya Rating v1.0",
+ "master_sha256": "7bbb0a5c55f40a3b3cbf3e344e2d03fb2418962b249a98853b359b7213c6d3c0",
+ "data_cutoff": "2026-10-02",
+ "algorithm": {
+  "sigma": {
+   "independent": 0.9,
+   "arena": 0.675,
+   "developer": 1.8,
+   "aipediya_multiplier": 1.25
+  },
+  "theta_prior_precision": 1.0,
+  "prior_a_mean": 1.0,
+  "prior_a_sd": 0.5,
+  "prior_c_sd": 3.0,
+  "a_bounds": [
+   0.1,
+   4.0
+  ],
+  "calibration_iterations": 150,
+  "logit_clip": [
+   0.01,
+   0.99
+  ]
+ },
+ "normalization": "theta standardized (mean 0, SD 1, ddof=0) over cohort at every iteration; frozen thereafter",
+ "cohort": [
+  "claude-fable-5-e8ba8499",
+  "claude-fable-51-7531dff6",
+  "claude-haiku-45-01aad30f",
+  "claude-opus-45-4e9bb797",
+  "claude-opus-46-fe255d9c",
+  "claude-opus-47-934a55dc",
+  "claude-opus-48-77081582",
+  "claude-opus-5-1c2df4c8",
+  "claude-opus-5-5",
+  "claude-sonnet-45-23075902",
+  "claude-sonnet-46-67e931da",
+  "claude-sonnet-5-26497337",
+  "deepseek-v4-pro-0813-c5a6b68e",
+  "deepseek-v41-flash-1d455a34",
+  "gemini-35-flash-6f4d3568",
+  "gemini-35-flash-lite-cedf836d",
+  "gemini-36-flash-c39dfa2e",
+  "gemini-37-flash-b733bb9f",
+  "gemini-38-flash-c9fb1256",
+  "gemma-2-27b-it-aa6d9fcd",
+  "gemma-2-9b-it-80e1fe01",
+  "gemma-3-12b-it-3c580ffc",
+  "gemma-3-1b-it-c61fb8e2",
+  "gemma-3-27b-it-a816dfe8",
+  "gemma-3-4b-it-754fe9a5",
+  "gemma-4-26b-a4b-it-631076e8",
+  "gemma-4-31b-it-6490a505",
+  "glm-46-3b20359a",
+  "glm-47-7bc07849",
+  "glm-47-flash-b10e89fa",
+  "glm-51-f38182d2",
+  "glm-53-8e5ab5d9",
+  "glm-53-flash-bdc83193",
+  "gpt-5-1",
+  "gpt-5-2",
+  "gpt-5-2-pro",
+  "gpt-5-4",
+  "gpt-5-4-mini",
+  "gpt-5-4-nano",
+  "gpt-5-4-pro",
+  "gpt-5-5",
+  "gpt-5-5-pro",
+  "gpt-5-pro",
+  "gpt-56-luna-642037b6",
+  "gpt-56-sol-201e54cf",
+  "gpt-56-terra-ecee13d5",
+  "gpt-6-astra-d05a172f",
+  "gpt-6-luna",
+  "gpt-6-sol",
+  "gpt-oss-120b-12965eda",
+  "gpt-oss-20b-335a1fbc",
+  "grok-46-e73c784d",
+  "grok-47-57cd0cab",
+  "kimi-k26-03b6a51b",
+  "kimi-k27-code-b770ac42",
+  "kimi-k3-40b65aea",
+  "llama-3-70b-instruct-a953989a",
+  "llama-3-8b-instruct-29fc646f",
+  "llama-31-405b-instruct-ce77e1fd",
+  "llama-31-70b-instruct-441da955",
+  "llama-31-8b-instruct-fcee1860",
+  "llama-32-1b-instruct-b48e8705",
+  "llama-32-90b-vision-instruct-88a989e6",
+  "llama-33-70b-instruct-f9965971",
+  "llama-4-scout-17b-16e-instruct-837f5a8d",
+  "minimax-m3-097dfd8e",
+  "mistral-medium-35-2b259c25",
+  "qwen38-27b-2d9346c1",
+  "qwen38-max-0902-32381f5b",
+  "qwen38-max-0b915bf5"
+ ],
+ "items": {
+  "Chess Puzzles": {
+   "a": 1.6615645248193818,
+   "c": -1.917342774528962
+  },
+  "Cybench (unguided)": {
+   "a": 1.0426642808687931,
+   "c": 1.3523679193175941
+  },
+  "EBR-bench": {
+   "a": 1.705745104784143,
+   "c": -2.4232866231490924
+  },
+  "ForecastBench (Brier Index)": {
+   "a": 0.40442738916566157,
+   "c": 0.7163640065968746
+  },
+  "FrontierMath": {
+   "a": 1.6463241426421777,
+   "c": -1.7485346011244705
+  },
+  "FrontierMath Open Problems (Erdős)": {
+   "a": 0.845147351233389,
+   "c": -5.213616786134433
+  },
+  "FrontierMath-Tier-4-2025-07-01-Private": {
+   "a": 1.4238597071359813,
+   "c": -2.9018479535669566
+  },
+  "FrontierMath-Tier-4-v2-Private": {
+   "a": 2.105052251535627,
+   "c": -1.940327526765054
+  },
+  "FrontierMath-Tiers-1-3-v2-Private": {
+   "a": 1.4064617187662014,
+   "c": -0.09873281782176828
+  },
+  "Furniture Assembly": {
+   "a": 1.3805393962938937,
+   "c": -1.5310766588298255
+  },
+  "GPQA Diamond": {
+   "a": 1.2635731327169508,
+   "c": 1.4919424252422928
+  },
+  "LMArena Document Arena": {
+   "a": 0.9521474998143207,
+   "c": -0.5176730924311775
+  },
+  "LMArena Text (style control)": {
+   "a": 0.8657760394694688,
+   "c": 0.2162991827931983
+  },
+  "LMArena Vision (style control)": {
+   "a": 0.9608719043315428,
+   "c": -0.04537715222102316
+  },
+  "LMArena WebDev / Code Arena": {
+   "a": 1.2493294915488946,
+   "c": -0.43400932106907575
+  },
+  "MATH level 5": {
+   "a": 1.7865094875510108,
+   "c": 2.258791461125652
+  },
+  "Mock AIME 2024/2025": {
+   "a": 2.7861042595984657,
+   "c": 1.4861283554868199
+  },
+  "Mystery Game Puzzles": {
+   "a": 1.8877651638174935,
+   "c": -2.16797173101463
+  },
+  "SimpleQA Verified": {
+   "a": 1.1040500039769727,
+   "c": -0.8081204707602612
+  },
+  "Surface Evolver Bench": {
+   "a": 1.3273788236540127,
+   "c": 0.043842652739166675
+  }
+ },
+ "arena_z": {
+  "LMArena Document Arena": {
+   "mean": 1463.9360000000001,
+   "sd": 30.095292655164506
+  },
+  "LMArena Text (style control)": {
+   "mean": 1394.8188125000001,
+   "sd": 99.43706976727714
+  },
+  "LMArena Vision (style control)": {
+   "mean": 1225.79625,
+   "sd": 83.7442294635129
+  },
+  "LMArena WebDev / Code Arena": {
+   "mean": 1518.1823511904763,
+   "sd": 132.16476078603043
+  }
+ },
+ "q_basket": [
+  {
+   "benchmark": "GPQA Diamond",
+   "family": "gpqa",
+   "a": 1.2635731327169508,
+   "c": 1.4919424252422928,
+   "n_models": 57
+  },
+  {
+   "benchmark": "Mock AIME 2024/2025",
+   "family": "aime",
+   "a": 2.7861042595984657,
+   "c": 1.4861283554868199,
+   "n_models": 57
+  },
+  {
+   "benchmark": "Chess Puzzles",
+   "family": "chess",
+   "a": 1.6615645248193818,
+   "c": -1.917342774528962,
+   "n_models": 50
+  },
+  {
+   "benchmark": "FrontierMath-Tiers-1-3-v2-Private",
+   "family": "frontiermath",
+   "a": 1.4064617187662014,
+   "c": -0.09873281782176828,
+   "n_models": 35
+  },
+  {
+   "benchmark": "SimpleQA Verified",
+   "family": "simpleqa",
+   "a": 1.1040500039769727,
+   "c": -0.8081204707602612,
+   "n_models": 34
+  },
+  {
+   "benchmark": "Mystery Game Puzzles",
+   "family": "mystery",
+   "a": 1.8877651638174935,
+   "c": -2.16797173101463,
+   "n_models": 27
+  },
+  {
+   "benchmark": "Furniture Assembly",
+   "family": "furniture",
+   "a": 1.3805393962938937,
+   "c": -1.5310766588298255,
+   "n_models": 24
+  },
+  {
+   "benchmark": "MATH level 5",
+   "family": "math_l5",
+   "a": 1.7865094875510108,
+   "c": 2.258791461125652,
+   "n_models": 12
+  },
+  {
+   "benchmark": "Surface Evolver Bench",
+   "family": "surface_evolver",
+   "a": 1.3273788236540127,
+   "c": 0.043842652739166675,
+   "n_models": 8
+  },
+  {
+   "benchmark": "ForecastBench (Brier Index)",
+   "family": "forecastbench",
+   "a": 0.40442738916566157,
+   "c": 0.7163640065968746,
+   "n_models": 7
+  }
+ ],
+ "linking_rule": "Тест, отсутствующий в items, не участвует в расчёте до привязки. Привязка: когда у теста ≥5 моделей с θ на замороженной шкале — ridge-регрессия y ~ a·θ + c с теми же priors на θ этих моделей; параметры записываются в append-only ledger (rating_item_ledger.json) и далее не меняются до новой версии. Новая подкатегория Arena: mean/SD фиксируются в ledger в момент привязки.",
+ "reference_theta": {
+  "claude-fable-5-e8ba8499": {
+   "theta": 1.077196596528021,
+   "sd_stat_before_k_new": 0.19232395469348199
+  },
+  "claude-fable-51-7531dff6": {
+   "theta": 1.3262683197573724,
+   "sd_stat_before_k_new": 0.19366466279528247
+  },
+  "claude-haiku-45-01aad30f": {
+   "theta": -0.300072191229757,
+   "sd_stat_before_k_new": 0.19521392602309895
+  },
+  "claude-opus-45-4e9bb797": {
+   "theta": 0.08230906614002523,
+   "sd_stat_before_k_new": 0.19874263233873282
+  },
+  "claude-opus-46-fe255d9c": {
+   "theta": 0.4573004775503553,
+   "sd_stat_before_k_new": 0.19545439343549567
+  },
+  "claude-opus-47-934a55dc": {
+   "theta": 0.3735757350182735,
+   "sd_stat_before_k_new": 0.18809337114231434
+  },
+  "claude-opus-48-77081582": {
+   "theta": 0.8467139227388685,
+   "sd_stat_before_k_new": 0.19671927615411347
+  },
+  "claude-opus-5-1c2df4c8": {
+   "theta": 1.1754706676656477,
+   "sd_stat_before_k_new": 0.19467232782226143
+  },
+  "claude-opus-5-5": {
+   "theta": 1.8052562092308264,
+   "sd_stat_before_k_new": 0.33469954757375686
+  },
+  "claude-sonnet-45-23075902": {
+   "theta": -0.5736130748206297,
+   "sd_stat_before_k_new": 0.19441524833208224
+  },
+  "claude-sonnet-46-67e931da": {
+   "theta": -0.19524267722055647,
+   "sd_stat_before_k_new": 0.22507858660311097
+  },
+  "claude-sonnet-5-26497337": {
+   "theta": 0.27193658968575596,
+   "sd_stat_before_k_new": 0.18894239234285942
+  },
+  "deepseek-v4-pro-0813-c5a6b68e": {
+   "theta": 0.8173406876310227,
+   "sd_stat_before_k_new": 0.18805939207528716
+  },
+  "deepseek-v41-flash-1d455a34": {
+   "theta": 0.083735925111423,
+   "sd_stat_before_k_new": 0.50634996406207
+  },
+  "gemini-35-flash-6f4d3568": {
+   "theta": 0.5836818148720181,
+   "sd_stat_before_k_new": 0.19256544177401153
+  },
+  "gemini-35-flash-lite-cedf836d": {
+   "theta": -0.26490610923658797,
+   "sd_stat_before_k_new": 0.22717635702958042
+  },
+  "gemini-36-flash-c39dfa2e": {
+   "theta": 0.5650016990890299,
+   "sd_stat_before_k_new": 0.1939081066481952
+  },
+  "gemini-37-flash-b733bb9f": {
+   "theta": 0.7945292196165902,
+   "sd_stat_before_k_new": 0.1929539961735005
+  },
+  "gemini-38-flash-c9fb1256": {
+   "theta": 0.9183564352515052,
+   "sd_stat_before_k_new": 0.1855853347052703
+  },
+  "gemma-2-27b-it-aa6d9fcd": {
+   "theta": -1.7956897258075881,
+   "sd_stat_before_k_new": 0.23479274466956812
+  },
+  "gemma-2-9b-it-80e1fe01": {
+   "theta": -1.9644981242456947,
+   "sd_stat_before_k_new": 0.23479274466956812
+  },
+  "gemma-3-12b-it-3c580ffc": {
+   "theta": -1.171115414628255,
+   "sd_stat_before_k_new": 0.23831252540183887
+  },
+  "gemma-3-1b-it-c61fb8e2": {
+   "theta": -1.9195391884299662,
+   "sd_stat_before_k_new": 0.2502918811561144
+  },
+  "gemma-3-27b-it-a816dfe8": {
+   "theta": -0.9816376045708561,
+   "sd_stat_before_k_new": 0.21447803829558437
+  },
+  "gemma-3-4b-it-754fe9a5": {
+   "theta": -1.45838200943066,
+   "sd_stat_before_k_new": 0.23831252540183887
+  },
+  "gemma-4-26b-a4b-it-631076e8": {
+   "theta": -0.14809431514126645,
+   "sd_stat_before_k_new": 0.23358084615601174
+  },
+  "gemma-4-31b-it-6490a505": {
+   "theta": -0.26232943532919156,
+   "sd_stat_before_k_new": 0.23418209806295073
+  },
+  "glm-46-3b20359a": {
+   "theta": -0.6081545356595568,
+   "sd_stat_before_k_new": 0.3821058535229366
+  },
+  "glm-47-7bc07849": {
+   "theta": -0.2556550397332115,
+   "sd_stat_before_k_new": 0.20248650785688174
+  },
+  "glm-47-flash-b10e89fa": {
+   "theta": -0.6880168286881142,
+   "sd_stat_before_k_new": 0.23831252540183887
+  },
+  "glm-51-f38182d2": {
+   "theta": 0.3626850501976983,
+   "sd_stat_before_k_new": 0.2034952330350296
+  },
+  "glm-53-8e5ab5d9": {
+   "theta": 0.49389592677419436,
+   "sd_stat_before_k_new": 0.18805939207528716
+  },
+  "glm-53-flash-bdc83193": {
+   "theta": 0.26400858197210136,
+   "sd_stat_before_k_new": 0.18007685739060458
+  },
+  "gpt-5-1": {
+   "theta": 0.3251194246033256,
+   "sd_stat_before_k_new": 0.20358995727184803
+  },
+  "gpt-5-2": {
+   "theta": 0.5874150832109772,
+   "sd_stat_before_k_new": 0.1986915132664123
+  },
+  "gpt-5-2-pro": {
+   "theta": 0.7193015008475364,
+   "sd_stat_before_k_new": 0.37974228344964456
+  },
+  "gpt-5-4": {
+   "theta": 0.7204299989735508,
+   "sd_stat_before_k_new": 0.19671927615411347
+  },
+  "gpt-5-4-mini": {
+   "theta": 0.1020694996246618,
+   "sd_stat_before_k_new": 0.20319452440059046
+  },
+  "gpt-5-4-nano": {
+   "theta": 0.008344734176704192,
+   "sd_stat_before_k_new": 0.19294571370323788
+  },
+  "gpt-5-4-pro": {
+   "theta": 1.030875984403254,
+   "sd_stat_before_k_new": 0.2720259860895741
+  },
+  "gpt-5-5": {
+   "theta": 1.058636419696038,
+   "sd_stat_before_k_new": 0.2263481127872463
+  },
+  "gpt-5-5-pro": {
+   "theta": 1.2959821617019371,
+   "sd_stat_before_k_new": 0.37974228344964456
+  },
+  "gpt-5-pro": {
+   "theta": 0.319085005477472,
+   "sd_stat_before_k_new": 0.40135488229909094
+  },
+  "gpt-56-luna-642037b6": {
+   "theta": 0.7840031488598218,
+   "sd_stat_before_k_new": 0.1939081066481952
+  },
+  "gpt-56-sol-201e54cf": {
+   "theta": 1.1906077051806228,
+   "sd_stat_before_k_new": 0.1988030514066513
+  },
+  "gpt-56-terra-ecee13d5": {
+   "theta": 1.0127619000325174,
+   "sd_stat_before_k_new": 0.1939081066481952
+  },
+  "gpt-6-astra-d05a172f": {
+   "theta": 1.6178142675476772,
+   "sd_stat_before_k_new": 0.19963241579789479
+  },
+  "gpt-6-luna": {
+   "theta": 0.37199079092529935,
+   "sd_stat_before_k_new": 0.49163555559954186
+  },
+  "gpt-6-sol": {
+   "theta": 1.2000436011248756,
+   "sd_stat_before_k_new": 0.33469954757375686
+  },
+  "gpt-oss-120b-12965eda": {
+   "theta": -0.19554234086285027,
+   "sd_stat_before_k_new": 0.2738947252137148
+  },
+  "gpt-oss-20b-335a1fbc": {
+   "theta": -0.8515895067185365,
+   "sd_stat_before_k_new": 0.23831252540183887
+  },
+  "grok-46-e73c784d": {
+   "theta": 0.8001741629330937,
+   "sd_stat_before_k_new": 0.19467232782226143
+  },
+  "grok-47-57cd0cab": {
+   "theta": 0.2297667719951292,
+   "sd_stat_before_k_new": 0.49163555559954186
+  },
+  "kimi-k26-03b6a51b": {
+   "theta": 0.33952510756221244,
+   "sd_stat_before_k_new": 0.19671927615411347
+  },
+  "kimi-k27-code-b770ac42": {
+   "theta": 0.28268362368711686,
+   "sd_stat_before_k_new": 0.18568551729935592
+  },
+  "kimi-k3-40b65aea": {
+   "theta": 0.8218397789877744,
+   "sd_stat_before_k_new": 0.18494332892146673
+  },
+  "llama-3-70b-instruct-a953989a": {
+   "theta": -1.6080384516045811,
+   "sd_stat_before_k_new": 0.23479274466956812
+  },
+  "llama-3-8b-instruct-29fc646f": {
+   "theta": -1.9795883984530278,
+   "sd_stat_before_k_new": 0.2144223004239053
+  },
+  "llama-31-405b-instruct-ce77e1fd": {
+   "theta": -1.1894856510624423,
+   "sd_stat_before_k_new": 0.23349672189751178
+  },
+  "llama-31-70b-instruct-441da955": {
+   "theta": -1.5283715653902818,
+   "sd_stat_before_k_new": 0.23479274466956812
+  },
+  "llama-31-8b-instruct-fcee1860": {
+   "theta": -1.8667920122905721,
+   "sd_stat_before_k_new": 0.2154246354360805
+  },
+  "llama-32-1b-instruct-b48e8705": {
+   "theta": -2.072806901953986,
+   "sd_stat_before_k_new": 0.2502144135569249
+  },
+  "llama-32-90b-vision-instruct-88a989e6": {
+   "theta": -1.6854519038403242,
+   "sd_stat_before_k_new": 0.2323636063584981
+  },
+  "llama-33-70b-instruct-f9965971": {
+   "theta": -1.390415851285994,
+   "sd_stat_before_k_new": 0.23349672189751178
+  },
+  "llama-4-scout-17b-16e-instruct-837f5a8d": {
+   "theta": -1.2744183519228622,
+   "sd_stat_before_k_new": 0.213792244468097
+  },
+  "minimax-m3-097dfd8e": {
+   "theta": -0.05080876308075026,
+   "sd_stat_before_k_new": 0.19995529376666232
+  },
+  "mistral-medium-35-2b259c25": {
+   "theta": -0.5574871037862446,
+   "sd_stat_before_k_new": 0.50634996406207
+  },
+  "qwen38-27b-2d9346c1": {
+   "theta": -0.005418016383942561,
+   "sd_stat_before_k_new": 0.50634996406207
+  },
+  "qwen38-max-0902-32381f5b": {
+   "theta": 0.8345322248775875,
+   "sd_stat_before_k_new": 0.1914720034238275
+  },
+  "qwen38-max-0b915bf5": {
+   "theta": 0.8908952715483714,
+   "sd_stat_before_k_new": 0.18862618831951838
+  }
+ }
+}

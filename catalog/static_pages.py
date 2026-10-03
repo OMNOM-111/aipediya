@@ -119,6 +119,12 @@ def _translated(english, lang):
     """Return ``(text, is_fallback)`` for one English source string."""
     digest = source_hash(english)
     text = _overlay().get(digest, {}).get(lang) or _discovery_overlay().get(digest, {}).get(lang)
+    if not text:
+        from .rating.content import LABELS
+        from .context import t
+        for key, (_ru, en) in LABELS.items():
+            if english == en:
+                return t(key, lang), False
     return (text, False) if text else (english, True)
 
 

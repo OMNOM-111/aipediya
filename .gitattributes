@@ -2,3 +2,6 @@
 *.sh text eol=lf
 *.py text eol=lf
 *.svg text eol=lf
+
+# Preserve owner-frozen reference bytes on Windows checkouts.
+data/rating/v1.0/*.json text eol=lf

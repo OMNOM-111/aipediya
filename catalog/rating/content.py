@@ -1,0 +1,111 @@
+"""Authored RU/EN presentation text for Rating methodology v1.0.
+
+All other locales use the application's source-hash translation provider.
+Technical context IDs, benchmark names and configuration IDs are preserved.
+"""
+LABELS={
+ 'rating_snapshot_stale': ('Снимок старше 7 дней; смотрите дату данных.', 'Snapshot is over 7 days old; check its data date.'),
+ 'rating_snapshot_old': ('Данные на указанную дату; снимок старше 14 дней.', 'Data as of the stated date; snapshot is over 14 days old.'),
+ 'rating_source_note':('Сравнимы только результаты одного теста с одинаковым протоколом. У каждого результата указаны автор оценки, тест, конфигурация, снимок и дата проверки. Результаты разработчика отделены от независимых прогонов и сводных индексов. Сторонние результаты показываются после проверки точной версии модели и права на публикацию. AIpediya Rating v1.0 рассчитывается отдельно по разрешённым доказательствам; его контексты и ограничения описаны ниже.',
+ 'Only results of the same benchmark and protocol are comparable. Each result names the evaluator, benchmark, configuration, snapshot and check date. Developer results are separate from independent runs and composite indexes. Third-party results require verified exact model identity and permission to publish. AIpediya Rating v1.0 is computed separately from permitted evidence; its contexts and limitations are explained below.'),
+ 'rating_context':('Контекст рейтинга','Rating context'),
+ 'rating_profile':('Профиль использования','Usage profile'),
+ 'rating_balanced':('Сбалансированный','Balanced'),
+ 'rating_quality_first':('Качество прежде всего','Quality first'),
+ 'rating_economy':('Экономный','Economy'),
+ 'rating_rank':('Место','Rank'),
+ 'rating_tier':('Ступень','Tier'),
+ 'rating_precision':('Статистическая точность','Statistical precision'),
+ 'rating_support':('Поддержка доказательствами','Evidence support'),
+ 'rating_coverage':('Покрытие данных рейтинга','Rating data coverage'),
+ 'rating_basket':('Ожидаемая доля верных ответов на эталонной корзине','Expected share of correct answers on the reference basket'),
+ 'rating_price_efficiency':('Ценовая эффективность','Price efficiency'),
+ 'rating_resource':('Ресурсная составляющая','Resource component'),
+ 'rating_configuration':('Конфигурация','Configuration'),
+ 'rating_freshness':('Свежесть фактов','Fact freshness'),
+ 'rating_date':('Данные на дату','Data as of'),
+ 'rating_unrated':('Нет рейтинга в активном контексте','Not rated in the active context'),
+ 'rating_provisional':('Предварительно','Provisional'),
+ 'rating_nr':('Нет рейтинга','Not rated'),
+ 'rating_ready':('Готов','Ready'),
+ 'rating_conditional':('Готов условно: большинство имеет Support C','Conditionally ready: most models have Support C'),
+ 'rating_beta':('Бета','Beta'),
+ 'rating_insufficient':('Недостаточно данных','Insufficient data'),
+ 'rating_out_of_scope':('Вне охвата v1','Out of scope v1'),
+ 'rating_fresh':('Подтверждено','Confirmed'),
+ 'rating_stale':('Устарело / требует перепроверки','Stale / needs re-check'),
+ 'rating_expired':('Срок подтверждения истёк','Confirmation expired'),
+ 'rating_unknown':('Неизвестно','Unknown'),
+ 'rating_unconfirmed':('Не подтверждено','Unconfirmed'),
+ 'rating_families':('Семейства тестов','Benchmark families'),
+ 'rating_domains':('Домены','Domains'),
+ 'rating_runners':('Независимые раннеры','Independent runners'),
+ 'rating_no1':('Допуск к №1','Eligibility for #1'),
+ 'rating_eligible':('Допускается','Eligible'),
+ 'rating_ineligible':('Не допускается','Not eligible'),
+ 'rating_audit':('Аудит рейтинга','Rating audit'),
+ 'rating_contexts':('Статусы контекстов','Context statuses'),
+ 'rating_missing':('Пробелы','Missing facts'),
+ 'rating_text_version':('Версия текста методики','Methodology text version'),
+ 'rating_available':('Доступность API','API availability'),
+ 'rating_price':('Стандартная API-цена','Standard API price'),
+ 'rating_licence':('Лицензия источника','Source licence'),
+ 'rating_p_no1':('Вероятность №1','Probability of #1'),
+ 'rating_not_winner':('Место в таблице не означает значок №1','Table rank does not imply a #1 badge'),
+}
+
+# (heading English, heading Russian, paragraph English, paragraph Russian).
+METHOD=[
+ ('Contexts and usage profiles','Контексты и профили использования',
+  'The hierarchy is Segment → Scenario → Variant → Usage Profile. There is no absolute ranking of all AI. LLM.OVERALL measures general language capability; scenarios and variants may change quality evidence. Usage profiles change economics and resource weights, never capability. Only LLM.OVERALL has a public numerical rank at launch. Math and Logic are Beta; other contexts are enabled only when their computed gates pass.',
+  'Иерархия: Segment → Scenario → Variant → Usage Profile. Абсолютного рейтинга всех AI нет. LLM.OVERALL измеряет общую языковую способность; сценарии и варианты могут менять доказательства качества. Профили меняют экономику и веса ресурсов, но не capability. На запуске публичные численные места есть только у LLM.OVERALL. Math и Logic — Beta; другие контексты включаются только после прохождения вычисляемых gates.'),
+ ('Permitted evidence','Разрешённые доказательства',
+  'The canonical master is the factual source. Public independent model-level results, Arena and reproducible AIpediya runs are separate from developer reports. Composite indexes, superseded duplicates and nonpublic research are excluded. SWE-bench Verified is legacy display evidence and is not rating eligible for Overall or a CODE gate. CODE audit sources marked research-only remain nonpublic; no CODE rating is published.',
+  'Фактический источник — canonical master. Публичные независимые результаты точной модели, Arena и воспроизводимые прогоны AIpediya отделены от отчётов разработчика. Составные индексы, заменённые дубли и непубличные исследования исключены. SWE-bench Verified остаётся legacy-доказательством для отображения, не входит в Overall и gate CODE. Источники CODE Audit со статусом research-only остаются непубличными; CODE-рейтинг не опубликован.'),
+ ('Frozen capability scale','Замороженная шкала capability',
+  'A one-factor latent model estimates capability from logit-transformed percentages clipped to [0.01, 0.99]. Arena uses frozen category means and standard deviations. Test coefficients, reference anchors and calibration are immutable within v1.0. New models do not rescale old models. An unknown test is removed before caps and configuration selection; a new item requires at least five frozen-scale anchors and append-only ridge binding.',
+  'Однофакторная латентная модель оценивает способность по процентам после logit-преобразования с ограничением [0.01, 0.99]. Arena использует замороженные средние и стандартные отклонения подкатегорий. Коэффициенты тестов, якоря и calibration неизменяемы в v1.0. Новые модели не меняют шкалу старых. Неизвестный тест исключается до caps и выбора конфигурации; новый item требует не менее пяти якорей замороженной шкалы и append-only ridge-привязки.'),
+ ('Caps and configuration','Ограничения веса и конфигурация',
+  'Each family contributes at most 1.5 effective observations; Epoch AI contributes at most 6 and other runners at most 2. Arena contributes at most 1 effective observation and 25% of precision, only with non-Arena evidence. Developer results are never independent and affect scoring only for an explicitly bound item. One configuration is chosen per model: most benchmark families, then higher effort. The selected configuration is displayed.',
+  'Каждое семейство даёт не более 1.5 эффективного наблюдения; Epoch AI — не более 6, другие раннеры — не более 2. Arena — не более одного наблюдения и 25% точности, только при наличии не-Arena доказательств. Результаты разработчика не являются независимыми и влияют на расчёт только для явно привязанного item. На модель выбирается одна конфигурация: больше семейств, затем более высокий effort. Она показана в панели.'),
+ ('Reference basket and uncertainty','Эталонная корзина и неопределённость',
+  'Capability is the expected share of correct answers on a frozen 10-test basket, not current-catalog min/max. Independent sigma is 0.90, Arena 0.675, developer 1.80; AIpediya sigma is 1.25 times independent. Misfit inflates uncertainty by max(1, sqrt(chi-square/dof)) for dof ≥ 2. A single evidence batch spanning at most 14 days and younger than 90 days widens statistical uncertainty by 1.29. Conservative theta subtracts 1.2816 sigma; conservative Overall is the 10th Monte Carlo percentile.',
+  'Capability — ожидаемая доля верных ответов на замороженной корзине из 10 тестов, без min/max текущего каталога. Sigma независимого теста — 0.90, Arena — 0.675, разработчика — 1.80; AIpediya — 1.25 от независимого. Misfit увеличивает неопределённость на max(1, sqrt(chi-square/dof)) при dof ≥ 2. Одна партия доказательств в пределах 14 дней и моложе 90 дней увеличивает статистическую неопределённость в 1.29 раза. Conservative theta вычитает 1.2816 sigma; conservative Overall — 10-й перцентиль Monte Carlo.'),
+ ('Price and resource','Цена и ресурс',
+  'The reference price is the developer’s standard public hosted API offer. Compatible input/output rates use (3 × input + output) / 4 per million tokens. Batch, off-peak, temporary and promotional tariffs are excluded. Fixed price anchors are $0.20 and $20. A permanent standard free API has price efficiency 1; self-hosting is not a $0 hosted offer. Declared context uses fixed anchors 8,000 and 1,000,000 tokens; it is not measured long-context performance.',
+  'Эталонная цена — стандартный публичный hosted API-тариф разработчика. Совместимые input/output цены дают (3 × input + output) / 4 за миллион токенов. Batch, off-peak, временные и акционные тарифы исключены. Якоря цены фиксированы: $0.20 и $20. Постоянный стандартный бесплатный API имеет ценовую эффективность 1; self-host не означает hosted-тариф $0. Заявленный контекст использует якоря 8 000 и 1 000 000 токенов; это не измеренная long-context performance.'),
+ ('Overall profiles','Профили Overall',
+  'Overall combines capability, price efficiency and declared resource geometrically: 100 × Q^wq × (0.2 + 0.8C)^wc × (0.3 + 0.7K)^wk. BALANCED weights are 0.78/0.16/0.06; QUALITY_FIRST 0.90/0.07/0.03; ECONOMY 0.55/0.37/0.08. Weights are normalized. The capability estimate is identical between profiles. Scores are interpreted within this context and version, not as a universal percentage of intelligence.',
+  'Overall объединяет capability, ценовую эффективность и заявленный ресурс геометрически: 100 × Q^wq × (0.2 + 0.8C)^wc × (0.3 + 0.7K)^wk. Веса BALANCED — 0.78/0.16/0.06; QUALITY_FIRST — 0.90/0.07/0.03; ECONOMY — 0.55/0.37/0.08. Веса нормированы. Capability одинакова между профилями. Баллы трактуются внутри контекста и версии, а не как универсальный процент интеллекта.'),
+ ('Evidence and distinctiveness gates','Gates доказательств и различимости',
+  'A Rated Overall model needs at least two non-Arena families in at least two domains. A public context needs sufficient models, families and runner diversity, including an external independent runner. Specialized contexts also require both statistical heterogeneity or validated out-of-sample improvement, and a meaningful change from the parent ranking. Gates are rebuilt from evidence. Ready is conditional when more than half of Rated models have Support C; passing evidence without distinctiveness yields at most Beta.',
+  'Rated-модели Overall нужны не менее двух не-Arena семейств в двух доменах. Публичному контексту нужны достаточное число моделей, семейства и разнообразие раннеров, включая внешнего независимого. Специализированным контекстам также нужны статистическая неоднородность или подтверждённое улучшение вне выборки и значимое отличие от родительского ранжирования. Gates пересчитываются по доказательствам. Ready условен, когда больше половины Rated имеют Support C; доказательства без различимости дают максимум Beta.'),
+ ('Missing data and bounded scores','Пропуски и диапазоны баллов',
+  'Missing critical quality evidence gives Provisional or NR, with no Overall or rank. Missing or unconfirmed required price, resource or configuration yields a bounded Overall and a global possible rank interval accounting for other bounded models. There is no single rank or #1 eligibility. Missing facts are not replaced with bad values or zero scores. Informational metadata has no rating effect.',
+  'Отсутствие критических доказательств качества даёт Provisional или NR без Overall и места. Отсутствующая или неподтверждённая цена, ресурс или конфигурация дают диапазон Overall и глобальный диапазон возможных мест с учётом других bounded-моделей. Единственного места и допуска к №1 нет. Пропуски не заменяются плохими значениями или нулевыми баллами. Информационные метаданные не влияют на рейтинг.'),
+ ('Precision, Support and coverage','Precision, Support и покрытие',
+  'Precision grades statistical uncertainty after misfit and early-evidence adjustments. Support grades independent paths: A at least three, B two, C one. They are displayed separately. Rating coverage counts only relevant critical, required and confidence-enhancing facts; developer reports and release dates cannot raise it. In v1.0 support sigma is zero: the absence of an AIpediya reproducible test changes Support, with zero point penalty.',
+  'Precision оценивает статистическую неопределённость после misfit и ранних доказательств. Support оценивает независимые пути: A — не менее трёх, B — два, C — один. Показатели разделены. Покрытие учитывает только значимые для рейтинга критические, обязательные и подтверждающие факты; отчёты разработчика и дата релиза его не увеличивают. В v1.0 support sigma равна нулю: отсутствие воспроизводимого теста AIpediya отражается в Support без штрафа в баллах.'),
+ ('Fact freshness','Свежесть фактов',
+  'All ages use the snapshot data cutoff: the maximum relevant Checked or Last Verified in the master. Unknown means never supplied; unconfirmed means expired or invalidated. Price/API availability is fresh through 30 days, stale through 60; resource 180/365; configuration 90/180. Stale only warns and keeps the value; expired required inputs become missing and bounded. Benchmark age alone never expires a result; licence revocation or invalidation excludes it. Snapshot age warns after 7 days and labels data as of its cutoff after 14; it never reruns #1 during a request.',
+  'Возраст считается относительно data cutoff снимка: максимального значимого Checked или Last Verified в master. Неизвестно — никогда не записано; не подтверждено — срок истёк или факт инвалидирован. Цена/доступность API свежи до 30 дней, stale до 60; ресурс — 180/365; конфигурация — 90/180. Stale только предупреждает и сохраняет значение; expired обязательные факты становятся пропусками и bounded. Возраст теста сам по себе не отменяет результат; отзыв лицензии или инвалидация исключают его. Возраст снимка даёт предупреждение после 7 дней и подпись даты после 14; №1 в HTTP-запросе не пересчитывается.'),
+ ('Tiers, frontier and the #1 badge','Ступени, эшелон и значок №1',
+  'Rank first follows capability tier, then conservative Overall within that tier. The frozen meaningful capability gap is delta theta 0.28, evaluated inside Monte Carlo. A larger Overall can therefore have a lower rank. #1 requires Precision A/B, exact price and resource, confirmed configuration and at least two independent organizations. Each draw chooses a frontier candidate within delta of the A/B capability leader, then the highest Overall among eligible candidates.',
+  'Место сначала определяется ступенью capability, затем conservative Overall внутри неё. Замороженный значимый разрыв delta theta 0.28 оценивается внутри Monte Carlo. Поэтому больший Overall может иметь худшее место. Для №1 нужны Precision A/B, точные цена и ресурс, подтверждённая конфигурация и не менее двух независимых организаций. В каждой выборке эшелон включает кандидатов в пределах delta от лидера capability A/B; затем выбирается максимальный Overall среди допущенных.'),
+ ('Monte Carlo and reproducibility','Monte Carlo и воспроизводимость',
+  'The default is 6,000 draws with a fixed seed and PCG64. Capability draws are generated in Record ID order before weight multipliers U(0.8, 1.2). The same capability matrix supplies conservative Overall, tiers, frontier and winner probabilities. MCSE is shown with P(#1). If the leading probability is within two MCSE of 0.50, rebuild with 12,000 draws from the same seed. A badge needs probability at least 0.50 outside that zone; otherwise leaders are statistically indistinguishable. Content hashes exclude creation time and snapshot ID. Runtime reads a built JSON snapshot and never runs Excel, IRT or Monte Carlo.',
+  'По умолчанию 6 000 выборок с фиксированным seed и PCG64. Capability генерируется в порядке Record ID до множителей весов U(0.8, 1.2). Одна матрица capability используется для conservative Overall, ступеней, эшелона и вероятностей победителя. MCSE показан вместе с P(№1). Если вероятность лидера находится в пределах двух MCSE от 0.50, выполняется пересчёт с 12 000 выборками из того же seed. Значок требует вероятности не ниже 0.50 вне этой зоны; иначе лидеры статистически неразличимы. Content hash не включает время создания и snapshot ID. Runtime читает готовый JSON и не запускает Excel, IRT или Monte Carlo.'),
+ ('Known limitations','Известные ограничения',
+  'The launch evidence depends heavily on Epoch AI and on Arena for #1 organization diversity. A single latent factor cannot capture every task. Per-token price is not cost per completed task, especially for reasoning configurations. Arena is a frozen z approximation, not a joint preference model. Some benchmarks saturate and many models lack resource facts. AIpediya reproducible tests have not started. Voice, media, embedding and CODE numerical ratings are not available at launch; future source acceptance and gates are required.',
+  'Доказательства на запуске сильно зависят от Epoch AI и от Arena для разнообразия организаций №1. Один латентный фактор не охватывает каждую задачу. Цена за токен не равна стоимости выполненной задачи, особенно для reasoning-конфигураций. Arena — замороженная z-аппроксимация, не совместная модель предпочтений. Часть тестов насыщается, у многих моделей нет ресурсных фактов. Воспроизводимые тесты AIpediya ещё не начаты. Численные рейтинги голоса, медиа, embeddings и CODE на запуске недоступны; нужны принятие будущих источников и gates.'),
+]
+
+def source_labels(config):
+    import json
+    templates=json.loads((config/'tooltip_templates_v1.0.json').read_text(encoding='utf-8'))
+    result=dict(LABELS)
+    for section in ('ui_state','checklist','text','leader','missing_fact_labels','no1_reason_labels'):
+        for key,value in templates[section].items():result[f'rating_tpl_{section}_{key}']=(value['ru'],value['en'])
+    for i,(en,ru,p_en,p_ru) in enumerate(METHOD):
+        result[f'rating_method_h{i}']=(ru,en);result[f'rating_method_p{i}']=(p_ru,p_en)
+    return result

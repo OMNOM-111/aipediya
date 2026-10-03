@@ -1,0 +1,44 @@
+/* Rating fills the existing rating cell; the primary catalog layout is retained. */
+.rating-value-wrap { display: block; min-width: 0; }
+.rating-trigger { border: 0; padding: 3px 0; margin: 0; background: transparent; color: var(--text); font: inherit; font-size: 14px; cursor: pointer; white-space: nowrap; }
+.rating-trigger:hover { color: var(--mint); }
+.rating-trigger:focus-visible { outline: 2px solid var(--mint); outline-offset: 3px; border-radius: 3px; }
+.rating-caption, .rating-grades { display: block; color: var(--muted); font-size: 10.5px; line-height: 1.35; overflow-wrap: anywhere; }
+.rating-grades { font-size: 10.5px; }
+.rating-leader { color: var(--muted); font-size: 12px; margin: 6px 0 9px; padding: 7px 10px; border: 1px solid var(--line-soft); border-radius: var(--r-card); }
+.rating-leader summary { cursor: pointer; }
+.rating-leader summary span:first-child { color: var(--text); }
+.rating-leader p { margin: 7px 0; }
+.rating-popover { position: fixed; inset: auto; margin: 0; width: min(440px, calc(100vw - 24px)); max-height: min(75vh, 650px); overflow: auto; box-sizing: border-box; border: 1px solid var(--line-strong); border-radius: var(--r-panel); background: var(--panel); color: var(--text); padding: 16px; box-shadow: var(--shadow); font-size: 12px; }
+.rating-popover::backdrop { background: transparent; }
+.rating-audit-content { overflow-wrap: anywhere; line-height: 1.5; }
+.rating-audit-content p { margin: 8px 0; }
+.rating-audit-content ul { padding-inline-start: 16px; display: grid; gap: 6px; margin: 10px 0; }
+.rating-freshness { display: grid; gap: 3px; margin: 10px 0; font-size: 11px; }
+.rating-freshness dt { color: var(--muted); }
+.rating-freshness dd { margin: 0 0 5px; }
+.rating-profiles { display: flex; flex-wrap: wrap; gap: 5px; margin: 12px 0; }
+.rating-profiles a { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; font-size: 11px; }
+.rating-profiles a[aria-current] { background: var(--mint-dim); border-color: var(--mint-line); color: var(--text); }
+.rating-panel .rating-trigger { font-size: 22px; }
+.rating-panel .rating-caption, .rating-panel .rating-grades { font-size: 12px; }
+.rating-components { margin: 14px 0; }
+.rating-components dt, .rating-components dd { overflow-wrap: anywhere; min-width: 0; }
+.rating-panel-audit { margin: 14px 0; }
+.rating-panel-audit summary { cursor: pointer; color: var(--text-soft); }
+.rating-panel-audit .rating-audit-content { font-size: 12px; margin: 12px 0; }
+.rating-context-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,240px),1fr)); gap: 8px; margin: 14px 0; }
+.rating-context-grid > div { display: grid; gap: 5px; padding: 10px; border: 1px solid var(--line); border-radius: 7px; font-size: 12px; }
+.rating-context-grid small { color: var(--muted); }
+.rating-snapshot-id { overflow-wrap: anywhere; font-size: 11px; }
+html body .model-table col.rating-col, html body .model-table .rating-col { width: 102px; }
+@container catalog (min-width: 720px) {
+  html body .model-table td.rating-col, html body .model-table th.rating-col { display: table-cell; }
+  html body .model-table col.rating-col { display: table-column; }
+}
+@container catalog (max-width: 719px) {
+  html body .model-table:not(.tool-table) tbody tr[data-slug] > .rating-col { display: block; grid-area: rating; width: auto; padding-top: 5px; border-top: 1px solid var(--line-soft); }
+  .model-table:not(.tool-table) tbody tr[data-slug] { grid-template-areas: "name number" "dev release" "purpose purpose" "price access" "checks checks" "rating rating"; }
+  .rating-col .rating-value-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+  .rating-col .rating-caption, .rating-col .rating-grades { font-size: 11px; }
+}

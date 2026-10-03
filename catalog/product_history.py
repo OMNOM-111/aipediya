@@ -13,6 +13,7 @@ from django.views.decorators.http import require_safe
 
 ROOT = Path(settings.BASE_DIR)
 SOURCES = {
+    "2026-10-03-rating-engine-v1-023": ("Rating Engine v1.0 / Local review", "docs/history/2026-10-03-rating-engine-v1-023.md"),
     "execution-state": ("Текущее состояние / Execution state", "docs/EXECUTION_STATE.md"),
     "decisions": ("Решения / Decisions", "docs/DECISIONS.md"),
     "release": ("Порядок выпуска / Release procedure", "docs/RELEASE.md"),

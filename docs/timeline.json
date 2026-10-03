@@ -1059,6 +1059,24 @@
       "status": "COMPLETED_LOCAL",
       "revision": null,
       "history": "docs/history/2026-10-02-daily-catalog-update-022.md"
+    },
+    {
+      "release_id": "RATING-ENGINE-V1-2026-10-03",
+      "release_sequence": 23,
+      "app_version": "v0.20.0",
+      "title": "AIpediya Rating Engine v1.0",
+      "environment": "local",
+      "stage": "review",
+      "status": "LOCAL_QA_PASS",
+      "started_utc": "2026-10-03T09:21:08.628060+00:00",
+      "executor": "Codex",
+      "history": "docs/history/2026-10-03-rating-engine-v1-023.md",
+      "release_tag": "release-2026-10-03-rating-engine-v1",
+      "revision": null,
+      "summary": "Offline frozen rating engine, reproducible snapshots, catalog and panel UI, localized methodology. Local-only; stop at Owner Review.",
+      "snapshot_id": "LLM.OVERALL@BALANCED-v1.0-2026-10-02-66c30305a6d9",
+      "master_sha256": "5174bce98bb5578868f9e0c41cfbb05c2940c3465b3247e2a81062becdd2382e",
+      "content_sha256": "66c30305a6d9e7b4cfbaf358e7b62af5fbb134bcb36aed20bd8a8dad6c811c6e"
     }
   ],
   "product_history": {
@@ -2603,6 +2621,60 @@
         "qa": {
           "local": "Canonical Local 127.0.0.1:18810 (main, data/local/aipedia.sqlite3): 343 Models / 158 Tools, integrity ok, FK 0; Release #022 browser smoke 59 checks + 44 NEW-flicker steps PASS, 0 console/network errors; launcher negative test with a temporary foreign instance on 18811 PASS (ignored, not stopped by the launcher); Production read-only f46cc43, 343/158, GSD 34/34."
         }
+      },
+      {
+        "release_id": "RATING-ENGINE-V1-2026-10-03",
+        "release_sequence": 23,
+        "app_version": "v0.20.0",
+        "date": "2026-10-03",
+        "title_ru": "AIpediya Rating Engine v1.0",
+        "title_en": "AIpediya Rating Engine v1.0",
+        "icon": "chart",
+        "tags_ru": [
+          "Rating v1.0",
+          "Local"
+        ],
+        "tags_en": [
+          "Rating v1.0",
+          "Local"
+        ],
+        "capabilities_ru": [
+          "Offline рейтинг по frozen calibration",
+          "Snapshot, аудит, методика и 22 локали"
+        ],
+        "capabilities_en": [
+          "Offline rating with frozen calibration",
+          "Snapshot, audit, methodology and 22 locales"
+        ],
+        "local_verified": true,
+        "owner_approved": false,
+        "production_released": false,
+        "production_verified": false,
+        "open": true,
+        "progress": "review",
+        "executor": "Codex",
+        "revision": null,
+        "release_tag": "release-2026-10-03-rating-engine-v1",
+        "source": "2026-10-03-rating-engine-v1-023",
+        "changes": [
+          {
+            "title_ru": "Frozen offline engine и snapshot",
+            "title_en": "Frozen offline engine and snapshot",
+            "description_ru": "59 Rated: 27 exact / 32 bounded; 66 Provisional / 162 NR. Три профиля; gates, MCSE, append-only item ledger; runtime только JSON.",
+            "description_en": "59 Rated: 27 exact / 32 bounded; 66 Provisional / 162 NR. Three profiles; gates, MCSE, append-only item ledger; JSON-only runtime."
+          },
+          {
+            "title_ru": "Рейтинг в существующем каталоге и панели",
+            "title_en": "Rating in the existing catalog and model panel",
+            "description_ru": "Overall, tier/rank, Precision/Support, audit popover и методика на 22 локалях; desktop/mobile/RTL.",
+            "description_en": "Overall, tier/rank, Precision/Support, audit popover and methodology in 22 locales; desktop/mobile/RTL."
+          }
+        ],
+        "qa": {
+          "local": "PASS: 397 tests (1 skip), reference/invariants, master/catalog/migrations, deterministic 3 profiles, 32 browser scenarios + interactions; 0 console/critical network errors."
+        },
+        "next_ru": "Владелец проверяет Local #023. Production не разрешён.",
+        "next_en": "Owner reviews Local #023. Production is not authorized."
       }
     ],
     "additional_tasks": [
@@ -2773,12 +2845,12 @@
       }
     ],
     "current_local": {
-      "release_id": "DAILY-CATALOG-UPDATE-2026-10-02",
-      "release_sequence": 22,
-      "app_version": "v0.19.0",
-      "release_tag": "release-2026-10-02-daily-catalog-update",
-      "revision": "8a4fe86a75ebcb5d2548aa57fdd8f6517058407d",
-      "started_utc": "2026-10-02T18:59:06Z"
+      "release_id": "RATING-ENGINE-V1-2026-10-03",
+      "release_sequence": 23,
+      "app_version": "v0.20.0",
+      "release_tag": "release-2026-10-03-rating-engine-v1",
+      "revision": null,
+      "started_utc": "2026-10-03T09:21:08.628060+00:00"
     },
     "current_production": {
       "release_id": "DAILY-CATALOG-UPDATE-2026-10-02",
